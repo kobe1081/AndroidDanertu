@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item android:duration="150" android:drawable="@drawable/loading_anim1" />
+    <item android:duration="150" android:drawable="@drawable/loading_anim2" />
+    <item android:duration="150" android:drawable="@drawable/loading_anim3" />
+    <item android:duration="150" android:drawable="@drawable/loading_anim4" />
+    <item android:duration="150" android:drawable="@drawable/loading_anim5" />
+    <item android:duration="150" android:drawable="@drawable/loading_anim6" />
+    <item android:duration="150" android:drawable="@drawable/loading_anim7" />
+    <item android:duration="150" android:drawable="@drawable/loading_anim8" />
+    <!--
+    <item
+        android:drawable="@drawable/loading_det1"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det2"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det3"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det4"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det5"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det6"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det7"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det8"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det9"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det10"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det11"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det12"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det13"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det14"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det15"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det16"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det17"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det18"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det19"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det20"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det21"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det22"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det23"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det24"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det25"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det26"
+        android:duration="120"/>
+    <item
+        android:drawable="@drawable/loading_det27"
+        android:duration="120"/>
+    -->
+
+</animation-list>

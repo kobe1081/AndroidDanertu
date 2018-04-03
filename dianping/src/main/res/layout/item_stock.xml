@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingBottom="5dp">
+
+    <ImageView
+        android:id="@+id/iv_product"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="10dp"/>
+
+    <TextView
+        android:id="@+id/tv_product_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/iv_product"
+        android:layout_marginRight="20dp"
+        android:layout_toRightOf="@id/iv_product"
+        android:padding="5dp"
+        android:text="晓镇香 5陈酿"
+        android:textColor="@color/gray"/>
+
+
+    <LinearLayout
+        android:id="@+id/ll_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/iv_product"
+        android:layout_gravity="center"
+        android:layout_toRightOf="@id/iv_product"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_valuation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="估值：￥45，153.00"
+            android:textColor="@color/gray"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:text="库存："/>
+
+        <TextView
+            android:id="@+id/tv_stock_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:text="59"
+            android:textColor="#FF6C6C"
+            android:textSize="@dimen/large_small_text"/>
+    </LinearLayout>
+
+    <View
+        style="@style/dividing_ling_horizon"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/iv_product"/>
+</RelativeLayout>

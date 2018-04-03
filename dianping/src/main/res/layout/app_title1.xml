@@ -1,0 +1,18 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/ll_title_dd"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/tab_black">
+
+    <Button
+        android:id="@+id/b_order_title_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/b_back_click"
+        android:drawableLeft="@drawable/b_title_back_click"
+        android:ellipsize="marquee"
+        android:lines="1"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"/>
+
+</LinearLayout>

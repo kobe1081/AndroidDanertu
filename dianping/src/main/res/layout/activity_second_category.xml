@@ -1,0 +1,63 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/main_background"
+              android:baselineAligned="false"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#ffc40000"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/second_category_btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/b_back_click"
+            android:drawableLeft="@drawable/b_title_back_click"
+            android:textColor="@android:color/white"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:background="#ffc40000">
+
+            <Spinner
+                android:id="@+id/category_spinner"
+                android:layout_width="105dp"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:dropDownWidth="match_parent"
+                android:spinnerMode="dropdown"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignBottom="@+id/category_spinner"
+                android:layout_marginLeft="-5dp"
+                android:layout_toRightOf="@+id/category_spinner"
+                android:scaleType="fitXY"
+                android:src="@drawable/drop"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <WebView
+        android:id="@+id/wv_sec_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"/>
+
+    <!--
+        <ExpandableListView
+            android:id="@+id/expand_second_title"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scrollbars="none"
+            android:cacheColorHint="#00000000"
+            android:divider="@null"
+            android:groupIndicator="@null"/>
+         -->
+</LinearLayout>

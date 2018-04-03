@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <!-- <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="46dip" >
+
+        <TextView
+            android:id="@+id/top_MyShopName"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@drawable/title_bg"
+            android:gravity="center"
+            android:text="店铺名称"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout> -->
+    <include layout="@layout/app_title1"/>
+
+    <WebView
+        android:id="@+id/wv_shopIntroduce"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <!-- <LinearLayout
+        android:id="@+id/lay_grid"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <GridView
+            android:id="@+id/shop_product_gridView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:horizontalSpacing="2dp"
+            android:listSelector="@null"
+            android:numColumns="2"
+            android:paddingTop="2dp"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="2dp" >
+        </GridView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lay_noproduct"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/no_product"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="本店暂无自营商品！"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+    </LinearLayout> -->
+
+</LinearLayout>

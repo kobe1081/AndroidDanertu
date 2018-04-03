@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true">
+
+    <Button
+        android:id="@+id/ok"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_margin="15dp"
+        android:background="@drawable/b_corner_blue1"
+        android:text="确定"
+        android:textColor="@color/blue1"
+        android:textSize="@dimen/medium_text_size"/>
+
+    <TextView
+        android:id="@+id/tips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/ok"
+        android:layout_marginBottom="35dp"
+        android:gravity="center"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:text="您的退款￥1123.33将在3个工作日内返回到您的账户上"
+        android:textColor="@color/solid_while"
+        android:textSize="@dimen/small_middle_text_size"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tips"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="25dp"
+        android:text="已为您取消预订"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_xxlarge"/>
+
+</RelativeLayout>

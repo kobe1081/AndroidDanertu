@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/fraHead"
+        layout="@layout/common_title"/>
+    "
+
+    <TextView
+        android:id="@+id/TextView_HelpText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:autoLink="all"
+        android:bufferType="spannable"
+        android:drawablePadding="5dp"
+        android:fadingEdge="vertical"
+        android:fadingEdgeLength="25dp"
+        android:isScrollContainer="true"
+        android:linksClickable="true"
+        android:padding="1dp"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical"
+        android:textColor="@color/black"
+        android:textColorLink="#FFFF0F"
+        android:textSize="12sp"/>
+
+</LinearLayout>

@@ -1,0 +1,26 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/ll_title3"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/tab_black">
+
+    <ImageButton
+        android:id="@+id/b_title_back3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/b_title_back_click"/>
+
+    <Button
+        android:id="@+id/b_title_select"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/b_back_click"
+        android:drawableRight="@drawable/index_type_item_bg"
+        android:gravity="center"
+        android:paddingLeft="15dp"
+        android:paddingRight="5dp"
+        android:text="吃"
+        android:textColor="@color/white"
+        android:textSize="20sp"/>
+
+</LinearLayout>

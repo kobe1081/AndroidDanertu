@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#f9f9f9"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="0dp"
+        android:paddingTop="15dp"
+        android:text="商品详细"
+        android:textColor="#666666"
+        android:textSize="@dimen/small_middle_text_size"/>
+
+    <com.danertu.widget.MyGridView
+        android:id="@+id/gv_pshop_selected_photo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:background="@color/white"
+        android:horizontalSpacing="15dp"
+        android:listSelector="@color/transparent"
+        android:numColumns="3"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:verticalSpacing="10dp"/>
+
+    <EditText
+        android:id="@+id/et_pshop_pro_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/et_corner_bg_shadow"
+        android:gravity="start"
+        android:hint="输入商品介绍..."
+        android:maxLength="400"
+        android:minLines="5"
+        android:paddingBottom="10dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="10dp"/>
+
+</LinearLayout>

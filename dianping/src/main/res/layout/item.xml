@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f0f0f0">
+
+    <ImageView
+        android:id="@+id/gallery_image"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/no_image"/>
+
+    <TextView
+        android:id="@+id/gallery_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gallery_image"
+        android:gravity="center"
+        android:padding="3dp"
+        android:text="adsasd"
+        android:textColor="#FFA500"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/nomalshopitemname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gallery_text"
+        android:ellipsize="end"
+        android:gravity="left"
+        android:padding="3dp"
+        android:singleLine="true"
+        android:text="日日日日日"
+        android:textColor="#CDC5BF"
+        android:textSize="12sp"/>
+
+    <TextView
+        android:id="@+id/nomalshopitemdetial"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/nomalshopitemname"
+        android:gravity="left"
+        android:padding="3dp"
+        android:text="guige"
+        android:textColor="#CDC5BF"
+        android:textSize="12sp"/>
+
+    <TextView
+        android:id="@+id/gallery_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="测试"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/nitemmarkerprice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/nomalshopitemname"
+        android:layout_alignRight="@+id/gallery_image"
+        android:padding="3dp"
+        android:text="shichang"/>
+
+</RelativeLayout>

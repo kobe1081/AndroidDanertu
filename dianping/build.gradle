@@ -1,0 +1,68 @@
+apply plugin: 'com.android.application'
+//apply plugin:'findbugs'
+android {
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
+    useLibrary 'org.apache.http.legacy'
+//    compileOptions.encoding="GBK"
+    compileOptions.encoding = "UTF-8"
+
+    defaultConfig {
+        applicationId "com.danertu.dianping"
+        minSdkVersion 14
+        targetSdkVersion 26
+        versionCode 87
+        versionName "8.7"
+        testApplicationId "com.danertu.dianpingtest"
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles 'proguard.cfg'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+        disable "ResourceType"
+    }
+
+    aaptOptions {
+        cruncherEnabled = false
+        useNewCruncher = false
+    }
+
+}
+
+dependencies {
+    compile project(':alipay_lib')
+    compile project(':code_library')
+    compile project(':libzxing')
+    compile project(':xiaonengChatUI')
+    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    compile files('libs/alipaysdk.jar')
+    compile files('libs/alipaysecsdk.jar')
+    compile files('libs/alipayutdid.jar')
+    compile files('libs/jpush-android-2.1.5.jar')
+    compile files('libs/libammsdk.jar')
+    compile files('libs/Msc.jar')
+    compile files('libs/need_lib.jar')
+    compile files('libs/testinagent.jar')
+    compile files('libs/umeng-analytics-v5.5.3.jar')
+    compile files('libs/universal-image-loader-1.8.6-with-sources.jar')
+    compile files('libs/BaiduLBS_Android.jar')
+    //    国产手机权限适配
+    implementation 'com.github.jokermonn:permissions4m:2.0.0-lib'
+    annotationProcessor 'com.github.jokermonn:permissions4m:2.0.0-processor'
+    compile project(':onekeyshare')
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
+}
+
+task hehe {
+    println 'hello word!!!!!!!!!!!'
+}

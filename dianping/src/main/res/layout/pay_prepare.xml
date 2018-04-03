@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/app_title6"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top"
+        android:layout_margin="10dp"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="订单号"
+            android:textColor="@color/gray_text_aaa"
+            android:textSize="@dimen/small_middle_text_size"/>
+
+        <TextView
+            android:id="@+id/order_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:text="@string/pay_orderNum_tips"
+            android:textColor="@color/gray_text"
+            android:textSize="@dimen/small_middle_text_size"/>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top"
+        android:layout_margin="10dp"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="支付方式"
+            android:textColor="@color/gray_text_aaa"
+            android:textSize="@dimen/small_middle_text_size"/>
+
+        <TextView
+            android:id="@+id/order_payWayTag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:drawablePadding="5dp"
+            android:drawableRight="@drawable/arrow_r_gray1"
+            android:text="单耳兔钱包"
+            android:textColor="@color/gray_text"
+            android:textSize="@dimen/small_middle_text_size"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top"
+        android:layout_margin="10dp"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="金额"
+            android:textColor="@color/gray_text_aaa"
+            android:textSize="@dimen/small_middle_text_size"/>
+
+        <TextView
+            android:id="@+id/order_money"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:text="@string/pay_orderMoney_tips"
+            android:textColor="@color/black"
+            android:textSize="@dimen/large_text_size"/>
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/b_toPay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="30dp"
+        android:background="@drawable/bg_pay_prepare_btn"
+        android:padding="10dp"
+        android:text="@string/pay_text"
+        android:textColor="@color/white"
+        android:textSize="@dimen/small_middle_text_size"/>
+
+</LinearLayout>

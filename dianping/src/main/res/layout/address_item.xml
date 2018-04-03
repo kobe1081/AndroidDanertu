@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:animateLayoutChanges="true"
+        android:background="#ffffff"
+        android:orientation="vertical">
+
+        <View
+            style="@style/Line"
+            android:layout_marginBottom="10dp"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
+
+            <TextView
+                android:id="@+id/tv_address_pName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="姓名"
+                android:textColor="@color/title_text_black"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/tv_address_pNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:text="手机号"
+                android:textColor="@color/title_text_black"/>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_address_receive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="地址"
+            android:textColor="@color/title_text_black"/>
+
+        <View
+            style="@style/Line"
+            android:layout_marginTop="10dp"/>
+
+        <FrameLayout
+            android:id="@+id/fl_editAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+            <RadioButton
+                android:id="@+id/set_default"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:button="@null"
+                android:checked="false"
+                android:drawableLeft="@drawable/cb_selector_circle"
+                android:drawablePadding="10dp"
+                android:paddingBottom="6dp"
+                android:paddingTop="6dp"
+                android:text="设为默认"
+                android:textColor="@drawable/selector_text_red"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="right|center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:drawableLeft="@drawable/ic_edit"
+                    android:drawablePadding="5dp"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="6dp"
+                    android:paddingTop="6dp"
+                    android:text="编辑"
+                    android:textColor="@color/title_text_black"/>
+
+                <TextView
+                    android:id="@+id/tv_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:drawableLeft="@drawable/ic_delete"
+                    android:drawablePadding="5dp"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="6dp"
+                    android:paddingTop="6dp"
+                    android:text="删除"
+                    android:textColor="@color/title_text_black"/>
+            </LinearLayout>
+
+            <View
+                style="@style/Line"
+                android:layout_gravity="bottom"/>
+        </FrameLayout>
+    </LinearLayout>
+
+</FrameLayout>

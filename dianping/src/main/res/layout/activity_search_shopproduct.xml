@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/home_backgroud" >
+
+    <LinearLayout
+        android:id="@+id/fraHead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="@color/tab_black"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/b_title_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/b_back_click"
+            android:drawableLeft="@drawable/b_title_back_click"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/search_edit"
+            android:layout_width="0dp"
+            android:layout_height="38dip"
+            android:layout_weight="1"
+            android:background="@drawable/et_corner_bg"
+            android:hint="搜索自营与入驻产品"
+            android:imeOptions="actionSearch"
+            android:padding="6dp"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/small_text_size" />
+
+        <Button
+            android:id="@+id/search_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5.0dip"
+            android:layout_marginRight="10.0dip"
+            android:background="@color/transparent"
+            android:text="搜索"
+            android:textColor="@color/white"
+            android:textSize="@dimen/medium_text_size" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/resultlist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/fraHead" >
+    </ListView>
+
+    <LinearLayout
+        android:id="@+id/loading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/gray_background"
+        android:gravity="center" >
+
+        <ProgressBar
+            android:id="@+id/ProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dip"
+            android:text="加载中 . . ." />
+    </LinearLayout>
+
+    <include
+        android:id="@+id/noResource"
+        layout="@layout/view_no_resource"
+        android:visibility="gone" />
+
+</RelativeLayout>

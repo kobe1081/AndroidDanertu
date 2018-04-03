@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_orderItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingLeft="0dp"
+    android:paddingRight="5dp">
+
+    <TextView
+        android:id="@+id/tv_shopName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_shop_logo"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="0dp"
+        android:paddingTop="10dp"
+        android:text="醇康"
+        android:textColor="@color/text_gray_999"/>
+
+    <include
+        android:id="@+id/item_proMsg"
+        layout="@layout/activity_my_order_produce_item"/>
+    <!--
+        <include
+            android:id="@+id/item_proMsg"
+            layout="@layout/item_produce_payment" />
+
+        <View style="@style/Line"/>
+
+        <include
+            android:id="@+id/item_buyNum"
+            layout="@layout/order_item_state" />
+
+        <include
+            android:id="@+id/item_createUser"
+            layout="@layout/order_item_state"
+            android:visibility="gone" />
+
+        <include
+            android:id="@+id/item_joinCount"
+            layout="@layout/order_item_state" />
+
+        <include
+            android:id="@+id/item_agentMobile"
+            layout="@layout/order_item_state" />
+
+        <include
+            android:id="@+id/item_arriveTime"
+            layout="@layout/order_item_state"
+            android:visibility="gone" />
+
+        <include
+            android:id="@+id/item_leaveTime"
+            layout="@layout/order_item_state"
+            android:visibility="gone" />
+
+        <include
+            android:id="@+id/item_marketPrice"
+            layout="@layout/order_item_state" />
+         -->
+</LinearLayout>

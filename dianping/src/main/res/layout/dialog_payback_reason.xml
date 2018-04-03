@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/ll_reasons"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/b_corner_white1"
+              android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_reason0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="15dp"
+        android:text="缺货"
+        android:textColor="@color/gray_text"
+        android:textSize="@dimen/small_middle_text_size"/>
+
+    <View style="@style/Line"/>
+
+    <TextView
+        android:id="@+id/tv_reason1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:padding="15dp"
+        android:text="协商一致退货"
+        android:textColor="@color/gray_text"
+        android:textSize="@dimen/small_middle_text_size"/>
+
+    <View style="@style/Line"/>
+
+    <TextView
+        android:id="@+id/tv_reason2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:padding="15dp"
+        android:text="未按约定时间发货"
+        android:textColor="@color/gray_text"
+        android:textSize="@dimen/small_middle_text_size"/>
+
+    <View style="@style/Line"/>
+
+    <TextView
+        android:id="@+id/tv_reason3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:padding="15dp"
+        android:text="其他原因"
+        android:textColor="@color/gray_text"
+        android:textSize="@dimen/small_middle_text_size"/>
+
+</LinearLayout>

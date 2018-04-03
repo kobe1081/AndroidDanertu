@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/search_panel_background"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="6.0dp"
+        android:paddingLeft="6.0dp"
+        android:paddingRight="6.0dp"
+        android:paddingTop="6.0dp"
+        >
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/edit_text"
+            android:drawableLeft="@drawable/ic_btn_search"
+            android:gravity="center_vertical"
+            android:hint="\u0020商户名,地址等..."
+            android:textAppearance="?android:textAppearanceMedium"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="热门商区 :  "
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="#ffffffff"
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_whitelink"
+                android:singleLine="true"
+                android:text="淮海路"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="#ffffffff"
+                />
+
+            <View
+                android:layout_width="8.0dp"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_whitelink"
+                android:singleLine="true"
+                android:text="人民广场"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="#ffffffff"
+                />
+
+            <View
+                android:layout_width="8.0dp"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_whitelink"
+                android:singleLine="true"
+                android:text="更多 &gt;&gt;"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="#ffffffff"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        style="@style/CustomChannelItem"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingLeft="6.0dp"
+        android:paddingRight="0dp"
+        android:text="频道"
+        android:textAppearance="?android:textAppearanceMediumInverse"
+        android:textColor="#ffffffff"
+        android:textSize="16.0sp"
+        />
+
+</LinearLayout>
+

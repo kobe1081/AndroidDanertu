@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_vertical"
+    android:background="#b5555555"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="15dp">
+
+        <EditText
+            android:id="@+id/EditText01"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:height="130dp"
+            android:gravity="top"
+            android:hint="有什么话想告诉店主？">
+        </EditText>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/Button01"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:text="确定">
+            </Button>
+
+            <Button
+                android:id="@+id/Button02"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:text="取消">
+            </Button>
+        </LinearLayout>
+        <!-- android:background="@drawable/downbutton_corner" -->
+        <!-- android:background="@drawable/downbutton_corner" -->
+    </LinearLayout>
+
+</LinearLayout>

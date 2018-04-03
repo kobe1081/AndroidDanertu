@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/index_top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/tab_black"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/index_top_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/b_back_click"
+            android:drawableLeft="@drawable/b_title_back_click"
+            android:text="名酒世界"
+            android:textColor="@android:color/white"/>
+
+        <!--
+        <ImageView
+            android:id="@+id/index_top_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp"
+            android:src="@drawable/my_logo" />
+        -->
+
+        <EditText
+            android:id="@+id/index_search_edit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/et_corner_bg"
+            android:drawableRight="@drawable/app_icon_voice"
+            android:hint="@string/index_search_edit_hint"
+            android:padding="6dp"
+            android:textColor="@color/darkgray"
+            android:textSize="@dimen/micro_text_size"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/index_top_layout"
+        android:background="@drawable/home_panicbuying_background"
+        android:fadingEdge="none"
+        android:fadingEdgeLength="0dp">
+
+        <LinearLayout
+            android:id="@+id/type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/my_order_head"
+            android:background="@drawable/segment_bg"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/type1"
+                style="@style/style_13_FFFFFF_BOLD"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/segment_selected_1_bg"
+                android:gravity="center"
+                android:text="晓镇香"/>
+
+            <TextView
+                android:id="@+id/type2"
+                style="@style/style_13_4B4B4B_BOLD"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/segment_normal_2_bg"
+                android:gravity="center"
+                android:text="红酒"/>
+
+            <TextView
+                android:id="@+id/type3"
+                style="@style/style_13_4B4B4B_BOLD"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/segment_normal_2_bg"
+                android:gravity="center"
+                android:text="养生酒"/>
+
+            <TextView
+                android:id="@+id/type4"
+                style="@style/style_13_4B4B4B_BOLD"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/segment_normal_2_bg"
+                android:gravity="center"
+                android:text="袪痛神"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/type5"
+                style="@style/style_13_4B4B4B_BOLD"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/segment_normal_2_bg"
+                android:gravity="center"
+                android:text="土豪醇"/>
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/productList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/type"
+            android:cacheColorHint="#00000000"
+            android:divider="@null"
+            android:dividerHeight="10.0dp"
+            android:fadingEdgeLength="1.0dp"
+            android:footerDividersEnabled="false"
+            android:headerDividersEnabled="true"/>
+    </RelativeLayout>
+
+</RelativeLayout>

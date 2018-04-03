@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/grayLightTransparent"/>
+
+    <!--<TextView-->
+    <!--android:id="@+id/tv_select_camera"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="46dp"-->
+    <!--android:background="@color/white"-->
+    <!--android:gravity="center"-->
+    <!--android:padding="5dp"-->
+    <!--android:text="拍照"-->
+    <!--android:textSize="18sp" />-->
+
+    <!--<View-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="1dp"-->
+    <!--android:background="@color/grayLightI" />-->
+
+    <TextView
+        android:id="@+id/tv_select_gallery"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="@color/white"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="从相册中选取"
+        android:textColor="@color/gray"
+        android:textSize="18sp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grayLightI"/>
+
+    <!--<TextView-->
+    <!--android:id="@+id/tv_select_show"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="46dp"-->
+    <!--android:background="@color/white"-->
+    <!--android:gravity="center"-->
+    <!--android:padding="5dp"-->
+    <!--android:text="查看大图"-->
+    <!--android:textSize="18sp" />-->
+
+    <!--<View-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="1dp"-->
+    <!--android:background="@color/grayLightI" />-->
+
+    <TextView
+        android:id="@+id/tv_select_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="@color/white"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="取消"
+        android:textSize="18sp"/>
+</LinearLayout>

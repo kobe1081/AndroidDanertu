@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#f0f0f0"
+                android:orientation="vertical">
+
+    <include
+        android:id="@+id/ll_title_dd"
+        layout="@layout/app_title4"/>
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_title_dd"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:drawablePadding="10dp"
+        android:drawableTop="@drawable/order_ok"
+        android:text="订单提交成功"
+        android:textColor="@color/black"
+        android:textSize="20sp"/>
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView1"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/b_order_check"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/linearLayout1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/b_corner_bg_pressed"
+        android:minHeight="38dp"
+        android:text="查看订单"
+        android:textColor="#ffffff"
+        android:textSize="16sp"/>
+
+</RelativeLayout>

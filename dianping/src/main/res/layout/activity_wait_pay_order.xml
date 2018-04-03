@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/home_backgroud">
+
+    <FrameLayout
+        android:id="@+id/my_order_head"
+        android:layout_width="match_parent"
+        android:layout_height="45sp"
+        android:background="@drawable/head_bg">
+
+        <TextView
+            android:id="@+id/my_order_head_title"
+            style="@style/style_18_BEBEBE_BOLD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="代付款订单"/>
+
+        <TextView
+            android:id="@+id/head_back_text"
+            style="@style/style_15_EBEBEB_BOLD"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/head_back"
+            android:gravity="center"
+            android:text="返  回"/>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/my_order_tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/my_order_head"
+        android:background="@drawable/segment_bg"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/my_order_month"
+            style="@style/style_13_FFFFFF_BOLD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/segment_selected_1_bg"
+            android:gravity="center"
+            android:text="一月内订单"/>
+
+        <TextView
+            android:id="@+id/my_order_all"
+            style="@style/style_13_4B4B4B_BOLD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/segment_normal_2_bg"
+            android:gravity="center"
+            android:text="所有订单"/>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/my_order_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/my_order_tab"
+        android:layout_marginBottom="55.0dp"
+        android:layout_marginLeft="10.0dp"
+        android:layout_marginRight="10.0dp"
+        android:layout_marginTop="10.0dp"
+        android:background="@null"
+        android:cacheColorHint="#00000000"
+        android:divider="@null"
+        android:dividerHeight="10.0dp"
+        android:fadingEdgeLength="1.0dp"
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="true"/>
+
+    <ListView
+        android:id="@+id/my_order_listAll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/my_order_tab"
+        android:layout_marginBottom="55.0dp"
+        android:layout_marginLeft="10.0dp"
+        android:layout_marginRight="10.0dp"
+        android:layout_marginTop="10.0dp"
+        android:background="@null"
+        android:cacheColorHint="#00000000"
+        android:divider="@null"
+        android:dividerHeight="10.0dp"
+        android:fadingEdgeLength="1.0dp"
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="true"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/tv_order_null_text"
+        style="@style/style_18_666666"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="暂无订单"
+        android:visibility="gone"/>
+
+</RelativeLayout>

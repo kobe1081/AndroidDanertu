@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/ll_1"
+        style="@style/proOpera_ll">
+
+        <TextView
+            style="@style/proOpera_tv_tips"
+            android:text="商品名称"/>
+
+        <EditText
+            android:id="@+id/et_pShopAdd_proName"
+            style="@style/proOpera_et_value"
+            android:hint="输入商品名称"
+            android:maxLength="20"
+            android:maxLines="2"/>
+    </LinearLayout>
+
+    <View style="@style/Line"/>
+
+    <FrameLayout
+        android:id="@+id/fl_pro_state"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <TextView
+            style="@style/proOpera_tv_tips"
+            android:layout_gravity="center_vertical"
+            android:text="商品状态"/>
+
+        <CheckBox
+            android:id="@+id/cb_putaway"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right|center_vertical"
+            android:button="@drawable/selector_circle"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="0dp"
+            android:text="立即上架"
+            android:textColor="#bbbbbb"/>
+    </FrameLayout>
+
+    <View
+        android:id="@+id/fl_pro_state_line"
+        style="@style/Line"/>
+
+    <LinearLayout
+        android:id="@+id/ll_4"
+        style="@style/proOpera_ll">
+
+        <TextView
+            style="@style/proOpera_tv_tips"
+            android:text="原价"/>
+
+        <EditText
+            android:id="@+id/et_pShopAdd_proMarketPrice"
+            style="@style/proOpera_et_value"
+            android:hint="输入商品原价￥"
+            android:inputType="numberDecimal"
+            android:lines="1"
+            android:maxLength="15"/>
+    </LinearLayout>
+
+    <View style="@style/Line"/>
+
+    <LinearLayout
+        android:id="@+id/ll_2"
+        style="@style/proOpera_ll">
+
+        <TextView
+            style="@style/proOpera_tv_tips"
+            android:text="优惠价"/>
+
+        <EditText
+            android:id="@+id/et_pShopAdd_proPrice"
+            style="@style/proOpera_et_value"
+            android:hint="输入优惠价￥"
+            android:inputType="numberDecimal"
+            android:lines="1"
+            android:maxLength="15"/>
+    </LinearLayout>
+
+    <View style="@style/Line"/>
+
+    <LinearLayout
+        android:id="@+id/ll_3"
+        style="@style/proOpera_ll">
+
+        <TextView
+            style="@style/proOpera_tv_tips"
+            android:text="库存"/>
+
+        <EditText
+            android:id="@+id/et_pShopAdd_proNum"
+            style="@style/proOpera_et_value"
+            android:digits="0123456789"
+            android:hint="输入库存"
+            android:inputType="number"
+            android:lines="1"
+            android:maxLength="6"/>
+    </LinearLayout>
+
+</LinearLayout>

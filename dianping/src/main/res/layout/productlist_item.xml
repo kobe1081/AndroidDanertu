@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+
+    <ImageView
+        android:id="@+id/productIcon"
+        style="@style/iv_searBanner"
+        android:src="@drawable/no_image"/>
+
+    <LinearLayout
+        android:id="@+id/appInfo2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dip"
+        android:layout_toRightOf="@id/productIcon"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/proName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="商品"
+            android:textColor="#666666"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:id="@+id/proNameDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="商品222"
+            android:textColor="#666666"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:id="@+id/proPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="￥  0.01"
+            android:textColor="#FF3333"
+            android:textSize="22sp"/>
+
+        <TextView
+            android:id="@+id/mpromarketprice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#cccccc"
+            android:textSize="13sp"/>
+    </LinearLayout>
+
+    <View
+        style="@style/Line"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@id/productIcon"/>
+</RelativeLayout>

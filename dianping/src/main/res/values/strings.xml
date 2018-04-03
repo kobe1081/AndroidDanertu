@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, DianpingActivity!</string>
+    <string name="app_name">单耳兔商城</string>
+    <string name="splash_version_info">一键导航、通话 </string>
+    <string name="index_search_edit_hint">搜索单耳兔商品</string>
+    <!-- 菜单 -->
+    <string name="menu_setting">设置</string>
+    <string name="menu_history">浏览历史</string>
+    <string name="menu_feedback">意见反馈</string>
+    <string name="menu_help">帮助</string>
+    <string name="menu_about">关于</string>
+    <string name="menu_exit">退出</string>
+    <!-- 菜单 -->
+    <string name="buffer_notice">正在为您加载数据...</string>
+    <string name="title_alert">&#160;&#160;  1.每天和单耳兔打招呼！长按“按住我吼”的同时，吼出“单耳兔”，获取有效游戏积分，声音越响亮，积分越多哦！\n
+         &#160;&#160; 2.每用户每天首次吼出的积分即作为当天有效积分，每天吼一吼，收获50-100分，相当于0.5-1元RMB！\n
+         &#160;&#160; 3.积分周期从上周六累积至当周周五，您可于周六10时后登录单耳兔商城首页（www.danertu.com）查看积分详情及积分排行榜。\n
+         &#160;&#160; 4.本游戏积分每周兑换一次，不作累积计算。\n
+         &#160;&#160; 5.提醒您：当周所获总积分仅可以在当周周六至下周五兑换心动奖品，活动多多，奖品多多，快来吼一吼吧！
+	</string>
+    <!-- 商品分类 -->
+    <string name="category">全部分类</string>
+
+    <!-- 个人中心 -->
+    <string name="personal_title">我的单耳兔</string>
+    <string name="personal_more">更多</string>
+    <string name="personal_welcome">欢迎来到单耳兔</string>
+    <string name="personal_login">登录</string>
+    <string name="personal_fast_search">订单状态速查</string>
+    <string name="personal_wait_pay">待付款订单</string>
+    <string name="personal_all_order">全部订单</string>
+    <string name="personal_my_focus">我的关注</string>
+    <string name="personal_comment">提交留言</string>
+    <string name="personal_information">消息中心</string>
+    <string name="personal_quick_buy">我的收货地址</string>
+    <string name="personal_account">账户安全</string>
+    <string name="personal_return_back">返修/退换货</string>
+    <string name="personal_order_center">订单中心</string>
+    <string name="personal_account_center">账户中心</string>
+    <string name="personal_customer_service">客户服务</string>
+    <string name="personal_infomation_service">预约电话服务</string>
+    <string name="personal_favour">猜你喜欢</string>
+    <string name="personal_favour_introduce">三星Glaxy_S4是一款不错的手机，大屏，霸气。</string>
+    <string name="personal_quit">退出登录</string>
+    <!-- 个人中心 -->
+
+
+    <!-- 登陆界面 -->
+    <string name="login">登录</string>
+    <string name="loginacount">账户：</string>
+    <string name="loginpassword">密码：</string>
+    <string name="inputpassword">请输入密码</string>
+    <string name="inputaccount">手机号/用户名</string>
+    <string name="register">快速注册</string>
+    <string name="search_info">暂无收索历史</string>
+    <string name="address_info">暂无收货地址信息</string>
+    <string name="login_btn">登   录</string>
+    <string name="find_password">找回密码</string>
+    <string name="usecooperationaccount">用合作网站帐户登录</string>
+    <string name="registerfree">免费注册</string>
+    <string name="register_quick">快速注册</string>
+    <!-- 购物车 -->
+    <string name="cart">购物车</string>
+    <string name="cartinfo_no">您的购物车是空的，快去选购吧！</string>
+    <string name="cartinfo_synchronous">购物车同步中</string>
+    <string name="cart_logininfo">您在登录后系统后方可进行购物 \n添加购物车中的商品</string>
+    <string name="cart_market">促销大卖场</string>
+
+    <!-- 更多 -->
+    <string name="more">更多</string>
+    <string name="more_history">浏览记录</string>
+    <string name="more_seting">设置</string>
+    <string name="more_help">帮助 </string>
+    <string name="more_opinion">意见反馈</string>
+    <string name="more_aboutus">关于我们</string>
+    <string name="more_update">检测更新</string>
+    <string name="more_exit">退出</string>
+    <string name="more_apps">应用推荐</string>
+
+    <!-- 注册 -->
+    <string name="registerinfo">输入手机号后，点击"获取密码"，系统会自动向你的手机发送一条短信</string>
+    <string name="register_tip">【提示】\n 1.使用手机号注册免费 \n 2.此手机号用来登录京东\n 3.你还可以选择其他注册方式</string>
+    <string name="register_in_normal">普通用户注册</string>
+    <string name="register_normal_useraccount">帐户：</string>
+    <string name="register_normal_useraccount_hint">请输入手机号/用户名</string>
+    <string name="register_normal_email">邮箱：</string>
+    <string name="register_normal_email_hint">请输入邮箱帐号</string>
+    <string name="register_normal_password">密码：</string>
+    <string name="register_normal_password_hint">请输入密码</string>
+    <string name="register_normal_repassword">确认密码：</string>
+    <string name="register_normal_repassword_hint">请输入确认密码</string>
+
+    <!-- 收货地址 -->
+    <string name="noAddress">您还没有收货地址，请在个人中心添加收货地址，并设置一个默认收货地址</string>
+    <!-- 导航栏的其他的标题和其他 -->
+    <string name="clothingcity">服装城</string>
+    <string name="hotproduct">热卖商品</string>
+    <string name="digital">数码家电馆</string>
+    <string name="ebook">好书汇</string>
+    <string name="daily">百货集</string>
+
+    <!-- JazzyViewPager -->
+    <string-array name="jazzy_effects">
+        <item>Standard</item>
+        <item>Tablet</item>
+        <item>CubeIn</item>
+        <item>CubeOut</item>
+        <item>FlipVertical</item>
+        <item>FlipHorizontal</item>
+        <item>Stack</item>
+        <item>ZoomIn</item>
+        <item>ZoomOut</item>
+        <item>RotateUp</item>
+        <item>RotateDown</item>
+        <item>Accordion</item>
+    </string-array>
+    <!-- JazzyViewPager -->
+    <string name="title_activity_personal">PersonalActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_activity_test">TestActivity</string>
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_cart">CartActivity</string>
+    <string name="title_activity_adress">AdressActivity</string>
+    <string name="title_activity_adress_operate">AdressOperateActivity</string>
+    <string name="title_activity_droll_search">DrollSearchActivity</string>
+    <string name="title_activity_liuyan">LiuyanActivity</string>
+    <string name="title_activity_product_details">ProductDetailsActivity</string>
+    <string name="title_activity_pay_mement_center">PayMementCenterActivity</string>
+    <string name="title_activity_order_details">OrderDetailsActivity</string>
+    <string name="title_activity_msg_list">MsgListActivity</string>
+    <string name="title_activity_my_order">MyOrderActivity</string>
+    <string name="title_activity_my_list_order_item">MyListOrderItemActivity</string>
+    <string name="title_activity_messagedetail">MessagedetailActivity</string>
+    <string name="title_activity_message_detail">MessageDetailActivity</string>
+    <string name="title_activity_index">IndexActivity</string>
+    <string name="title_activity_shop_product">ShopProductActivity</string>
+    <string name="title_activity_search_shop_product">SearchShopProductActivity</string>
+    <string name="title_activity_my_order_listall">MyOrderListAllActivity</string>
+    <string name="title_activity_my_order_nocomment">MyOrderNoCommentActivity</string>
+    <string name="title_activity_my_order_nopay">MyOrderNoPayActivity</string>
+    <string name="title_activity_my_order_noreceive">MyOrderNoReceiveActivity</string>
+    <string name="title_activity_my_order_nosend">MyOrderNoSendActivity</string>
+
+    <!-- 首页 -->
+    <string name="index_limit">还剩</string>
+    <string name="index_hour">时</string>
+    <string name="index_min">分</string>
+    <string name="index_seconds">秒</string>
+    <string name="index_price">秒杀价:</string>
+    <string name="index_raw_price">原价:</string>
+    <string name="index_slogan">chi</string>
+    <string name="index_promotion">吃</string>
+    <string name="index_recharge">住</string>
+    <string name="index_group_buy">玩</string>
+    <string name="index_lottery">购</string>
+    <string name="index_shake">摇一摇</string>
+    <string name="index_order">订单状态</string>
+    <string name="index_history">浏览历史</string>
+    <string name="index_collect">我的关注</string>
+    <string name="index_life_journey">生活娱乐</string>
+    <string name="index_notify_info">向左滑，更多优惠等你抢</string>
+    <string name="index_shopping_jinqiufengbao">入驻商品</string>
+    <string name="index_shopping_remenyouhui">热门特惠</string>
+    <!-- 首页 -->
+
+    <string name="title_activity_routeplan">RouteplanActivity</string>
+    <string name="title_activity_route_plan">RoutePlanActivity</string>
+    <string name="title_activity_route_go_plan">RouteGoPlanActivity</string>
+    <string name="title_activity_navi_demo">NaviDemoActivity</string>
+    <string name="title_activity_nearly_browse">NearlyBrowseActivity</string>
+    <string name="title_activity_my_collect">MyCollectActivity</string>
+    <string name="title_activity_hu_dong">HuDongActivity</string>
+    <string name="title_activity_calendar">CalendarActivity</string>
+    <string name="title_activity_is_no">IsNoActivity</string>
+    <string name="title_activity_search_result">SearchResultActivity</string>
+    <string name="title_activity_set_city">SetCityActivity</string>
+    <string name="title_activity_wait_pay_order">WaitPayOrderActivity</string>
+
+    <!-- 下拉刷新，上拉加载更多 -->
+    <string name="xlistview_header_hint_normal">下拉刷新</string>
+    <string name="xlistview_header_hint_ready">松开刷新数据</string>
+    <string name="xlistview_header_hint_loading">正在加载...</string>
+    <string name="xlistview_header_last_time">上次更新时间：</string>
+    <string name="xlistview_footer_hint_normal">查看更多</string>
+    <string name="xlistview_footer_hint_ready">松开载入更多</string>
+    <string name="title_activity_near_by_shop">NearByShopActivity</string>
+    <string name="title_activity_search_product_result">SearchProductResultActivity</string>
+    <string name="title_activity_qrcode">QRCodeActivity</string>
+    <string name="title_activity_zhang_hu">ZhanghuActivity</string>
+    <string name="title_activity_ChangePassword">ChangePasswordActivity</string>
+    <string name="title_apkUpload">程序升级</string>
+
+    <!-- 账户安全 -->
+    <string name="change_password">修改密码</string>
+    <string name="psw_limit_text">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+    <!-- 账户安全 -->
+    <string name="title_activity_net_shop">NetShopActivity</string>
+    <string name="rules">每周六在单耳兔网络商城、单耳兔官方微信、泉眼温泉官网、泉眼温泉微博，泉眼温泉酒店大堂公布上周“积分排行榜”，积分用于在公布当周内，兑换“泉眼温泉入场卷”“泉眼温泉客房”，兑换后在有效期内可免费享受温泉之旅。多得多换！</string>
+    <string name="title_activity_share_my_app">ShareMyAppActivity</string>
+    <string name="activity_index_share">IndexShareActivity</string>
+    <string name="title_activity_app_show">AppShowActivity</string>
+    <string name="title_activity_product_comment">ProductComment</string>
+    <string name="title_activity_add_comment">AddCommentActivity</string>
+    <string name="title_activity_ticket">TicketActivity</string>
+    <string name="title_activity_category">CategoryActivity</string>
+    <string name="title_activity_score_help">ScoreHelpActivity</string>
+    <string name="title_activity_score_center">ScoreCenterActivity</string>
+    <string name="activity_find_passwd">FindPasswdActivity</string>
+    <string name="title_activity_pay_back">PayBackActivity</string>
+    <string name="title_activity_second_category">SecondCategoryActivity</string>
+    <string name="title_activity_ticket_detail">TicketDetailActivity</string>
+    <string name="title_activity_index_type">IndexTypeActivity</string>
+    <string name="title_activity_category_product">CategoryProductActivity</string>
+    <string name="title_activity_announcement">AnnouncementActivity</string>
+    <string name="title_activity_message_center">MessageCenterActivity</string>
+
+    <!-- 店铺评价 -->
+    <string name="shopComment_star1">很差，来了就是吃亏上当</string>
+    <string name="shopComment_star2">不太好，明显低于平均水平呢</string>
+    <string name="shopComment_star3">一般般，和普通店家区别不大</string>
+    <string name="shopComment_star4">还不错，值得下次再来</string>
+    <string name="shopComment_star5">非常棒，值得向所有人推荐</string>
+    <string name="shopComment_et_tips">（点击尽心评语编辑，最少评论15字，最多不超过300字，您的评论将是其他用户的重要参考。）</string>
+
+    <string name="pay_tips">(提示:支付完成后,请点击“确认”返回)</string>
+    <string name="payWay_account_tips">单耳兔钱包</string>
+    <string name="payWay_alipay_tips">支付宝支付</string>
+    <string name="payWay_arrivedPay_tips">到付</string>
+    <string name="payWay_wechatPay_tips">微信支付</string>
+    <string name="payWay_account_key">AccountPay</string>
+    <string name="payWay_alipay_key">Alipay</string>
+    <string name="payWay_arrivedPay_key">ArrivedPay</string>
+    <string name="payWay_wechatPay_key">WechatPay</string>
+
+    <string name="pay_orderMoney_tips">订单金额：￥</string>
+    <string name="pay_orderNum_tips">订&#8194;单&#8194;号：</string>
+    <string name="pay_orderCreate_tips">创建时间：</string>
+
+    <string name="pay_text">支付</string>
+    <string name="payWay_selectTag">商家自营商品只能使用单耳兔钱包支付!</string>
+
+    <string name="tips_already_logined">您已经登录过了！</string>
+    <string name="tips_toLogin">请先登录！</string>
+    <string name="tips_o2o">注意： 此商品请直接到店消费</string>
+    <string name="tips_putToCarSuc">商品已成功加入</string>
+    <string name="tips_bound_shop">在分享链接中查看店铺码\n如何疑问 请致电客服 400 995 2220</string>
+
+    <!-- <string name="alcohol_text1">卖酒有压力，我们送出即成功\n送酒也赚钱，更赚人气</string> -->
+    <string name="alcohol_text1">陌生送成朋友，朋友送出友谊</string>
+
+    <string name="share_android">单耳兔O2O商城集购物、美食、住宿、娱乐、生活于一体，从食品到服饰、家居用品分类齐全。分享我的安卓端</string>
+    <string name="share_ios">单耳兔O2O商城集购物、美食、住宿、娱乐、生活于一体，从食品到服饰、家居用品分类齐全。分享我的IOS苹果端</string>
+    <string name="share_text">您身边的商城-单耳兔O2O商城。</string>
+
+    <string name="tag_recName">收货人：</string>
+    <string name="tag_recPhone">号码：</string>
+    <string name="tag_contact_custom_service">联系客服</string>
+
+    <string name="home_tab_backtoindex_page">回首页</string>
+    <string name="home_tab_toproduct_page">去产品页</string>
+
+    <string name="car_edit">编辑</string>
+    <string name="car_done">完成</string>
+
+    <string name="payback_policy">入住前24小时可获得100入住前24小时可获得100入住前24小时可获得100入住前24小时可获得100入住前24小时可获得100</string>
+</resources>

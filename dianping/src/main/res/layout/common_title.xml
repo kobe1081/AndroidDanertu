@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="45.0dp">
+
+    <ImageView
+        android:id="@+id/titleBg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/tab_black"/>
+
+    <ImageButton
+        android:id="@+id/titleLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="0dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/b_title_back_click"
+        android:scaleType="centerInside"/>
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="1.0dp"
+        android:layout_toRightOf="@id/titleLogo"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/medium_text_size"/>
+
+    <Button
+        android:id="@+id/titleRightButton"
+        android:layout_width="50.0dp"
+        android:layout_height="30.0dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="10.0dp"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/title_back_button"
+        android:layout_width="40.0dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="0dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/title_back_icon"
+        android:visibility="gone"/>
+
+</RelativeLayout>

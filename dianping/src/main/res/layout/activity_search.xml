@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white" 
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:id="@+id/search_top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/android_title_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        
+      <EditText
+            android:id="@+id/edit_search"
+            android:layout_width="0.0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:background="@android:drawable/edit_text"
+            android:drawableLeft="@drawable/ic_btn_search"
+            android:singleLine="true"
+            android:gravity="center_vertical"
+            android:hint="\u0020请输入店铺名"
+            android:imeOptions="actionSearch"
+            android:textAppearance="?android:textAppearanceMedium" />
+	 <Button
+            android:id="@+id/search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:hint="搜索"
+            android:textAppearance="?android:textAppearanceMedium" />
+    </LinearLayout>
+
+     <ListView
+        android:id="@+id/search_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/search_top_layout"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:listSelector="@null"
+        android:scrollbars="none"
+        android:visibility="gone" /> 
+
+<LinearLayout
+        android:id="@+id/layout_login"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+	 
+    
+    <ListView
+            android:id="@+id/search_history_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/main_background" />
+        
+          <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingTop="20dp"
+           android:layout_gravity="center"
+            android:text="@string/search_info"
+            />
+        
+    </LinearLayout>
+        
+      
+
+        
+</LinearLayout>

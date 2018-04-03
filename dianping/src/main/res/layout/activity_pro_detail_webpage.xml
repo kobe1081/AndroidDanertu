@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/proDetail_top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/app_title_bg_offline">
+
+        <Button
+            android:id="@+id/b_title_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/b_back_click"
+            android:drawableLeft="@drawable/b_title_back_offline"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right|center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+            <Button
+                android:id="@+id/b_contact_service"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/b_back_click"
+                android:text="@string/tag_contact_custom_service"
+                android:textColor="#ffffff"
+                android:textSize="16sp"
+                android:visibility="visible"/>
+
+            <View
+                android:id="@+id/line"
+                android:layout_width="1px"
+                android:layout_height="15dp"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:background="@color/line_gray"/>
+
+            <Button
+                android:id="@+id/b_order_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/b_back_click"
+                android:textColor="#ffffff"
+                android:textSize="16sp"
+                android:visibility="visible"/>
+        </LinearLayout>
+    </FrameLayout>
+
+    <WebView
+        android:id="@+id/wv_proDetail_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"/>
+
+</LinearLayout>

@@ -1,0 +1,6 @@
+include ':xiaonengChatUI'
+include ':onekeyshare'
+include ':alipay_lib'
+include ':code_library'
+include ':libzxing'
+include ':dianping'

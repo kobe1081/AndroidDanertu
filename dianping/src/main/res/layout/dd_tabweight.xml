@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white">
+
+    <TextView
+        android:id="@+id/tv_dd_tabweight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:ellipsize="middle"
+        android:gravity="center"
+        android:lines="1"
+        android:padding="10dp"
+        android:background="@drawable/b_dd_opera_click"
+        android:textColor="@drawable/tabwidget_order_text"/>
+
+</RelativeLayout>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/dialog_bg_payway"
+              android:minWidth="300dp"
+              android:orientation="vertical"
+              android:paddingBottom="10dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:text="请选择支付方式"
+        android:textColor="@color/text_gray_light"/>
+
+    <View style="@style/Line"/>
+
+    <RadioGroup
+        android:id="@+id/rg_payWay_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+
+        <RadioButton
+            android:id="@+id/rb_arrivePay"
+            style="@style/payWay_rb"
+            android:drawableLeft="@drawable/icon_arrive_pay"
+            android:padding="10dp"
+            android:tag="@string/payWay_arrivedPay_key"
+            android:text="@string/payWay_arrivedPay_tips"
+            android:visibility="gone"/>
+
+        <View
+            android:id="@+id/rb_arrivePay_line"
+            style="@style/Line"
+            android:visibility="gone"/>
+
+        <RadioButton
+            android:id="@+id/rb_accountPay"
+            style="@style/payWay_rb"
+            android:drawableLeft="@drawable/icon_m"
+            android:padding="10dp"
+            android:tag="@string/payWay_account_key"
+            android:text="@string/payWay_account_tips"/>
+
+        <View style="@style/Line"/>
+
+        <RadioButton
+            android:id="@+id/rb_wechatPay"
+            style="@style/payWay_rb"
+            android:drawableLeft="@drawable/ic_pay_wechat"
+            android:padding="10dp"
+            android:tag="@string/payWay_wechatPay_key"
+            android:text="@string/payWay_wechatPay_tips"/>
+
+        <View style="@style/Line"/>
+
+        <RadioButton
+            android:id="@+id/rb_alipay"
+            style="@style/payWay_rb"
+            android:drawableLeft="@drawable/alipay"
+            android:padding="10dp"
+            android:tag="@string/payWay_alipay_key"
+            android:text="@string/payWay_alipay_tips"/>
+    </RadioGroup>
+
+</LinearLayout>

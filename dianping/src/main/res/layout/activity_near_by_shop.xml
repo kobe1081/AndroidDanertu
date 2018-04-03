@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#f0f0f0"
+        android:orientation="vertical">
+
+        <!-- <FrameLayout
+            android:id="@+id/fraHead"
+            android:layout_width="fill_parent"
+            android:layout_height="45sp"
+            android:background="@drawable/head_bg" >
+
+            <TextView
+                android:id="@+id/goBack"
+                style="@style/style_15_EBEBEB_BOLD"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:background="@anim/head_back"
+                android:gravity="center"
+                android:text="返 回" />
+
+            <TextView
+                style="@style/style_18_BEBEBE_BOLD"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="附近店铺" />
+        </FrameLayout> -->
+
+        <include
+            android:id="@+id/fraHead"
+            layout="@layout/app_title1"/>
+
+        <com.danertu.widget.XListView
+            android:id="@+id/techan_xListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:cacheColorHint="#00000000">
+        </com.danertu.widget.XListView>
+    </LinearLayout>
+
+</LinearLayout>

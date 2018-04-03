@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#f0f0f0"
+    android:orientation="vertical"
+    android:padding="5dip">
+
+    <RelativeLayout
+        android:id="@+id/order_item_rel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/content"
+            style="@style/style_14_9F9F9F_BOLD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10.0dp"
+            android:layout_marginTop="5.0dp"
+            android:text=""/>
+
+        <TextView
+            android:id="@+id/uptime"
+            style="@style/style_14_9F9F9F_BOLD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/content"
+            android:layout_marginLeft="10.0dp"
+            android:layout_marginTop="5.0dp"
+            android:text=""/>
+    </RelativeLayout>
+
+</LinearLayout>

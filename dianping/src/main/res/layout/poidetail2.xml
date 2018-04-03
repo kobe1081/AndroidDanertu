@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bgColor"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/personal_top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/app_title_bg"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/b_title_back3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/b_back_click"
+            android:drawableLeft="@drawable/b_title_back_click"
+            android:text="超市店面"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"/>
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@id/b_title_back3"
+            android:background="@drawable/et_corner_bg"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:padding="8dp">
+
+            <EditText
+                android:id="@+id/search_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/search_btn"
+                android:background="@null"
+                android:ems="10"
+                android:hint="搜索本店铺商品"
+                android:imeOptions="actionSearch"
+                android:lines="1"
+                android:singleLine="true"
+                android:textSize="15sp"/>
+
+            <Button
+                android:id="@+id/search_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/search_edit"
+                android:layout_alignBottom="@+id/search_edit"
+                android:layout_alignParentLeft="true"
+                android:background="@drawable/abc_ic_search_api_holo_light"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <com.danertu.widget.MWebView
+        android:id="@+id/wv_detail_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/personal_top_layout"
+        android:scrollbars="none"/>
+</RelativeLayout>

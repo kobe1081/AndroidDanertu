@@ -1,0 +1,685 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/home_backgroud"
+              android:orientation="vertical">
+
+    <include layout="@layout/app_title1"/>
+
+    <WebView
+        android:id="@+id/wv_proDetail_online"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <!--
+        <FrameLayout
+            android:id="@+id/fraHead"
+            android:layout_width="fill_parent"
+            android:layout_height="45sp"
+            android:background="@drawable/head_bg"
+            android:visibility="gone" >
+
+            <TextView
+                android:id="@+id/goBack"
+                style="@style/style_15_EBEBEB_BOLD"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:background="@anim/head_back"
+                android:gravity="center"
+                android:text="返 回" />
+
+            <TextView
+                style="@style/style_18_BEBEBE_BOLD"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="商品详情" />
+        </FrameLayout>
+
+        <ViewFlipper
+            android:id="@+id/viewflipper"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@id/fraHead" >
+
+            <LinearLayout
+                android:id="@+id/productInfo"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:id="@+id/imgPoint"
+                    android:layout_width="fill_parent"
+                    android:layout_height="200sp"
+                    android:layout_gravity="center_horizontal" />
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/imgPoint"
+                    android:background="@drawable/product_detail_cell_normal"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/textPriceValue"
+                        style="@style/style_16_C21513_BOLD"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginTop="8.0dip"
+                        android:ellipsize="marquee"
+                        android:singleLine="true"
+                        android:text="￥188" />
+
+                    <TextView
+                        android:id="@+id/textProdNum"
+                        style="@style/style_13_9F9F9F_New"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@id/textPriceValue"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:layout_marginBottom="5.0dip"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_toRightOf="@id/textPriceValue"
+                        android:text="数 量：" />
+
+                    <EditText
+                        android:id="@+id/prodNumValue"
+                        android:layout_width="60.0dip"
+                        android:layout_height="30.0dip"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="6.0dip"
+                        android:layout_marginTop="12.0dip"
+                        android:layout_toRightOf="@id/textProdNum"
+                        android:numeric="integer"
+                        android:paddingBottom="4dip"
+                        android:text="1"
+                        android:textSize="18.0sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/product_detail_cell_normal" >
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true" >
+
+                        <TextView
+                            android:id="@+id/textPutIntoShopcar"
+                            style="@style/style_16_FFFFFF"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10.0dip"
+                            android:background="@anim/product_detail_shop"
+                            android:ellipsize="marquee"
+                            android:gravity="center"
+                            android:text="加入购物车" />
+
+                        <TextView
+                            android:id="@+id/textProdToCollect"
+                            style="@style/style_16_FFFFFF"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/textPutIntoShopcar"
+                            android:background="@anim/product_detail_shop"
+                            android:ellipsize="marquee"
+                            android:gravity="center"
+                            android:text="收藏" />
+                    </RelativeLayout>
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/imgServiceImg"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" />
+
+                <RelativeLayout
+                    android:id="@+id/relDescription"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/product_detail_cell_normal" >
+
+                    <TextView
+                        android:id="@+id/textProductNameValue"
+                        style="@style/style_15_Name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dip"
+                        android:layout_marginTop="5.0dip"
+                        android:text="名称" />
+
+                    <TextView
+                        android:id="@+id/detail"
+                        style="@style/style_15_666666"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/textProductNameValue"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="8.0dip"
+                        android:text="as"
+                        android:visibility="gone"
+                        android:textScaleX="1.0" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/relProdStock"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/listview_41bg_normal" >
+
+                    <TextView
+                        android:id="@+id/textLookProdStock"
+                        style="@style/style_15_666666"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="8.0dip"
+                        android:text="库存" />
+
+                    <TextView
+                        android:id="@+id/textProdIsStock"
+                        style="@style/style_15_666666"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/textLookProdStock"
+                        android:text="   (有货)" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/relProductComment"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@anim/detail2_comment" >
+
+                    <TextView
+                        android:id="@+id/textProductComment"
+                        style="@style/style_15_666666"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="8.0dip"
+                        android:text="购买评论 (" />
+
+                    <TextView
+                        android:id="@+id/textProductCommentNum"
+                        style="@style/style_15_666666"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/textProductComment"
+                        android:text="0" />
+
+                    <TextView
+                        style="@style/style_15_666666"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/textProductCommentNum"
+                        android:text=")" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/product_detail_cell_normal" >
+
+                    <TextView
+                        android:id="@+id/txt_mobile"
+                        style="@style/style_16_FFFFFF"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:background="@anim/button_long"
+                        android:gravity="center"
+                        android:text="咨询电话 400-995-2220" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/product_detail_cell_normal" >
+
+                    <Button
+                        android:id="@+id/b_proDetail_allMsg"
+                        style="@style/style_16_FFFFFF"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@anim/button_long"
+                        android:text="图文详情" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/productInfo"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:id="@+id/imgPoint2"
+                    android:layout_width="fill_parent"
+                    android:layout_height="220sp"
+                    android:layout_gravity="center_horizontal"
+                    android:scaleType="fitXY" />
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/imgPoint2"
+                    android:background="@drawable/product_detail_cell_normal"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/textPriceValue2"
+                        style="@style/style_16_C21513_BOLD"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginTop="8.0dip"
+                        android:ellipsize="marquee"
+                        android:singleLine="true"
+                        android:text="￥188" />
+
+                    <TextView
+                        android:id="@+id/textProdNum2"
+                        style="@style/style_13_9F9F9F_New"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@id/textPriceValue2"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:layout_marginBottom="5.0dip"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_toRightOf="@id/textPriceValue2"
+                        android:text="数 量：" />
+
+                    <EditText
+                        android:id="@+id/prodNumValue2"
+                        android:layout_width="60.0dip"
+                        android:layout_height="30.0dip"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="6.0dip"
+                        android:layout_marginTop="12.0dip"
+                        android:layout_toRightOf="@id/textProdNum2"
+                        android:numeric="integer"
+                        android:paddingBottom="4dip"
+                        android:text="1"
+                        android:textSize="18.0sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/product_detail_cell_normal" >
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true" >
+
+                        <TextView
+                            android:id="@+id/textPutIntoShopcar2"
+                            style="@style/style_16_FFFFFF"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10.0dip"
+                            android:background="@anim/product_detail_shop"
+                            android:ellipsize="marquee"
+                            android:gravity="center"
+                            android:text="加入购物车" />
+
+                        <TextView
+                            android:id="@+id/textProdToCollect2"
+                            style="@style/style_16_FFFFFF"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/textPutIntoShopcar2"
+                            android:background="@anim/product_detail_shop"
+                            android:ellipsize="marquee"
+                            android:gravity="center"
+                            android:text="收藏" />
+                    </RelativeLayout>
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/imgServiceImg"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" />
+
+                <RelativeLayout
+                    android:id="@+id/relDescription"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/product_detail_cell_normal" >
+
+                    <TextView
+                        android:id="@+id/textProductNameValue2"
+                        style="@style/style_15_Name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dip"
+                        android:layout_marginTop="5.0dip"
+                        android:text="名称" />
+
+                    <TextView
+                        android:id="@+id/detail2"
+                        style="@style/style_15_666666"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/textProductNameValue2"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="8.0dip"
+                        android:text="as"
+                        android:textScaleX="1.0" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/relProdStock"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/listview_41bg_normal" >
+
+                    <TextView
+                        android:id="@+id/textLookProdStock"
+                        style="@style/style_15_666666"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="8.0dip"
+                        android:text="库存" />
+
+                    <TextView
+                        android:id="@+id/textProdIsStock"
+                        style="@style/style_15_666666"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/textLookProdStock"
+                        android:text="   (有货)" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/relProductComment1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@anim/detail2_comment" >
+
+                    <TextView
+                        android:id="@+id/textProductComment1"
+                        style="@style/style_15_666666"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="8.0dip"
+                        android:text="购买评论 (" />
+
+                    <TextView
+                        android:id="@+id/textProductCommentNum1"
+                        style="@style/style_15_666666"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/textProductComment1"
+                        android:text="0" />
+
+                    <TextView
+                        style="@style/style_15_666666"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/textProductCommentNum1"
+                        android:text=")" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/product_detail_cell_normal" >
+
+                    <TextView
+                        android:id="@+id/txt_mobile1"
+                        style="@style/style_16_FFFFFF"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:background="@anim/button_long"
+                        android:gravity="center"
+                        android:text="咨询电话 400-995-2220" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/product_detail_cell_normal" >
+
+                    <Button
+                        android:id="@+id/b_proDetail_allMsg1"
+                        style="@style/style_16_FFFFFF"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@anim/button_long"
+                        android:text="图文详情" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/productInfo"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:id="@+id/imgPoint3"
+                    android:layout_width="fill_parent"
+                    android:layout_height="220sp"
+                    android:layout_gravity="center_horizontal"
+                    android:scaleType="fitXY" />
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/imgPoint3"
+                    android:background="@drawable/product_detail_cell_normal"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/textPriceValue3"
+                        style="@style/style_16_C21513_BOLD"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginTop="8.0dip"
+                        android:ellipsize="marquee"
+                        android:singleLine="true"
+                        android:text="￥188" />
+
+                    <TextView
+                        android:id="@+id/textProdNum3"
+                        style="@style/style_13_9F9F9F_New"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@id/textPriceValue3"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:layout_marginBottom="5.0dip"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_toRightOf="@id/textPriceValue3"
+                        android:text="数 量：" />
+
+                    <EditText
+                        android:id="@+id/prodNumValue3"
+                        android:layout_width="60.0dip"
+                        android:layout_height="30.0dip"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="6.0dip"
+                        android:layout_marginTop="12.0dip"
+                        android:layout_toRightOf="@id/textProdNum3"
+                        android:numeric="integer"
+                        android:paddingBottom="4dip"
+                        android:text="1"
+                        android:textSize="18.0sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/product_detail_cell_normal" >
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true" >
+
+                        <TextView
+                            android:id="@+id/textPutIntoShopcar3"
+                            style="@style/style_16_FFFFFF"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10.0dip"
+                            android:background="@anim/product_detail_shop"
+                            android:ellipsize="marquee"
+                            android:gravity="center"
+                            android:text="加入购物车" />
+
+                        <TextView
+                            android:id="@+id/textProdToCollect3"
+                            style="@style/style_16_FFFFFF"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/textPutIntoShopcar3"
+                            android:background="@anim/product_detail_shop"
+                            android:ellipsize="marquee"
+                            android:gravity="center"
+                            android:text="收藏" />
+                    </RelativeLayout>
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/imgServiceImg"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" />
+
+                <RelativeLayout
+                    android:id="@+id/relDescription"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/product_detail_cell_normal" >
+
+                    <TextView
+                        android:id="@+id/textProductNameValue3"
+                        style="@style/style_15_Name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dip"
+                        android:layout_marginTop="5.0dip"
+                        android:text="名称" />
+
+                    <TextView
+                        android:id="@+id/detail3"
+                        style="@style/style_15_666666"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/textProductNameValue3"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="8.0dip"
+                        android:text="as"
+                        android:textScaleX="1.0" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/relProdStock"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/listview_41bg_normal" >
+
+                    <TextView
+                        android:id="@+id/textLookProdStock"
+                        style="@style/style_15_666666"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="8.0dip"
+                        android:text="库存" />
+
+                    <TextView
+                        android:id="@+id/textProdIsStock"
+                        style="@style/style_15_666666"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/textLookProdStock"
+                        android:text="   (有货)" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/relProductComment2"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@anim/detail2_comment" >
+
+                    <TextView
+                        android:id="@+id/textProductComment2"
+                        style="@style/style_15_666666"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="8.0dip"
+                        android:text="购买评论 (" />
+
+                    <TextView
+                        android:id="@+id/textProductCommentNum2"
+                        style="@style/style_15_666666"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/textProductComment2"
+                        android:text="0" />
+
+                    <TextView
+                        style="@style/style_15_666666"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/textProductCommentNum2"
+                        android:text=")" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/product_detail_cell_normal" >
+
+                    <TextView
+                        android:id="@+id/txt_mobile2"
+                        style="@style/style_16_FFFFFF"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:background="@anim/button_long"
+                        android:gravity="center"
+                        android:text="咨询电话 400-995-2220" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/product_detail_cell_normal" >
+
+                    <Button
+                        android:id="@+id/b_proDetail_allMsg2"
+                        style="@style/style_16_FFFFFF"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@anim/button_long"
+                        android:text="图文详情" />
+                </RelativeLayout>
+            </LinearLayout>
+        </ViewFlipper>
+     -->
+</LinearLayout>

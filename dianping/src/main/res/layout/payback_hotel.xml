@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parent_reason"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true"
+    android:orientation="vertical">
+
+    <ImageButton
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:padding="15dp"
+        android:src="@drawable/arrow_back_l_black"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="15dp"
+        android:text="取消预订"
+        android:textColor="@color/black"
+        android:textSize="@dimen/large_text_size"/>
+
+    <View
+        style="@style/Line"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
+
+    <TextView
+        style="@style/payback_hotel_reason"
+        android:onClick="click"
+        android:text="我想取消预订"/>
+
+    <View
+        style="@style/Line"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
+
+    <TextView
+        style="@style/payback_hotel_reason"
+        android:onClick="click"
+        android:text="日期有误"/>
+
+    <View
+        style="@style/Line"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
+
+    <TextView
+        style="@style/payback_hotel_reason"
+        android:onClick="click"
+        android:text="已与酒店确认取消预订"/>
+
+    <View
+        style="@style/Line"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
+
+    <TextView
+        style="@style/payback_hotel_reason"
+        android:onClick="click"
+        android:text="其他原因"/>
+
+</LinearLayout>

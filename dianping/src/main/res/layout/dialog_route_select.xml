@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:background="@drawable/b_corner_bg"
+              android:gravity="center"
+              android:minWidth="100dp"
+              android:orientation="vertical"
+              android:padding="5dp">
+
+    <Button
+        android:id="@+id/b_route_car"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:drawableLeft="@drawable/icon_car"
+        android:minHeight="50dp"
+        android:minWidth="200dp"
+        android:text="自驾"
+        android:textSize="20sp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"/>
+
+    <Button
+        android:id="@+id/b_route_bus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:drawableLeft="@drawable/icon_bus"
+        android:minHeight="50dp"
+        android:minWidth="200dp"
+        android:text="公交"
+        android:textSize="20sp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"/>
+
+    <Button
+        android:id="@+id/b_route_walk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:drawableLeft="@drawable/icon_walk"
+        android:minHeight="50dp"
+        android:minWidth="200dp"
+        android:text="步行"
+        android:textSize="20sp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"/>
+
+    <Button
+        android:id="@+id/b_route_bike"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:drawableLeft="@drawable/icon_bike"
+        android:minHeight="50dp"
+        android:minWidth="200dp"
+        android:text="骑行"
+        android:textSize="20sp"/>
+
+</LinearLayout>

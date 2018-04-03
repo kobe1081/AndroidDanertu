@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <include
+        android:id="@+id/title"
+        layout="@layout/app_title2" />
+
+    <ViewFlipper
+        android:id="@+id/ViewFlipper01"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/title" >
+    </ViewFlipper>
+<!-- 
+    <LinearLayout
+        android:id="@+id/helpLL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/title" >
+
+        <ImageView
+            android:id="@+id/helpImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/toast_icon" />
+
+        <TextView
+            android:id="@+id/help"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/helpImg"
+            android:text="游戏规则"
+            android:textColor="#cc00cc"
+            android:textSize="18sp" />
+    </LinearLayout>
+ -->
+    <Button
+        android:id="@+id/record"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/title"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="30dip"
+        android:background="#00000000" />
+
+</RelativeLayout>

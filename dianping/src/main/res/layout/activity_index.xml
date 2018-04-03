@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rl_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/tab_black"
+    >
+    <!--android:background="#c7c5c5"-->
+    <FrameLayout
+        android:id="@+id/top_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true">
+
+        <View
+            android:id="@+id/top_bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/tab_black"/>
+
+        <LinearLayout
+            android:id="@+id/index_top_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/index_title_height">
+
+            <TextView
+                android:id="@+id/tv_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:drawableLeft="@mipmap/icon_local"
+                android:drawablePadding="5dp"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="中山"
+                android:textColor="@color/white"/>
+
+            <TextView
+                android:id="@+id/tv_store_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/et_corner_bg_tran"
+                android:drawableRight="@drawable/icon_search"
+                android:ellipsize="middle"
+                android:gravity="center"
+                android:lines="1"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/small_text_size"/>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="7dp"
+                >
+
+                <Button
+                    android:id="@+id/msgbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="7dp"
+                    android:background="@drawable/ic_msg_person"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/white"
+                    android:visibility="visible"/>
+
+                <TextView
+                    android:id="@+id/tv_msg_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|top"
+                    android:background="@drawable/round_background"
+                    android:gravity="center"
+                    android:text="3"
+                    android:textColor="@color/red_text"
+                    android:textSize="@dimen/micro_text_size_plus"
+                    android:visibility="gone"/>
+            </FrameLayout>
+
+        </LinearLayout>
+    </FrameLayout>
+
+    <wl.codelibrary.widget.v4.SwipeRefreshLayout
+        android:id="@+id/srl_webView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/top_parent"
+        app:drawable_anim="@drawable/loading_anim">
+
+        <com.danertu.widget.MWebView
+            android:id="@+id/wv_index_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none"/>
+    </wl.codelibrary.widget.v4.SwipeRefreshLayout>
+</RelativeLayout><!--
+     <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/tab_black" >
+
+        <FrameLayout
+            android:id="@+id/index_top_layout"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" >
+
+            <Button
+                android:id="@+id/b_city"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/b_back_click"
+                android:drawableRight="@drawable/ic_arrow_down"
+                android:ellipsize="end"
+                android:lines="1"
+                android:maxWidth="120dp"
+                android:padding="5dp"
+                android:text="中山市"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:id="@+id/tv_store_name"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/b_back_click"
+                android:ellipsize="middle"
+                android:gravity="center"
+                android:maxWidth="250dp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/small_middle_text_size" />
+
+            <ImageView
+                android:id="@+id/search_product"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:paddingRight="15dp"
+                android:src="@drawable/main_bottom_tab_search_normal"
+                android:visibility="visible" />
+        </FrameLayout>
+    </FrameLayout>
+-->

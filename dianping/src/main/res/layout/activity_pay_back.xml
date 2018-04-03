@@ -1,0 +1,110 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/paybackmain"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_background"
+    android:baselineAligned="false"
+    android:orientation="vertical" >
+
+    <include layout="@layout/app_title4" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:background="@drawable/corner_bg_white_shadow"
+        android:orientation="vertical"
+        android:padding="10dp" >
+
+        <RelativeLayout
+            android:id="@+id/payreturnreson"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:clickable="true"
+            android:focusable="true" >
+
+            <TextView
+                android:id="@+id/d1"
+                style="@style/PersonalTextStyle"
+                android:layout_marginLeft="0dp"
+                android:text="退款原因:"
+                android:textColor="@color/solid_while"
+                android:textSize="@dimen/small_middle_text_size" />
+
+            <TextView
+                android:id="@+id/reason"
+                style="@style/PersonalTextStyle"
+                android:layout_alignParentRight="true"
+                android:drawablePadding="3dp"
+                android:drawableRight="@drawable/android_list_idex"
+                android:text="请选择退款原因"
+                android:textColor="@color/solid_while"
+                android:textSize="@dimen/small_middle_text_size" />
+        </RelativeLayout>
+
+        <View style="@style/Line" />
+
+        <RelativeLayout
+            android:id="@+id/payreturnPrice"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:clickable="true"
+            android:focusable="true" >
+
+            <TextView
+                android:id="@+id/d2"
+                style="@style/PersonalTextStyle"
+                android:layout_marginLeft="0dp"
+                android:text="退款金额:"
+                android:textColor="@color/solid_while"
+                android:textSize="@dimen/small_middle_text_size" />
+
+            <TextView
+                android:id="@+id/d3"
+                style="@style/PersonalTextStyle"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="10dp"
+                android:text="0.00"
+                android:textColor="@color/red_text"
+                android:textSize="@dimen/small_middle_text_size" />
+
+            <TextView
+                android:id="@+id/f1"
+                style="@style/PersonalTextStyle"
+                android:layout_toLeftOf="@id/d3"
+                android:text="￥"
+                android:textColor="@color/red_text"
+                android:textSize="@dimen/small_middle_text_size" />
+        </RelativeLayout>
+
+        <View style="@style/Line" />
+
+        <EditText
+            android:id="@+id/editText1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/et_corner_bg_shadow"
+            android:gravity="top"
+            android:hint="填写具体退款说明..."
+            android:textSize="@dimen/small_middle_text_size"
+            android:minLines="5"
+            android:padding="10dp"
+            android:textColorHint="@color/solid_while" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/b_corner_red_light"
+        android:text="提交"
+        android:textColor="@color/white"
+        android:textSize="20dip" />
+
+</LinearLayout>

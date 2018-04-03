@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <ListView
+        android:id="@+id/lv_search_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:cacheColorHint="@color/transparent"
+        android:divider="@null"
+        android:listSelector="@color/transparent"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/tips_empty"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="60dp"
+        android:drawablePadding="18dp"
+        android:drawableTop="@drawable/ic_empty"
+        android:gravity="center"
+        android:text="没有相关商品信息"
+        android:textColor="#bbbbbb"
+        android:textSize="@dimen/medium_text_size"
+        android:visibility="gone"/>
+
+    <ProgressBar
+        android:id="@+id/tips_loading"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="50dp"
+        android:indeterminate="true"
+        android:indeterminateDrawable="@drawable/loading_cycle"
+        android:visibility="gone"/>
+</FrameLayout>

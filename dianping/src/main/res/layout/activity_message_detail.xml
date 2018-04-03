@@ -1,0 +1,75 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/home_backgroud"
+                android:orientation="vertical">
+
+    <!-- <FrameLayout
+        android:id="@+id/relTop"
+        android:layout_width="match_parent"
+        android:layout_height="45sp"
+        android:background="@drawable/head_bg" >
+
+        <TextView
+            android:id="@+id/titleBack"
+            style="@style/style_15_EBEBEB_BOLD"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:layout_marginLeft="10.0dp"
+            android:layout_marginTop="8.0dp"
+            android:gravity="center" 
+            android:text="消息详细" />
+
+    </FrameLayout> -->
+    <include
+        android:id="@+id/relTop"
+        layout="@layout/app_title1"/>
+
+    <RelativeLayout
+        android:id="@+id/message_item_rel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/relTop"
+        android:layout_gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/msgLabel"
+            style="@style/style_14_9F9F9F_BOLD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10.0dp"
+            android:layout_marginTop="5.0dp"
+            android:text="消息："/>
+
+        <TextView
+            android:id="@+id/txtMsg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/msgLabel"
+            android:layout_alignBottom="@+id/msgLabel"
+            android:layout_toRightOf="@+id/msgLabel"
+            android:text=""/>
+
+        <TextView
+            android:id="@+id/answerLabel"
+            style="@style/style_14_9F9F9F_BOLD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/msgLabel"
+            android:layout_marginLeft="10.0dp"
+            android:layout_marginTop="5.0dp"
+            android:text="回复："/>
+
+        <TextView
+            android:id="@+id/txtAnswer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/answerLabel"
+            android:layout_alignBottom="@+id/answerLabel"
+            android:layout_alignLeft="@+id/txtMsg"
+            android:text=""/>
+    </RelativeLayout>
+
+</RelativeLayout>
+

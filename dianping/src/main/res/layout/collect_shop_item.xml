@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="#f0f0f0">
+
+    <Button
+        android:id="@+id/back"
+        android:layout_width="@dimen/back_w_size"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:background="@color/red"
+        android:gravity="center"
+        android:text="删除"
+        android:textColor="@color/gray_background"
+        android:textSize="20sp"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_collect_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/iv_collect_shopLogo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"/>
+
+        <ImageButton
+            android:id="@+id/ib_collect_shopDelete"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:background="@null"
+            android:focusable="false"
+            android:src="@drawable/order_collect_btn_delete"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_toLeftOf="@id/ib_collect_shopDelete"
+            android:layout_toRightOf="@id/iv_collect_shopLogo"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_collect_shopDistance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="5dp"
+                    android:text="5.2km"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/tv_collect_shopName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/tv_collect_shopDistance"
+                    android:text="店铺名"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/iv_collect_shopCollectNum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="5dp"
+                    android:text="6人收藏"
+                    android:textColor="#a09e9f"
+                    android:textSize="12sp"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/tv_collect_shopSale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="主营：生活用品"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"/>
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_collect_shopAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="店铺地址"
+                android:textColor="#a09e9f"
+                android:textSize="12sp"/>
+        </LinearLayout>
+    </RelativeLayout>
+</FrameLayout>

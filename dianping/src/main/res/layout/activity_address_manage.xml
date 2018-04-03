@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#f0f0f0">
+
+    <include
+        android:id="@+id/title_address_manage"
+        layout="@layout/app_title5"/>
+
+    <Button
+        android:id="@+id/b_addressManage_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/b_corner_bg_pressed"
+        android:minHeight="38dp"
+        android:minWidth="100dp"
+        android:text="保存"
+        android:textColor="@color/white"
+        android:textSize="20sp"/>
+
+    <ScrollView
+        android:id="@+id/sv_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_address_manage">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
+
+            <RelativeLayout style="@style/address_edit_rl">
+
+                <TextView
+                    android:id="@+id/tips_name"
+                    style="@style/addAddress_tv"
+                    android:text="姓名"/>
+
+                <EditText
+                    android:id="@+id/et_addressManage_pName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/tips_name"
+                    android:background="@null"
+                    android:enabled="true"
+                    android:maxLength="12"
+                    android:text="姓名"/>
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/address_edit_rl">
+
+                <TextView
+                    android:id="@+id/tips_phone"
+                    style="@style/addAddress_tv"
+                    android:text="电话"/>
+
+                <EditText
+                    android:id="@+id/et_addressManage_pNum"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/tips_phone"
+                    android:background="@null"
+                    android:digits="0123456789"
+                    android:enabled="true"
+                    android:maxLength="11"
+                    android:text="13854623523"/>
+            </RelativeLayout>
+
+            <RelativeLayout style="@style/address_edit_rl">
+
+                <TextView
+                    android:id="@+id/tips_address"
+                    style="@style/addAddress_tv"
+                    android:text="地址"/>
+
+                <EditText
+                    android:id="@+id/et_addressManage_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/tips_address"
+                    android:background="@null"
+                    android:enabled="true"
+                    android:maxLines="2"
+                    android:text="地址"/>
+            </RelativeLayout>
+            <!--邮编-->
+            <RelativeLayout
+                android:id="@+id/rl_addressManage_postalCode"
+                style="@style/address_edit_rl"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/iv_go_tips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/dd_logo_tips"/>
+
+                <EditText
+                    android:id="@+id/et_addressManage_postalCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/iv_go_tips"
+                    android:background="@null"
+                    android:digits="0123456789"
+                    android:enabled="false"
+                    android:maxLength="6"
+                    android:text="520000"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/et_addressManage_postalCode"
+                    android:text="邮编"
+                    android:textColor="@color/gray"
+                    android:textSize="12sp"/>
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/b_addressManage_delete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sv_parent"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/order_item_bg"
+        android:drawableLeft="@drawable/delect_icon"
+        android:gravity="left|center_vertical"
+        android:padding="15dp"
+        android:text="删除"
+        android:textColor="@color/gray"/>
+
+    <CheckBox
+        android:id="@+id/cb_addressManage_setDefault"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/b_addressManage_delete"
+        android:layout_margin="10dp"
+        android:button="@drawable/cb_selector_circle"
+        android:padding="10dp"
+        android:text="设置为默认收货地址"
+        android:textColor="@color/gray"
+        android:textSize="18sp"/>
+
+</RelativeLayout>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <wl.codelibrary.widget.RevealLayout
+        android:id="@+id/rel_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/app_title_bg_offline"
+            android:text="--"
+            android:textColor="@color/white"/>
+    </wl.codelibrary.widget.RevealLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/rel_bottom"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="60dp">
+
+        <ImageView
+            android:id="@+id/iv_icon1"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/wave"/>
+
+        <ImageView
+            android:id="@+id/iv_icon2"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/wave"/>
+
+        <ImageView
+            android:id="@+id/iv_icon3"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/wave"/>
+
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="135dp"
+            android:layout_height="135dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/icon"/>
+
+        <ProgressBar
+            android:id="@+id/pb"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iv_icon"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="60dp"/>
+
+        <TextView
+            android:id="@+id/tv_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/pb"
+            android:gravity="right"
+            android:padding="10dp"
+            android:textSize="@dimen/small_middle_text_size"/>
+    </RelativeLayout>
+
+</RelativeLayout>

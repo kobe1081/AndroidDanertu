@@ -1,0 +1,137 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/main_background"
+              android:orientation="vertical">
+
+    <include layout="@layout/app_title1"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/detail_head"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/detail_info_bg">
+
+        <TextView
+            android:id="@+id/detail_ticketName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:text="单耳兔优惠券"
+            android:textColor="@color/white"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/detail_ticketTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/detail_ticketName"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:text="使用期限:2014.10.5-2014.10.30"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/detail_ticketMoney"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/detail_ticketTime"
+            android:layout_below="@+id/detail_ticketTime"
+            android:layout_marginTop="45dp"
+            android:text="￥50"
+            android:textColor="@color/white"
+            android:textSize="45sp"
+            android:textStyle="bold"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="本超市线下产品"
+            android:textColor="@color/black"/>
+
+        <Gallery
+            android:id="@+id/ticket_detail_gallery"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/lay_shopInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/tick_item_bg"
+        android:baselineAligned="false">
+
+        <ImageView
+            android:id="@+id/tickdetail_shop_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ticket_shop_icon"/>
+
+        <TextView
+            android:id="@+id/ticketdetail_shopname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_toRightOf="@+id/tickdetail_shop_icon"
+            android:text="苓轩茶庄"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/ticketdetail_collect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ticketdetail_shopname"
+            android:layout_toRightOf="@+id/tickdetail_shop_icon"
+            android:text="6542人收藏"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:id="@+id/ticketdetail_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ticketdetail_collect"
+            android:layout_toRightOf="@+id/tickdetail_shop_icon"
+            android:text="三乡镇古鹤村鹤湾路19号"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:id="@+id/to_shop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/ticketdetail_address"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/ticketdetial_toshop"
+            android:gravity="center"
+            android:text="进入店铺"
+            android:textColor="@color/black"/>
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btn_use"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/tickdetial_button"
+        android:text="立即使用"/>
+
+</LinearLayout>

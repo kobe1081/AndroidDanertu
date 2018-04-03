@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/whitesmoke"
+                android:orientation="vertical">
+
+    <include
+        android:id="@+id/fraHead"
+        layout="@layout/app_title6"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_sum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white">
+
+        <Button
+            android:id="@+id/b_payCenter_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="8dp"
+            android:background="@drawable/b_corner_red_light1"
+            android:gravity="center"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:text="支付"
+            android:textColor="@color/white"
+            android:textSize="@dimen/small_middle_text_size"/>
+
+        <LinearLayout
+            android:id="@+id/ll_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@id/b_payCenter_submit"
+            android:gravity="right"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_payCenter_allMoney"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="合计："
+                android:textColor="@color/text_red"
+                android:textSize="@dimen/small_middle_text_size"/>
+            <!--优惠说明-->
+            <TextView
+                android:id="@+id/tv_payCenter_allFav"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_gray_999"
+                android:textSize="10sp"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/ll_bottom"
+            android:text="需支付："/>
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/rl_sum"
+        android:layout_below="@id/fraHead"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="10dp">
+            <!--后台拿货时显示-->
+            <RadioGroup
+                android:id="@+id/rg_payment_ship_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <RadioButton
+                    android:id="@+id/rb_payment_ship_now"
+                    style="@style/payment_center_radio"
+                    android:text="马上配送"/>
+
+                <RadioButton
+                    android:id="@+id/rb_payment_ship_after"
+                    style="@style/payment_center_radio"
+                    android:text="囤货后发"
+                    />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/tv_ship_after_tip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="-10dp"
+                android:background="#FFFFEB"
+                android:padding="10dp"
+                android:text="囤货商品会存到您的专属单耳兔仓库，在您需要的时候为您发出"
+                android:textSize="@dimen/micro_text_size"
+                android:visibility="gone"/>
+
+            <include
+                android:id="@+id/ll_contact"
+                layout="@layout/contact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"/>
+
+            <LinearLayout
+                android:id="@+id/ll_payCenter_proItemParent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:animateLayoutChanges="true"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="给卖家留言："
+                        android:textColor="@color/gray_text"/>
+
+                    <EditText
+                        android:id="@+id/et_payCenter_message"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:gravity="left"
+                        android:hint="对本次购买商品的说明、备注等信息"
+                        android:lines="1"
+                        android:textColorHint="@color/gray_text_aaa"
+                        android:textSize="@dimen/small_text_size"/>
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_fav_ticket"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:background="@color/white"
+                    android:padding="10dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tv_fav_ticket_tag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="优惠券"
+                        android:textColor="@color/gray_text_aaa"
+                        android:textSize="@dimen/small_text_size"/>
+
+                    <TextView
+                        android:id="@+id/tv_fav_ticket"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:drawablePadding="10dp"
+                        android:drawableRight="@drawable/arrow_r_gray1"
+                        android:text="无可用优惠券"
+                        android:textColor="@color/gray_text_bbb"
+                        android:textSize="@dimen/small_text_size"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_fav_num"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:background="@color/white"
+                    android:padding="10dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tv_fav_tag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="优惠码"
+                        android:textColor="@color/gray_text_aaa"
+                        android:textSize="@dimen/small_text_size"/>
+
+                    <TextView
+                        android:id="@+id/tv_fav_num_tips"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:drawableRight="@drawable/arrow_r_gray1"
+                        android:gravity="center"
+                        android:textColor="@color/text_gray_light"
+                        android:textSize="@dimen/small_text_size"/>
+                </RelativeLayout>
+
+                <CheckBox
+                    android:id="@+id/cb_payCenter_useJLBtoPay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:background="@color/white"
+                    android:button="@null"
+                    android:drawableRight="@drawable/cb_selector_radish"
+                    android:minHeight="60dp"
+                    android:padding="10dp"
+                    android:text="金萝卜抵扣"
+                    android:textColor="@color/gray_text_aaa"
+                    android:textSize="@dimen/small_text_size"
+                    android:visibility="gone"/>
+
+                <LinearLayout
+                    android:id="@+id/ll_payCenter_bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"/>
+
+                <FrameLayout
+                    android:id="@+id/fl_payWay_show"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/white">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:padding="8dp"
+                        android:text="支付方式"
+                        android:textColor="@color/gray_text_aaa"
+                        android:textSize="@dimen/small_text_size"/>
+
+                    <CheckBox
+                        android:id="@+id/cb_payWay_tag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right|center_vertical"
+                        android:layout_marginRight="10dp"
+                        android:button="@null"
+                        android:clickable="false"
+                        android:drawablePadding="10dp"
+                        android:drawableRight="@drawable/arrow_r_gray1"
+                        android:text="请选择支付方式"
+                        android:textColor="@color/text_gray_light"
+                        android:textSize="@dimen/small_text_size"/>
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_stock_protocol"
+                android:layout_width="match_parent"
+                android:layout_marginTop="1dp"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:gravity="center"
+                android:visibility="gone"
+                android:orientation="horizontal"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="点击支付表示同意"/>
+
+                <TextView
+                    android:id="@+id/tv_stock_protocol"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#60b3ff"
+                    android:text="《单耳兔智慧仓库协议》"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <View
+        style="@style/line_shadow"
+        android:layout_above="@id/rl_sum"/>
+
+</RelativeLayout>

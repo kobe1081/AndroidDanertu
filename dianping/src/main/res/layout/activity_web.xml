@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- <include layout="@layout/main_layout" /> -->
+
+    <LinearLayout
+        android:id="@+id/baseWeb_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/title2"
+            layout="@layout/app_title2"/>
+
+        <com.danertu.widget.MWebView
+            android:id="@+id/wv_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none"/>
+    </LinearLayout>
+
+</merge>

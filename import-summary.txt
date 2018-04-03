@@ -1,0 +1,206 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Manifest Merging:
+-----------------
+Your project uses libraries that provide manifests, and your Eclipse
+project did not explicitly turn on manifest merging. In Android Gradle
+projects, manifests are always merged (meaning that contents from your
+libraries' manifests will be merged into the app manifest. If you had
+manually copied contents from library manifests into your app manifest
+you may need to remove these for the app to build correctly.
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+From OneKeyShare:
+* OneKeyShare.iml
+* build.xml
+* proguard-project.txt
+From ShareSDK:
+* ShareSDK.iml
+* build.xml
+* proguard-project.txt
+From alipay_lib:
+* build.xml
+* proguard-project.txt
+From code_library:
+* proguard-project.txt
+From dianping:
+* ant.properties
+* build.xml
+* proguard-project.txt
+* proguard\
+* proguard\dump.txt
+* proguard\mapping.txt
+* proguard\seeds.txt
+* proguard\usage.txt
+From libzxing:
+* ic_launcher-web.png
+* proguard-project.txt
+
+Replaced Jars with Dependencies:
+--------------------------------
+The importer recognized the following .jar files as third party
+libraries and replaced them with Gradle dependencies instead. This has
+the advantage that more explicit version information is known, and the
+libraries can be updated automatically. However, it is possible that
+the .jar file in your project was of an older version than the
+dependency we picked, which could render the project not compileable.
+You can disable the jar replacement in the import wizard and try again:
+
+android-support-v4.jar => com.android.support:support-v4:19.1.0
+android-support-v7-appcompat.jar => com.android.support:appcompat-v7:19.1.0
+gson-2.2.4.jar => com.google.code.gson:gson:2.2.4
+
+Potentially Missing Dependency:
+-------------------------------
+When we replaced the following .jar files with a Gradle dependency, we
+inferred the dependency version number from the filename. This
+specific version may not actually be available from the repository.
+If you get a build error stating that the dependency is missing, edit
+the version number to for example "+" to pick up the latest version
+instead. (This may require you to update your code if the library APIs
+have changed.)
+
+gson-2.2.4.jar => version 2.2.4 in com.google.code.gson:gson:2.2.4
+
+Replaced Libraries with Dependencies:
+-------------------------------------
+The importer recognized the following library projects as third party
+libraries and replaced them with Gradle dependencies instead. This has
+the advantage that more explicit version information is known, and the
+libraries can be updated automatically. However, it is possible that
+the source files in your project were of an older version than the
+dependency we picked, which could render the project not compileable.
+You can disable the library replacement in the import wizard and try
+again:
+
+appcompat_v7 => [com.android.support:appcompat-v7:19.1.0]
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+In ShareSDK:
+* AndroidManifest.xml => shareSDK\src\main\AndroidManifest.xml
+* assets\ => shareSDK\src\main\assets
+* libs\MobCommons.jar => shareSDK\libs\MobCommons.jar
+* libs\MobTools.jar => shareSDK\libs\MobTools.jar
+* libs\ShareSDK-Core-2.6.4.jar => shareSDK\libs\ShareSDK-Core-2.6.4.jar
+* libs\ShareSDK-Email-2.6.4.jar => shareSDK\libs\ShareSDK-Email-2.6.4.jar
+* libs\ShareSDK-Facebook-2.6.4.jar => shareSDK\libs\ShareSDK-Facebook-2.6.4.jar
+* libs\ShareSDK-QQ-2.6.4.jar => shareSDK\libs\ShareSDK-QQ-2.6.4.jar
+* libs\ShareSDK-QZone-2.6.4.jar => shareSDK\libs\ShareSDK-QZone-2.6.4.jar
+* libs\ShareSDK-ShortMessage-2.6.4.jar => shareSDK\libs\ShareSDK-ShortMessage-2.6.4.jar
+* libs\ShareSDK-SinaWeibo-2.6.4.jar => shareSDK\libs\ShareSDK-SinaWeibo-2.6.4.jar
+* libs\ShareSDK-TencentWeibo-2.6.4.jar => shareSDK\libs\ShareSDK-TencentWeibo-2.6.4.jar
+* libs\ShareSDK-Twitter-2.6.4.jar => shareSDK\libs\ShareSDK-Twitter-2.6.4.jar
+* libs\ShareSDK-Wechat-2.6.4.jar => shareSDK\libs\ShareSDK-Wechat-2.6.4.jar
+* libs\ShareSDK-Wechat-Core-2.6.4.jar => shareSDK\libs\ShareSDK-Wechat-Core-2.6.4.jar
+* libs\ShareSDK-Wechat-Favorite-2.6.4.jar => shareSDK\libs\ShareSDK-Wechat-Favorite-2.6.4.jar
+* libs\ShareSDK-Wechat-Moments-2.6.4.jar => shareSDK\libs\ShareSDK-Wechat-Moments-2.6.4.jar
+* lint.xml => shareSDK\lint.xml
+* res\ => shareSDK\src\main\res\
+* src\ => shareSDK\src\main\java
+In OneKeyShare:
+* AndroidManifest.xml => oneKeyShare\src\main\AndroidManifest.xml
+* assets\ => oneKeyShare\src\main\assets
+* res\ => oneKeyShare\src\main\res\
+* src\ => oneKeyShare\src\main\java\
+* src\.define => oneKeyShare\src\main\resources\.define
+In XiaonengChatUI:
+* AndroidManifest.xml => xiaonengChatUI\src\main\AndroidManifest.xml
+* assets\ => xiaonengChatUI\src\main\assets
+* libs\xiaoneng-mqtt.jar => xiaonengChatUI\libs\xiaoneng-mqtt.jar
+* libs\xiaonengchatcore.jar => xiaonengChatUI\libs\xiaonengchatcore.jar
+* libs\xiaonengchatui.jar => xiaonengChatUI\libs\xiaonengchatui.jar
+* libs\xiaonengnetwork.jar => xiaonengChatUI\libs\xiaonengnetwork.jar
+* libs\xiaonengutil.jar => xiaonengChatUI\libs\xiaonengutil.jar
+* libs\xiaonengv4.jar => xiaonengChatUI\libs\xiaonengv4.jar
+* lint.xml => xiaonengChatUI\lint.xml
+* res\ => xiaonengChatUI\src\main\res\
+* src\ => xiaonengChatUI\src\main\java
+In alipay_lib:
+* AndroidManifest.xml => alipay_lib\src\main\AndroidManifest.xml
+* assets\ => alipay_lib\src\main\assets
+* res\ => alipay_lib\src\main\res\
+* src\ => alipay_lib\src\main\java\
+In code_library:
+* AndroidManifest.xml => code_library\src\main\AndroidManifest.xml
+* assets\ => code_library\src\main\assets
+* libs\nineoldandroids-2.4.0.jar => code_library\libs\nineoldandroids-2.4.0.jar
+* lint.xml => code_library\lint.xml
+* res\ => code_library\src\main\res\
+* src\ => code_library\src\main\java\
+In libzxing:
+* AndroidManifest.xml => libzxing\src\main\AndroidManifest.xml
+* assets\ => libzxing\src\main\assets
+* libs\zxing.jar => libzxing\libs\zxing.jar
+* res\ => libzxing\src\main\res\
+* src\ => libzxing\src\main\java\
+In dianping:
+* AndroidManifest.xml => dianping\src\main\AndroidManifest.xml
+* assets\ => dianping\src\main\assets\
+* bin\res\ => dianping\src\androidTest\res\
+* libs\alipaysdk.jar => dianping\libs\alipaysdk.jar
+* libs\alipaysecsdk.jar => dianping\libs\alipaysecsdk.jar
+* libs\alipayutdid.jar => dianping\libs\alipayutdid.jar
+* libs\armeabi-v7a\libapp_BaiduNaviApplib_v1_0_0.so => dianping\src\main\jniLibs\armeabi-v7a\libapp_BaiduNaviApplib_v1_0_0.so
+* libs\armeabi-v7a\libBaiduMapSDK_v2_4_0.so => dianping\src\main\jniLibs\armeabi-v7a\libBaiduMapSDK_v2_4_0.so
+* libs\armeabi-v7a\libBMapApiEngine_v1_3_3.so => dianping\src\main\jniLibs\armeabi-v7a\libBMapApiEngine_v1_3_3.so
+* libs\armeabi-v7a\libCNPackage.so => dianping\src\main\jniLibs\armeabi-v7a\libCNPackage.so
+* libs\armeabi-v7a\libdiff.so => dianping\src\main\jniLibs\armeabi-v7a\libdiff.so
+* libs\armeabi-v7a\libejTTS.so => dianping\src\main\jniLibs\armeabi-v7a\libejTTS.so
+* libs\armeabi-v7a\libjpush215.so => dianping\src\main\jniLibs\armeabi-v7a\libjpush215.so
+* libs\armeabi-v7a\liblocnaviSDK.so => dianping\src\main\jniLibs\armeabi-v7a\liblocnaviSDK.so
+* libs\armeabi-v7a\liblocSDK3.so => dianping\src\main\jniLibs\armeabi-v7a\liblocSDK3.so
+* libs\armeabi-v7a\liblocSDK4d.so => dianping\src\main\jniLibs\armeabi-v7a\liblocSDK4d.so
+* libs\armeabi-v7a\libmsc.so => dianping\src\main\jniLibs\armeabi-v7a\libmsc.so
+* libs\armeabi\libapp_BaiduNaviApplib_v1_0_0.so => dianping\src\main\jniLibs\armeabi\libapp_BaiduNaviApplib_v1_0_0.so
+* libs\armeabi\libBaiduMapSDK_v2_4_0.so => dianping\src\main\jniLibs\armeabi\libBaiduMapSDK_v2_4_0.so
+* libs\armeabi\libBMapApiEngine_v1_3_3.so => dianping\src\main\jniLibs\armeabi\libBMapApiEngine_v1_3_3.so
+* libs\armeabi\libCNPackage.so => dianping\src\main\jniLibs\armeabi\libCNPackage.so
+* libs\armeabi\libdiff.so => dianping\src\main\jniLibs\armeabi\libdiff.so
+* libs\armeabi\libejTTS.so => dianping\src\main\jniLibs\armeabi\libejTTS.so
+* libs\armeabi\libjpush215.so => dianping\src\main\jniLibs\armeabi\libjpush215.so
+* libs\armeabi\liblocnaviSDK.so => dianping\src\main\jniLibs\armeabi\liblocnaviSDK.so
+* libs\armeabi\liblocSDK3.so => dianping\src\main\jniLibs\armeabi\liblocSDK3.so
+* libs\armeabi\liblocSDK4d.so => dianping\src\main\jniLibs\armeabi\liblocSDK4d.so
+* libs\armeabi\libmsc.so => dianping\src\main\jniLibs\armeabi\libmsc.so
+* libs\baidumapapi_v2_4_0.jar => dianping\libs\baidumapapi_v2_4_0.jar
+* libs\BaiduNaviSDK_v1_0_0.jar => dianping\libs\BaiduNaviSDK_v1_0_0.jar
+* libs\jpush-android-2.1.5.jar => dianping\libs\jpush-android-2.1.5.jar
+* libs\libammsdk.jar => dianping\libs\libammsdk.jar
+* libs\locSDK_4.2.jar => dianping\libs\locSDK_4.2.jar
+* libs\MapApi.jar => dianping\libs\MapApi.jar
+* libs\mframework.jar => dianping\libs\mframework.jar
+* libs\Msc.jar => dianping\libs\Msc.jar
+* libs\need_lib.jar => dianping\libs\need_lib.jar
+* libs\testinagent.jar => dianping\libs\testinagent.jar
+* libs\umeng-analytics-v5.5.3.jar => dianping\libs\umeng-analytics-v5.5.3.jar
+* libs\universal-image-loader-1.8.6-with-sources.jar => dianping\libs\universal-image-loader-1.8.6-with-sources.jar
+* lint.xml => dianping\lint.xml
+* proguard.cfg => dianping\proguard.cfg
+* res\ => dianping\src\main\res\
+* src\ => dianping\src\main\java\
+* popup_option_selected.PNG => popup_option_selected.png
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/home_backgroud" >
+
+    <!-- <FrameLayout
+        android:id="@+id/fraHead"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/head_bg" >
+
+        <TextView
+            style="@style/style_18_BEBEBE_BOLD"
+            android:layout_width="fill_parent"
+            android:layout_height="45sp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="写评论" />
+    </FrameLayout> -->
+    
+    <include 
+        android:id="@+id/fraHead"
+        layout="@layout/app_title1"/>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/fraHead"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/rank"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10.0dip"
+            android:background="@drawable/shape_rounded_rectangle"
+            android:orientation="horizontal" >
+
+            <TextView
+                style="@style/style_16_666666"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="评星:" />
+
+            <RatingBar
+                android:id="@+id/rankBar"
+                style="?android:attr/ratingBarStyleIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:isIndicator="false"
+                android:layout_marginLeft="5dp"
+                android:numStars="5"
+                android:rating="5.0"
+                android:stepSize="1.0" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/style_16_666666"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:text="评论内容：" />
+
+        <LinearLayout
+            android:id="@+id/remark_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10.0dip"
+            android:background="@drawable/shape_rounded_rectangle"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/main_content"
+                android:layout_width="fill_parent"
+                android:layout_height="150.0dip"
+                android:padding="5dp"
+                android:background="@null"
+                android:focusable="true"
+                android:gravity="top|left|center"
+                android:maxLength="50" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/style_16_666666"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="评论内容请在50字以内" />
+
+        <Button
+            android:id="@+id/com_save"
+            style="@style/style_15_EBEBEB_BOLD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/comit_comment"
+            android:gravity="center"
+            android:text="提   交"
+            android:textSize="25sp" />
+    </LinearLayout>
+
+</RelativeLayout>

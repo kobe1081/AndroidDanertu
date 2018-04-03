@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/personal_top_layout"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@color/tab_black">
+
+    <Button
+        android:id="@+id/b_title_back2"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/b_back_click"
+        android:drawableLeft="@drawable/b_title_back_click"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"/>
+
+    <Button
+        android:id="@+id/b_title_operation2"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="right|center_vertical"
+        android:background="@drawable/b_back_click"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textColor="#ffffff"
+        android:textSize="16sp"
+        android:visibility="visible"/>
+
+</FrameLayout>

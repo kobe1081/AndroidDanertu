@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_QrShow"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+   <Button
+        android:id="@+id/share_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" 
+        android:layout_alignParentTop="true"
+          android:visibility="gone"
+        android:text="一键分享应用" />
+     <TextView
+        android:id="@+id/tuiguangTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/share_btn"
+        android:text="点击对应二维码一键分享" />
+    <TextView
+        android:id="@+id/indexTitle1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="3dp"
+          android:layout_below="@+id/tuiguangTV"
+        android:text="Android端分享"
+        android:textSize="22sp" />
+
+    <ImageView
+        android:id="@+id/indeximg1"
+        android:layout_width="230dp"
+        android:layout_height="230dp"
+        android:layout_below="@+id/indexTitle1"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/indexTitle2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/indeximg1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="IOS端分享"
+        android:textSize="22sp" />
+
+    <ImageView
+        android:id="@+id/indeximg2"
+        android:layout_width="230dp"
+        android:layout_height="230dp"
+        android:layout_below="@+id/indexTitle2"
+        android:layout_centerHorizontal="true" />
+    <TextView
+        android:id="@+id/SharepCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/indeximg2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="" />
+</RelativeLayout>

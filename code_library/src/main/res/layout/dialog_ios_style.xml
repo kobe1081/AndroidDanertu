@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_ios_bg"
+    android:minWidth="300dp"
+    android:paddingTop="20dp"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/dialog_ios_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingBottom="10dp"
+        android:text="标题"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/dialog_ios_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:cursorVisible="false"
+        android:gravity="center_horizontal"
+        android:editable="false"
+        android:maxHeight="500dp"
+        android:minHeight="60dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:text="TextView"
+        android:textColor="#333333"
+        android:textIsSelectable="true"
+        android:textSize="16sp" />
+
+    <View style="@style/ios_line"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/b_dialog_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/dialog_ios_btn_left_selector"
+            android:minHeight="50dp"
+            android:text="--"
+            android:textColor="@color/blue"
+            android:textSize="16sp" />
+
+        <View
+            android:id="@+id/line"
+            style="@style/ios_line_vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"/>
+
+        <Button
+            android:id="@+id/b_dialog_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/dialog_ios_btn_right_selector"
+            android:minHeight="50dp"
+            android:text="--"
+            android:textColor="@color/blue"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+</LinearLayout>
