@@ -41,6 +41,7 @@ public class PayBackActivity extends BaseActivity {
 
     public final String TAG_REASON = "reason";
     public final String TAG_REASON_CONFIRM = "reasonConfirm";
+    public static final int RESULT_PAY_BACK=323;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,6 +178,7 @@ public class PayBackActivity extends BaseActivity {
                     jsShowMsg("您已提交过退款信息，请耐心等候！");
                 }
             }
+            setResult(RESULT_PAY_BACK);
             return true;
         }
     };
@@ -191,6 +193,7 @@ public class PayBackActivity extends BaseActivity {
             finish();
             return;
         }
+        setResult(RESULT_PAY_BACK);
         super.onBackPressed();
     }
 }

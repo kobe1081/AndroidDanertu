@@ -36,7 +36,6 @@ import android.widget.TextView;
 
 import com.config.Constants;
 import com.danertu.db.DBHelper;
-import com.danertu.entity.MyOrderData;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.FWorkUtil;
 import com.danertu.tools.Logger;
@@ -50,6 +49,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
  * 将修改头像的AlertDialog改为PopupWindow实现
  *
  * @Link #showPopupWindos()
+ *
+ * 2018年4月4日
+ * 未开店跳转地址修改为 activity/20171012.html
  */
 public class PersonalActivity extends HomeActivity implements OnClickListener {
     private Context context;
@@ -64,7 +66,7 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
 
     public static final String KEY_FROM_PUSH = "fromPush";
     public static final String KEY_TAB_INDEX = "TabIndex";
-    public static final String KEY_IS_ONLY_HONTEL = "isOnlyHotel";
+    public static final String KEY_IS_ONLY_HOTEL = "isOnlyHotel";
 
 //    DBManager mgr = new DBManager();
 //	String filePath = android.os.Environment.getExternalStorageDirectory()
@@ -106,7 +108,7 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
          * 从推送调起的话，起中转作用，先打开此页面然后打开订单页面
          */
         if (intent.getBooleanExtra(KEY_FROM_PUSH, false)) {
-            jsToOrderActivity(Integer.parseInt(intent.getStringExtra(KEY_TAB_INDEX)), intent.getBooleanExtra(KEY_IS_ONLY_HONTEL, false));
+            jsToOrderActivity(Integer.parseInt(intent.getStringExtra(KEY_TAB_INDEX)), intent.getBooleanExtra(KEY_IS_ONLY_HOTEL, false));
         }
         fwUtil = new FWorkUtil(context);
         init();
@@ -345,7 +347,12 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
 //                    startActivity(new Intent(context, JPushMessageActivity.class));
                     break;
                 case R.id.create_shop:
-                    jsStartActivityForResult("HtmlActivity", "pageName|set_shop_base.html", 3);
+                    /**
+                     * 2018年4月4日
+                     * 修改指向地址
+                     */
+//                    jsStartActivityForResult("HtmlActivity", "pageName|set_shop_base.html", 3);
+                    jsStartActivityForResult("HtmlActivity", "pageName|activity/20171012.html", 3);
                     break;
 //                case R.id.test:
 //                    startActivity(new Intent(context,StockpileActivity.class));

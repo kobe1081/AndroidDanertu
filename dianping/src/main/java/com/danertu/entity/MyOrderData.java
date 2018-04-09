@@ -2,12 +2,14 @@ package com.danertu.entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -251,6 +253,14 @@ public abstract class MyOrderData {
         intent.putExtra("memberid", uid);
         intent.putExtra("price", price);
         context.startActivity(intent);
+    }
+    public static void toPayBackActivityForResult(Activity context, String orderNumber, String uid, String price,int position,int requestCode) {
+        Intent intent = new Intent(context, PayBackActivity.class);
+        intent.putExtra("ordernumber", orderNumber);
+        intent.putExtra("memberid", uid);
+        intent.putExtra("price", price);
+        intent.putExtra("position", position);
+        context.startActivityForResult(intent,requestCode);
     }
 
     public static void startToProDetail(Context context, String guid, String proName, String img, String detail, String agentID, String supplierID, String price, String mobile) {
@@ -745,8 +755,9 @@ public abstract class MyOrderData {
      * @param orderNumber 订单号
      */
     public static void payForOrder(String orderNumber) {
-        if (order_list_all == null || order_list_all.size() == 0)
-            return;
+//        if (order_list_all == null || order_list_all.size() == 0)
+//            return;
+        Logger.e(TAG,"payForOrder");
         boolean isAllChange = false;
         boolean isNoPayChange = false;
 //-------------------------------------全部列表----------------------------------
@@ -764,7 +775,6 @@ public abstract class MyOrderData {
                 MyOrderActivity.dataChanges[0] = true;
                 MyOrderNoSendActivity.adapter.addDateItem(0, orderItem);//添加到未发货列表
                 MyOrderActivity.dataChanges[2] = true;
-
                 break;
             }
         }
@@ -781,34 +791,44 @@ public abstract class MyOrderData {
                     item.put("order_ShipmentStatus", "0");
                     MyOrderNoSendActivity.adapter.addDateItem(0, item);
                     MyOrderActivity.dataChanges[2] = true;
-
                     break;
                 }
             }
 
 //-------------------------------------未付款列表----------------------------------
         //如果在order_list_noPay中
-        for (HashMap<String, Object> item : order_list_noPay) {
+        /**
+         * 不要在foreach循环里进行元素的remove/add操作，remove元素请使用Iterator方式，如果并发操作，需要对Iterator对象加锁
+         */
+        Iterator<HashMap<String, Object>> iterator = order_list_noPay.iterator();
+        while (iterator.hasNext()) {
+            HashMap<String, Object> item = iterator.next();
             String oNum = item.get("order_orderNumber").toString();
-            if (oNum.equals(orderNumber)) {// 改变订单状态
+            if (oNum.equals(orderNumber)) {
                 Logger.e(TAG, orderNumber + "->找到相应数据-order_list_noPay");
-                removeData(order_list_noPay, orderNumber);// 从 未付款 中移除
+                iterator.remove();
                 MyOrderActivity.dataChanges[1] = true;
                 isNoPayChange = true;
                 break;
             }
         }
+
         //如果在order_noPay中
-        if (!isNoPayChange)
-            for (HashMap<String, Object> item : MyOrderData.order_noPay) {
-                String order_orderNumber = item.get("order_orderNumber").toString();
-                //更新订单列表
-                if (orderNumber.equals(order_orderNumber)) {
+        if (!isNoPayChange) {
+            iterator = order_noPay.iterator();
+            while (iterator.hasNext()) {
+                HashMap<String, Object> item = iterator.next();
+                String oNum = item.get("order_orderNumber").toString();
+                if (oNum.equals(orderNumber)) {
                     Logger.e(TAG, orderNumber + "->找到相应数据-order_noPay");
-                    removeData(order_noPay, orderNumber);
+                    iterator.remove();
                     break;
                 }
             }
+
+        }
+
+
         if (loadListener != null) {
             loadListener.dataChanged();
         }
@@ -830,8 +850,8 @@ public abstract class MyOrderData {
      *                    添加遍历order_noPay列表修改数据
      */
     public static void cancelOrder(String orderNumber) {
-        if (order_list_all == null || order_list_all.size() == 0)
-            return;
+//        if (order_list_all == null || order_list_all.size() == 0)
+//            return;
         String oNum;
         boolean isRemove = false;
         boolean isChange = false;
@@ -869,26 +889,53 @@ public abstract class MyOrderData {
                 }
             }
 //--------------------------未付款订单列表--------------------------------
-        for (HashMap<String, Object> item : order_list_noPay) {
+
+        Iterator<HashMap<String, Object>> iterator = order_list_noPay.iterator();
+        while (iterator.hasNext()) {
+            HashMap<String, Object> item = iterator.next();
             oNum = item.get("order_orderNumber").toString();
             if (oNum.equals(orderNumber)) {
                 Logger.e(TAG, orderNumber + "->找到相应数据-order_list_noPay");
-                isRemove = removeData(order_list_noPay, orderNumber);
+                iterator.remove();
+                isRemove = true;
                 MyOrderActivity.dataChanges[1] = true;
                 break;
             }
         }
-        if (isRemove) {
-            return;
-        }
-        for (HashMap<String, Object> item : order_noPay) {
-            oNum = item.get("order_orderNumber").toString();
-            if (oNum.equals(orderNumber)) {
-                Logger.e(TAG, orderNumber + "->找到相应数据-order_noPay");
-                removeData(order_noPay, orderNumber);
-                break;
+
+
+//        for (HashMap<String, Object> item : order_list_noPay) {
+//            oNum = item.get("order_orderNumber").toString();
+//            if (oNum.equals(orderNumber)) {
+//                Logger.e(TAG, orderNumber + "->找到相应数据-order_list_noPay");
+//                isRemove = removeData(order_list_noPay, orderNumber);
+//                MyOrderActivity.dataChanges[1] = true;
+//                break;
+//            }
+//        }
+        if (!isRemove) {
+            iterator = order_noPay.iterator();
+            while (iterator.hasNext()) {
+                HashMap<String, Object> item = iterator.next();
+                oNum = item.get("order_orderNumber").toString();
+                if (oNum.equals(orderNumber)) {
+                    Logger.e(TAG, orderNumber + "->找到相应数据-order_noPay");
+                    iterator.remove();
+                    MyOrderActivity.dataChanges[1] = true;
+                    break;
+                }
             }
+
+//            for (HashMap<String, Object> item : order_noPay) {
+//                oNum = item.get("order_orderNumber").toString();
+//                if (oNum.equals(orderNumber)) {
+//                    Logger.e(TAG, orderNumber + "->找到相应数据-order_noPay");
+//                    removeData(order_noPay, orderNumber);
+//                    break;
+//                }
+//            }
         }
+
         if (loadListener != null) {
             loadListener.dataChanged();
         }
@@ -905,8 +952,8 @@ public abstract class MyOrderData {
      *                    数据改变的页面底标; 0表示 全部，1表示 待付款，2表示 待发货，3表示 待收货，4表示 待评价
      */
     public static void sureTakeGoods(String orderNumber) {
-        if (order_list_all == null || order_list_all.size() == 0)
-            return;
+//        if (order_list_all == null || order_list_all.size() == 0)
+//            return;
         String oNum;
         boolean isAllChange = false;
         boolean isRemove = false;
@@ -942,31 +989,56 @@ public abstract class MyOrderData {
                 }
             }
 //--------------------待收货订单、已完成订单-----------------------------
-        for (HashMap<String, Object> item : order_list_noReceive) {
+
+
+        Iterator<HashMap<String, Object>> iterator = order_list_noReceive.iterator();
+        while (iterator.hasNext()) {
+            HashMap<String, Object> item = iterator.next();
             oNum = item.get("order_orderNumber").toString();
             if (oNum.equals(orderNumber)) {
                 Logger.e(TAG, orderNumber + "->找到相应数据-order_list_noReceive");
-                removeData(order_list_noReceive, orderNumber);
                 item.remove("order_OderStatus");
                 item.remove("order_ShipmentStatus");
                 item.remove("order_PaymentStatus");
                 item.put("order_OderStatus", "5");// 已确认订单
                 item.put("order_ShipmentStatus", "2");// 已收货
                 item.put("order_PaymentStatus", "2");// 已付款
-                isRemove = true;
                 order_list_noComment.add(0, item);
+                iterator.remove();
+                isRemove = true;
                 MyOrderActivity.dataChanges[3] = true;
                 MyOrderActivity.dataChanges[4] = true;
                 break;
             }
         }
 
-        if (!isRemove)
-            for (HashMap<String, Object> item : order_noReceive) {
+
+//        for (HashMap<String, Object> item : order_list_noReceive) {
+//            oNum = item.get("order_orderNumber").toString();
+//            if (oNum.equals(orderNumber)) {
+//                Logger.e(TAG, orderNumber + "->找到相应数据-order_list_noReceive");
+//                item.remove("order_OderStatus");
+//                item.remove("order_ShipmentStatus");
+//                item.remove("order_PaymentStatus");
+//                item.put("order_OderStatus", "5");// 已确认订单
+//                item.put("order_ShipmentStatus", "2");// 已收货
+//                item.put("order_PaymentStatus", "2");// 已付款
+//                order_list_noComment.add(0, item);
+//                order_list_noReceive.remove(item);
+//                isRemove = true;
+//                MyOrderActivity.dataChanges[3] = true;
+//                MyOrderActivity.dataChanges[4] = true;
+//                break;
+//            }
+//        }
+
+        if (!isRemove) {
+            iterator = order_noReceive.iterator();
+            while (iterator.hasNext()) {
+                HashMap<String, Object> item = iterator.next();
                 oNum = item.get("order_orderNumber").toString();
                 if (oNum.equals(orderNumber)) {
                     Logger.e(TAG, orderNumber + "->找到相应数据-order_noReceive");
-                    removeData(order_noReceive, orderNumber);
                     item.remove("order_OderStatus");
                     item.remove("order_ShipmentStatus");
                     item.remove("order_PaymentStatus");
@@ -974,10 +1046,29 @@ public abstract class MyOrderData {
                     item.put("order_ShipmentStatus", "2");// 已收货
                     item.put("order_PaymentStatus", "2");// 已付款
                     order_list_noComment.add(0, item);
+                    iterator.remove();
                     MyOrderActivity.dataChanges[4] = true;
                     break;
                 }
             }
+
+//            for (HashMap<String, Object> item : order_noReceive) {
+//                oNum = item.get("order_orderNumber").toString();
+//                if (oNum.equals(orderNumber)) {
+//                    Logger.e(TAG, orderNumber + "->找到相应数据-order_noReceive");
+//                    item.remove("order_OderStatus");
+//                    item.remove("order_ShipmentStatus");
+//                    item.remove("order_PaymentStatus");
+//                    item.put("order_OderStatus", "5");// 已确认订单
+//                    item.put("order_ShipmentStatus", "2");// 已收货
+//                    item.put("order_PaymentStatus", "2");// 已付款
+//                    order_list_noComment.add(0, item);
+//                    MyOrderActivity.dataChanges[4] = true;
+//                    order_noReceive.remove(item);
+//                    break;
+//                }
+//            }
+        }
         if (loadListener != null) {
             loadListener.dataChanged();
         }
@@ -993,9 +1084,8 @@ public abstract class MyOrderData {
      * @param orderNumber 订单号
      */
     public static void payBackHandle(String orderNumber) {
-        Logger.e(TAG, "申请退款");
-        if (order_list_all == null || order_list_all.size() == 0)
-            return;
+//        if (order_list_all == null || order_list_all.size() == 0)
+//            return;
 //        boolean isDelete = false, isDelete2 = false, isDelete3 = false, isDelete4 = false;
         boolean isAllChange = false;
         boolean isRemove = false;
@@ -1029,6 +1119,8 @@ public abstract class MyOrderData {
 
 
 //-----------------------全部订单列表----------------------------------------
+
+
         for (HashMap<String, Object> item : order_list_all) {
             oNum = item.get("order_orderNumber").toString();
             if (oNum.equals(orderNumber)) {
@@ -1052,24 +1144,32 @@ public abstract class MyOrderData {
             }
 
 //-----------------------待发货订单列表----------------------------------------
-        for (HashMap<String, Object> item : order_list_noSend) {
+
+        Iterator<HashMap<String, Object>> iterator = order_list_noSend.iterator();
+        while (iterator.hasNext()) {
+            HashMap<String, Object> item = iterator.next();
             oNum = item.get("order_orderNumber").toString();
             if (oNum.equals(orderNumber)) {
                 Logger.e(TAG, orderNumber + "->找到相应数据-order_list_noSend");
-                isRemove = removeData(order_list_noSend, orderNumber);
+                iterator.remove();
+                isRemove = true;
                 MyOrderActivity.dataChanges[2] = true;
                 break;
             }
         }
-        if (!isRemove)
-            for (HashMap<String, Object> item : order_noSend) {
+
+        if (!isRemove) {
+            iterator = order_noSend.iterator();
+            while (iterator.hasNext()) {
+                HashMap<String, Object> item = iterator.next();
                 oNum = item.get("order_orderNumber").toString();
                 if (oNum.equals(orderNumber)) {
                     Logger.e(TAG, orderNumber + "->找到相应数据-order_noSend");
-                    removeData(order_noSend, orderNumber);
+                    iterator.remove();
                     break;
                 }
             }
+        }
         //已完成订单列表没有申请退款按钮
 //-----------------------已完成订单列表----------------------------------------
 //        for (HashMap<String, Object> item : order_list_noComment) {
@@ -1103,8 +1203,8 @@ public abstract class MyOrderData {
      */
     public static void commentOrder(Context context) {
         Logger.e(TAG, "评价订单");
-        if (order_list_all == null || order_list_all.size() == 0)
-            return;
+//        if (order_list_all == null || order_list_all.size() == 0)
+//            return;
         if (tOrderNumber == null) {
             CommonTools.showShortToast(context, "更新数据出错，请重新开启程序");
             return;
@@ -1174,24 +1274,44 @@ public abstract class MyOrderData {
                 }
             }
 //-----------------------已完成订单列表----------------------------------------
-        for (HashMap<String, Object> item : order_list_noComment) {
+
+        Iterator<HashMap<String, Object>> iterator = order_list_noComment.iterator();
+        while (iterator.hasNext()) {
+            HashMap<String, Object> item = iterator.next();
             String oNum = item.get("order_orderNumber").toString();
             if (oNum.equals(orderNumber)) {
                 Logger.e(TAG, orderNumber + "->找到相应数据-order_list_noComment");
-                isRemove = removeData(order_list_noComment, orderNumber);
+                iterator.remove();
+                isRemove = true;
                 MyOrderActivity.dataChanges[4] = true;
                 break;
             }
         }
-        if (!isRemove)
-            for (HashMap<String, Object> item : order_noComment) {
+
+
+//        for (HashMap<String, Object> item : order_list_noComment) {
+//            String oNum = item.get("order_orderNumber").toString();
+//            if (oNum.equals(orderNumber)) {
+//                Logger.e(TAG, orderNumber + "->找到相应数据-order_list_noComment");
+//                isRemove = removeData(order_list_noComment, orderNumber);
+//                MyOrderActivity.dataChanges[4] = true;
+//                break;
+//            }
+//        }
+
+        if (!isRemove) {
+            iterator = order_noComment.iterator();
+            while (iterator.hasNext()) {
+                HashMap<String, Object> item = iterator.next();
                 String oNum = item.get("order_orderNumber").toString();
                 if (oNum.equals(orderNumber)) {
                     Logger.e(TAG, orderNumber + "->找到相应数据-order_noComment");
-                    removeData(order_noComment, orderNumber);
+                    iterator.remove();
                     break;
                 }
             }
+        }
+
         if (loadListener != null) {
             loadListener.dataChanged();
         }

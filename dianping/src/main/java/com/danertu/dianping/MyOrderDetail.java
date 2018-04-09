@@ -18,6 +18,7 @@ import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -285,7 +286,8 @@ public class MyOrderDetail extends BaseActivity {
                     final String tag = b_order_opera1.getText().toString();
                     switch (tag) {
                         case BTN_LEFT_DRAWBACK:
-                            MyOrderData.toPayBackActivity(context, outOrderNumber, getUid(), totalprice);
+//                            MyOrderData.toPayBackActivity(context, outOrderNumber, getUid(), totalprice);
+                            MyOrderData.toPayBackActivityForResult(MyOrderDetail.this, outOrderNumber, getUid(), totalprice,position,REQUEST_SHOW_QRCODE);
 
                             break;
                         case BTN_LEFT_CANCEL:
@@ -1014,6 +1016,7 @@ public class MyOrderDetail extends BaseActivity {
                         }
 
                         Logger.e(TAG, "数据更新完毕");
+
                         setResult(RESULT_ORDER_STATUS_CHANGE);
                     }
                     initView();
@@ -1035,5 +1038,11 @@ public class MyOrderDetail extends BaseActivity {
             }
         }
         return result;
+    }
+
+    private void sendDataChangeBroadcast() {
+        LocalBroadcastManager manager = LocalBroadcastManager.getInstance(context);
+        Intent intent = new Intent(Constants.ORDER_DATA_CHANGE);
+        manager.sendBroadcast(intent);
     }
 }

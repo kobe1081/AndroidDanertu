@@ -14,17 +14,14 @@ import cn.jpush.android.api.JPushInterface;
 import com.config.Constants;
 import com.danertu.db.DBManager;
 import com.danertu.entity.Messagebean;
-import com.danertu.entity.MyOrderData;
 import com.danertu.tools.Logger;
 import com.danertu.widget.CommonTools;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Set;
-
 import static com.danertu.dianping.PersonalActivity.KEY_FROM_PUSH;
-import static com.danertu.dianping.PersonalActivity.KEY_IS_ONLY_HONTEL;
+import static com.danertu.dianping.PersonalActivity.KEY_IS_ONLY_HOTEL;
 import static com.danertu.dianping.PersonalActivity.KEY_TAB_INDEX;
 
 /**
@@ -166,7 +163,7 @@ public class JPushReceiver extends BroadcastReceiver {
                         Intent intent4 = new Intent(context, PersonalActivity.class);
                         intent4.putExtra(KEY_FROM_PUSH, true);
                         intent4.putExtra(KEY_TAB_INDEX, objectParam.getString("orderType"));
-                        intent4.putExtra(KEY_IS_ONLY_HONTEL, objectParam.getBoolean("isShowHotel"));
+                        intent4.putExtra(KEY_IS_ONLY_HOTEL, objectParam.getBoolean("isShowHotel"));
                         intent4.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
                         context.startActivity(intent4);
                         break;
