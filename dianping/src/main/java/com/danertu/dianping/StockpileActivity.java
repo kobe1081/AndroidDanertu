@@ -11,16 +11,16 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.danertu.dianping.frag.stockorder.StockOrderFragment;
-import com.danertu.dianping.frag.warehouse.WarehouseFragment;
+import com.danertu.dianping.fragment.stockorder.StockOrderFragment;
+import com.danertu.dianping.fragment.warehouse.WarehouseFragment;
 import com.danertu.listener.LoadingListener;
 import com.danertu.tools.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.danertu.dianping.frag.stockorder.StockOrderFragment.REQUEST_TO_ORDER_DETAIL;
-import static com.danertu.dianping.frag.warehouse.WarehouseFragment.REQUEST_DETAIL;
+import static com.danertu.dianping.fragment.stockorder.StockOrderFragment.REQUEST_TO_ORDER_DETAIL;
+import static com.danertu.dianping.fragment.warehouse.WarehouseFragment.REQUEST_DETAIL;
 
 /**
  * 2017年11月9日

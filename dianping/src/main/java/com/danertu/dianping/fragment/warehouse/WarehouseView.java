@@ -1,4 +1,4 @@
-package com.danertu.dianping.frag.warehouse;
+package com.danertu.dianping.fragment.warehouse;
 
 import com.danertu.base.BaseView;
 import com.danertu.entity.WarehouseBean;

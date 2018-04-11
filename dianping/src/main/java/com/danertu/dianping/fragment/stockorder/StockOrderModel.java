@@ -1,4 +1,4 @@
-package com.danertu.dianping.frag.stockorder;
+package com.danertu.dianping.fragment.stockorder;
 
 import android.os.Handler;
 
@@ -13,11 +13,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.danertu.dianping.frag.stockorder.StockOrderPresenter.MSG_GET_DATA_FAIL;
-import static com.danertu.dianping.frag.stockorder.StockOrderPresenter.MSG_GET_DATA_SUCCESS;
-import static com.danertu.dianping.frag.stockorder.StockOrderPresenter.MSG_LOAD_MORE_FAIL;
-import static com.danertu.dianping.frag.stockorder.StockOrderPresenter.MSG_LOAD_MORE_SUCCESS;
-import static com.danertu.dianping.frag.stockorder.StockOrderPresenter.MSG_NO_MORE_DATA;
+import static com.danertu.dianping.fragment.stockorder.StockOrderPresenter.MSG_GET_DATA_FAIL;
+import static com.danertu.dianping.fragment.stockorder.StockOrderPresenter.MSG_GET_DATA_SUCCESS;
+import static com.danertu.dianping.fragment.stockorder.StockOrderPresenter.MSG_LOAD_MORE_FAIL;
+import static com.danertu.dianping.fragment.stockorder.StockOrderPresenter.MSG_LOAD_MORE_SUCCESS;
+import static com.danertu.dianping.fragment.stockorder.StockOrderPresenter.MSG_NO_MORE_DATA;
 
 /**
  * Created by Viz on 2017/12/21.

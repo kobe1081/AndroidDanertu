@@ -1,4 +1,4 @@
-package com.danertu.dianping.frag.stockorder;
+package com.danertu.dianping.fragment.stockorder;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,7 +11,7 @@ import com.danertu.base.BasePresenter;
 import com.danertu.base.IPresenter;
 
 import static com.danertu.dianping.StockOrderDetailActivity.RESULT_RETURN;
-import static com.danertu.dianping.frag.stockorder.StockOrderFragment.REQUEST_TO_ORDER_DETAIL;
+import static com.danertu.dianping.fragment.stockorder.StockOrderFragment.REQUEST_TO_ORDER_DETAIL;
 
 /**
  * Created by Viz on 2017/12/21.

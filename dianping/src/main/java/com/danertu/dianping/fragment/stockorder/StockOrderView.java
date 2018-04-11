@@ -1,4 +1,4 @@
-package com.danertu.dianping.frag.stockorder;
+package com.danertu.dianping.fragment.stockorder;
 
 import com.danertu.base.BaseView;
 import com.danertu.entity.WareHouseOrderBean;

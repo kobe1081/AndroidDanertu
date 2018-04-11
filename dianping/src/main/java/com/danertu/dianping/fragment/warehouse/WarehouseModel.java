@@ -1,4 +1,4 @@
-package com.danertu.dianping.frag.warehouse;
+package com.danertu.dianping.fragment.warehouse;
 
 import android.os.Handler;
 
@@ -14,11 +14,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.danertu.dianping.frag.warehouse.WarehousePresenter.MSG_DATA_FAIL;
-import static com.danertu.dianping.frag.warehouse.WarehousePresenter.MSG_DATA_SUCCESS;
-import static com.danertu.dianping.frag.warehouse.WarehousePresenter.MSG_LOAD_MORE_FAIL;
-import static com.danertu.dianping.frag.warehouse.WarehousePresenter.MSG_LOAD_MORE_NO_DATA;
-import static com.danertu.dianping.frag.warehouse.WarehousePresenter.MSG_LOAD_MORE_SUCCESS;
+import static com.danertu.dianping.fragment.warehouse.WarehousePresenter.MSG_DATA_FAIL;
+import static com.danertu.dianping.fragment.warehouse.WarehousePresenter.MSG_DATA_SUCCESS;
+import static com.danertu.dianping.fragment.warehouse.WarehousePresenter.MSG_LOAD_MORE_FAIL;
+import static com.danertu.dianping.fragment.warehouse.WarehousePresenter.MSG_LOAD_MORE_NO_DATA;
+import static com.danertu.dianping.fragment.warehouse.WarehousePresenter.MSG_LOAD_MORE_SUCCESS;
 
 /**
  * Created by Viz on 2017/12/21.

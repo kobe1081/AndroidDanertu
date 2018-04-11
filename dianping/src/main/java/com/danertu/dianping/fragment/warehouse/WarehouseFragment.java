@@ -1,4 +1,4 @@
-package com.danertu.dianping.frag.warehouse;
+package com.danertu.dianping.fragment.warehouse;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,7 +6,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,18 +17,14 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.config.Constants;
 import com.danertu.base.BaseFragment;
 import com.danertu.dianping.R;
 import com.danertu.dianping.StockDetailActivity;
 import com.danertu.entity.WarehouseBean;
 import com.danertu.listener.LoadingListener;
-import com.danertu.tools.AsyncTask;
-import com.danertu.tools.Logger;
 import com.danertu.widget.XListView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

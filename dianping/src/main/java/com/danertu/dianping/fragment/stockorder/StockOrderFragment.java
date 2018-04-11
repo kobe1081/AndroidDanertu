@@ -1,4 +1,4 @@
-package com.danertu.dianping.frag.stockorder;
+package com.danertu.dianping.fragment.stockorder;
 
 import android.content.Intent;
 import android.graphics.Paint;

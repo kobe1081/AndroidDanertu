@@ -1,9 +1,8 @@
-package com.danertu.dianping.frag.warehouse;
+package com.danertu.dianping.fragment.warehouse;
 
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
 
 import com.config.Constants;
 import com.danertu.base.BasePresenter;
