@@ -16,7 +16,8 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2bd52f5d-e648-4b27-8c5d-6add5230634d" name="Default" comment="87大改版">
+    <list default="true" id="2bd52f5d-e648-4b27-8c5d-6add5230634d" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -53,7 +54,7 @@
       <file leaf-file-name="Constants.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/config/Constants.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="689">
+            <state relative-caret-position="5130">
               <caret line="369" column="44" lean-forward="false" selection-start-line="369" selection-start-column="44" selection-end-line="369" selection-end-column="44" />
               <folding />
             </state>
@@ -63,7 +64,7 @@
       <file leaf-file-name="MyOrderData.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/MyOrderData.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1755">
+            <state relative-caret-position="135">
               <caret line="46" column="22" lean-forward="false" selection-start-line="46" selection-start-column="22" selection-end-line="46" selection-end-column="22" />
               <folding>
                 <element signature="e#15322#15323#0" expanded="true" />
@@ -76,14 +77,12 @@
       <file leaf-file-name="MyOrderAdapter.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/adapter/MyOrderAdapter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="269">
+            <state relative-caret-position="8865">
               <caret line="733" column="88" lean-forward="false" selection-start-line="733" selection-start-column="88" selection-end-line="733" selection-end-column="88" />
               <folding>
                 <element signature="e#20901#20945#0" expanded="false" />
                 <element signature="e#23124#23261#0" expanded="false" />
                 <element signature="e#26866#26905#0" expanded="false" />
-                <element signature="e#31951#33162#0" expanded="true" />
-                <element signature="e#33161#33162#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -93,7 +92,7 @@
         <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderParent.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="44">
-              <caret line="212" column="82" lean-forward="true" selection-start-line="212" selection-start-column="82" selection-end-line="212" selection-end-column="82" />
+              <caret line="212" column="82" lean-forward="false" selection-start-line="212" selection-start-column="82" selection-end-line="212" selection-end-column="82" />
               <folding />
             </state>
           </provider>
@@ -102,7 +101,7 @@
       <file leaf-file-name="MyOrderActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="584">
+            <state relative-caret-position="7545">
               <caret line="568" column="11" lean-forward="false" selection-start-line="568" selection-start-column="11" selection-end-line="568" selection-end-column="11" />
               <folding />
             </state>
@@ -112,7 +111,7 @@
       <file leaf-file-name="QRCodeDetailActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/QRCodeDetailActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-495">
+            <state relative-caret-position="495">
               <caret line="61" column="59" lean-forward="false" selection-start-line="61" selection-start-column="59" selection-end-line="61" selection-end-column="59" />
               <folding />
             </state>
@@ -122,7 +121,7 @@
       <file leaf-file-name="MyOrderDetail.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderDetail.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="194">
+            <state relative-caret-position="20130">
               <caret line="1437" column="24" lean-forward="false" selection-start-line="1437" selection-start-column="24" selection-end-line="1529" selection-end-column="25" />
               <folding>
                 <element signature="e#35759#35788#0" expanded="false" />
@@ -6386,9 +6385,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
+      <pane id="ProjectPane" />
       <pane id="PackagesPane" />
-      <pane id="Scratches" />
       <pane id="AndroidView">
         <subPane>
           <expand>
@@ -6453,7 +6451,8 @@
           <select />
         </subPane>
       </pane>
-      <pane id="ProjectPane" />
+      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -6681,7 +6680,14 @@
       <option name="project" value="LOCAL" />
       <updated>1526970800973</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="87大改版">
+      <created>1526970832268</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1526970832268</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TodoView">
@@ -6696,14 +6702,13 @@
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <layout>
-      <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.515778" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.515778" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297062" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297062" sideWeight="0.5021322" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3297062" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -6725,6 +6730,7 @@
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297062" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
@@ -6834,7 +6840,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="612">
           <caret line="155" column="26" lean-forward="false" selection-start-line="155" selection-start-column="26" selection-end-line="155" selection-end-column="26" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -6860,7 +6865,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="379">
           <caret line="960" column="18" lean-forward="false" selection-start-line="960" selection-start-column="18" selection-end-line="960" selection-end-column="18" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -6954,7 +6958,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
           <caret line="25" column="48" lean-forward="false" selection-start-line="25" selection-start-column="48" selection-end-line="25" selection-end-column="48" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -6981,7 +6984,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
           <caret line="33" column="54" lean-forward="false" selection-start-line="33" selection-start-column="54" selection-end-line="33" selection-end-column="54" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -6992,7 +6994,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
           <caret line="11" column="45" lean-forward="false" selection-start-line="11" selection-start-column="45" selection-end-line="11" selection-end-column="45" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -7019,7 +7020,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="405">
           <caret line="36" column="40" lean-forward="false" selection-start-line="36" selection-start-column="40" selection-end-line="36" selection-end-column="40" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -7030,11 +7030,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1830">
           <caret line="122" column="45" lean-forward="false" selection-start-line="122" selection-start-column="29" selection-end-line="122" selection-end-column="45" />
-          <folding>
-            <marker date="1526626672473" expanded="false" signature="1112:1139" ph="&quot;50dp&quot;" />
-            <marker date="1526626672473" expanded="false" signature="2760:2784" ph="&quot;14sp&quot;" />
-            <marker date="1526626672473" expanded="false" signature="4231:4260" ph="&quot;13sp&quot;" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -7053,7 +7048,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="297">
           <caret line="84" column="23" lean-forward="false" selection-start-line="84" selection-start-column="23" selection-end-line="84" selection-end-column="23" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -7088,20 +7082,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="349">
           <caret line="279" column="53" lean-forward="false" selection-start-line="279" selection-start-column="53" selection-end-line="279" selection-end-column="53" />
-          <folding>
-            <element signature="e#4708#4851#0" expanded="false" />
-            <element signature="e#4850#4851#0" expanded="false" />
-            <element signature="e#5068#5211#0" expanded="false" />
-            <element signature="e#5210#5211#0" expanded="false" />
-            <element signature="e#5777#6273#0" expanded="false" />
-            <element signature="e#6272#6273#0" expanded="false" />
-            <element signature="e#6333#6928#0" expanded="false" />
-            <element signature="e#6927#6928#0" expanded="false" />
-            <element signature="e#6991#7497#0" expanded="false" />
-            <element signature="e#7496#7497#0" expanded="false" />
-            <element signature="e#7555#8056#0" expanded="false" />
-            <element signature="e#8055#8056#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -7112,12 +7092,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
           <caret line="17" column="48" lean-forward="true" selection-start-line="17" selection-start-column="48" selection-end-line="17" selection-end-column="48" />
-          <folding>
-            <element signature="e#7941#7978#0" expanded="false" />
-            <element signature="e#10733#10766#0" expanded="false" />
-            <element signature="e#14125#14156#0" expanded="false" />
-            <element signature="e#18293#18320#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -7147,7 +7121,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/config/Constants.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="689">
+        <state relative-caret-position="5130">
           <caret line="369" column="44" lean-forward="false" selection-start-line="369" selection-start-column="44" selection-end-line="369" selection-end-column="44" />
           <folding />
         </state>
@@ -7157,7 +7131,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="269">
           <caret line="6754" column="40" lean-forward="false" selection-start-line="6754" selection-start-column="29" selection-end-line="6754" selection-end-column="40" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -7165,27 +7138,24 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="184">
           <caret line="8592" column="27" lean-forward="false" selection-start-line="8592" selection-start-column="27" selection-end-line="8592" selection-end-column="27" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/adapter/MyOrderAdapter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="269">
+        <state relative-caret-position="8865">
           <caret line="733" column="88" lean-forward="false" selection-start-line="733" selection-start-column="88" selection-end-line="733" selection-end-column="88" />
           <folding>
             <element signature="e#20901#20945#0" expanded="false" />
             <element signature="e#23124#23261#0" expanded="false" />
             <element signature="e#26866#26905#0" expanded="false" />
-            <element signature="e#31951#33162#0" expanded="true" />
-            <element signature="e#33161#33162#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/MyOrderData.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1755">
+        <state relative-caret-position="135">
           <caret line="46" column="22" lean-forward="false" selection-start-line="46" selection-start-column="22" selection-end-line="46" selection-end-column="22" />
           <folding>
             <element signature="e#15322#15323#0" expanded="true" />
@@ -7228,7 +7198,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/QRCodeDetailActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-495">
+        <state relative-caret-position="495">
           <caret line="61" column="59" lean-forward="false" selection-start-line="61" selection-start-column="59" selection-end-line="61" selection-end-column="59" />
           <folding />
         </state>
@@ -7236,7 +7206,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="584">
+        <state relative-caret-position="7545">
           <caret line="568" column="11" lean-forward="false" selection-start-line="568" selection-start-column="11" selection-end-line="568" selection-end-column="11" />
           <folding />
         </state>
@@ -7260,7 +7230,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderDetail.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
+        <state relative-caret-position="20130">
           <caret line="1437" column="24" lean-forward="false" selection-start-line="1437" selection-start-column="24" selection-end-line="1529" selection-end-column="25" />
           <folding>
             <element signature="e#35759#35788#0" expanded="false" />
@@ -7272,14 +7242,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
           <caret line="16" column="52" lean-forward="true" selection-start-line="16" selection-start-column="52" selection-end-line="16" selection-end-column="52" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderParent.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="44">
-          <caret line="212" column="82" lean-forward="true" selection-start-line="212" selection-start-column="82" selection-end-line="212" selection-end-column="82" />
+          <caret line="212" column="82" lean-forward="false" selection-start-line="212" selection-start-column="82" selection-end-line="212" selection-end-column="82" />
           <folding />
         </state>
       </provider>
