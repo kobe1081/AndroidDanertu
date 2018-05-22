@@ -17,290 +17,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2bd52f5d-e648-4b27-8c5d-6add5230634d" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/adapter/MyOrderQRCodeAdapter.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/base/NewBaseActivity.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/base/NewBaseFragment.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/base/NewBasePresenter.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/IndexNewActivity.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MessageActivity.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderCompleteQRCodeActivity.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderNoUseActivity.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderQRCodeActivity.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderQRCodeParentActivity.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/OrderCenterActivity.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/activity/index/IndexContact.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/activity/index/IndexModel.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/activity/index/IndexPresenter.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/activity/ordercenter/OrderCenterContact.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/activity/ordercenter/OrderCenterModel.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/activity/ordercenter/OrderCenterPresenter.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/fragment/index/IndexFragment.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/fragment/index/IndexFragmentContact.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/fragment/index/IndexFragmentModel.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/fragment/index/IndexFragmentPresenter.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/fragment/orderitem/OrderItemContact.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/fragment/orderitem/OrderItemFragment.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/fragment/orderitem/OrderItemModel.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/fragment/orderitem/OrderItemPresenter.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/ContactBean.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/MyOrderDataQRCode.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/DateTimeUtils.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/MIUIUtils.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/PayUtils.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/SPTool.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/bg_blue_solid_round.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/bg_bottom_line.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/bg_gray_line_border.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/bg_item_order_center.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/bg_item_order_center_btn.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/bg_left_red_line.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/bg_order_detail_pay_btn.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/bg_red_round_corner.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/bg_shopcar_cb.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/bg_shopcar_edit.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/bg_top_line.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/bg_white_click_gray.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/bg_yellow_solid_round.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/divider_order_item.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/home_tab_message_selector.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/home_tab_search_selector.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/main_menu_text.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_index_new.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_my_order_listitem_bak.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_my_order_produce_item_new.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_order_center.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/app_title7.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/fragment_index.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/fragment_orer_item.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/item_order_center.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/item_popup_contact.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/item_qrcode_order.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/item_shop_car_list.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/item_shopcar_list_item.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/popup_choose_pay_way.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/popup_contact_list.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/popup_order_detail_contact_kf.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/delete.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_add_new.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_book.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_car.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_close2.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_close_new.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_help.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_ku.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_msg_new.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_msg_order.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_msgon.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_order.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_payali.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_paybydet.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_paygoon.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_paywechat.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_product.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_reduce.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_search_new.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_search_on.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_selectoff.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_selecton.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_setting.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_shop.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_shoppingcar.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/icon_system_news.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/order.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/qr_code_gray.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/setting.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi/shop.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/delete.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_add_new.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_book.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_car.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_close2.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_close_new.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_help.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_ku.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_msg_new.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_msg_order.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_msgon.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_order.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_payali.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_paybydet.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_paygoon.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_paywechat.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_product.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_reduce.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_search_new.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_search_on.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_selectoff.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_selecton.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_setting.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_shop.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_shoppingcar.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/icon_system_news.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/order.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/qr_code_gray.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/setting.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xhdpi/shop.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/delete.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_add_new.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_book.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_car.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_close2.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_close_new.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_help.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_ku.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_msg_new.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_msg_order.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_msgon.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_order.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_payali.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_paybydet.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_paygoon.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_paywechat.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_product.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_reduce.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_search_new.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_search_on.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_selectoff.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_selecton.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_setting.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_shop.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_shoppingcar.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/icon_system_news.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/order.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/point_red.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/qr_code_gray.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/setting.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/shop.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/mipmap-xxhdpi/shopcar_tip.png" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" afterPath="$PROJECT_DIR$/.idea/gradle.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_code_library_libs_nineoldandroids_2_4_0_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_dianping_libs_BaiduLBS_Android_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_dianping_libs_Msc_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_dianping_libs_alipaysdk_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_dianping_libs_alipaysecsdk_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_dianping_libs_alipayutdid_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_dianping_libs_jpush_android_2_1_5_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_dianping_libs_libammsdk_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_dianping_libs_need_lib_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_dianping_libs_testinagent_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_dianping_libs_umeng_analytics_v5_5_3_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_dianping_libs_universal_image_loader_1_8_6_with_sources_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_libzxing_libs_zxing_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_onekeyshare_libs_MobCommons_2017_0914_1125_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_onekeyshare_libs_MobTools_2017_0914_1125_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_onekeyshare_libs_ShareSDK_Core_3_1_0_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_onekeyshare_libs_ShareSDK_Email_3_1_0_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_onekeyshare_libs_ShareSDK_Facebook_3_1_0_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_onekeyshare_libs_ShareSDK_QQ_3_1_0_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_onekeyshare_libs_ShareSDK_QZone_3_1_0_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_onekeyshare_libs_ShareSDK_ShortMessage_3_1_0_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_onekeyshare_libs_ShareSDK_SinaWeibo_3_1_0_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_onekeyshare_libs_ShareSDK_TencentWeibo_3_1_0_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_onekeyshare_libs_ShareSDK_Twitter_3_1_0_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_onekeyshare_libs_ShareSDK_Wechat_3_1_0_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_onekeyshare_libs_ShareSDK_Wechat_Core_3_1_0_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_onekeyshare_libs_ShareSDK_Wechat_Favorite_3_1_0_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_onekeyshare_libs_ShareSDK_Wechat_Moments_3_1_0_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_xiaonengChatUI_libs_xiaoneng_mqtt_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_xiaonengChatUI_libs_xiaonengchatcore_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_xiaonengChatUI_libs_xiaonengchatui_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_xiaonengChatUI_libs_xiaonengnetwork_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_xiaonengChatUI_libs_xiaonengutil_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_aars___D__WorkSpace_Danertu_xiaonengChatUI_libs_xiaonengv4_jar_unspecified_jar.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations.xml" afterPath="$PROJECT_DIR$/.idea/runConfigurations.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/Danertu.iml" afterPath="$PROJECT_DIR$/Danertu.iml" />
-      <change beforePath="$PROJECT_DIR$/alipay_lib/alipay_lib.iml" afterPath="$PROJECT_DIR$/alipay_lib/alipay_lib.iml" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
-      <change beforePath="$PROJECT_DIR$/code_library/code_library.iml" afterPath="$PROJECT_DIR$/code_library/code_library.iml" />
-      <change beforePath="$PROJECT_DIR$/dianping/build.gradle" afterPath="$PROJECT_DIR$/dianping/build.gradle" />
-      <change beforePath="$PROJECT_DIR$/dianping/dianping.iml" afterPath="$PROJECT_DIR$/dianping/dianping.iml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/dianping/src/main/AndroidManifest.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/config/Constants.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/config/Constants.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/adapter/MyOrderAdapter.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/adapter/MyOrderAdapter.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/base/BaseFragment.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/base/BaseFragment.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/base/BaseModel.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/base/BaseModel.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/base/BasePresenter.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/base/BasePresenter.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/base/BaseView.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/base/BaseView.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/db/DBHelper.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/db/DBHelper.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/db/DBManager.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/db/DBManager.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseWebActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseWebActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/CalendarActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/CalendarActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/CartActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/CartActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/HomeActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/HomeActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/IndexActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/IndexActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/JPushReceiver.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/JPushReceiver.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/LoginActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/LoginActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MessageCenterActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MessageCenterActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderDetail.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderDetail.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderListAllActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderListAllActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderNoCommentActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderNoCommentActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderNoPayActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderNoPayActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderNoReceiveActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderNoReceiveActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderNoSendActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderNoSendActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderParent.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderParent.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/PaymentCenterActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/PaymentCenterActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/PersonalActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/PersonalActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/ProductDetailsActivity2.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/ProductDetailsActivity2.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/QRCodeDetailActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/QRCodeDetailActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/SearchActivityV2.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/SearchActivityV2.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/SplashActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/SplashActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/fragment/stockorder/StockOrderModel.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/fragment/stockorder/StockOrderModel.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/fragment/warehouse/WarehouseModel.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/fragment/warehouse/WarehouseModel.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/sign/CalendarAdapter.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/sign/CalendarAdapter.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/sign/Seference.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/sign/Seference.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/wxapi/WXPayEntryActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/wxapi/WXPayEntryActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/JPushBean.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/JPushBean.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/Messagebean.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/Messagebean.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/MyOrderData.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/MyOrderData.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/OrderHead.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/OrderHead.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AccToPay.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AccToPay.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AccountUtil.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AccountUtil.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/ApiService.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/config/ApiService.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AppClient.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AppClient.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AppManager.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AppManager.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/NoticeManager.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/NoticeManager.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/ProductDetailUtil.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/ProductDetailUtil.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/SystemBarTintManager.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/SystemBarTintManager.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/widget/CommonTools.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/widget/CommonTools.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/drawable/tabwidget_order_text.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/tabwidget_order_text.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_calendar.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_calendar.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_car.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_car.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_home.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_home.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_index.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_index.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_message_center.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_message_center.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_my_order.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_my_order.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_my_order_listitem.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_my_order_listitem.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_my_order_parent.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_my_order_parent.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_my_order_produce_item.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_my_order_produce_item.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_personal.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_personal.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_pick_up.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_pick_up.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_qrconde_detail.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_qrconde_detail.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_register.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/activity_register.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/base_search_layout.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/base_search_layout.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/dd_tabweight.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/dd_tabweight.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/item_textview.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/item_textview.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/message_list_item.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/message_list_item.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/order_detail.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/order_detail.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/pshop_listitem.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/pshop_listitem.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/search_result_item.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/search_result_item.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/tab_layout.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/tab_layout.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/values/attrs.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/values/attrs.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/values/colors.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/values/colors.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/values/strings.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/values/styles.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/values/styles.xml" />
-      <change beforePath="$PROJECT_DIR$/import-summary.txt" afterPath="$PROJECT_DIR$/import-summary.txt" />
-      <change beforePath="$PROJECT_DIR$/libzxing/libzxing.iml" afterPath="$PROJECT_DIR$/libzxing/libzxing.iml" />
-      <change beforePath="$PROJECT_DIR$/onekeyshare/onekeyshare.iml" afterPath="$PROJECT_DIR$/onekeyshare/onekeyshare.iml" />
-      <change beforePath="$PROJECT_DIR$/onekeyshare/proguard-rules.pro" afterPath="$PROJECT_DIR$/onekeyshare/proguard-rules.pro" />
-      <change beforePath="$PROJECT_DIR$/onekeyshare/src/main/res/values-en/ssdk_strings.xml" afterPath="$PROJECT_DIR$/onekeyshare/src/main/res/values-en/ssdk_strings.xml" />
-      <change beforePath="$PROJECT_DIR$/xiaonengChatUI/xiaonengChatUI.iml" afterPath="$PROJECT_DIR$/xiaonengChatUI/xiaonengChatUI.iml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -6950,6 +6667,14 @@
       <option name="presentableId" value="Default" />
       <updated>1523410206791</updated>
     </task>
+    <task id="LOCAL-00001" summary="87大改版">
+      <created>1526970606780</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1526970606780</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TodoView">
@@ -6963,7 +6688,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.515778" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297062" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -6974,7 +6698,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297062" sideWeight="0.5021322" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297062" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3297062" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.37105548" sideWeight="0.4978678" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -7057,6 +6781,10 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="87大改版" />
+    <option name="LAST_COMMIT_MESSAGE" value="87大改版" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
