@@ -37,6 +37,13 @@ public class AccountUtil {
         return aes.encrypt(msg);
     }
 
+    /**
+     * @param uid
+     * @param orderNum
+     * @param orderMoney
+     * @return 加密后的支付信息
+     * @throws Exception
+     */
     public String getPayInfo(String uid, String orderNum, String orderMoney) throws Exception {
         String msg = uid + "|" + orderNum + "|" + orderMoney;
         return aes.encrypt(msg);
@@ -45,6 +52,7 @@ public class AccountUtil {
     /**
      * 2018年1月3日
      * 囤货订单账号支付、退货运费账号支付
+     *
      * @param memLoginId
      * @param orderNum
      * @param payPrice
@@ -53,8 +61,8 @@ public class AccountUtil {
      * @throws Exception
      */
     public String getPayInfo(String memLoginId, String orderNum, String payPrice, String deviceType) throws Exception {
-        String msg = memLoginId + "|" + orderNum + "|" + payPrice+"|"+deviceType;
-        Logger.e(this.getClass().getSimpleName(),"{memLoginId:"+memLoginId+",orderNum:"+orderNum+",payPrice:"+payPrice+",deviceType:"+deviceType+"}");
+        String msg = memLoginId + "|" + orderNum + "|" + payPrice + "|" + deviceType;
+        Logger.e(this.getClass().getSimpleName(), "{memLoginId:" + memLoginId + ",orderNum:" + orderNum + ",payPrice:" + payPrice + ",deviceType:" + deviceType + "}");
         return aes.encrypt(msg);
     }
 

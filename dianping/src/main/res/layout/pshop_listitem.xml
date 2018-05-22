@@ -105,7 +105,7 @@
             style="@style/proOpera_et_value"
             android:digits="0123456789"
             android:hint="输入库存"
-            android:inputType="number"
+            android:inputType="phone"
             android:lines="1"
             android:maxLength="6"/>
     </LinearLayout>

@@ -9,7 +9,7 @@ import java.util.List;
 public class OrderHead {
 
     /**
-     * orderinfolist : {"orderinfobean":[{"Name":"测试","Mobile":"18677757641","Address":"","ClientToSellerMsg":"","InvoiceTitle":"null","CreateTime":"2018-1-24 16:21:33","PaymentName":"安卓端移动设备WAP支付-到付","PaymentStatus":"0","DispatchModeName":"","ShipmentNumber":"","ShouldPayPrice":"686.00","OrderNumber":"201801242133357","OderStatus":"1","orderType":"1","ShipmentStatus":"0","DispatchPrice":"0.00"}]}
+     * orderinfolist : {"orderinfobean":[{"Name":"测试","Mobile":"18677757641","Address":"","ClientToSellerMsg":"","InvoiceTitle":"null","CreateTime":"2018/3/26 16:14:39","PaymentName":"泉眼核销-到付","PaymentStatus":"2","DispatchModeName":"EMS","ShipmentNumber":"000","ShouldPayPrice":"120.00","MemLoginId":"13557013342","OrderNumber":"201803261439066","OderStatus":"5","orderType":"0","ShipmentStatus":"2","DispatchPrice":"0.00","DispatchTime":"2018/3/26 16:16:04"}]}
      */
 
     private OrderinfolistBean orderinfolist;
@@ -40,17 +40,19 @@ public class OrderHead {
              * Address :
              * ClientToSellerMsg :
              * InvoiceTitle : null
-             * CreateTime : 2018-1-24 16:21:33
-             * PaymentName : 安卓端移动设备WAP支付-到付
-             * PaymentStatus : 0
-             * DispatchModeName :
-             * ShipmentNumber :
-             * ShouldPayPrice : 686.00
-             * OrderNumber : 201801242133357
-             * OderStatus : 1
-             * orderType : 1
-             * ShipmentStatus : 0
+             * CreateTime : 2018/3/26 16:14:39
+             * PaymentName : 泉眼核销-到付
+             * PaymentStatus : 2
+             * DispatchModeName : EMS
+             * ShipmentNumber : 000
+             * ShouldPayPrice : 120.00
+             * MemLoginId : 13557013342
+             * OrderNumber : 201803261439066
+             * OderStatus : 5
+             * orderType : 0
+             * ShipmentStatus : 2
              * DispatchPrice : 0.00
+             * DispatchTime : 2018/3/26 16:16:04
              */
 
             private String Name;
@@ -64,11 +66,13 @@ public class OrderHead {
             private String DispatchModeName;
             private String ShipmentNumber;
             private String ShouldPayPrice;
+            private String MemLoginId;
             private String OrderNumber;
             private String OderStatus;
             private String orderType;
             private String ShipmentStatus;
             private String DispatchPrice;
+            private String DispatchTime;
 
             public String getName() {
                 return Name;
@@ -158,6 +162,14 @@ public class OrderHead {
                 this.ShouldPayPrice = ShouldPayPrice;
             }
 
+            public String getMemLoginId() {
+                return MemLoginId;
+            }
+
+            public void setMemLoginId(String MemLoginId) {
+                this.MemLoginId = MemLoginId;
+            }
+
             public String getOrderNumber() {
                 return OrderNumber;
             }
@@ -198,6 +210,14 @@ public class OrderHead {
                 this.DispatchPrice = DispatchPrice;
             }
 
+            public String getDispatchTime() {
+                return DispatchTime;
+            }
+
+            public void setDispatchTime(String DispatchTime) {
+                this.DispatchTime = DispatchTime;
+            }
+
             @Override
             public String toString() {
                 return "OrderinfobeanBean{" +
@@ -212,13 +232,22 @@ public class OrderHead {
                         ", DispatchModeName='" + DispatchModeName + '\'' +
                         ", ShipmentNumber='" + ShipmentNumber + '\'' +
                         ", ShouldPayPrice='" + ShouldPayPrice + '\'' +
+                        ", MemLoginId='" + MemLoginId + '\'' +
                         ", OrderNumber='" + OrderNumber + '\'' +
                         ", OderStatus='" + OderStatus + '\'' +
                         ", orderType='" + orderType + '\'' +
                         ", ShipmentStatus='" + ShipmentStatus + '\'' +
                         ", DispatchPrice='" + DispatchPrice + '\'' +
+                        ", DispatchTime='" + DispatchTime + '\'' +
                         '}';
             }
+        }
+
+        @Override
+        public String toString() {
+            return "OrderinfolistBean{" +
+                    "orderinfobean=" + orderinfobean +
+                    '}';
         }
     }
 

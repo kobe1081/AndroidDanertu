@@ -16,7 +16,6 @@ import java.util.Map;
 
 /**
  * presenter基类
- * Created by Viz on 2017/10/16.
  */
 
 public abstract class BasePresenter<T> {
@@ -25,10 +24,9 @@ public abstract class BasePresenter<T> {
     public Context context;
     public final String TAG = this.getClass().getSimpleName();
     public Handler handler;
-
+    public BaseModel model;
     public BasePresenter(Context context) {
         this.context = context;
-
     }
 
     public void attach(T mView) {
@@ -126,5 +124,7 @@ public abstract class BasePresenter<T> {
         params.append("}");
         return params.toString();
     }
+
+
 
 }

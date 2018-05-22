@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/fl_main"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+    <!--底部按钮-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/gray_text_bbb" />
+
+    <LinearLayout
+        android:id="@+id/ll_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/ll_menu_index"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="3dp">
+
+                <TextView
+                    android:id="@+id/tv_menu_index"
+                    style="@style/main_menu_text_style"
+                    android:drawableTop="@drawable/home_tab_main_selector"
+                    android:text="首页" />
+                <!--右上角小红点-->
+                <ImageView
+                    android:id="@+id/iv_menu_index_point"
+                    style="@style/main_menu_red_point_style"
+                    android:layout_gravity="right|top"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll_menu_search"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="3dp">
+
+                <TextView
+                    android:id="@+id/tv_menu_search"
+                    style="@style/main_menu_text_style"
+                    android:drawableTop="@drawable/home_tab_search_selector"
+                    android:text="搜索" />
+                <!--右上角小红点-->
+                <ImageView
+                    android:id="@+id/iv_menu_search_point"
+                    style="@style/main_menu_red_point_style"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_menu_shop_car"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="3dp">
+
+                <TextView
+                    android:id="@+id/tv_menu_shop_car"
+                    style="@style/main_menu_text_style"
+                    android:drawableTop="@drawable/home_tab_cart_selector"
+
+                    android:text="购物车" />
+                <!--右上角小红点-->
+                <ImageView
+                    android:id="@+id/iv_menu_shop_car_point"
+                    style="@style/main_menu_red_point_style"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_menu_message"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="3dp">
+
+                <TextView
+                    android:id="@+id/tv_menu_message"
+                    style="@style/main_menu_text_style"
+                    android:drawableTop="@drawable/home_tab_message_selector"
+                    android:text="消息" />
+                <!--右上角小红点-->
+                <ImageView
+                    android:id="@+id/iv_menu_message_point"
+                    style="@style/main_menu_red_point_style"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_menu_mine"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="3dp">
+
+                <TextView
+                    android:id="@+id/tv_menu_mine"
+                    style="@style/main_menu_text_style"
+                    android:drawableTop="@drawable/home_tab_personal_selector"
+                    android:text="我的" />
+
+                <ImageView
+                    android:id="@+id/iv_menu_mine_point"
+                    style="@style/main_menu_red_point_style"
+                    android:layout_toRightOf="@id/tv_menu_mine"
+                    android:visibility="gone" />
+                <!--右上角小红点-->
+            </FrameLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

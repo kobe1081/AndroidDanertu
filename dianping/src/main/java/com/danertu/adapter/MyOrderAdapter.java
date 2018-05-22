@@ -11,9 +11,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +28,7 @@ import com.danertu.dianping.ActivityUtils;
 import com.danertu.dianping.BaseActivity;
 import com.danertu.dianping.MyOrderActivity;
 import com.danertu.dianping.MyOrderDetail;
-import com.danertu.dianping.MyOrderNoPayActivity;
+import com.danertu.dianping.MyOrderListAllActivity;
 import com.danertu.dianping.MyOrderParent;
 import com.danertu.dianping.MyOrderShipmentActivity;
 import com.danertu.dianping.PayPrepareActivity;
@@ -40,26 +38,51 @@ import com.danertu.entity.MyOrderData;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.Logger;
 import com.danertu.tools.MyDialog;
+import com.danertu.tools.PayUtils;
 import com.danertu.widget.CommonTools;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import static com.danertu.entity.MyOrderData.ORDER_ITEM_ARRIVE_TIME;
-
 public class MyOrderAdapter extends BaseAdapter {
-    Context context = null;
+    public static final int REQUEST_QRCODE = 122;
+    private Context context = null;
+    private MyOrderParent myOrderParent;
     private List<HashMap<String, Object>> dataList = null;
     private DBManager db = null;
     private ImageLoader imgLoader = null;
     private long firstClick;
     private boolean isQuanyan = false;
-    public static final int REQUEST_ORDER_DETAIL=121;
+    public static final int REQUEST_ORDER_DETAIL = 121;
     private int tabIndex;
-    public MyOrderAdapter(Context context, List<HashMap<String, Object>> data,int tabIndex) {
+
+    public static final String STATUS_NO_PAY = "等待支付";
+    public static final String STATUS_NO_SEND = "待发货";
+    public static final String STATUS_NO_RECEIVE = "待收货";
+    public static final String STATUS_PAY_BACK_ING = "退款中";
+    public static final String STATUS_PAY_REFUND = "已退款";
+    public static final String STATUS_CANCELED = "已取消";
+    public static final String STATUS_INVALID = "已作废";
+    public static final String STATUS_SUCCESS = "交易成功";
+    public static final String STATUS_RETURNNING = "请退货";
+    public static final String STATUS_TICKET_NO_USE = "待使用";
+    public static final String STATUS_TICKET_USED = "已使用";
+
+
+    private static final String BTN_PAY = "支付";
+    private static final String BTN_CANCEL_ORDER = "取消订单";
+    private static final String BTN_PAYBACK = "申请退款";
+    private static final String BTN_SURE_TAKE_GOODS = "确认收货";
+    private static final String BTN_CHECK_SHIPMENT = "查看物流";
+    private static final String BTN_CHECK = "查看";
+    private static final String BTN_QRCODE = "查看券码";
+    private boolean isPayLoading;
+
+    public MyOrderAdapter(Context context, List<HashMap<String, Object>> data, int tabIndex) {
         this.context = context;
+        myOrderParent = ((MyOrderParent) context);
         this.dataList = data;
         db = DBManager.getInstance();
         imgLoader = ImageLoader.getInstance();
-        this.tabIndex=tabIndex;
+        this.tabIndex = tabIndex;
         firstClick = System.currentTimeMillis();
     }
 
@@ -134,7 +157,8 @@ public class MyOrderAdapter extends BaseAdapter {
     }
 
     /**
-     *  显示商品信息
+     * 显示商品信息
+     *
      * @param p
      * @param ll_parent
      * @param tv_priceSum
@@ -145,7 +169,7 @@ public class MyOrderAdapter extends BaseAdapter {
         // 实例化好列表里面的商品信息
         int yorderCount = 0;
         final HashMap<String, Object> headItems = dataList.get(p);
-        Logger.i(getClass().getSimpleName(),headItems.toString());
+        Logger.i(getClass().getSimpleName(), headItems.toString());
         List<HashMap<String, String>> list_orderSet = (List) headItems.get(MyOrderData.ORDER_ITEMSET_KEY);
         ImageView iv_pro_logo = null;
         TextView tv_title = null;
@@ -157,10 +181,19 @@ public class MyOrderAdapter extends BaseAdapter {
         TextView tv_order_2 = null;
         TextView tv_favorablePrice = null;
 
+        /**
+         * 2018年4月13日
+         * 类型：成人票
+         * or
+         * 入住时间：2018.4.13. 15:00后
+         */
+        TextView tv_item_quanyan_product_tip = null;
+
         TextView tv_market_price = null;
         String imgPath = null;
+
         for (HashMap<String, String> orderItem : list_orderSet) {
-            View v_orderItem = LayoutInflater.from(context).inflate(R.layout.activity_my_order_produce_item, null);
+            View v_orderItem = LayoutInflater.from(context).inflate(R.layout.activity_my_order_produce_item_new, null);
 
 //			final String guid = orderItem.get("Guid");
             final String title = orderItem.get("Name");
@@ -173,9 +206,11 @@ public class MyOrderAdapter extends BaseAdapter {
             final String num = orderItem.get("BuyNumber");
             final String attrParam = orderItem.get(MyOrderData.ORDER_ITEM_ATTRIBUTE);
 
-            //获取供应商ID，如果等于shopnum1说明是泉眼商品
-            String suppID = orderItem.get(MyOrderData.ORDER_ITEM_SUPPLIERID_KEY);
-            isQuanyan = suppID.equals(Constants.QY_SUPPLIERID);
+            final String other1 = orderItem.get("other1");
+            final String other2 = orderItem.get("other2");
+
+            //如果供应商ID等于shopnum1说明是泉眼商品
+            isQuanyan = supplierLoginId.equals(Constants.QY_SUPPLIERID);
 
 
 //			final String mobile = orderItem.get("mobile");
@@ -190,6 +225,7 @@ public class MyOrderAdapter extends BaseAdapter {
             tv_order_1 = ((TextView) v_orderItem.findViewById(R.id.tv_order_1));
             tv_order_2 = ((TextView) v_orderItem.findViewById(R.id.tv_order_2));
             tv_favorablePrice = ((TextView) v_orderItem.findViewById(R.id.tv_order_discount_price));
+            tv_item_quanyan_product_tip = ((TextView) v_orderItem.findViewById(R.id.tv_item_quanyan_product_tip));
 
             imgPath = getSmallImgPath(smallImage, agentID, supplierLoginId);
 
@@ -227,8 +263,8 @@ public class MyOrderAdapter extends BaseAdapter {
                         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         Bundle bundle = new Bundle();
                         bundle.putSerializable(MyOrderDetail.KEY_ORDER_ITEM, headItems);
-                        bundle.putInt("tab_index",tabIndex);
-                        bundle.putInt("position",p);
+                        bundle.putInt("tab_index", tabIndex);
+                        bundle.putInt("position", p);
                         intent.putExtras(bundle);
                         ((Activity) context).startActivityForResult(intent, REQUEST_ORDER_DETAIL);
                     }
@@ -241,11 +277,29 @@ public class MyOrderAdapter extends BaseAdapter {
             String joinString = orderItem.get("joinCount");
             tCount = MyOrderData.getRealCount(tCount, joinString);
 
+            //TODO 门票票型、酒店入住时间
+//            if (isQuanyan){
+//
+//                //两个都不为空，说明是酒店
+//                if (!TextUtils.isEmpty(other1)&&!TextUtils.isEmpty(other2)){
+//                    tv_item_quanyan_product_tip.setText("入住时间："+other1);
+//                }
+//                //other1不为空，other2为空，门票
+//                if (!TextUtils.isEmpty(other1)&&!TextUtils.isEmpty(other2)){
+//                    String type="";
+//                    tv_item_quanyan_product_tip.setText("票型："+other1);
+//                }
+//
+//                tv_item_quanyan_product_tip.setVisibility(View.VISIBLE);
+//            }
+
         }
 
         String totalPrice = dataList.get(p).get(MyOrderData.ORDER_SHOULDPAY_KEY).toString();
 
         tv_priceSum.setText("共" + yorderCount + "件商品(含运费)：" + "￥" + totalPrice);
+
+
     }
 
     protected String getHandleAttrs(String attrParam) {
@@ -283,6 +337,7 @@ public class MyOrderAdapter extends BaseAdapter {
 
     /**
      * 设置按钮显示文字
+     *
      * @param p             position
      * @param tv_traceState 物流状态
      * @param b_left
@@ -296,261 +351,476 @@ public class MyOrderAdapter extends BaseAdapter {
         View parent = (View) b_left.getParent();
         parent.setVisibility(View.VISIBLE);
         if (pResult.equals("0")) {// 付款状态为 未付款
-            tv_traceState.setText("待付款");
-            b_center.setVisibility(View.VISIBLE);
-            b_right.setVisibility(View.VISIBLE);
-            b_center.setText("取消订单");
-            b_right.setText("付款");
-            b_right.setBackgroundResource(R.drawable.b_corner_red1);
-            b_right.setTextColor(ContextCompat.getColor(context, R.color.red_text1));
-        } else if (sResult.equals("0") && pResult.equals("2")) {// 已付款 ，未发货
-            tv_traceState.setText("已付款");
-            b_center.setVisibility(View.GONE);
-            b_right.setVisibility(View.VISIBLE);
-            b_left.setVisibility(View.GONE);
-            b_right.setText("申请退款");
-            b_right.setBackgroundResource(R.drawable.b_corner_gray1);
-            b_right.setTextColor(ContextCompat.getColor(context, R.color.gray_text_aaa));
 
+            if (isQuanyan) {
+                b_center.setText(BTN_PAY);
+                b_right.setText(BTN_QRCODE);
+                b_center.setVisibility(View.VISIBLE);
+                b_right.setVisibility(View.VISIBLE);
+                tv_traceState.setText(STATUS_TICKET_NO_USE);
+            } else {
+                b_right.setText(BTN_PAY);
+                b_center.setVisibility(View.GONE);
+                b_right.setVisibility(View.VISIBLE);
+                tv_traceState.setText(STATUS_NO_PAY);
+            }
+//            b_right.setBackgroundResource(R.drawable.b_corner_red1);
+//            b_right.setTextColor(ContextCompat.getColor(context, R.color.red_text1));
+        } else if (sResult.equals("0") && pResult.equals("2")) {// 已付款 ，未发货
+//            b_right.setBackgroundResource(R.drawable.b_corner_gray1);
+//            b_right.setTextColor(ContextCompat.getColor(context, R.color.gray_text_aaa));
+            if (isQuanyan) {
+                tv_traceState.setText(STATUS_TICKET_NO_USE);
+                b_right.setText(BTN_QRCODE);
+                b_center.setText(BTN_PAYBACK);
+                b_left.setVisibility(View.GONE);
+                b_center.setVisibility(View.VISIBLE);
+                b_right.setVisibility(View.VISIBLE);
+            } else {
+                b_right.setText(BTN_CANCEL_ORDER);
+                b_right.setVisibility(View.VISIBLE);
+                b_center.setVisibility(View.GONE);
+                b_left.setVisibility(View.GONE);
+                tv_traceState.setText(STATUS_NO_SEND);
+            }
 
         } else if (sResult.equals("1") && pResult.equals("2")) {// 已发货,买家待收货
-
-            //普通商品
-            tv_traceState.setText("待收货");
-            b_left.setVisibility(View.GONE);
-            b_center.setVisibility(View.VISIBLE);
-            b_right.setVisibility(View.VISIBLE);
-//			b_left.setText("申请退款");
-            b_center.setText("查看物流");
-            b_right.setText("确定收货");
-            b_right.setBackgroundResource(R.drawable.b_corner_red1);
-            b_right.setTextColor(ContextCompat.getColor(context, R.color.red_text1));
-        }
-
-        switch (oResult) {
-            case "2": //订单已取消
-                tv_traceState.setText("已取消");
+            if (isQuanyan) {
+                //泉眼
+                tv_traceState.setText(STATUS_TICKET_USED);
                 parent.setVisibility(View.GONE);
-
-                break;
-            case "3":
-                tv_traceState.setText("已作废");
-                parent.setVisibility(View.GONE);
-
-                break;
-            case "4":
-                tv_traceState.setText("请退货");
-                parent.setVisibility(View.GONE);
-
-                break;
-            case "5": // 已完成订单
-                tv_traceState.setText("交易成功");
+            } else {
+                //普通商品
+                tv_traceState.setText(STATUS_NO_RECEIVE);
                 b_left.setVisibility(View.GONE);
                 b_center.setVisibility(View.VISIBLE);
                 b_right.setVisibility(View.VISIBLE);
 //			b_left.setText("申请退款");
-                b_center.setText("查看物流");
-                b_right.setText("评价订单");
-                b_right.setBackgroundResource(R.drawable.b_corner_gray1);
-                b_right.setTextColor(ContextCompat.getColor(context, R.color.gray_text_aaa));
+                b_center.setText(BTN_CHECK_SHIPMENT);
+                b_right.setText(BTN_SURE_TAKE_GOODS);
+//            b_right.setBackgroundResource(R.drawable.b_corner_red1);
+//            b_right.setTextColor(ContextCompat.getColor(context, R.color.red_text1));
+            }
+
+        }
+
+        switch (oResult) {
+            case "2": //订单已取消
+                tv_traceState.setText(STATUS_CANCELED);
+                parent.setVisibility(View.GONE);
+
+                break;
+            case "3":
+                tv_traceState.setText(STATUS_INVALID);
+                parent.setVisibility(View.GONE);
+
+                break;
+            case "4":
+                tv_traceState.setText(STATUS_RETURNNING);
+//                parent.setVisibility(View.GONE);
+                b_center.setVisibility(View.GONE);
+                b_right.setVisibility(View.VISIBLE);
+                b_left.setVisibility(View.GONE);
+                b_right.setText(BTN_CHECK);
+                break;
+            case "5": // 已完成订单
+                if (isQuanyan) {
+                    tv_traceState.setText(STATUS_TICKET_USED);
+                    parent.setVisibility(View.GONE);
+//                b_right.setBackgroundResource(R.drawable.b_corner_gray1);
+//                b_right.setTextColor(ContextCompat.getColor(context, R.color.gray_text_aaa));
+                } else {
+                    tv_traceState.setText(STATUS_SUCCESS);
+                    b_left.setVisibility(View.GONE);
+                    b_center.setVisibility(View.VISIBLE);
+                    b_right.setVisibility(View.VISIBLE);
+//			b_left.setText("申请退款");
+                    b_center.setText(BTN_CHECK_SHIPMENT);
+//                b_right.setBackgroundResource(R.drawable.b_corner_gray1);
+//                b_right.setTextColor(ContextCompat.getColor(context, R.color.gray_text_aaa));
+                }
+
                 break;
             default:
                 break;
         }
-        if (sResult.equals("4")) {
-            tv_traceState.setText("退款中");
-            parent.setVisibility(View.GONE);
+        if (sResult.equals("4")) {//退款中
+            tv_traceState.setText(STATUS_PAY_BACK_ING);
+            b_left.setVisibility(View.GONE);
+            b_center.setVisibility(View.GONE);
+            b_right.setVisibility(View.VISIBLE);
+            b_right.setText(BTN_CHECK);
         }
         if (pResult.equals("3")) {// 表示已退款
-            tv_traceState.setText("已退款");
+            tv_traceState.setText(STATUS_PAY_REFUND);
             parent.setVisibility(View.GONE);
         }
 
-        setClickListener(p, b_left, b_center, b_right,sResult);
+
+        setClickListener(p, b_left, b_center, b_right, sResult);
     }
 
-    String orderNumber = null;
     Dialog askDialog = null;
 
     /**
      * 设置按钮点击事件
+     *
      * @param p
      * @param b_left
      * @param b_center
      * @param b_right
-     * @param shipmentStatus
+     * @param supplinerId
      */
-    private void setClickListener(final int p, final Button b_left, final Button b_center, final Button b_right, String shipmentStatus) {
+    private void setClickListener(final int p, final Button b_left, final Button b_center, final Button b_right, String supplinerId) {
+        final HashMap<String, Object> headItems = dataList.get(p);
+        final String number = headItems.get(MyOrderData.ORDER_ORDERNUMBER_KEY).toString();
         b_left.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-                HashMap<String, Object> headItems = dataList.get(p);
-                orderNumber = headItems.get(MyOrderData.ORDER_ORDERNUMBER_KEY).toString();
-
-                if (b_left.getText().toString().equals("申请退款")) {
+                if (isClickOften()) return;
+                if (b_left.getText().toString().equals(BTN_PAYBACK)) {
                     String priceSum = headItems.get(MyOrderData.ORDER_SHOULDPAY_KEY).toString();
-                    applyDrawBack(priceSum, orderNumber);
+                    applyDrawBack(priceSum, number);
                 }
             }
         });
 
         b_center.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                HashMap<String, Object> headItems = dataList.get(p);
+                if (isClickOften()) return;
                 // List proItems = (List) headItems.get(MyOrderData.ORDER_ITEMSET_KEY);
-                orderNumber = headItems.get(MyOrderData.ORDER_ORDERNUMBER_KEY).toString();
 
                 String shipCode = headItems.get("order_LogisticsCompanyCode").toString();// 快递公司编码
                 String shipName = headItems.get(MyOrderData.ORDER_DISPATMODENAME_KEY).toString();
                 String shipNumber = headItems.get("order_ShipmentNumber").toString();// 快递单号
 
                 Logger.e("shipment", "shipCode=" + shipCode + "/shipName=" + shipName + "/shipNumber=" + shipNumber);
-                if (b_center.getText().toString().equals("查看物流")) {
+                String btnCenterStr = b_center.getText().toString();
+                switch (btnCenterStr) {
+                    case BTN_CHECK_SHIPMENT: {
+                        Intent intent = new Intent(context, MyOrderShipmentActivity.class);
+                        intent.putExtra(MyOrderShipmentActivity.KEY_SHIPMENT_CODE, shipCode);
+                        intent.putExtra(MyOrderShipmentActivity.KEY_SHIPMENT_NUMBER, shipNumber);
+                        intent.putExtra(MyOrderShipmentActivity.KEY_SHIPMENT_NAME, shipName);
+                        context.startActivity(intent);
+                        break;
+                    }
+//                    case BTN_CANCEL_ORDER:
+//
+//                        askDialog = MyDialog.getDefineDialog(context, "取消订单", "注意： 订单取消后无法找回");
+//                        final Button b_cancel = (Button) askDialog.findViewById(R.id.b_dialog_left);
+//                        final Button b_sure = (Button) askDialog.findViewById(R.id.b_dialog_right);
+//                        b_cancel.setOnClickListener(new View.OnClickListener() {
+//                            public void onClick(View arg0) {
+//                                askDialog.dismiss();
+//                            }
+//                        });
+//                        b_sure.setOnClickListener(new View.OnClickListener() {
+//                            public void onClick(View arg0) {
+//                                Logger.e("dialog_order", orderNumber + "");
+//                                b_sure.setText("正在取消...");
+//                                b_sure.setEnabled(false);
+//                                new Thread(cancelOrderRun).start();
+//                            }
+//                        });
+//                        askDialog.show();
+//                        break;
+                    case "追加评论":
+                        break;
+                    case BTN_QRCODE: {
+                        Intent intent = new Intent(context, QRCodeDetailActivity.class);
+                        intent.putExtra("orderNumber", number);
+//                        context.startActivity(intent);
+                        ((MyOrderParent) context).startActivityForResult(intent, REQUEST_QRCODE);
+                        break;
+                    }
+                    case BTN_PAYBACK:
+                        String priceSum = headItems.get(MyOrderData.ORDER_SHOULDPAY_KEY).toString();
+                        applyDrawBack(priceSum, number);
+                        break;
+                    case BTN_PAY: //支付
 
-                    Intent intent = new Intent(context, MyOrderShipmentActivity.class);
-                    intent.putExtra(MyOrderShipmentActivity.KEY_SHIPMENT_CODE, shipCode);
-                    intent.putExtra(MyOrderShipmentActivity.KEY_SHIPMENT_NUMBER, shipNumber);
-                    intent.putExtra(MyOrderShipmentActivity.KEY_SHIPMENT_NAME, shipName);
-                    context.startActivity(intent);
+                        List<HashMap<String, String>> list_orderSet = (List) headItems.get(MyOrderData.ORDER_ITEMSET_KEY);
+                        String supplierLoginID = list_orderSet.get(0).get("SupplierLoginID").toString();
+                        payOrder(number, true, supplierLoginID.equals(Constants.QY_SUPPLIERID));
 
-                } else if (b_center.getText().toString().equals("取消订单")) {
+//                    List<HashMap<String, String>> items = (List<HashMap<String, String>>) headItems.get(MyOrderData.ORDER_ITEMSET_KEY);
+//                    String body = "";
+//                    StringBuilder sb = new StringBuilder();
+//                    boolean isCanUserOrderPayWay = true;
+//                    int qyCount = 0;
+//                    for (int i = 0; i < items.size(); i++) {
+//                        HashMap<String, String> item = items.get(i);
+//                        String proName = item.get("Name");
+//                        String price = item.get("ShopPrice");
+//                        String buyCount1 = item.get("BuyNumber");//单项商品总数
+//                        String createUser = item.get(MyOrderData.ORDER_ITEM_CREATEUSER);
+//                        String agentid = item.get(MyOrderData.ORDER_ITEM_AGENTID_KEY);
+//                        String suppID = item.get(MyOrderData.ORDER_ITEM_SUPPLIERID_KEY);
+//                        if (!TextUtils.isEmpty(agentid))
+//                            isCanUserOrderPayWay = false;
+//                        if (suppID.equals(Constants.QY_SUPPLIERID)) {//泉眼商品
+//                            qyCount++;
+//                        }
+//                        int tCount = 0;
+//                        int yCount = Integer.parseInt(buyCount1);
+//                        String joinString = item.get("joinCount");
+//                        tCount = MyOrderData.getRealCount(yCount, joinString);
+//                        double tPrice = Double.parseDouble(price);
+//                        double singleSum = tCount * tPrice;
+//
+//                        body += proName + ",";
+//                        sb.append(createUser).append(",").append(singleSum).append("|");
+////                        pricedata += createUser + "," + singleSum + "|";
+//                    }
+//                    String pricedata = sb.toString();
+//
+//                    String createTime = headItems.get(MyOrderData.ORDER_CREATETIME_KEY).toString();
+////					String totalPrice = String.format("%.2f", priceSum);//保留两位小数
+//                    String totalPrice = headItems.get(MyOrderData.ORDER_SHOULDPAY_KEY).toString();//保留两位小数
+//                    String subject = body.substring(0, body.length() - 1);
+//                    pricedata = pricedata.substring(0, pricedata.length() - 1);
+//                    String payWayName = headItems.get(MyOrderData.ORDER_PAYMENTNAME_KEY).toString();
+//                    toPayPrepare(createTime, totalPrice, orderNumber, subject, body, pricedata, isCanUserOrderPayWay, payWayName, qyCount == items.size());
 
-                    askDialog = MyDialog.getDefineDialog(context, "取消订单", "注意： 订单取消后无法找回");
-                    final Button b_cancel = (Button) askDialog.findViewById(R.id.b_dialog_left);
-                    final Button b_sure = (Button) askDialog.findViewById(R.id.b_dialog_right);
-                    b_cancel.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View arg0) {
-                            askDialog.dismiss();
-                        }
-                    });
-                    b_sure.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View arg0) {
-                            Logger.e("dialog_order", orderNumber + "");
-                            b_sure.setText("正在取消...");
-                            b_sure.setEnabled(false);
-                            new Thread(cancelOrderRun).start();
-                        }
-                    });
-                    askDialog.show();
-
-                } else if (b_center.getText().toString().equals("追加评论")) {
-
+                        break;
                 }
             }
         });
         b_right.setOnClickListener(new View.OnClickListener() {
             @SuppressWarnings("unchecked")
             public void onClick(View v) {
-                long millis = System.currentTimeMillis();
-                if (millis - firstClick < 1000) {
-                    Logger.e("order", "频繁点击");
-                    CommonTools.showShortToast(context, "请不要频繁点击。");
-                    firstClick = millis;
-                    return;
-                }
-                HashMap<String, Object> headItem = dataList.get(p);
-                List<HashMap<String, String>> items = (List<HashMap<String, String>>) headItem.get(MyOrderData.ORDER_ITEMSET_KEY);
-                orderNumber = headItem.get("order_orderNumber").toString();
-                final String agentID = headItem.get("order_AgentId").toString();// shopID
+                if (isClickOften()) return;
+                List<HashMap<String, String>> items = (List<HashMap<String, String>>) headItems.get(MyOrderData.ORDER_ITEMSET_KEY);
+                final String number = headItems.get("order_orderNumber").toString();
+                final String agentID = headItems.get("order_AgentId").toString();// shopID
 
-                if (b_right.getText().toString().equals("申请退款")) {
-                    String priceSum = headItem.get(MyOrderData.ORDER_SHOULDPAY_KEY).toString();
-                    applyDrawBack(priceSum, orderNumber);
+                String btnRightStr = b_right.getText().toString();
+                if (btnRightStr.equals(BTN_PAYBACK)) {
+                    String priceSum = headItems.get(MyOrderData.ORDER_SHOULDPAY_KEY).toString();
+                    applyDrawBack(priceSum, number);
                 }
 
-                if (b_right.getText().toString().equals("付款")) {
-                    String body = "";
-                    StringBuilder sb = new StringBuilder();
-                    boolean isCanUserOrderPayWay = true;
-                    int qyCount = 0;
-                    for (int i = 0; i < items.size(); i++) {
-                        HashMap<String, String> item = items.get(i);
-                        String proName = item.get("Name");
-                        String price = item.get("ShopPrice");
-                        String buyCount1 = item.get("BuyNumber");//单项商品总数
-                        String createUser = item.get(MyOrderData.ORDER_ITEM_CREATEUSER);
-                        String agentid = item.get(MyOrderData.ORDER_ITEM_AGENTID_KEY);
-                        String suppID = item.get(MyOrderData.ORDER_ITEM_SUPPLIERID_KEY);
-                        if (!TextUtils.isEmpty(agentid))
-                            isCanUserOrderPayWay = false;
-                        if (suppID.equals(Constants.QY_SUPPLIERID)) {//泉眼商品
-                            qyCount++;
-                        }
-                        int tCount = 0;
-                        int yCount = Integer.parseInt(buyCount1);
-                        String joinString = item.get("joinCount");
-                        tCount = MyOrderData.getRealCount(yCount, joinString);
-                        double tPrice = Double.parseDouble(price);
-                        double singleSum = tCount * tPrice;
+                switch (btnRightStr) {
+                    case BTN_PAY:
+                        String supplierLoginID = items.get(0).get("SupplierLoginID").toString();
+                        payOrder(number, true, supplierLoginID.equals(Constants.QY_SUPPLIERID));
 
-                        body += proName + ",";
-                        sb.append(createUser).append(",").append(singleSum).append("|");
-//                        pricedata += createUser + "," + singleSum + "|";
+//                    String body = "";
+//                    StringBuilder sb = new StringBuilder();
+//                    boolean isCanUserOrderPayWay = true;
+//                    int qyCount = 0;
+//                    for (int i = 0; i < items.size(); i++) {
+//                        HashMap<String, String> item = items.get(i);
+//                        String proName = item.get("Name");
+//                        String price = item.get("ShopPrice");
+//                        String buyCount1 = item.get("BuyNumber");//单项商品总数
+//                        String createUser = item.get(MyOrderData.ORDER_ITEM_CREATEUSER);
+//                        String agentid = item.get(MyOrderData.ORDER_ITEM_AGENTID_KEY);
+//                        String suppID = item.get(MyOrderData.ORDER_ITEM_SUPPLIERID_KEY);
+//                        if (!TextUtils.isEmpty(agentid))
+//                            isCanUserOrderPayWay = false;
+//                        if (suppID.equals(Constants.QY_SUPPLIERID)) {//泉眼商品
+//                            qyCount++;
+//                        }
+//                        int tCount = 0;
+//                        int yCount = Integer.parseInt(buyCount1);
+//                        String joinString = item.get("joinCount");
+//                        tCount = MyOrderData.getRealCount(yCount, joinString);
+//                        double tPrice = Double.parseDouble(price);
+//                        double singleSum = tCount * tPrice;
+//
+//                        body += proName + ",";
+//                        sb.append(createUser).append(",").append(singleSum).append("|");
+////                        pricedata += createUser + "," + singleSum + "|";
+//                    }
+//                    String pricedata = sb.toString();
+//
+//                    String createTime = headItems.get(MyOrderData.ORDER_CREATETIME_KEY).toString();
+////					String totalPrice = String.format("%.2f", priceSum);//保留两位小数
+//                    String totalPrice = headItems.get(MyOrderData.ORDER_SHOULDPAY_KEY).toString();//保留两位小数
+//                    String subject = body.substring(0, body.length() - 1);
+//                    pricedata = pricedata.substring(0, pricedata.length() - 1);
+//                    String payWayName = headItems.get(MyOrderData.ORDER_PAYMENTNAME_KEY).toString();
+//                    toPayPrepare(createTime, totalPrice, orderNumber, subject, body, pricedata, isCanUserOrderPayWay, payWayName, qyCount == items.size());
+
+                        break;
+                    case BTN_SURE_TAKE_GOODS:
+                        askDialog = MyDialog.getDefineDialog(context, "确定收货", "请确定收到货物才进行此操作");
+                        Button b_cancel = (Button) askDialog.findViewById(R.id.b_dialog_left);
+                        final Button b_sure = (Button) askDialog.findViewById(R.id.b_dialog_right);
+                        b_cancel.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View arg0) {
+                                askDialog.dismiss();
+                            }
+                        });
+                        b_sure.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View arg0) {
+                                Logger.e("dialog_order", number + "");
+                                b_sure.setText("正在确定...");
+                                b_sure.setEnabled(false);
+//                                new Thread(sureTakeGoods).start();
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (AppManager.getInstance().postFinishOrder(number)) {
+//                                            mHandler.sendEmptyMessage(WHAT_TAKEGOODS_SUCCESS);
+                                            sendMessage(WHAT_TAKEGOODS_SUCCESS, number);// 表示确定收货成功
+                                        } else {
+                                            sendMessage(WHAT_TAKEGOODS_FAIL, number);// 表示确定收货失败
+//                                            mHandler.sendEmptyMessage(WHAT_TAKEGOODS_FAIL);
+                                        }
+                                    }
+                                }).start();
+                            }
+                        });
+                        askDialog.show();
+
+                        break;
+                    case BTN_CANCEL_ORDER:
+
+                        askDialog = MyDialog.getDefineDialog(context, "取消订单", "注意： 订单取消后无法找回");
+                        final Button b_cancel2 = (Button) askDialog.findViewById(R.id.b_dialog_left);
+                        final Button b_sure2 = (Button) askDialog.findViewById(R.id.b_dialog_right);
+                        b_cancel2.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View arg0) {
+                                askDialog.dismiss();
+                            }
+                        });
+                        b_sure2.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View arg0) {
+                                Logger.e("dialog_order", number + "");
+                                b_sure2.setText("正在取消...");
+                                b_sure2.setEnabled(false);
+
+//                                new Thread(cancelOrderRun).start();
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (AppManager.getInstance().postCancelOrder(number)) {
+//                                            mHandler.sendEmptyMessage(WHAT_CANCLEORDER_SUCCESS);
+                                            sendMessage(WHAT_CANCLEORDER_SUCCESS, number);
+                                        } else {
+//                                            mHandler.sendEmptyMessage(WHAT_CANCLEORDER_FAIL);
+                                            sendMessage(WHAT_CANCLEORDER_FAIL, number);
+                                        }
+                                    }
+                                }).start();
+                            }
+                        });
+                        askDialog.show();
+
+                        break;
+                    case "评价订单":
+                        if (items != null && !items.isEmpty()) {
+                            String guid = items.get(0).get("Guid");
+                            MyOrderData.startProductCommentAct(context, number, guid, agentID);
+                        } else {
+                            CommonTools.showShortToast(context, "订单信息出错！");
+                        }
+
+                        break;
+                    case BTN_CHECK: {
+                        Intent intent = new Intent(context, MyOrderDetail.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(MyOrderDetail.KEY_ORDER_ITEM, headItems);
+                        bundle.putInt("tab_index", tabIndex);
+                        bundle.putInt("position", p);
+                        intent.putExtras(bundle);
+                        ((Activity) context).startActivityForResult(intent, REQUEST_ORDER_DETAIL);
+                        break;
                     }
-                    String pricedata = sb.toString();
-
-                    String createTime = headItem.get(MyOrderData.ORDER_CREATETIME_KEY).toString();
-//					String totalPrice = String.format("%.2f", priceSum);//保留两位小数 
-                    String totalPrice = headItem.get(MyOrderData.ORDER_SHOULDPAY_KEY).toString();//保留两位小数
-                    String subject = body.substring(0, body.length() - 1);
-                    pricedata = pricedata.substring(0, pricedata.length() - 1);
-                    String payWayName = headItem.get(MyOrderData.ORDER_PAYMENTNAME_KEY).toString();
-                    toPayPrepare(createTime, totalPrice, orderNumber, subject, body, pricedata, isCanUserOrderPayWay, payWayName, qyCount == items.size());
-
-                } else if (b_right.getText().toString().equals("确定收货")) {
-
-                    askDialog = MyDialog.getDefineDialog(context, "确定收货", "请确定收到货物才进行此操作");
-                    Button b_cancel = (Button) askDialog.findViewById(R.id.b_dialog_left);
-                    final Button b_sure = (Button) askDialog.findViewById(R.id.b_dialog_right);
-                    b_cancel.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View arg0) {
-                            askDialog.dismiss();
-                        }
-                    });
-                    b_sure.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View arg0) {
-                            Logger.e("dialog_order", orderNumber + "");
-                            b_sure.setText("正在确定...");
-                            b_sure.setEnabled(false);
-                            new Thread(sureTakeGoods).start();
-                        }
-                    });
-                    askDialog.show();
-
-                } else if (b_right.getText().toString().equals("评价订单")) {
-                    if (items != null && !items.isEmpty()) {
-                        String guid = items.get(0).get("Guid");
-                        MyOrderData.startProductCommentAct(context, orderNumber, guid, agentID);
-
-                    } else {
-                        CommonTools.showShortToast(context, "订单信息出错！");
+                    case BTN_QRCODE: {
+                        Intent intent = new Intent(context, QRCodeDetailActivity.class);
+                        intent.putExtra("orderNumber", number);
+//                        context.startActivity(intent);
+                        myOrderParent.getParent().startActivityForResult(intent, REQUEST_QRCODE);
+//                        ((MyOrderParent) context).startActivityForResult(intent, REQUEST_QRCODE);
+                        break;
                     }
-
                 }
             }
         });
 
         //如果是温泉门票、客房
-        if (isQuanyan&&shipmentStatus.equals("0")) {
-            b_right.setText("查看券码");
-            b_right.setBackgroundResource(R.drawable.b_corner_red1);
-            b_right.setTextColor(ContextCompat.getColor(context, R.color.red_text1));
-            b_right.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    HashMap<String, Object> headItems = dataList.get(p);
-                    orderNumber = headItems.get(MyOrderData.ORDER_ORDERNUMBER_KEY).toString();
-                    Intent intent = new Intent(context, QRCodeDetailActivity.class);
-                    intent.putExtra("orderNumber", orderNumber);
-                    context.startActivity(intent);
-//                    ((MyOrderParent) context).startActivityForResult(intent,);
-                }
-            });
+//        if (isQuanyan && shipmentStatus.equals("0")) {
+//            b_right.setText("查看券码");
+////            b_right.setBackgroundResource(R.drawable.b_corner_red1);
+////            b_right.setTextColor(ContextCompat.getColor(context, R.color.red_text1));
+//            b_right.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//
+//                }
+//            });
+//        }
+
+
+    }
+
+    public void payOrder(final String orderNumber, boolean isShowAccountPay, boolean isShowArrivePay) {
+        payOrder(orderNumber, true, true, isShowAccountPay, isShowArrivePay);
+    }
+
+    public void payOrder(final String orderNumber, boolean isShowAliPay, boolean isShowWechaPay, boolean isShowAccountPay, boolean isShowArrivePay) {
+        if (isPayLoading) {
+            return;
         }
+        isPayLoading = true;
+        PayUtils payUtils = new PayUtils((BaseActivity) context, db.GetLoginUid(context), orderNumber, isShowAliPay, isShowWechaPay, isShowAccountPay, isShowArrivePay) {
+            @Override
+            public void paySuccess() {
+                isPayLoading = false;
+                jsShowMsg("支付成功");
+                MyOrderData.payForOrder(orderNumber);
+                notifyDataSetChanged();
+//                toOrderDetail(orderNumber);
+            }
+
+            @Override
+            public void payFail() {
+                isPayLoading = false;
+                jsShowMsg("支付失败,请检查");
+            }
+
+            @Override
+            public void payCancel() {
+                isPayLoading = false;
+                jsShowMsg("您已取消支付");
+//                toOrderDetail(orderNumber);
+            }
+
+            @Override
+            public void payError(String message) {
+                isPayLoading = false;
+                jsShowMsg(message);
+            }
+
+            @Override
+            public void dismissOption() {
+                isPayLoading = false;
+            }
+        };
+    }
+
+    private void jsShowMsg(String message) {
+        CommonTools.showShortToast(context, message);
+    }
+
+    private boolean isClickOften() {
+        long millis = System.currentTimeMillis();
+        if (millis - firstClick < 1000) {
+            Logger.e("order", "频繁点击");
+            CommonTools.showShortToast(context, "请不要频繁点击。");
+            firstClick = millis;
+            return true;
+        }
+        return false;
     }
 
     /**
      * 跳转至支付
+     *
      * @param createTime
      * @param money
      * @param orderNumber
@@ -579,47 +849,63 @@ public class MyOrderAdapter extends BaseAdapter {
     public static final int WHAT_CANCLEORDER_FAIL = -2;
     public static final int WHAT_TAKEGOODS_SUCCESS = 10;
     public static final int WHAT_TAKEGOODS_FAIL = -10;
+
+    public void sendMessage(int what, Object obj) {
+        Message message = mHandler.obtainMessage();
+        message.what = what;
+        message.obj = obj;
+        mHandler.sendMessage(message);
+    }
+
     /**
      * 取消订单
      */
-    public Runnable cancelOrderRun = new Runnable() {
-        public void run() {
-            if (AppManager.getInstance().postCancelOrder(orderNumber)) {
-                mHandler.sendEmptyMessage(WHAT_CANCLEORDER_SUCCESS);
-            } else {
-                mHandler.sendEmptyMessage(WHAT_CANCLEORDER_FAIL);
-            }
-        }
-    };
+//    public Runnable cancelOrderRun = new Runnable() {
+//        public void run() {
+//            if (AppManager.getInstance().postCancelOrder(orderNumber)) {
+//                mHandler.sendEmptyMessage(WHAT_CANCLEORDER_SUCCESS);
+//            } else {
+//                mHandler.sendEmptyMessage(WHAT_CANCLEORDER_FAIL);
+//            }
+//        }
+//    };
     /**
      * 确认收货
      */
-    public Runnable sureTakeGoods = new Runnable() {
-        public void run() {
-            if (AppManager.getInstance().postFinishOrder(orderNumber)) {
-                mHandler.sendEmptyMessage(WHAT_TAKEGOODS_SUCCESS);// 表示确定收货成功
-            } else {
-                mHandler.sendEmptyMessage(WHAT_TAKEGOODS_FAIL);
-            }
-        }
-    };
+//    public Runnable sureTakeGoods = new Runnable() {
+//        public void run() {
+//            if (AppManager.getInstance().postFinishOrder(orderNumber)) {
+//                mHandler.sendEmptyMessage(WHAT_TAKEGOODS_SUCCESS);// 表示确定收货成功
+//            } else {
+//                mHandler.sendEmptyMessage(WHAT_TAKEGOODS_FAIL);
+//            }
+//        }
+//    };
 
     private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
-            if (msg.what == WHAT_TAKEGOODS_SUCCESS) {
-                if (askDialog.isShowing())
-                    askDialog.dismiss();
-                CommonTools.showShortToast(context, "确定收货成功");
-                MyOrderData.sureTakeGoods(orderNumber);
-                notifyDataSetChanged();
-
-            } else if (msg.what == WHAT_CANCLEORDER_SUCCESS) {
-                if (askDialog.isShowing())
-                    askDialog.dismiss();
-                CommonTools.showShortToast(context, "取消订单成功");
-                MyOrderData.cancelOrder(orderNumber);
-                MyOrderActivity.isCurrentPage = false;
-                notifyDataSetChanged();
+            switch (msg.what) {
+                case WHAT_TAKEGOODS_SUCCESS:
+                    if (askDialog.isShowing())
+                        askDialog.dismiss();
+                    CommonTools.showShortToast(context, "确定收货成功");
+                    MyOrderData.sureTakeGoods(msg.obj.toString());
+                    notifyDataSetChanged();
+                    break;
+                case WHAT_TAKEGOODS_FAIL:
+                    CommonTools.showShortToast(context, "确定收货失败");
+                    break;
+                case WHAT_CANCLEORDER_SUCCESS:
+                    if (askDialog.isShowing())
+                        askDialog.dismiss();
+                    CommonTools.showShortToast(context, "取消订单成功");
+                    MyOrderData.cancelOrder(msg.obj.toString());
+                    MyOrderActivity.isCurrentPage = false;
+                    notifyDataSetChanged();
+                    break;
+                case WHAT_CANCLEORDER_FAIL:
+                    CommonTools.showShortToast(context, "取消订单失败");
+                    break;
             }
         }
     };
@@ -636,7 +922,6 @@ public class MyOrderAdapter extends BaseAdapter {
     }
 
     /**
-     *
      * @param guid
      * @param proName
      * @param img
@@ -752,6 +1037,7 @@ public class MyOrderAdapter extends BaseAdapter {
     }
 
     public void addDateItem(int index, HashMap<String, Object> data) {
+        Logger.e(context.getClass().getSimpleName(), "adapter");
         dataList.add(index, data);
         notifyDataSetChanged();
     }

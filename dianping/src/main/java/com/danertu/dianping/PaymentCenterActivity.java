@@ -239,7 +239,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
     }
 
     /**
-     * c初始化标题
+     * 初始化标题
      *
      * @param title
      */
@@ -991,7 +991,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
         } catch (Exception e) {
             e.printStackTrace();
         }
-        txt_totalMoney.setText("￥:" + price.getTotalPrice());
+        txt_totalMoney.setText("￥" + price.getTotalPrice());
         if (favourablePrice > 0) {
             txt_totalFav.setVisibility(View.VISIBLE);
             txt_totalFav.setText("(已优惠" + formatZero2Str(favourablePrice) + "元)");

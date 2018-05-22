@@ -1,61 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="#f3f3f3"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/personal_top_layout"
+    <EditText
+        android:id="@+id/search_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/tab_black">
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/search_btn"
+        android:background="@color/transparent"
+        android:ems="10"
+        android:hint="搜索酒水.门票.店铺"
+        android:textColor="@color/gray_text"
+        android:imeOptions="actionSearch"
+        android:lines="1"
+        android:padding="10dp"
+        android:singleLine="true"
+        android:textSize="25sp" />
 
-        <Button
-            android:id="@+id/search_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@null"
-            android:gravity="center_vertical"
-            android:padding="10dp"
-            android:text="搜索"
-            android:textColor="@color/white"
-            android:textSize="@dimen/medium_text_size"/>
-
-        <Button
-            android:id="@+id/b_title_back3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/b_back_click"
-            android:drawableLeft="@drawable/b_title_back_click1"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"/>
-
-        <EditText
-            android:id="@+id/search_edit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="3dp"
-            android:layout_marginRight="3dp"
-            android:layout_toLeftOf="@id/search_btn"
-            android:layout_toRightOf="@id/b_title_back3"
-            android:background="@drawable/et_corner_bg"
-            android:drawableLeft="@drawable/ic_search"
-            android:drawablePadding="10dp"
-            android:ems="10"
-            android:hint="搜索内容"
-            android:imeOptions="actionSearch"
-            android:lines="1"
-            android:paddingBottom="5dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="5dp"
-            android:singleLine="true"
-            android:textSize="15sp"/>
-    </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@color/grayLightTransparent" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -83,14 +55,15 @@
                     android:paddingLeft="5dp"
                     android:paddingRight="0dp"
                     android:text="历史搜索"
-                    android:textColor="#999999"/>
+                    android:textSize="16sp"
+                    android:textColor="#999999" />
 
                 <ImageView
                     android:id="@+id/delete"
                     android:layout_width="wrap_content"
                     android:layout_height="39dp"
                     android:padding="10dp"
-                    android:src="@drawable/ic_delete_gray"/>
+                    android:src="@drawable/ic_delete_gray" />
             </LinearLayout>
 
             <com.danertu.widget.SearchTipsGroupView
@@ -101,17 +74,17 @@
                 android:orientation="horizontal"
                 android:paddingBottom="15dp"
                 android:paddingLeft="15dp"
-                android:paddingRight="0dp">
-            </com.danertu.widget.SearchTipsGroupView>
+                android:paddingRight="0dp"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="39dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="5dp"
+                android:textSize="16sp"
                 android:paddingRight="0dp"
                 android:text="热门搜索"
-                android:textColor="#999999"/>
+                android:textColor="#999999" />
 
             <com.danertu.widget.SearchTipsGroupView
                 android:id="@+id/ll_search_hot"
@@ -121,56 +94,59 @@
                 android:orientation="horizontal"
                 android:paddingBottom="15dp"
                 android:paddingLeft="15dp"
-                android:paddingRight="0dp">
-            </com.danertu.widget.SearchTipsGroupView>
+                android:paddingRight="0dp"></com.danertu.widget.SearchTipsGroupView>
         </LinearLayout>
     </ScrollView>
 
-    <RadioGroup
-        android:id="@+id/radiogroup"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
         android:background="@color/white"
-        android:fadingEdge="none"
-        android:orientation="horizontal"
-        android:visibility="gone">
+        android:layout_marginTop="5dp"
+        android:orientation="vertical">
 
-        <RadioButton
-            android:id="@+id/select_product"
-            android:layout_width="match_parent"
-            android:layout_height="40dip"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_weight="1"
-            android:background="@drawable/check_red_line"
-            android:button="@null"
-            android:checked="true"
-            android:gravity="center"
-            android:text="商品"
-            android:textColor="@drawable/color_red_gray"
-            android:textSize="@dimen/small_middle_text_size"/>
+        <RadioGroup
+            android:id="@+id/radiogroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:fadingEdge="none"
+            android:orientation="horizontal"
+            android:visibility="gone">
 
-        <RadioButton
-            android:id="@+id/select_shop"
-            android:layout_width="match_parent"
-            android:layout_height="40dip"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_weight="1"
-            android:background="@drawable/check_red_line"
-            android:button="@null"
-            android:gravity="center"
-            android:text="店铺"
-            android:textColor="@drawable/color_red_gray"
-            android:textSize="@dimen/small_middle_text_size"/>
-    </RadioGroup>
+            <RadioButton
+                android:id="@+id/select_product"
+                android:layout_width="60dp"
+                android:layout_height="40dip"
+                android:layout_weight="1"
+                android:background="@drawable/check_red_line"
+                android:button="@null"
+                android:checked="true"
+                android:gravity="center"
+                android:text="商品"
+                android:textColor="@drawable/color_red_gray"
+                android:textSize="@dimen/small_middle_text_size" />
+
+            <RadioButton
+                android:id="@+id/select_shop"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="40dp"
+                android:layout_weight="1"
+                android:background="@drawable/check_red_line"
+                android:button="@null"
+                android:gravity="center"
+                android:text="店铺"
+                android:textColor="@drawable/color_red_gray"
+                android:textSize="@dimen/small_middle_text_size" />
+        </RadioGroup>
+    </LinearLayout>
+
 
     <android.support.v4.view.ViewPager
         android:id="@+id/vp_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </LinearLayout>

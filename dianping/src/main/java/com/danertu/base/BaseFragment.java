@@ -357,6 +357,11 @@ public abstract class BaseFragment<V, T extends BasePresenter<V>> extends Fragme
     }
 
     @Override
+    public void jsShowMsg(String message) {
+        CommonTools.showShortToast(context, message);
+    }
+
+    @Override
     public boolean jsIsLogin() {
         DBManager utils = DBManager.getInstance();
         String uid = utils.GetLoginUid(context);

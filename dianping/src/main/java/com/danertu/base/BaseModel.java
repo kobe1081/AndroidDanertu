@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.config.Constants;
+import com.danertu.db.DBManager;
+import com.danertu.tools.DeviceTag;
 import com.danertu.tools.Logger;
 
 import java.io.IOException;
@@ -28,6 +30,8 @@ public abstract class BaseModel {
     public static final int MSG_SERVER_ERROR = 1;
     public static final int RESULT_OK = 200;
     public Retrofit retrofit;
+    private DeviceTag dTag = null;
+    protected DBManager db = null;
 
     public BaseModel() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
@@ -74,8 +78,36 @@ public abstract class BaseModel {
     public void println(Object object) {
         Logger.i(TAG, object.toString());
     }
+
     public void printlnE(Object object) {
         Logger.e(TAG, object.toString());
     }
 
+    public String getUid(Context context) {
+        if (db == null) {
+            db = DBManager.getInstance();
+        }
+        return db.GetLoginUid(context);
+    }
+
+    public String getImei(Context context) {
+        if (dTag == null) {
+            dTag = new DeviceTag(context);
+        }
+        return dTag.getImei();
+    }
+
+    public String getMac(Context context) {
+        if (dTag == null) {
+            dTag = new DeviceTag(context);
+        }
+        return dTag.getMac();
+    }
+
+    public String getDeviceID(Context context) {
+        if (dTag == null) {
+            dTag = new DeviceTag(context);
+        }
+        return dTag.getDeviceID();
+    }
 }

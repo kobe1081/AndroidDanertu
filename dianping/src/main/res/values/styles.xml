@@ -40,7 +40,7 @@
     <style name="Theme.DianpingNoTitle" parent="@style/Theme.Dianping">
         <item name="android:windowNoTitle">true</item>
     </style>
-<!--<item name="android:windowBackground">@drawable/splash_bg</item>-->
+    <!--<item name="android:windowBackground">@drawable/splash_bg</item>-->
     <style name="Theme.DianpingNoTitle.CustomerBackground">
 
         <item name="android:windowAnimationStyle">@style/AnimationActivity1</item>
@@ -375,7 +375,7 @@
     </style>
 
     <style name="DialogStyle" parent="@android:style/Theme.Dialog">
-        <item name="android:windowBackground"> @android:color/transparent </item>
+        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
@@ -396,13 +396,13 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1.0dp</item>
     </style>
-    
+
     <style name="line_shadow">
         <item name="android:background">@drawable/line_shadow</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">3dp</item>
     </style>
-    
+
     <style name="index_tab_top">
         <item name="android:gravity">center</item>
         <item name="android:paddingLeft">3dip</item>
@@ -461,12 +461,12 @@
         <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
         <item name="android:backgroundDimEnabled">false</item>
     </style>
-    
+
     <style name="animation">
         <item name="android:windowEnterAnimation">@anim/window_right_in</item>
         <item name="android:windowExitAnimation">@anim/window_right_out</item>
     </style>
-    
+
     <style name="noExitAnim" parent="@style/animation">
         <item name="android:windowExitAnimation">@null</item>
     </style>
@@ -486,7 +486,7 @@
     <style name="noActivityAnimStyle" mce_bogus="1" parent="@android:style/Theme.Translucent.NoTitleBar">
         <item name="android:windowAnimationStyle">@style/noActAnim</item>
     </style>
-    
+
     <style name="noActAnim">
         <item name="android:activityOpenEnterAnimation">@null</item>
         <item name="android:activityOpenExitAnimation">@null</item>
@@ -526,7 +526,7 @@
     <style name="bottom_menu">
         <item name="android:textSize">10sp</item>
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
         <item name="android:background">@color/white</item>
         <item name="android:lines">1</item>
         <item name="android:ellipsize">middle</item>
@@ -585,12 +585,12 @@
     <style name="translucent_wd" parent="@style/ThemeActivity">
         <item name="android:windowIsTranslucent">true</item>
     </style>
-    
+
     <style name="wMhM">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
     </style>
-    
+
     <style name="map_type_btn" parent="@style/wMhM">
         <item name="android:layout_weight">1.0</item>
         <item name="android:background">@drawable/menumybutton</item>
@@ -600,7 +600,7 @@
         <item name="android:gravity">center</item>
         <item name="android:textColor">@drawable/tv_map_type_color</item>
     </style>
-    
+
     <style name="MyDialogStyle">
         <item name="android:windowBackground">@color/transparent</item>
         <item name="android:windowFrame">@null</item>
@@ -611,7 +611,7 @@
         <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
         <item name="android:backgroundDimEnabled">true</item>
     </style>
-    
+
     <style name="rl_address_item">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -621,18 +621,18 @@
         <item name="android:paddingRight">15dp</item>
         <item name="android:background">@color/white</item>
     </style>
-    
+    <!--<item name="android:background">@drawable/b_corner_gray1</item>-->
     <style name="btn_order_opera">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@drawable/b_corner_gray1</item>
+        <item name="android:background">@drawable/bg_item_order_center_btn</item>
         <item name="android:minHeight">25dp</item>
         <item name="android:minWidth">80dp</item>
         <item name="android:paddingLeft">5dp</item>
         <item name="android:paddingRight">5dp</item>
         <item name="android:textColor">@color/gray_text_aaa</item>
     </style>
-    
+
     <style name="proOpera_ll">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -640,6 +640,7 @@
         <item name="android:orientation">horizontal</item>
         <item name="android:padding">10dp</item>
     </style>
+
     <style name="proOpera_tv_tips">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -647,6 +648,7 @@
         <item name="android:paddingBottom">10dp</item>
         <item name="android:textColor">@color/text_gray_999</item>
     </style>
+
     <style name="proOpera_et_value">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -676,7 +678,7 @@
         <item name="android:paddingTop">25dp</item>
         <item name="android:paddingBottom">25dp</item>
     </style>
-    
+
     <style name="payback_hotel_reason">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -688,7 +690,7 @@
         <item name="android:textColor">@color/gray_text</item>
         <item name="android:textSize">@dimen/small_middle_text_size</item>
     </style>
-    
+
     <style name="person_order">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -701,6 +703,7 @@
         <item name="android:textSize">@dimen/micro_text_size</item>
         <item name="android:lines">1</item>
     </style>
+
     <style name="person_item">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -721,6 +724,7 @@
         <item name="android:windowEnterAnimation">@anim/in_bottomtotop</item>
         <item name="android:windowExitAnimation">@anim/out_toptobottom</item>
     </style>
+
     <style name="orderRadioStyle">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>
@@ -731,6 +735,7 @@
         <item name="android:background">@drawable/b_dd_opera_click</item>
         <item name="android:textColor">@drawable/tabwidget_order_text</item>
     </style>
+
     <style name="payment_center_radio">
         <item name="android:layout_width">0dp</item>
         <item name="android:height">@dimen/back_w_size</item>
@@ -742,6 +747,7 @@
         <item name="android:textColor">@drawable/text_color_payment_radio</item>
         <item name="android:padding">15dp</item>
     </style>
+
     <style name="stock_radio">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:height">@dimen/back_w_size</item>
@@ -753,6 +759,7 @@
         <item name="android:gravity">center</item>
         <item name="android:textColor">@drawable/text_color_payment_radio</item>
     </style>
+
     <style name="stock_spinner">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>
@@ -762,6 +769,7 @@
         <item name="android:dropDownHeight">wrap_content</item>
         <item name="android:gravity">center</item>
     </style>
+
     <style name="stock_textview">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -783,5 +791,74 @@
         <item name="android:layout_width">1dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:background">@color/ios_gray_line</item>
+    </style>
+
+    <style name="main_menu_text_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:drawablePadding">3dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/micro_text_size</item>
+        <item name="android:textColor">@drawable/main_menu_text</item>
+    </style>
+
+    <style name="main_menu_red_point_style">
+        <item name="android:layout_width">5dp</item>
+        <item name="android:layout_height">5dp</item>
+        <item name="android:layout_gravity">right|top</item>
+        <item name="android:src">@mipmap/point_red</item>
+    </style>
+
+    <style name="personal_item_root">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:background">@drawable/bg_white_click_gray</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+
+    <style name="personal_item_text">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/gray_text</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="personal_shop_manager_item">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/bg_white_click_gray</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">10dp</item>
+    </style>
+    <style name="personal_shop_manager_item_iv">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingTop">10dp</item>
+    </style>
+    <style name="personal_shop_manager_item_point">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:src">@drawable/tabwidget_tag</item>
+        <item name="android:layout_gravity">right|top</item>
+        <item name="android:layout_margin">5dp</item>
+    </style>
+
+    <style name="personal_shop_manager_item_text">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/solid_while</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">5dp</item>
     </style>
 </resources>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/nearlyBroswerItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -10,7 +9,7 @@
     <ImageView
         android:id="@+id/titleImg"
         style="@style/iv_searBanner"
-        android:src="@drawable/no_image"/>
+        android:src="@drawable/no_image" />
 
     <RelativeLayout
         android:id="@+id/appInfo"
@@ -26,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#666666"
-            android:textSize="@dimen/small_middle_text_size"/>
+            android:textSize="@dimen/small_middle_text_size" />
 
         <TextView
             android:id="@+id/jyfw"
@@ -34,8 +33,10 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/shopName"
             android:layout_marginTop="15dp"
+            android:maxLines="2"
+            android:layout_centerVertical="true"
             android:textColor="#999999"
-            android:textSize="13sp"/>
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/address"
@@ -47,13 +48,13 @@
             android:drawablePadding="5dp"
             android:gravity="center_vertical"
             android:textColor="#999999"
-            android:textSize="@dimen/micro_text_size"/>
+            android:textSize="@dimen/micro_text_size" />
     </RelativeLayout>
 
     <View
         style="@style/Line"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@id/titleImg"/>
+        android:layout_toRightOf="@id/titleImg" />
 
 </RelativeLayout>

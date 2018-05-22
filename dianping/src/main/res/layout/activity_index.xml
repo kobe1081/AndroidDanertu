@@ -8,95 +8,102 @@
     android:background="@color/tab_black"
     >
     <!--android:background="#c7c5c5"-->
-    <FrameLayout
-        android:id="@+id/top_parent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true">
 
-        <View
-            android:id="@+id/top_bg"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/tab_black"/>
+    <!--
+        2018年4月17日
+        首页改版，隐藏顶部搜索框
+    -->
+    <!--<FrameLayout-->
+        <!--android:id="@+id/top_parent"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:visibility="gone"-->
+        <!--android:layout_alignParentTop="true">-->
 
-        <LinearLayout
-            android:id="@+id/index_top_layout"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/index_title_height">
+        <!--<View-->
+            <!--android:id="@+id/top_bg"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@color/tab_black"/>-->
 
-            <TextView
-                android:id="@+id/tv_location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:drawableLeft="@mipmap/icon_local"
-                android:drawablePadding="5dp"
-                android:gravity="center"
-                android:padding="5dp"
-                android:text="中山"
-                android:textColor="@color/white"/>
+        <!--<LinearLayout-->
+            <!--android:id="@+id/index_top_layout"-->
+            <!--android:layout_width="match_parent"-->
 
-            <TextView
-                android:id="@+id/tv_store_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/et_corner_bg_tran"
-                android:drawableRight="@drawable/icon_search"
-                android:ellipsize="middle"
-                android:gravity="center"
-                android:lines="1"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="5dp"
-                android:paddingTop="5dp"
-                android:singleLine="true"
-                android:textColor="@color/white"
-                android:textSize="@dimen/small_text_size"/>
+            <!--android:layout_height="@dimen/index_title_height">-->
 
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="7dp"
-                >
+            <!--<TextView-->
+                <!--android:id="@+id/tv_location"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:drawableLeft="@mipmap/icon_local"-->
+                <!--android:drawablePadding="5dp"-->
+                <!--android:gravity="center"-->
+                <!--android:padding="5dp"-->
+                <!--android:text="中山"-->
+                <!--android:textColor="@color/white"/>-->
 
-                <Button
-                    android:id="@+id/msgbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="7dp"
-                    android:background="@drawable/ic_msg_person"
-                    android:gravity="center_vertical"
-                    android:textColor="@color/white"
-                    android:visibility="visible"/>
+            <!--<TextView-->
+                <!--android:id="@+id/tv_store_name"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:layout_marginLeft="5dp"-->
+                <!--android:layout_marginRight="5dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:background="@drawable/et_corner_bg_tran"-->
+                <!--android:drawableRight="@drawable/icon_search"-->
+                <!--android:ellipsize="middle"-->
+                <!--android:gravity="center"-->
+                <!--android:lines="1"-->
+                <!--android:paddingBottom="5dp"-->
+                <!--android:paddingLeft="10dp"-->
+                <!--android:paddingRight="5dp"-->
+                <!--android:paddingTop="5dp"-->
+                <!--android:singleLine="true"-->
+                <!--android:textColor="@color/white"-->
+                <!--android:textSize="@dimen/small_text_size"/>-->
 
-                <TextView
-                    android:id="@+id/tv_msg_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right|top"
-                    android:background="@drawable/round_background"
-                    android:gravity="center"
-                    android:text="3"
-                    android:textColor="@color/red_text"
-                    android:textSize="@dimen/micro_text_size_plus"
-                    android:visibility="gone"/>
-            </FrameLayout>
+            <!--<FrameLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:layout_marginRight="7dp"-->
+                <!--&gt;-->
 
-        </LinearLayout>
-    </FrameLayout>
+                <!--<Button-->
+                    <!--android:id="@+id/msgbox"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="center_vertical"-->
+                    <!--android:layout_margin="7dp"-->
+                    <!--android:background="@drawable/ic_msg_person"-->
+                    <!--android:gravity="center_vertical"-->
+                    <!--android:textColor="@color/white"-->
+                    <!--android:visibility="visible"/>-->
 
+                <!--<TextView-->
+                    <!--android:id="@+id/tv_msg_count"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="right|top"-->
+                    <!--android:background="@drawable/round_background"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="3"-->
+                    <!--android:textColor="@color/red_text"-->
+                    <!--android:textSize="@dimen/micro_text_size_plus"-->
+                    <!--android:visibility="gone"/>-->
+            <!--</FrameLayout>-->
+
+        <!--</LinearLayout>-->
+    <!--</FrameLayout>-->
+<!--android:layout_below="@id/top_parent"-->
     <wl.codelibrary.widget.v4.SwipeRefreshLayout
         android:id="@+id/srl_webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/top_parent"
+
         app:drawable_anim="@drawable/loading_anim">
 
         <com.danertu.widget.MWebView

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.LocalActivityManager;
 import android.content.Context;
@@ -24,6 +25,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TextView;
@@ -42,7 +44,8 @@ public class MyOrderActivity extends BaseActivity implements MyOrderData.LoadDat
     /**
      * tab页标题
      */
-    private String tabWeightName[] = {"全部", "待付款", "待发货", "待收货", "待评价"};
+    private String tabWeightName[] = {"全部", "待付款", "待发货", "待收货", "退款"};
+//    private String tabWeightName[] = {"全部", "待付款", "待发货", "待收货", "待评价"};
     /**
      * 用于指示tab页的数据是否发生变化  true-发生变化  false--未发生变化
      * <p>
@@ -59,7 +62,7 @@ public class MyOrderActivity extends BaseActivity implements MyOrderData.LoadDat
     List<Intent> list_intents;
     LocalActivityManager manager;
     TabHost tabHost;
-
+    //    private TextView tvTabStr;
     private ViewPager viewPager;
     MyPageAdapter myPageAdapter;
     /**
@@ -77,6 +80,7 @@ public class MyOrderActivity extends BaseActivity implements MyOrderData.LoadDat
     public static boolean isNeedInitMyOrderData = true;
     private ViewGroup title_layout = null;
     private TextView tv_title;
+    private RelativeLayout root;
     /**
      * 2017年9月15日
      * true时表示tab尚未初始化，设置此标识时因为将订单列表修改为进入页面加载而不是数据加载完再进入页面时，进入订单详情支付或者取消订单完成后返回订单列表tab会重新add导致tab增加的问题
@@ -90,6 +94,11 @@ public class MyOrderActivity extends BaseActivity implements MyOrderData.LoadDat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_order);
+        setFitsSystemWindows(false);
+//        initSystemBar();
+        findViewById();
+        setTopPadding(title_layout, getStatusBarHeight());
+//        setTopPadding(root,getStatusBarHeight());
         showLoadDialog();
         context = this;
         //获取传递过来的要首先打开的tab页
@@ -109,7 +118,7 @@ public class MyOrderActivity extends BaseActivity implements MyOrderData.LoadDat
     public void initTabHost() {
         tabHost = (TabHost) findViewById(android.R.id.tabhost);
         viewPager = (ViewPager) findViewById(R.id.vp_tab_content);
-
+//        tvTabStr= ((TextView) findViewById(R.id.tv_tab_str));
         // 实例化view容器
         list_views = new View[className.length];
 //        list_wait_views = new View[className.length];
@@ -187,13 +196,18 @@ public class MyOrderActivity extends BaseActivity implements MyOrderData.LoadDat
                         }
                         tabIndex = i;
                         viewPager.setCurrentItem(i, false);
-                        break;
+//                        break;
+//                        tvTabStr.setText(tabWeightName[i]);
+                        ((TextView) ((RelativeLayout) tabHost.getTabWidget().getChildTabViewAt(i)).getChildAt(0)).setTextSize(22);
+                    } else {
+                        ((TextView) ((RelativeLayout) tabHost.getTabWidget().getChildTabViewAt(i)).getChildAt(0)).setTextSize(14);
                     }
                 }
             }
         });
-
+        ((TextView) ((RelativeLayout) tabHost.getTabWidget().getChildTabViewAt(tabIndex)).getChildAt(0)).setTextSize(22);
         tabHost.setCurrentTab(tabIndex);
+//        tvTabStr.setText(tabWeightName[tabIndex]);
         viewPager.setCurrentItem(tabIndex, false);
         isTabInit = false;
     }
@@ -225,6 +239,15 @@ public class MyOrderActivity extends BaseActivity implements MyOrderData.LoadDat
     private void sendDataChangeBroadcast() {
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(context);
         Intent intent = new Intent(Constants.ORDER_DATA_CHANGE);
+        manager.sendBroadcast(intent);
+    }
+
+    private void sendActivityResultBroadcast(int requestCode, int resultCode, String orderNumber) {
+        LocalBroadcastManager manager = LocalBroadcastManager.getInstance(context);
+        Intent intent = new Intent(Constants.ORDER_DATA_ON_ACTIVITY_FOR_RESULT);
+        intent.putExtra("orderNumber", orderNumber);
+        intent.putExtra("requestCode", requestCode);
+        intent.putExtra("resultCode", resultCode);
         manager.sendBroadcast(intent);
     }
 
@@ -499,9 +522,8 @@ public class MyOrderActivity extends BaseActivity implements MyOrderData.LoadDat
     }
 
     public void initTitle(String title) {
-        title_layout = (ViewGroup) findViewById(R.id.ll_title_order);
-        tv_title = (TextView) findViewById(R.id.tv_title);
-        tv_title.setText(title);
+
+//        tv_title.setText(title);
         findViewById(R.id.b_title_back).setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
                 finish();
@@ -531,7 +553,9 @@ public class MyOrderActivity extends BaseActivity implements MyOrderData.LoadDat
 
     @Override
     protected void findViewById() {
-
+        title_layout = (ViewGroup) findViewById(R.id.ll_title_order);
+        tv_title = (TextView) findViewById(R.id.tv_title);
+        root = ((RelativeLayout) findViewById(R.id.root));
     }
 
     @Override
@@ -541,7 +565,17 @@ public class MyOrderActivity extends BaseActivity implements MyOrderData.LoadDat
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Logger.e(TAG, "onActivityResult");
+        Logger.e(TAG, "onActivityResult 接收到数据变化");
+        /**
+         * 因为虚指向的问题，通过发广播的方式通知子tab页更新数据
+         */
+        try {
+            String orderNumber = data.getStringExtra("orderNumber");
+            sendActivityResultBroadcast(requestCode, resultCode, orderNumber);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
 }

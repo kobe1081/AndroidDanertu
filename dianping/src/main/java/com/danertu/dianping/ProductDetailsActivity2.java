@@ -19,6 +19,14 @@ import com.danertu.tools.XNUtil;
 import com.danertu.widget.MWebView;
 //import android.view.GestureDetector;
 
+
+/**
+ * 2018年4月27日
+ * 0026接口接口新增字段，空：普通商品，1：门票，2：客房
+ * 用于跳转至不同页面
+ * <p>
+ * 原商品详情页prodetail.html，现在门票详情页跳转到order_tickets.html
+ */
 public class ProductDetailsActivity2 extends BaseWebActivity {
     private ProductDetailUtil util = null;
 
@@ -48,10 +56,11 @@ public class ProductDetailsActivity2 extends BaseWebActivity {
     final String KEY_SHOPID = "shopid";
 
     private final String PAGE_NAME = "android/proDetail.html";
-
+    private final String PAGE_NAME_TICKET = "android/order_tickets.html";
 
     /**
      * 联系客服
+     *
      * @param shopid
      * @param guid
      * @param proName
@@ -170,6 +179,9 @@ public class ProductDetailsActivity2 extends BaseWebActivity {
         this.proInfo = proInfo;
     }
 
+    /**
+     * 获取产品信息
+     */
     private class GetProInfo extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... arg0) {
@@ -181,6 +193,22 @@ public class ProductDetailsActivity2 extends BaseWebActivity {
                 proInfo = proInfo.replaceAll("\n|\r", "");
                 JSONObject proItem = new JSONObject(proInfo).getJSONArray("val").getJSONObject(0);
                 result = "android/" + proItem.getString("pageName");
+
+                /**
+                 * 2018年4月27日添加
+                 * */
+//                String isQYProduct = proItem.get("IsQYProduct").toString();
+//                switch (isQYProduct) {
+//                    case "1"://门票
+//                        result = PAGE_NAME_TICKET;
+//                        break;
+//                    case "2"://客房
+//                        result = "android/" + proItem.getString("pageName");
+//                        break;
+//                    default:
+//                        result = PAGE_NAME;
+//                        break;
+//                }
                 setProInfo(proInfo);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -221,6 +249,11 @@ public class ProductDetailsActivity2 extends BaseWebActivity {
     public boolean toShopCar(String productID, String productName, String aID, String buyPrice, String proImage, String buyCount, String uid, String supId, String shopID, String attrParam, String shopName, String createUser) {
         return util.putInShopCar(productID, productName, aID, buyPrice, proImage, buyCount, uid, supId, shopID, attrParam, shopName, createUser);
     }
+
+//    @JavascriptInterface
+//    public boolean toShopCar(String productID, String productName, String aID, String buyPrice,String marketPrice, String proImage, String buyCount, String uid, String supId, String shopID, String attrParam, String shopName, String createUser) {
+//        return util.putInShopCar(productID, productName, aID, buyPrice, marketPrice,proImage, buyCount, uid, supId, shopID, attrParam, shopName, createUser);
+//    }
 
     @JavascriptInterface
     public void jsCallSupplier(final String shopMobile) {

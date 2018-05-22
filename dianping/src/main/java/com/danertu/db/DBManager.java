@@ -20,6 +20,7 @@ import cn.jpush.android.api.JPushInterface;
 import com.danertu.dianping.LoginActivity;
 import com.danertu.entity.Address;
 import com.danertu.entity.JPushBean;
+import com.danertu.entity.Messagebean;
 import com.danertu.tools.Logger;
 import com.danertu.widget.CommonTools;
 
@@ -29,15 +30,16 @@ public class DBManager {
     private boolean jpInitFirst = true;
 
     private static DBManager dbManager;
-    public static final int PAGE_SIZE=30;
+    public static final int PAGE_SIZE = 30;
+
     private DBManager() {
     }
 
-    public static DBManager getInstance(){
-        if(dbManager==null){
-            synchronized (DBManager.class){
-                if(dbManager==null) {
-                    dbManager=new DBManager();
+    public static DBManager getInstance() {
+        if (dbManager == null) {
+            synchronized (DBManager.class) {
+                if (dbManager == null) {
+                    dbManager = new DBManager();
                 }
             }
         }
@@ -69,6 +71,12 @@ public class DBManager {
 
     private String uId = "";
 
+    /**
+     * 获取用户id
+     *
+     * @param context
+     * @return
+     */
     public String GetLoginUid(Context context) {
         if (!TextUtils.isEmpty(uId)) {
             if (jpInitFirst) {
@@ -430,6 +438,69 @@ public class DBManager {
         }
         return true;
     }
+
+    /**
+     * 2018年4月18日
+     * 增加市场价字段
+     *
+     * @param context
+     * @param productID
+     * @param proName
+     * @param agentID
+     * @param buyPrice
+     * @param marketPrice
+     * @param image
+     * @param buyCount
+     * @param uid
+     * @param supplierID
+     * @param shopID
+     * @param attrParam
+     * @param shopName
+     * @param createUser
+     * @return
+     */
+//
+//    public boolean InsertShopCar(Context context, String productID,
+//                                 String proName, String agentID, String buyPrice,String marketPrice, String image,
+//                                 String buyCount, String uid, String supplierID, String shopID,
+//                                 String attrParam, String shopName, String createUser) {
+//        DBHelper dbHelper3 = DBHelper.getInstance(context);
+//        SQLiteDatabase dbr = dbHelper3.getWritableDatabase();
+//        try {
+//            Cursor cursor = ProductInShopCar(context, productID, attrParam, shopID);
+//            if (cursor.getCount() > 0) {
+//                cursor.moveToNext();
+//                int oldCount = Integer.parseInt(cursor.getString(5));
+//                int newCount = oldCount + Integer.parseInt(buyCount);
+//                ContentValues values = new ContentValues();
+//                values.put("buyCount", newCount);
+//                values.put("shopID", shopID);
+//                values.put(DBHelper.SHOPCAR_CREATEUSER, createUser);
+//                values.put(DBHelper.SHOPCAR_SHOPNAME, shopName);
+//                String whereClause = "productID='" + productID + "' and uid='" + uid + "' and " + DBHelper.SHOPCAR_SHOPID + "='" + shopID + "'";
+//                String[] whereArgs = null;
+//                if (TextUtils.isEmpty(attrParam)) {
+//                    whereClause += " and (" + DBHelper.SHOPCAR_ATTRJSON + " is null or " + DBHelper.SHOPCAR_ATTRJSON + "='')";
+//                } else {
+//                    whereClause += " and " + DBHelper.SHOPCAR_ATTRJSON + "='" + attrParam + "'";
+//                }
+//                dbr.update("ShopCar", values, whereClause, whereArgs);
+//            } else {
+//                dbr.execSQL(
+//                        "insert into ShopCar (productID,proName,agentID,buyPrice,marketPrice,proImage,buyCount,uid,SupplierLoginID,shopID,"
+//                                + DBHelper.SHOPCAR_ATTRJSON + ","
+//                                + DBHelper.SHOPCAR_SHOPNAME + ","
+//                                + DBHelper.SHOPCAR_CREATEUSER + ") values(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+//                        new Object[]{productID, proName, agentID, buyPrice,marketPrice,
+//                                image, buyCount, uid, supplierID, shopID,
+//                                attrParam, shopName, createUser});
+//            }
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//            return false;
+//        }
+//        return true;
+//    }
 
     // 点击去结算时查出当前购物车中的商品信息 计算数量和总支付金额
     // liujun 2014-7-22
@@ -967,7 +1038,6 @@ public class DBManager {
     }
 
     /**
-     *
      * @param context
      * @param pageSize
      * @param startIndex
@@ -975,19 +1045,16 @@ public class DBManager {
      */
 //    sqlitecmd.CommandText = string.Format("select * from GuestInfo order by GuestId limit {0} offset {0}*{1}", size, index-1);//size:每页显示条数，index页码
     //获取指定记录
-    public List<JPushBean> getJPushMessage(Context context, String pageSize, String startIndex){
-        if(!isLogin(context)){
-
-        }
+    public List<JPushBean> getJPushMessage(Context context, String uid, String pageSize, String startIndex) {
         Cursor cursor = null;
-        List<JPushBean> list=new ArrayList<>();
+        List<JPushBean> list = new ArrayList<>();
         try {
             DBHelper dbHelper3 = DBHelper.getInstance(context);
             SQLiteDatabase dbr = dbHelper3.getReadableDatabase();
 //
-            cursor = dbr.rawQuery("select * from JPushMessage  order by _id desc limit ? offset ?",new String[]{pageSize,startIndex});
+            cursor = dbr.rawQuery("select * from JPushMessage where uid=?  order by _id desc limit ? offset ?", new String[]{uid, pageSize, startIndex});
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-                list.add(new JPushBean(cursor.getInt(0),cursor.getString(1),cursor.getString(2),cursor.getString(3)));
+                list.add(new JPushBean(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3)));
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -998,35 +1065,125 @@ public class DBManager {
         }
         return list;
     }
+
     //插入推送记录表
-    public void insertJPushMessage(Context context,String title,String message,String pushTime){
+    public void insertJPushMessage(Context context, String uid, String title, String message, String pushTime, String Link) {
         DBHelper dbHelper3 = DBHelper.getInstance(context);
         SQLiteDatabase dbr = dbHelper3.getReadableDatabase();
-        String sql="insert into JPushMessage(title,message,pushTime) values(?,?,?)";
-        dbr.execSQL(sql,new Object[]{title,message,pushTime});
+        String sql = "insert into JPushMessage(uid,title,message,pushTime,Link) values(?,?,?,?,?)";
+        dbr.execSQL(sql, new Object[]{uid, title, message, pushTime, Link});
     }
 
     /**
      * 删除指定推送记录
+     *
      * @param context
-     * @param _id 推送记录id
+     * @param _id     推送记录id
      */
-    public void deleteJPushMessage(Context context,int _id){
+    public void deleteJPushMessage(Context context, int _id) {
         DBHelper dbHelper3 = DBHelper.getInstance(context);
         SQLiteDatabase dbr = dbHelper3.getReadableDatabase();
-        String sql="delete from JPushMessage where _id=?";
-        dbr.execSQL(sql,new Object[]{_id});
+        String sql = "delete from JPushMessage where _id=?";
+        dbr.execSQL(sql, new Object[]{_id});
     }
 
     /**
      * 清空推送记录
+     *
      * @param context
      */
-    public void deleteAllJPushMessage(Context context){
+    public void deleteAllJPushMessage(Context context) {
         DBHelper dbHelper3 = DBHelper.getInstance(context);
         SQLiteDatabase dbr = dbHelper3.getReadableDatabase();
-        String sql="delete from JPushMessage";
+        String sql = "delete from JPushMessage";
         dbr.execSQL(sql);
+    }
+
+    public List<Messagebean> getNotice(Context context, String uid, String pageSize, String startIndex) {
+        Cursor cursor = null;
+        List<Messagebean> list = new ArrayList<>();
+        try {
+            DBHelper dbHelper3 = DBHelper.getInstance(context);
+            SQLiteDatabase dbr = dbHelper3.getReadableDatabase();
+//
+            cursor = dbr.rawQuery("select * from tb_notice where uid=?  order by _id desc limit ? offset ?", new String[]{uid, pageSize, startIndex});
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                list.add(new Messagebean(cursor.getString(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(5),
+                        cursor.getInt(4)));
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return list;
+    }
+
+    public List<Messagebean> getNotice(Context context, String uid) {
+        Cursor cursor = null;
+        List<Messagebean> list = new ArrayList<>();
+        try {
+            DBHelper dbHelper3 = DBHelper.getInstance(context);
+            SQLiteDatabase dbr = dbHelper3.getReadableDatabase();
+//
+            cursor = dbr.rawQuery("select * from tb_notice where uid=?  order by _id desc", new String[]{uid});
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                list.add(new Messagebean(cursor.getString(0),
+                        cursor.getString(3),
+                        cursor.getString(6),
+                        cursor.getString(4),
+                        cursor.getString(2),
+                        cursor.getInt(4)));
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return list;
+    }
+
+    //插入推送记录表
+    public void insertNotice(Context context, String uid, String image,String title, String subtitle, String option, String pushTime) {
+        DBHelper dbHelper3 = DBHelper.getInstance(context);
+        SQLiteDatabase dbr = dbHelper3.getReadableDatabase();
+        String sql = "insert into tb_notice(uid,image,title,subtitle,option,pushTime) values(?,?,?,?,?,?)";
+        dbr.execSQL(sql, new Object[]{uid, image,title, subtitle, option, pushTime});
+    }
+
+    /**
+     * 删除指定推送记录
+     *
+     * @param context
+     * @param _id     推送记录id
+     */
+    public void deleteNotice(Context context, int _id) {
+        DBHelper dbHelper3 = DBHelper.getInstance(context);
+        SQLiteDatabase dbr = dbHelper3.getReadableDatabase();
+        String sql = "delete from JPushMessage where _id=?";
+        dbr.execSQL(sql, new Object[]{_id});
+    }
+
+    /**
+     * 清空指定用户推送记录
+     *
+     * @param context
+     */
+    public void deleteAllNotice(Context context, String uid) {
+        DBHelper dbHelper3 = DBHelper.getInstance(context);
+        SQLiteDatabase dbr = dbHelper3.getReadableDatabase();
+        String sql = "delete from JPushMessage where uid =?";
+        dbr.execSQL(sql, new Object[]{uid});
     }
 
 

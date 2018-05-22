@@ -9,19 +9,22 @@ import com.danertu.tools.Logger;
 import com.danertu.widget.CommonTools;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import static com.danertu.adapter.MyOrderAdapter.REQUEST_QRCODE;
 
 public class MyOrderNoPayActivity extends MyOrderParent {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         data2 = MyOrderData.order_list_noPay;
-        adapter = new MyOrderAdapter(context, data2,TAB_NO_PAY);
+        adapter = new MyOrderAdapter(context, data2, TAB_NO_PAY);
         lv_order.setAdapter(adapter);
     }
 
     @Override
-    protected void onResume() {
-        Logger.e(getClass().getSimpleName(),"onResume");
+    public void onResume() {
+        Logger.e(getClass().getSimpleName(), "onResume");
         super.onResume();
         if (data2.size() == 0 && MyOrderData.order_noPay.size() != 0) {
             loadData();
@@ -42,9 +45,10 @@ public class MyOrderNoPayActivity extends MyOrderParent {
      */
     @Override
     void loadMore() {
-        if ((MyOrderData.order_noPay == null || MyOrderData.order_noPay.size() <= 0)&&MyOrderData.isFinish) {
+        if ((MyOrderData.order_noPay == null || MyOrderData.order_noPay.size() <= 0) && MyOrderData.isFinish) {
             CommonTools.showShortToast(this, "已无更多订单");
             lv_order.stopLoadMore();
+            lv_order.setPullLoadEnable(false);
             return;
         }
         loadData();
@@ -64,8 +68,4 @@ public class MyOrderNoPayActivity extends MyOrderParent {
         adapter.notifyDataSetChanged();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 }

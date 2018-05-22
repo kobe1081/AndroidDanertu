@@ -45,9 +45,9 @@ import com.danertu.widget.CommonTools;
 import com.danertu.widget.SearchTipsGroupView;
 import com.danertu.widget.SearchTipsGroupView.OnItemClick;
 
-public class SearchActivityV2 extends BaseActivity {
+public class SearchActivityV2 extends HomeActivity {
     private EditText mEditText;
-    private Button mSearchBtn;
+    //    private Button mSearchBtn;
     public RadioGroup mRadioGroup;
     public RadioButton mRadio1, mRadio2;
     /*
@@ -134,6 +134,7 @@ public class SearchActivityV2 extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.base_search_layout);
+        setSystemBarWhite();
         loadHistory(HISTORY_URL);
         findViewById();
         initView();
@@ -153,7 +154,6 @@ public class SearchActivityV2 extends BaseActivity {
         mRadioGroup = (RadioGroup) findViewById(R.id.radiogroup);
         mRadio1 = (RadioButton) findViewById(R.id.select_product);
         mRadio2 = (RadioButton) findViewById(R.id.select_shop);
-        mSearchBtn = (Button) findViewById(R.id.search_btn);
         mEditText = ((EditText) findViewById(R.id.search_edit));
 
         ll_search_history_tag = (LinearLayout) findViewById(R.id.ll_search_history_tag);
@@ -197,11 +197,6 @@ public class SearchActivityV2 extends BaseActivity {
 
     @Override
     protected void initView() {
-        findViewById(R.id.b_title_back3).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                finish();
-            }
-        });
 
         findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
             private IOSDialog dialog;
@@ -260,7 +255,7 @@ public class SearchActivityV2 extends BaseActivity {
                         } else {
                             jsStartActivity("IndexActivity", "shopid|" + shopid + ",;shoptype|" + levelType);
                             //发出刷新首页请求，更新shopid等
-                            jsSendRefreshBroadcast();
+//                            jsSendRefreshBroadcast();
                         }
                     }
                 });
@@ -306,18 +301,17 @@ public class SearchActivityV2 extends BaseActivity {
                 return false;
             }
         });
-        final Drawable dLeft = ContextCompat.getDrawable(this, R.drawable.ic_search);
+//        final Drawable dLeft = ContextCompat.getDrawable(this, R.drawable.ic_search);
         final Drawable dRight = ContextCompat.getDrawable(this, R.drawable.ic_close);
-        dLeft.setBounds(0, 0, dLeft.getIntrinsicWidth(), dLeft.getIntrinsicHeight());
+//        dLeft.setBounds(0, 0, dLeft.getIntrinsicWidth(), dLeft.getIntrinsicHeight());
         dRight.setBounds(0, 0, dRight.getIntrinsicWidth(), dRight.getIntrinsicHeight());
         mEditText.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() == 0) {
                     setSearchState(false);
                     initSearchTipsGroupView(ll_search_history, searchHistoryList);
-                    mEditText.setCompoundDrawables(dLeft, null, null, null);
                 } else {
-                    mEditText.setCompoundDrawables(dLeft, null, dRight, null);
+                    mEditText.setCompoundDrawables(null, null, dRight, null);
                 }
             }
 
@@ -344,13 +338,6 @@ public class SearchActivityV2 extends BaseActivity {
             }
         });
 
-        mSearchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String keyword = mEditText.getText().toString().trim();
-                search(keyword);
-            }
-        });
     }
 
     private class SearchContentAdapter extends PagerAdapter {

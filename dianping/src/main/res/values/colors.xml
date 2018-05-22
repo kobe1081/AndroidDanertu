@@ -391,4 +391,9 @@
     <color name="grayLightTransparent">#a6888888</color>
     <color name="grayLightI">#f2f2f2</color>
     <color name="blue_hotel_qr_code">#6BB8FE</color>
+    <color name="menu_font_check">#FE6567</color>
+    <color name="diver_color">#f2f2f2</color>
+
+    <color name="bg_gray">#F7F7F7</color>
+
 </resources>

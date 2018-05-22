@@ -21,10 +21,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import static com.danertu.adapter.MyOrderAdapter.REQUEST_ORDER_DETAIL;
+import static com.danertu.adapter.MyOrderAdapter.REQUEST_QRCODE;
 import static com.danertu.dianping.MyOrderDetail.KEY_ORDER_ITEM;
 
 
-public abstract class MyOrderParent extends Activity implements XListView.IXListViewListener {
+public abstract class MyOrderParent extends BaseActivity implements XListView.IXListViewListener {
     protected XListView lv_order;
     protected TextView orderNullText;
     protected Context context;
@@ -35,6 +36,7 @@ public abstract class MyOrderParent extends Activity implements XListView.IXList
     private LocalBroadcastManager broadcastManager;
     private LoadOrderReceiver receiver;
     private DataChangerReceiver dataChangerReceiver;
+    private AdapterOnActivityResult adapterOnActivityResult;
 
     public static final int TAB_ALL = 0;
     public static final int TAB_NO_PAY = 1;
@@ -85,8 +87,23 @@ public abstract class MyOrderParent extends Activity implements XListView.IXList
             dataChangerReceiver = new DataChangerReceiver();
             broadcastManager.registerReceiver(dataChangerReceiver, intentFilter);
         }
+        if (adapterOnActivityResult == null) {
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(Constants.ORDER_DATA_ON_ACTIVITY_FOR_RESULT);
+            adapterOnActivityResult = new AdapterOnActivityResult();
+            broadcastManager.registerReceiver(adapterOnActivityResult, intentFilter);
+        }
     }
 
+    @Override
+    protected void initView() {
+
+    }
+
+    @Override
+    protected void findViewById() {
+
+    }
 
     @Override
     protected void onDestroy() {
@@ -98,88 +115,13 @@ public abstract class MyOrderParent extends Activity implements XListView.IXList
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Logger.e(getClass().getSimpleName(), "onActivityResult 接收到数据变化");
+
         if (resultCode == REQ_PAY) {
             adapter.notifyDataSetChanged();
         }
 
-        /**
-         * 更新列表
-         */
-        if (requestCode == REQUEST_ORDER_DETAIL) {
-            adapter.notifyDataSetChanged();
-        }
-
-        Logger.e(getClass().getSimpleName(), "接收到数据变化");
-//        switch (requestCode) {
-//            case REQUEST_ORDER_DETAIL:
-//                Logger.e(getClass().getSimpleName(),"接收到数据变化===2");
-//                Bundle bundle = data.getBundleExtra("data");
-////                Bundle bundle = data.getExtras();
-//
-//                String orderNumber = data.getStringExtra("orderNumber");
-//                HashMap<String, Object> item = (HashMap<String, Object>) bundle.getSerializable(KEY_ORDER_ITEM);
-//                Logger.e(getClass().getSimpleName(),item.toString());
-//                /**
-//                 * 更新全部列表
-//                 */
-//                int allSize = MyOrderListAllActivity.data2.size();
-//                for (int i = 0; i < allSize; i++) {
-//                    HashMap<String, Object> orderItem = MyOrderListAllActivity.data2.get(i);
-//                    if (orderItem.get("order_orderNumber").toString().equals(orderNumber)) {
-//                        MyOrderListAllActivity.data2.remove(i);
-//                        MyOrderListAllActivity.data2.add(i, item);
-//                        MyOrderListAllActivity.adapter.notifyDataSetChanged();
-//                        break;
-//                    }
-//                }
-//
-//                String oResult = item.get(MyOrderData.ORDER_ORDERSTATUS_KEY).toString();
-//                String sResult = item.get(MyOrderData.ORDER_SHIPSTATUS_KEY).toString();
-//                String pResult = item.get(MyOrderData.ORDER_PAYSTATUS_KEY).toString();
-//
-//                if (oResult.equals("1")) {
-//                    if (pResult.equals("0")) {// 付款状态为 未付款
-//                        for(HashMap<String,Object> orderItem:MyOrderNoPayActivity.data2){
-//                            if (orderItem.get("order_orderNumber").toString().equals(orderNumber)) {
-//                                MyOrderNoPayActivity.data2.remove(orderItem);
-//                                break;
-//                            }
-//                        }
-//                        MyOrderNoPayActivity.data2.add(0, item);
-//                        MyOrderNoPayActivity.adapter.notifyDataSetChanged();
-//                    } else if (pResult.equals("2") && sResult.equals("0")) {// 已付款 ，未发货
-//                        for(HashMap<String,Object> orderItem:MyOrderNoSendActivity.data2){
-//                            if (orderItem.get("order_orderNumber").toString().equals(orderNumber)) {
-//                                MyOrderNoSendActivity.data2.remove(orderItem);
-//                                break;
-//                            }
-//                        }
-//                        MyOrderNoSendActivity.data2.add(0, item);
-//                        MyOrderNoSendActivity.adapter.notifyDataSetChanged();
-//                    } else if (sResult.equals("1") && pResult.equals("2")) {// 已发货,买家待收货
-//                        for(HashMap<String,Object> orderItem:MyOrderNoReceiveActivity.data2){
-//                            if (orderItem.get("order_orderNumber").toString().equals(orderNumber)) {
-//                                MyOrderNoReceiveActivity.data2.remove(orderItem);
-//                                break;
-//                            }
-//                        }
-//                        MyOrderNoReceiveActivity.data2.add(0, item);
-//                        MyOrderNoReceiveActivity.adapter.notifyDataSetChanged();
-//                    }
-//                } else if (oResult.equals("5")) {// 已完成订单,可以评论多次
-//                    for(HashMap<String,Object> orderItem:MyOrderNoCommentActivity.data2){
-//                        if (orderItem.get("order_orderNumber").toString().equals(orderNumber)) {
-//                            MyOrderNoCommentActivity.data2.remove(orderItem);
-//                            break;
-//                        }
-//                    }
-//                    MyOrderNoCommentActivity.data2.add(0, item);
-//                    MyOrderNoCommentActivity.adapter.notifyDataSetChanged();
-//                }
-//                break;
-//
-//        }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -196,6 +138,7 @@ public abstract class MyOrderParent extends Activity implements XListView.IXList
 
     abstract void loadMore();
 
+
     class LoadOrderReceiver extends BroadcastReceiver {
 
         @Override
@@ -211,9 +154,115 @@ public abstract class MyOrderParent extends Activity implements XListView.IXList
         public void onReceive(Context context, Intent intent) {
             Logger.e(getClass().getSimpleName(), " DataChangerReceiver 接收到数据变化");
             if (adapter != null) {
-                Logger.e("DataChangerReceiver", " DataChangerReceiver 接收到数据变化");
                 adapter.notifyDataSetChanged();
             }
+        }
+    }
+
+    /**
+     * 为了避免出现问题(比如在全部列表进入券码页面核销，返回列表再进入未付款页面后，已核销的订单在未付款列表显示已使用)，直接在这里操作列表数据
+     */
+    class AdapterOnActivityResult extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+                int requestCode = intent.getIntExtra("requestCode", -1);
+                int resultCode = intent.getIntExtra("resultCode", -1);
+                final String orderNumber = intent.getStringExtra("orderNumber");
+                switch (requestCode) {
+                    case REQUEST_QRCODE:
+                        new MyOrderData(MyOrderParent.this, true, orderNumber) {
+
+                            @Override
+                            public void getDataSuccess() {
+                                HashMap<String, Object> orderBean = getItemOrder();
+                                if (orderBean == null || orderBean.isEmpty()) {
+                                    jsShowMsg("订单数据有误");
+                                    finish();
+                                    return;
+                                }
+                                //从订单中心过来
+                                boolean hasAllChange = false;
+                                //------------------------------全部订单--------------------------------------------
+                                for (HashMap<String, Object> orderItem : MyOrderData.order_list_all) {
+                                    String order_orderNumber = orderItem.get("order_orderNumber").toString();
+                                    //更新所有订单列表
+                                    if (orderNumber.equals(order_orderNumber)) {
+//                                    orderItem.remove("order_PaymentStatus");
+//                                    orderItem.put("order_PaymentStatus", payStatus);
+//                                    orderItem.remove("order_ShipmentStatus");
+//                                    orderItem.put("order_ShipmentStatus", shipmentStatus);
+//                                    orderItem.remove(MyOrderData.ORDER_ORDERSTATUS_KEY);
+//                                    orderItem.put(MyOrderData.ORDER_ORDERSTATUS_KEY, orderStatus);
+
+                                        for (String s : orderItem.keySet()) {
+                                            orderItem.put(s, orderBean.get(s));
+                                        }
+                                        hasAllChange = true;
+                                        Logger.e(TAG, "  order_list_all change");
+                                        MyOrderListAllActivity.adapter.notifyDataSetChanged();
+                                        break;
+                                    }
+                                }
+                                if (!hasAllChange)
+                                    for (HashMap<String, Object> orderItem : MyOrderData.order_all) {
+                                        String order_orderNumber = orderItem.get("order_orderNumber").toString();
+                                        //更新所有订单列表
+                                        if (orderNumber.equals(order_orderNumber)) {
+//                                        orderItem.remove("order_PaymentStatus");
+//                                        orderItem.put("order_PaymentStatus", payStatus);
+//                                        orderItem.remove("order_ShipmentStatus");
+//                                        orderItem.put("order_ShipmentStatus", shipmentStatus);
+//                                        orderItem.remove(MyOrderData.ORDER_ORDERSTATUS_KEY);
+//                                        orderItem.put(MyOrderData.ORDER_ORDERSTATUS_KEY, orderStatus);
+
+                                            for (String s : orderItem.keySet()) {
+                                                orderItem.put(s, orderBean.get(s));
+                                            }
+                                            Logger.e(TAG, "  order_all change");
+                                            break;
+                                        }
+                                    }
+//------------------------------全部订单--------------------------------------------------
+
+                                String orderStatus = orderBean.get(MyOrderData.ORDER_ORDERSTATUS_KEY).toString();
+                                String shipmentStatus = orderBean.get(MyOrderData.ORDER_SHIPSTATUS_KEY).toString();
+                                String payStatus = orderBean.get(MyOrderData.ORDER_PAYSTATUS_KEY).toString();
+                                if (orderStatus.equals("5") && shipmentStatus.equals("2") && payStatus.equals("2")) {
+                                    //未付款
+                                    boolean removeData = removeData(MyOrderData.order_list_noPay, orderNumber);
+                                    if (removeData) {
+                                        MyOrderNoPayActivity.adapter.notifyDataSetChanged();
+                                    }
+                                    if (!removeData) {
+                                        removeData = removeData(MyOrderData.order_noPay, orderNumber);
+                                    }
+                                    //已付款
+                                    if (!removeData) {
+                                        removeData = removeData(MyOrderData.order_list_noSend, orderNumber);
+                                        if (removeData) {
+                                            MyOrderNoSendActivity.adapter.notifyDataSetChanged();
+                                        }
+                                    }
+                                    if (!removeData) {
+                                        removeData(MyOrderData.order_noSend, orderNumber);
+                                    }
+
+                                }
+
+
+                                Logger.e(TAG, "数据更新完毕");
+                            }
+                        };
+                        break;
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     }
 

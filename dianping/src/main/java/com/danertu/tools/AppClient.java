@@ -1,5 +1,7 @@
 package com.danertu.tools;
 
+import android.nfc.Tag;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +32,7 @@ import com.config.Constants;
 @SuppressWarnings("rawtypes")
 public class AppClient {
 
+    private static String TAG="AppClient";
     // compress strategy
     final private static int CS_NONE = 0;
     final private static int CS_GZIP = 1;
@@ -126,6 +129,8 @@ public class AppClient {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+
+            Logger.i(TAG, apiUrl);
             Logger.i("ApiRequest", stateCode + "\n" + urlParams.toString() + "\n" + result);
             httpPost.abort();
         }

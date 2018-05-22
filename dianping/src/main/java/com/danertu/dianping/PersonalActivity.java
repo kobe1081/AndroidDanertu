@@ -1,6 +1,8 @@
 package com.danertu.dianping;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.json.JSONArray;
@@ -14,8 +16,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,14 +29,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.config.Constants;
 import com.danertu.db.DBHelper;
+import com.danertu.dianping.sign.Seference;
+import com.danertu.entity.MyOrderData;
+import com.danertu.entity.MyOrderDataQRCode;
 import com.danertu.tools.AppManager;
+import com.danertu.tools.DateTimeUtils;
 import com.danertu.tools.FWorkUtil;
 import com.danertu.tools.Logger;
 import com.danertu.widget.CommonTools;
@@ -49,7 +53,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
  * 将修改头像的AlertDialog改为PopupWindow实现
  *
  * @Link #showPopupWindos()
- *
+ * <p>
  * 2018年4月4日
  * 未开店跳转地址修改为 activity/20171012.html
  */
@@ -68,6 +72,11 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
     public static final String KEY_TAB_INDEX = "TabIndex";
     public static final String KEY_IS_ONLY_HOTEL = "isOnlyHotel";
 
+
+    private String currentDate = "";
+    private String dateStr = "";// 今天的日期
+
+
 //    DBManager mgr = new DBManager();
 //	String filePath = android.os.Environment.getExternalStorageDirectory()
 //			+ "/CACHE/1133326912";
@@ -77,17 +86,21 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
      */
     final String WEBPAGE_NAME = "Android_personal2.html";
     public static final String WV_INTERFACE = "iface_personal";
-    public ImageView iv_head = null;
-    public Button b_checkIn = null;
-    public TextView tv_account = null;
-    public TextView tv_jlb = null;
+    public ImageView iv_head = null;            //头像
+    private LinearLayout llSignIn;              //签到item
+    public TextView tv_sign_in = null;          //签到按钮
+    public TextView tv_sign_in_tip = null;      //签到提示
+    public TextView tv_account = null;          //账号
+    public TextView tv_wallet_count = null;     //钱包余额
+    public TextView tv_jlb = null;              //金萝卜
+    private TextView tv_coupon;                 //优惠券
     final int CHECK_IN = 101;
 
     private String headImgUrl = null;
     private String nickname = null;
     private String psw = null;
 
-    private ImageView create_shop;
+    private String loginId;
 
     public final int getCheckInKey() {
         return CHECK_IN;
@@ -98,20 +111,42 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
         context = this;
         setContentView(R.layout.activity_personal);
-        setSystemBar(R.color.red_text1);
+        setSystemBarWhite();
         if (!isLogin()) {
             jsStartActivityForResult("LoginActivity", "", REQ_LOGIN);
             return;
         }
         Intent intent = getIntent();
+
+        init();
         /**
          * 从推送调起的话，起中转作用，先打开此页面然后打开订单页面
          */
         if (intent.getBooleanExtra(KEY_FROM_PUSH, false)) {
             jsToOrderActivity(Integer.parseInt(intent.getStringExtra(KEY_TAB_INDEX)), intent.getBooleanExtra(KEY_IS_ONLY_HOTEL, false));
         }
-        fwUtil = new FWorkUtil(context);
-        init();
+    }
+
+    public void onResume() {
+        super.onResume();
+        if (isLogin()) {
+            new Thread(rInitMsg).start();
+            new GetSignInToday().execute();
+            new GetWallet().execute();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        /**
+         * 从推送调起的话，起中转作用，先打开此页面然后打开订单页面
+         */
+        new Thread(rInitMsg).start();
+        new GetSignInToday().execute();
+        if (intent.getBooleanExtra(KEY_FROM_PUSH, false)) {
+            jsToOrderActivity(Integer.parseInt(intent.getStringExtra(KEY_TAB_INDEX)), intent.getBooleanExtra(KEY_IS_ONLY_HOTEL, false));
+        }
     }
 
     private Runnable rInitFav = new Runnable() {
@@ -133,7 +168,6 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
         }
     };
 
-    private TextView tv_coupon;
 
     /**
      * 检查当前登录用户是否为店主，是则显示我的店铺、开店必看、车友会等入口
@@ -141,7 +175,6 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
      * 否则隐藏
      */
     private class CheckShopState extends AsyncTask<Void, Void, Integer> {
-        private Bitmap b_createShop;
 
         @Override
         protected Integer doInBackground(Void... params) {
@@ -167,15 +200,6 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
                     e.printStackTrace();
                 }
             }
-            if (type == 0) {
-                try {
-                    //不是店主，显示 我要开店  banner
-                    Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.mission_banner);
-                    b_createShop = zoomBitmap(b, getScreenWidth(), getScreenHeight());
-                } catch (OutOfMemoryError e) {
-                    e.printStackTrace();
-                }
-            }
             return type;
         }
 
@@ -190,21 +214,23 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
              */
             if (result > 0) {
                 isOpen = true;
-                create_shop.setVisibility(View.GONE);
+
                 findViewById(R.id.id_level).setVisibility(View.VISIBLE);
-                findViewById(R.id.ll_opera2).setVisibility(View.VISIBLE);
-                if (result == 2) findViewById(R.id.p_crown).setVisibility(View.VISIBLE);
+                findViewById(R.id.ll_shop_manager).setVisibility(View.VISIBLE);
+//                if (result == 2)
+//                    findViewById(R.id.p_crown).setVisibility(View.VISIBLE);
             } else {
-                if (b_createShop != null) {
-                    create_shop.setVisibility(View.VISIBLE);
-                    create_shop.setImageBitmap(b_createShop);
-                }
+
+                //显示我要开店
+                findViewById(R.id.ll_open_shop).setVisibility(View.VISIBLE);
             }
         }
 
     }
 
     public void init() {
+        loginId = getUid();
+        fwUtil = new FWorkUtil(context);
         handlerOrderData = new Handler(new HCallBack());
         findViewById();
         setMessage();
@@ -254,41 +280,47 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
         }
     }
 
-    public void onResume() {
-        super.onResume();
-        if (isLogin()) {
-            new Thread(rInitMsg).start();
-        }
-    }
 
     protected void findViewById() {
-        tv_jlb = (TextView) findViewById(R.id.tv_personal_jlb);
+        tv_jlb = (TextView) findViewById(R.id.tv_jlb_count);
         tv_coupon = (TextView) findViewById(R.id.tv_coupon);
         tv_account = (TextView) findViewById(R.id.tv_personal_account);
-        b_checkIn = (Button) findViewById(R.id.b_personal_checkIn);
+        tv_sign_in = (TextView) findViewById(R.id.tv_sign_in);
+        tv_sign_in_tip = (TextView) findViewById(R.id.tv_sign_in_tip);
+        tv_wallet_count = (TextView) findViewById(R.id.tv_wallet_count);
+        llSignIn = (LinearLayout) findViewById(R.id.ll_sign_in);
         iv_head = (ImageView) findViewById(R.id.iv_personal_head);
-        create_shop = (ImageView) findViewById(R.id.create_shop);
+
+        tv_sign_in_tip.setOnClickListener(this);
+        tv_wallet_count.setOnClickListener(this);
 
         findViewById(R.id.b_order_set).setOnClickListener(this);
         findViewById(R.id.iv_personal_head).setOnClickListener(this);
-        findViewById(R.id.b_personal_checkIn).setOnClickListener(this);
-        findViewById(R.id.p_car).setOnClickListener(this);
-        findViewById(R.id.p_book).setOnClickListener(this);
-        findViewById(R.id.p_crown).setOnClickListener(this);
-        findViewById(R.id.p_myshop).setOnClickListener(this);
-        findViewById(R.id.order_hotel).setOnClickListener(this);
-        findViewById(R.id.p_collect).setOnClickListener(this);
-        findViewById(R.id.p_wallet).setOnClickListener(this);
+        findViewById(R.id.tv_sign_in).setOnClickListener(this);
+
+        findViewById(R.id.ll_collect).setOnClickListener(this);
+        findViewById(R.id.ll_wallet).setOnClickListener(this);
         findViewById(R.id.ll_coupon).setOnClickListener(this);
         findViewById(R.id.ll_jlb).setOnClickListener(this);
-        findViewById(R.id.p_msg).setOnClickListener(this);
-        findViewById(R.id.create_shop).setOnClickListener(this);
 
-        findViewById(R.id.order_all).setOnClickListener(this);
-        findViewById(R.id.order_nopay).setOnClickListener(this);
-        findViewById(R.id.order_nosend).setOnClickListener(this);
-        findViewById(R.id.order_noreceive).setOnClickListener(this);
-        findViewById(R.id.order_complete).setOnClickListener(this);
+        findViewById(R.id.ll_qr_code).setOnClickListener(this);
+        findViewById(R.id.ll_my_order).setOnClickListener(this);
+        findViewById(R.id.ll_open_shop).setOnClickListener(this);
+
+
+        /**
+         * 店铺功能
+         */
+        findViewById(R.id.ll_manual).setOnClickListener(this);
+        findViewById(R.id.ll_car).setOnClickListener(this);
+        findViewById(R.id.ll_back_buy).setOnClickListener(this);
+        findViewById(R.id.ll_warehouse).setOnClickListener(this);
+        findViewById(R.id.ll_shop_setting).setOnClickListener(this);
+        findViewById(R.id.ll_order_manager).setOnClickListener(this);
+        findViewById(R.id.ll_product_manager).setOnClickListener(this);
+        findViewById(R.id.ll_my_shop).setOnClickListener(this);
+        findViewById(R.id.ll_shop_manager).setOnClickListener(this);
+
 
 //        findViewById(R.id.test).setOnClickListener(this);
 
@@ -304,36 +336,33 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
                     jsStartActivity("HtmlActivityNew", "url|" + Constants.appWebPageUrl + "Android/set_center.html");
                     // 实例化SelectPicPopupWindow
                     break;
-                case R.id.iv_personal_head:
+                case R.id.iv_personal_head://头像
 //                showDialog();
                     showPopupWindow();
                     break;
-                case R.id.b_personal_checkIn:
-                    jsStartActivityForResult("CalendarActivity", "", CHECK_IN);
-                    break;
-                case R.id.p_car:
-                    jsStartActivity("HtmlActivity", "pageName|car_insurance.html");
-                    break;
-                case R.id.p_book:
-                    jsStartActivity("HtmlActivityNew", "url|" + Constants.appWebPageUrl + "seller_learn.html");
-                    break;
-                case R.id.p_crown:
-                    jsStartActivity("HtmlActivityNew", "url|" + Constants.appWebPageUrl + "elite_alliance.html");
-                    break;
-                case R.id.p_myshop:
-                    if (!isOpen) {
-                        jsStartActivityForResult("HtmlActivity", "pageName|set_shop_base.html", 3);
+                case R.id.tv_sign_in://签到
+                    if (isLogined()) {
+                        new SignIn().execute();
                     } else {
-                        jsStartActivity("HtmlActivityNew", "url|" + Constants.appWebPageUrl + "Android/seller_center.html,;showDialog|true");
+                        jsShowMsg("请先登录");
+                        jsStartActivityForResult("LoginActivity", "", REQ_LOGIN);
                     }
                     break;
-                case R.id.order_hotel:
-                    jsToOrderActivity(0, true);
+                case R.id.tv_sign_in_tip:
+                    jsStartActivityForResult("CalendarActivity", "", CHECK_IN);
                     break;
-                case R.id.p_collect:
+//                case R.id.p_crown:
+                //精英联盟
+//                    jsStartActivity("HtmlActivityNew", "url|" + Constants.appWebPageUrl + "elite_alliance.html");
+//                    break;
+
+                case R.id.ll_collect:
                     jsToActivity("com.danertu.dianping.MyCollectActivity");
                     break;
-                case R.id.p_wallet:
+                case R.id.ll_my_order:
+                    jsToOrderActivity(0);
+                    break;
+                case R.id.ll_wallet:
                     jsToActivity("com.danertu.dianping.MyWalletActivity");
                     break;
                 case R.id.ll_coupon:
@@ -342,11 +371,7 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
                 case R.id.ll_jlb:
                     jsToActivity("com.danertu.dianping.ScoreCenterActivity");
                     break;
-                case R.id.p_msg:
-                    jsToActivity("com.danertu.dianping.MessageCenterActivity");
-//                    startActivity(new Intent(context, JPushMessageActivity.class));
-                    break;
-                case R.id.create_shop:
+                case R.id.ll_open_shop:
                     /**
                      * 2018年4月4日
                      * 修改指向地址
@@ -354,9 +379,68 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
 //                    jsStartActivityForResult("HtmlActivity", "pageName|set_shop_base.html", 3);
                     jsStartActivityForResult("HtmlActivity", "pageName|activity/20171012.html", 3);
                     break;
+                case R.id.ll_qr_code:
+                    /**
+                     * 消费码
+                     */
+//                    jsToOrderActivity(0, false, true);
+
+                    Intent intent = new Intent(getContext(), MyOrderQRCodeActivity.class);
+                    intent.putExtra("TabIndex", 0);
+                    intent.putExtra("isOnlyHotel", false);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                    myOrderDataQRCode = new MyOrderDataQRCode(this, false, true) {
+                        @Override
+                        public void getDataSuccess() {
+//
+//                    if (handler != null) {
+//                        handler.postDelayed(new Runnable() {
+//                            public void run() {
+//                                hideLoadDialog();
+//
+//                            }
+//                        }, 1000);
+//                    } else {
+//                        hideLoadDialog();
+//                    }
+                        }
+                    };
+
+                    break;
+                case R.id.ll_my_shop://进入店铺
+                    if (!isOpen) {
+                        jsStartActivityForResult("HtmlActivity", "pageName|set_shop_base.html", 3);
+                    } else {
+                        jsStartActivity("HtmlActivityNew", "url|" + Constants.appWebPageUrl + "Android/seller_center.html,;showDialog|true");
+                    }
+                    break;
+                case R.id.ll_product_manager://商品管理
+                    jsStartActivity("HtmlActivity", "pageName|seller_product.html");
+                    break;
+                case R.id.ll_order_manager://订单管理
+                    jsStartActivity("HtmlActivity", "pageName|deal_manage.html");
+                    break;
+                case R.id.ll_shop_setting://店铺设置
+                    jsStartActivity("HtmlActivity", "pageName|set_shop_base.html");
+                    break;
+                case R.id.ll_warehouse://仓库
+                    jsToActivity("com.danertu.dianping.StockpileActivity");
+                    break;
+                case R.id.ll_back_buy://后台拿货
+                    jsStartActivity("HtmlActivityNew", "url|" + Constants.appWebPageUrl + "Android/seller_take.html");
+                    break;
+                case R.id.ll_car:
+                    jsStartActivity("HtmlActivity", "pageName|car_insurance.html");
+                    break;
+                case R.id.ll_manual://卖家手册
+                    jsStartActivity("HtmlActivityNew", "url|" + Constants.appWebPageUrl + "seller_learn.html");
+                    break;
 //                case R.id.test:
-//                    startActivity(new Intent(context,StockpileActivity.class));
+//                    startActivity(new Intent(context,IndexNewActivity.class));
 //                    break;
+
+
                 default:
                     break;
             }
@@ -365,28 +449,96 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
         }
     }
 
+    /**
+     * 获取钱包余额
+     */
+    private class GetWallet extends AsyncTask<Void, Integer, String> {
 
-    public void toOrderCenter(View v) {
-        switch (v.getId()) {
-            case R.id.order_all:
-                jsToOrderActivity(0);
-                break;
-            case R.id.order_nopay:
-                jsToOrderActivity(1);
-                break;
-            case R.id.order_nosend:
-                jsToOrderActivity(2);
-                break;
-            case R.id.order_noreceive:
-                jsToOrderActivity(3);
-                break;
-            case R.id.order_complete:
-                jsToOrderActivity(4);
-                break;
-            default:
-                break;
+        @Override
+        protected String doInBackground(Void... voids) {
+            return AppManager.getInstance().getWalletMoney("0108", loginId);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            //通过try-catch方式判断获取回来的结果是不是数字
+            //如果是就显示
+            try {
+                double money = Double.parseDouble(s);
+                tv_wallet_count.setText(CommonTools.formatZero2Str(money));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
+
+
+    /**
+     * 从服务器中取出客户签到信息
+     */
+    private class GetSignInToday extends AsyncTask<Void, Integer, String> {
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = new Date();
+            currentDate = sDateFormat.format(date);
+            return AppManager.getInstance().judgeSignIn("0050", loginId, currentDate);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (s.equals("true")) {
+                //已经签到
+                tv_sign_in_tip.setVisibility(View.VISIBLE);
+                llSignIn.setVisibility(View.GONE);
+            } else {
+                //未签到
+                tv_sign_in_tip.setVisibility(View.GONE);
+                llSignIn.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    /**
+     * 将签到添加到服务器
+     * <p>
+     * 0051接口 签到成功返回：true
+     */
+    private class SignIn extends AsyncTask<Void, Integer, String> {
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            return AppManager.getInstance().insertSignIn("0051", loginId);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (s.equals("true")) {
+                jsShowMsg("签到成功");
+                new Thread(rInitMsg).start();
+                llSignIn.setVisibility(View.GONE);
+                tv_sign_in_tip.setVisibility(View.VISIBLE);
+
+                db.InsertRegistrationForm(context, loginId, DateTimeUtils.getDateToyyyyMMdd());
+
+                //保存签到记录
+                Seference seference = new Seference(context);
+                SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-M-d");
+                Date date = new Date();
+                dateStr = sDateFormat.format(date);
+                seference.savePreferenceData(seference.signFileName, dateStr, true + "");
+            } else {
+                llSignIn.setVisibility(View.VISIBLE);
+                tv_sign_in_tip.setVisibility(View.GONE);
+                jsShowMsg("签到失败，请重试");
+            }
+        }
+    }
+
 
     final String appWebPageUrl = "file:///android_asset/";
 
@@ -621,11 +773,12 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
     @Override
     public void onClick(View v) {
         click(v);
-        toOrderCenter(v);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
     }
+
+
 }

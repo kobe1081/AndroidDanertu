@@ -12,17 +12,21 @@ import com.danertu.widget.CommonTools;
 
 import java.util.ArrayList;
 
+/**
+ * 2018年4月13日
+ * 修改为显示 退款订单
+ */
 public class MyOrderNoCommentActivity extends MyOrderParent {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         data2 = MyOrderData.order_list_noComment;
-        adapter = new MyOrderAdapter(context, data2,TAB_NO_COMMENT);
+        adapter = new MyOrderAdapter(context, data2, TAB_NO_COMMENT);
         lv_order.setAdapter(adapter);
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         if (data2.size() == 0 && MyOrderData.order_noComment.size() != 0) {
             loadData();
@@ -43,9 +47,10 @@ public class MyOrderNoCommentActivity extends MyOrderParent {
      */
     @Override
     void loadMore() {
-        if((MyOrderData.order_noComment==null||MyOrderData.order_noComment.size()<=0)&&MyOrderData.isFinish){
+        if ((MyOrderData.order_noComment == null || MyOrderData.order_noComment.size() <= 0) && MyOrderData.isFinish) {
             CommonTools.showShortToast(this, "已无更多订单");
             lv_order.stopLoadMore();
+            lv_order.setPullLoadEnable(false);
             return;
         }
         loadData();
@@ -63,10 +68,5 @@ public class MyOrderNoCommentActivity extends MyOrderParent {
             MyOrderData.order_noComment.clear();
         }
         adapter.notifyDataSetChanged();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
     }
 }

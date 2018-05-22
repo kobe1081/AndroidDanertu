@@ -57,7 +57,7 @@
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/category_selection_gridview_bg"
                 android:hint="@string/register_normal_useraccount_hint"
-                android:inputType="number"
+                android:inputType="phone"
                 android:textColor="@color/black" />
         </TableRow>
 

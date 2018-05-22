@@ -2,25 +2,28 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f9f9f9" >
+    android:layout_marginTop="-15dp"
+    android:background="#f9f9f9">
+
     <TextView
         android:id="@+id/tv_order_null_text"
-        android:textColor="@color/gray_text_bbb"
-        android:textSize="@dimen/small_middle_text_size"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:drawablePadding="10dp"
+        android:drawableTop="@drawable/order_null_img"
         android:gravity="center"
         android:text="暂无相关订单信息"
-        android:drawableTop="@drawable/order_null_img"
-        android:layout_marginTop="20dp"
-        android:drawablePadding="10dp"
+        android:textColor="@color/gray_text_bbb"
+        android:textSize="@dimen/small_middle_text_size"
         android:visibility="visible" />
-
+    <!--android:divider="@color/gray_text"-->
     <com.danertu.widget.XListView
         android:id="@+id/xlv_order"
         android:layout_width="match_parent"
-        android:divider="@color/gray_text"
-        android:background="@color/white"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:background="#f2f2f2"
+        android:divider="@drawable/divider_order_item"
+        android:padding="5dp" />
 
 </FrameLayout>

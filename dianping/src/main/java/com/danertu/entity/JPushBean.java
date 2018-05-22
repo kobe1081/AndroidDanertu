@@ -11,7 +11,7 @@ public class JPushBean {
     String pushTime;
 
     public JPushBean(int _id, String title, String message, String pushTime) {
-        this._id=_id;
+        this._id = _id;
         this.title = title;
         this.message = message;
         this.pushTime = pushTime;
@@ -49,10 +49,11 @@ public class JPushBean {
         this.pushTime = pushTime;
     }
 
+
     @Override
     public String toString() {
         return "JPushBean{" +
-                "_id='" + _id + '\'' +
+                "_id=" + _id +
                 ", title='" + title + '\'' +
                 ", message='" + message + '\'' +
                 ", pushTime='" + pushTime + '\'' +

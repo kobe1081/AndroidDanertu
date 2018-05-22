@@ -12,10 +12,12 @@ import org.json.JSONObject;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.config.Constants;
 import com.danertu.entity.Messagebean;
+import com.google.gson.Gson;
 
 
 public class NoticeManager {
@@ -63,6 +65,7 @@ public class NoticeManager {
 
     /**
      * 更新消息列表
+     *
      * @param memberId
      */
     public void updateMsg(String memberId) {
@@ -141,11 +144,13 @@ public class NoticeManager {
                 try {
                     AppClient client = new AppClient(taskUrl);
                     String httpResult = client.post(taskArgs);
-                    if (httpResult != null) {
-                        onTaskComplete(taskId, httpResult);
-                    } else {
-                        onError(Constants.err.MESSAGE);
-                    }
+
+                    onTaskComplete(taskId, httpResult);
+//                    if (httpResult != null) {
+//                        onTaskComplete(taskId, httpResult);
+//                    } else {
+//                        onError(Constants.err.MESSAGE);
+//                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -160,32 +165,43 @@ public class NoticeManager {
 //				msgList = (ArrayList<Messagebean>) MESSAGE.getResultList("messagebean");
             msgList = analysisJson(result);
         } catch (Exception e) {
-//				e.printStackTrace();
+            e.printStackTrace();
         }
-        Logger.e("Message","msgList size="+msgList.size());
-        Logger.e("Message","msgList="+msgList);
-        hasNewMsg = msgList.size() > 0;
+        Logger.e("Message", "msgList size=" + msgList.size());
+        Logger.e("Message", "msgList=" + msgList);
+        hasNewMsg = msgList.size() >= 0;
         this.mNewMsgCount = msgList.size();
         sendMessage(GETMSG_COMPLETE);
     }
 
     /**
      * json解析
+     *
      * @param jsonStr json
      * @return list
      * @throws JSONException
      */
     public ArrayList<Messagebean> analysisJson(String jsonStr) throws JSONException {
         ArrayList<Messagebean> results = new ArrayList<>();
+
         JSONObject obj = new JSONObject(jsonStr).getJSONObject("messageList");
         JSONArray arr = obj.getJSONArray("messagebean");
+
+        Gson gson = new Gson();
         for (int i = 0; i < arr.length(); i++) {
             JSONObject oj = arr.getJSONObject(i);
-            Messagebean item = new Messagebean();
-            item.setId(oj.getString(Messagebean.COL_ID));
-            item.setMessageTitle(oj.getString(Messagebean.COL_MESSAGETITLE));
-            item.setModiflyTime(oj.getString(Messagebean.COL_MODIFLYTIME));
-            results.add(item);
+
+            Messagebean json = gson.fromJson(oj.toString(), Messagebean.class);
+
+//            Messagebean item = new Messagebean();
+//            item.setId(oj.getString(Messagebean.COL_ID));
+//            item.setMessageTitle(oj.getString(Messagebean.COL_MESSAGETITLE));
+//            item.setModiflyTime(oj.getString(Messagebean.COL_MODIFLYTIME));
+//            item.setSubtitle(oj.get(Messagebean.COL_SUBTITLE)==null?"":oj.getString(Messagebean.COL_SUBTITLE));
+//            item.setImage(oj.get(Messagebean.COL_IMAGE)==null?"":oj.getString(Messagebean.COL_IMAGE));
+//            results.add(item);
+
+            results.add(json);
         }
         return results;
     }

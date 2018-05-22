@@ -8,6 +8,5 @@
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
     android:paddingTop="5dp"
-    android:textColor="@color/deep_gray" >
-
+    android:textColor="@color/deep_gray">
 </TextView>

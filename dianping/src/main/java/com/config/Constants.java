@@ -54,21 +54,21 @@ public class Constants {
     /**
      * @see 2017/7/7
      */
-	public static final String apiSrcUrl = "http://192.168.1.137:511/RequestApi.aspx";
+    public static final String apiSrcUrl = "http://192.168.1.137:511/RequestApi.aspx";
 
 //	public static final String apiSrcUrl = "http://192.168.1.253:8085/RequestApi.aspx";
     //------------------------------------------------------------
 
     /**
      * @see
-     * @notice:  现在的retrofit地址是截取apiSrcUrl使用
+     * @notice: 现在的retrofit地址是截取apiSrcUrl使用
      * retrofit参数，发布版本时要注意修改为正式地址
      */
     /**
      * -------------------------正式地址------------------------------------
      */
 //    public static final String BASE_API_URL="http://115.28.55.222:8085"+apiSrcUrl.substring(0,apiSrcUrl.lastIndexOf("/"));
-    public static final String BASE_API_URL=apiSrcUrl.substring(0,apiSrcUrl.lastIndexOf("/"));
+    public static final String BASE_API_URL = apiSrcUrl.substring(0, apiSrcUrl.lastIndexOf("/"));
 
     /**
      * -------------------------测试地址------------------------------------
@@ -76,20 +76,19 @@ public class Constants {
 //    public static final String BASE_API_URL="http://192.168.1.137:511";
 
 
-
-    public static final String API_ADDRESS="/RequestApi.aspx";
+    public static final String API_ADDRESS = "/RequestApi.aspx";
 
 
     /**
      * 分享大厅页面地址修改
      * 2017年11月28日
      */
-    public static final String NEW_SHARE_HALL_ADDRESS="http://www.danertu.com/mobile/sharehall/list.aspx?platform=android&issharehall=1";
+    public static final String NEW_SHARE_HALL_ADDRESS = "http://www.danertu.com/mobile/sharehall/list.aspx?platform=android&issharehall=1";
     /**
      * 2018年2月2日
      * 单耳兔智慧仓库协议地址
      */
-    public static final String DANERTU_STOCK_PROTOCOL=appWebPageUrl+"articlescrap/articlescrap_tunhuo_protocol.html?from=order";
+    public static final String DANERTU_STOCK_PROTOCOL = appWebPageUrl + "articlescrap/articlescrap_tunhuo_protocol.html?from=order";
 
     // appi
     // 请同时修改 androidmanifest.xml里面，.PaymentCenterActivity里的属性<data
@@ -162,6 +161,7 @@ public class Constants {
     public static void setLt(String lt) {
         Constants.lt = lt;
     }
+
     //当前纬度
     private static String la;
     //当前经度
@@ -276,7 +276,8 @@ public class Constants {
     }
 
     public static final class api {
-        public static final String BASE = "http://115.28.55.222:8085/RequestApi.aspx";
+        //        public static final String BASE = "http://115.28.55.222:8085/RequestApi.aspx";
+        public static final String BASE = apiSrcUrl;
         public static final int GET_MOBILE_MESSAGE = 7;    //获取公告消息
         public static final int POST_LOGIN_INFO = 9;    //post取用户输入的登录信息判断登录
         public static final int POST_INFO = 11;   // Post方式提交注册信息
@@ -367,5 +368,8 @@ public class Constants {
     public final static String REFRESH_INDEX = "com.danertu.dianping.REFRESH";
     public final static String ORDER_FINISH = "com.danertu.dianping.ORDER_FINISH";
     public final static String ORDER_DATA_CHANGE = "com.danertu.dianping.ORDER_DATA_CHANGE";
+    public final static String ORDER_DATA_ON_ACTIVITY_FOR_RESULT = "com.danertu.dianping.ORDER_DATA_ON_ACTIVITY_FOR_RESULT";
     public final static String GET_LOCATION_FINISH = "com.danertu.dianping.GET_LOCATION_FINISH";
+
+    public final static String PAY_UTILS_RESULT = "com.danertu.dianping.PAY_UTILS_RESULT";
 }

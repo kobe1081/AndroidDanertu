@@ -2,27 +2,57 @@
 <TabHost xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/tabhost"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:background="@drawable/home_backgroud">
-    <RelativeLayout 
+    android:layout_height="match_parent">
+    <!--android:background="@drawable/home_backgroud"-->
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <TabWidget 
+
+        <!--<LinearLayout-->
+        <!--android:id="@+id/ll_tab"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:background="#f2f2f2"-->
+        <!--android:gravity="bottom"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:paddingBottom="10dp">-->
+
+        <!--<TextView-->
+        <!--android:id="@+id/tv_tab_str"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:gravity="bottom|center_vertical"-->
+        <!--android:paddingLeft="10dp"-->
+        <!---->
+        <!--android:paddingRight="7dp"-->
+        <!--android:textColor="#FF6F6F"-->
+        <!--android:textSize="22sp" />-->
+        <!--android:layout_alignBottom="@id/tv_tab_str"-->
+        <TabWidget
             android:id="@android:id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"/>
+            android:layout_alignParentTop="true"
+            android:background="#f2f2f2"
+            android:gravity="center"
+            android:paddingBottom="10dp" />
+        <!--</LinearLayout>-->
+
         <android.support.v4.view.ViewPager
             android:id="@+id/vp_tab_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@android:id/tabs" />
-        <FrameLayout 
+            android:layout_below="@android:id/tabs"
+            android:background="@color/white" />
+
+        <FrameLayout
             android:id="@android:id/tabcontent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible"
-            android:layout_below="@android:id/tabs"/>
+            android:layout_below="@android:id/tabs"
+            android:visibility="visible" />
     </RelativeLayout>
 
 </TabHost>

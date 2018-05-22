@@ -70,11 +70,17 @@ public class HomeActivity extends BaseActivity {
 //		case R.id.classify:
 //			toCategory();
 //			break;
+            case R.id.btn_search:
+                toSearch();
+                break;
             case R.id.fl_car:
                 toCar();
                 break;
             case R.id.shoppingcar:
                 toCar();
+                break;
+            case R.id.btn_message:
+                toMessage();
                 break;
             case R.id.personal:
                 if (!TAG.equals("PersonalActivity"))
@@ -107,6 +113,16 @@ public class HomeActivity extends BaseActivity {
             jsStartActivityClearTop("CartActivity", "");
     }
 
+    protected void toSearch() {
+        if (!TAG.equals("SearchActivityV2"))
+            jsStartActivityClearTop("SearchActivityV2", "");
+    }
+
+    protected void toMessage() {
+        if (!TAG.equals("MessageCenterActivity"))
+            jsStartActivityClearTop("MessageCenterActivity", "");
+    }
+
     /**
      * 分类
      */
@@ -129,7 +145,7 @@ public class HomeActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getContext();
-        mHandle=new HomeHandler(this);
+        mHandle = new HomeHandler(this);
 //		sp_index = getSharedPreferences(PRE_INDEX_PAGE, Context.MODE_PRIVATE);
 //		initView();
 //		registerMessageReceiver();  // used for receive msg

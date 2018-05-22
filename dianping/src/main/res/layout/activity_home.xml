@@ -19,6 +19,13 @@
             android:drawableTop="@drawable/home_tab_main_selector"
             android:tag="IndexActivity"
             android:text="首页" />
+        <Button
+            android:id="@+id/btn_search"
+            style="@style/bottom_menu"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/home_tab_search_selector"
+            android:tag="SearchActivityV2"
+            android:text="搜索" />
 
         <FrameLayout
             android:id="@+id/fl_car"
@@ -59,7 +66,15 @@
             android:layout_weight="1"
             android:drawableTop="@drawable/home_tab_share_selector"
             android:tag="QRCodeActivity"
+            android:visibility="gone"
             android:text="分享赚钱" />
+        <Button
+            android:id="@+id/btn_message"
+            style="@style/bottom_menu"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/home_tab_message_selector"
+            android:tag="MessageCenterActivity"
+            android:text="消息" />
 
         <Button
             android:id="@+id/personal"

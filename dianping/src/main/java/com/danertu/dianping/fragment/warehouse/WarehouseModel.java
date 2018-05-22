@@ -4,7 +4,7 @@ import android.os.Handler;
 
 import com.danertu.base.BaseModel;
 import com.danertu.entity.WarehouseBean;
-import com.danertu.tools.ApiService;
+import com.config.ApiService;
 import com.danertu.tools.Logger;
 
 import java.util.ArrayList;

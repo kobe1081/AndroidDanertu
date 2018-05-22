@@ -59,10 +59,10 @@ gson-2.2.4.jar => com.google.code.gson:gson:2.2.4
 Potentially Missing Dependency:
 -------------------------------
 When we replaced the following .jar files with a Gradle dependency, we
-inferred the dependency version number from the filename. This
+inferred the dependency version phone from the filename. This
 specific version may not actually be available from the repository.
 If you get a build error stating that the dependency is missing, edit
-the version number to for example "+" to pick up the latest version
+the version phone to for example "+" to pick up the latest version
 instead. (This may require you to update your code if the library APIs
 have changed.)
 

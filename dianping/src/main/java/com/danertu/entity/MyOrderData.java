@@ -36,6 +36,7 @@ import com.danertu.dianping.ProductCommentActivity;
 import com.danertu.tools.AESEncrypt;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.Logger;
+import com.danertu.tools.PayUtils;
 import com.danertu.widget.CommonTools;
 
 /**
@@ -60,6 +61,9 @@ public abstract class MyOrderData {
     public static final String HEAD_P_ADDRESS = "Address";
     public static final String HEAD_P_MOBILE = "Mobile";
     public static final String ORDER_TYPE_KEY = "orderType";
+
+
+    public static final String ORDER_DISPATCH_TIME = "DispatchTime";//发货时间，主要用于已使用过的门票、客房在券码页面显示
 
     public static final String ORDER_ITEMSET_KEY = "order_itemSet";
     public static final String ORDER_ITEM_SHOPNAME_KEY = "ShopName";
@@ -114,6 +118,17 @@ public abstract class MyOrderData {
     private GetOrderHead getOrderHead;
     private GetOrderHeadAll getOrderHeadAll;
     private Context context;
+    /**
+     * 是否只展示酒店
+     */
+    private boolean isOnlyHotel = false;
+
+    /**
+     * 2018年4月26日
+     * 是否只展示泉眼商品
+     * 用于个人中心消费码功能
+     */
+    private boolean isOnlyQuanYan = false;
 
     public static String TAG = "MyOrderData";
 
@@ -208,7 +223,7 @@ public abstract class MyOrderData {
      * @param orderNum
      */
     public MyOrderData(BaseActivity context, boolean noClearAllData, String orderNum) {
-        this(context, orderNum, false, noClearAllData);
+        this(context, orderNum, false, noClearAllData, false);
     }
 
 
@@ -216,14 +231,22 @@ public abstract class MyOrderData {
         this(context, null, isOnlyHotel);
     }
 
-    private boolean isOnlyHotel = false;
-
-    public MyOrderData(BaseActivity context, String orderNum, boolean isOnlyHotel) {
-        this(context, orderNum, isOnlyHotel, false);
+    public MyOrderData(BaseActivity context, boolean isOnlyHotel, boolean isOnlyQuanYan) {
+        this(context, null, isOnlyHotel, isOnlyQuanYan);
     }
 
-    public MyOrderData(BaseActivity context, String orderNum, boolean isOnlyHotel, boolean noClearAllData) {
+
+    public MyOrderData(BaseActivity context, String orderNum, boolean isOnlyHotel) {
+        this(context, orderNum, isOnlyHotel, false, false);
+    }
+
+    public MyOrderData(BaseActivity context, String orderNum, boolean isOnlyHotel, boolean isOnlyQuanYan) {
+        this(context, orderNum, isOnlyHotel, false, isOnlyQuanYan);
+    }
+
+    public MyOrderData(BaseActivity context, String orderNum, boolean isOnlyHotel, boolean noClearAllData, boolean isOnlyQuanYan) {
         this.isOnlyHotel = isOnlyHotel;
+        this.isOnlyQuanYan = isOnlyQuanYan;
         uid = context.getUid();
         isFinish = false;
         appManager = AppManager.getInstance();
@@ -254,13 +277,14 @@ public abstract class MyOrderData {
         intent.putExtra("price", price);
         context.startActivity(intent);
     }
-    public static void toPayBackActivityForResult(Activity context, String orderNumber, String uid, String price,int position,int requestCode) {
+
+    public static void toPayBackActivityForResult(Activity context, String orderNumber, String uid, String price, int position, int requestCode) {
         Intent intent = new Intent(context, PayBackActivity.class);
         intent.putExtra("ordernumber", orderNumber);
         intent.putExtra("memberid", uid);
         intent.putExtra("price", price);
         intent.putExtra("position", position);
-        context.startActivityForResult(intent,requestCode);
+        context.startActivityForResult(intent, requestCode);
     }
 
     public static void startToProDetail(Context context, String guid, String proName, String img, String detail, String agentID, String supplierID, String price, String mobile) {
@@ -308,6 +332,9 @@ public abstract class MyOrderData {
             String ShipmentStatus = oj.getString("ShipmentStatus");
             String PaymentStatus = oj.getString("PaymentStatus");
             String DispatchModeName = oj.getString("DispatchModeName");
+            //
+            String DispatchTime = oj.get(ORDER_DISPATCH_TIME) == null ? "" : oj.get(ORDER_DISPATCH_TIME).toString();
+
             String LogisticsCompanyCode = "";
             String AgentId = "";
             String ShipmentNumber = oj.getString("ShipmentNumber");
@@ -328,6 +355,7 @@ public abstract class MyOrderData {
                     ShipmentStatus,
                     PaymentStatus,
                     DispatchModeName,
+                    DispatchTime,
                     LogisticsCompanyCode,
                     AgentId,
                     ShipmentNumber,
@@ -344,7 +372,7 @@ public abstract class MyOrderData {
     }
 
     /**
-     * 注意：这是单个订单获取的信息，通过实例此构造方法-MyOrderData(Context context, String orderNum)
+     * 注意：这是全部订单头信息，通过实例此构造方法-MyOrderData(Context context, String orderNum)
      */
     public HashMap<String, Object> getItemOrder() {
         return itemOrder;
@@ -447,6 +475,7 @@ public abstract class MyOrderData {
 
     public void initOrderBean(JSONArray jsonArray, int start, int end) throws JSONException {
         if (start >= end || jsonArray == null) {
+            sendMSG(LOAD_DATA, null);
             return;
         }
 
@@ -465,6 +494,9 @@ public abstract class MyOrderData {
             String ShipmentStatus = oj.getString("ShipmentStatus");
             String PaymentStatus = oj.getString("PaymentStatus");
             String DispatchModeName = oj.getString("DispatchModeName");
+
+            String DispatchTime = oj.get(ORDER_DISPATCH_TIME) == null ? "" : oj.get(ORDER_DISPATCH_TIME).toString();
+
             String LogisticsCompanyCode = oj.getString("LogisticsCompanyCode");
             String AgentId = oj.getString("AgentId");
             String ShipmentNumber = oj.getString("ShipmentNumber");
@@ -481,6 +513,11 @@ public abstract class MyOrderData {
             }
 
             ArrayList<HashMap<String, String>> orderItemSet = analyzeOrderInfo(orderNumber);
+
+            if (isOnlyQuanYan && !isQuanYan) {
+                continue;
+            }
+
             HashMap<String, Object> item = getOrder(
                     orderItemSet,
                     orderNumber,
@@ -488,6 +525,7 @@ public abstract class MyOrderData {
                     ShipmentStatus,
                     PaymentStatus,
                     DispatchModeName,
+                    DispatchTime,
                     LogisticsCompanyCode,
                     AgentId,
                     ShipmentNumber,
@@ -510,7 +548,7 @@ public abstract class MyOrderData {
                 } else if (ShipmentStatus.equals("1") && PaymentStatus.equals("2")) {// 已发货,买家待收货
                     sendMSG(ADD_DATA_NO_RECEIVE, item);
                 }
-            } else if (orderStatus.equals("5")) {// 已完成订单,可以评论多次
+            } else if (PaymentStatus.equals("3")) {// 已退款
                 sendMSG(ADD_DATA_NO_COMMENT, item);
             }
         }
@@ -532,6 +570,7 @@ public abstract class MyOrderData {
             String ShipmentStatus,
             String PaymentStatus,
             String DispatchModeName,
+            String DispatchTime,
             String LogisticsCompanyCode,
             String AgentId,
             String ShipmentNumber,
@@ -550,6 +589,7 @@ public abstract class MyOrderData {
         item.put("order_ShipmentStatus", ShipmentStatus);
         item.put("order_PaymentStatus", PaymentStatus);
         item.put("order_DispatchModeName", DispatchModeName);
+        item.put(ORDER_DISPATCH_TIME, DispatchTime);
         item.put("order_LogisticsCompanyCode", LogisticsCompanyCode);
         item.put("order_AgentId", AgentId);
         item.put("order_ShipmentNumber", ShipmentNumber);
@@ -584,6 +624,8 @@ public abstract class MyOrderData {
         return count;
     }
 
+    private boolean isQuanYan = false;
+
     /**
      * 解析订单商品的数据
      * 检查本地缓存，有当前用户保存的订单部分信息则读取缓存，不联网获取
@@ -599,9 +641,10 @@ public abstract class MyOrderData {
     // AppManager.getInstance().getPJoinedInfo("0082",list.get(index).get("productID").toString());
     @SuppressLint("CommitPrefEdits")
     private ArrayList<HashMap<String, String>> analyzeOrderInfo(String orderNumber) {
-        if (sp == null)
-            sp = base.getSharedPreferences(uid + ".danertu", Context.MODE_PRIVATE);
-        Editor editor = sp.edit();
+        isQuanYan = false;
+//        if (sp == null)
+//            sp = base.getSharedPreferences(uid + ".danertu", Context.MODE_PRIVATE);
+//        Editor editor = sp.edit();
 //        String jsonOrderInfo = getString(sp, orderNumber);
 //        boolean isEmpty = TextUtils.isEmpty(jsonOrderInfo);
 //        if (!isEmpty) {
@@ -627,9 +670,14 @@ public abstract class MyOrderData {
             for (int i = 0; i < orderproductbean.length(); i++) {
                 HashMap<String, String> item = new HashMap<>();
                 JSONObject oj = orderproductbean.getJSONObject(i);
+                String supplierLoginID = oj.getString("SupplierLoginID");
+                isQuanYan = supplierLoginID.equals(Constants.QY_SUPPLIERID);
+
+                if (isOnlyQuanYan && !isQuanYan) {
+                    continue;
+                }
+
                 String shopName = oj.getString(ORDER_ITEM_SHOPNAME_KEY);
-
-
                 String guid = oj.getString("Guid");
                 String joinCount = oj.getString("iSGive");// 返回为几就表示买几赠 1
                 String marketPrice = oj.getString("MarketPrice");//市场价/原价
@@ -637,13 +685,14 @@ public abstract class MyOrderData {
                 String CreateUser = oj.getString("CreateUser");
                 String BuyNumber = oj.getString("BuyNumber");
                 String agentID = oj.getString("AgentID");
-                String supplierLoginID = oj.getString("SupplierLoginID");
                 String ShopPrice = oj.getString("ShopPrice");//售价/拿货价
                 String SmallImage = oj.getString("SmallImage");
                 String mobile = oj.getString("tel");
                 String arriveTime = oj.getString(ORDER_ITEM_ARRIVE_TIME);
                 String leaveTime = oj.getString(ORDER_ITEM_LEAVE_TIME);
                 String attrs = oj.getString(ORDER_ITEM_ATTRIBUTE);
+
+
                 /**
                  * 2017年7月18日
                  * huangyeliang
@@ -696,11 +745,11 @@ public abstract class MyOrderData {
                 data.add(item);
             }
             //写入加密数据到缓存
-            commitMsg(editor, orderNumber, jsonOrderInfo);
+//            commitMsg(editor, orderNumber, jsonOrderInfo);
         } catch (Exception e) {
             Logger.e("test", "MyOrderData analyzeOrderInfo 错误信息》" + e.toString());
-            jsonOrderInfo = AppManager.getInstance().postGetOrderInfoShow("0072", orderNumber);
-            commitMsg(editor, orderNumber, jsonOrderInfo);
+//            jsonOrderInfo = AppManager.getInstance().postGetOrderInfoShow("0072", orderNumber);
+//            commitMsg(editor, orderNumber, jsonOrderInfo);
             analyzeOrderInfo(orderNumber);
         }
         return data;
@@ -757,7 +806,7 @@ public abstract class MyOrderData {
     public static void payForOrder(String orderNumber) {
 //        if (order_list_all == null || order_list_all.size() == 0)
 //            return;
-        Logger.e(TAG,"payForOrder");
+        Logger.e(TAG, "payForOrder");
         boolean isAllChange = false;
         boolean isNoPayChange = false;
 //-------------------------------------全部列表----------------------------------
@@ -773,7 +822,12 @@ public abstract class MyOrderData {
                 orderItem.put("order_ShipmentStatus", "0");// 未发货
                 isAllChange = true;
                 MyOrderActivity.dataChanges[0] = true;
-                MyOrderNoSendActivity.adapter.addDateItem(0, orderItem);//添加到未发货列表
+
+                if (MyOrderNoSendActivity.isInit) {
+                    MyOrderNoSendActivity.adapter.addDateItem(0, orderItem);//添加到未发货列表
+                } else {
+                    order_noSend.add(0, orderItem);
+                }
                 MyOrderActivity.dataChanges[2] = true;
                 break;
             }
@@ -789,7 +843,8 @@ public abstract class MyOrderData {
                     item.put("order_PaymentStatus", "2");
                     item.remove("order_ShipmentStatus");
                     item.put("order_ShipmentStatus", "0");
-                    MyOrderNoSendActivity.adapter.addDateItem(0, item);
+//                    MyOrderNoSendActivity.adapter.addDateItem(0, item);
+                    order_list_noSend.add(0, item);
                     MyOrderActivity.dataChanges[2] = true;
                     break;
                 }
@@ -1419,6 +1474,7 @@ public abstract class MyOrderData {
         }
         return result;
     }
+
 
     public interface LoadDataListener {
         void hideLoad();

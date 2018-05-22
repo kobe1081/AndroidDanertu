@@ -9,20 +9,24 @@ import com.danertu.tools.Logger;
 import com.danertu.widget.CommonTools;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import static com.danertu.adapter.MyOrderAdapter.REQUEST_ORDER_DETAIL;
+import static com.danertu.adapter.MyOrderAdapter.REQUEST_QRCODE;
 
 public class MyOrderListAllActivity extends MyOrderParent {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         data2 = MyOrderData.order_list_all;
-        adapter = new MyOrderAdapter(context, data2,TAB_ALL);
+        adapter = new MyOrderAdapter(context, data2, TAB_ALL);
         lv_order.setAdapter(adapter);
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
-        Logger.e(getClass().getSimpleName(),"onResume");
+        Logger.e(getClass().getSimpleName(), "onResume");
         if (data2.size() == 0 && MyOrderData.order_all.size() != 0) {
             loadData();
         }
@@ -42,9 +46,10 @@ public class MyOrderListAllActivity extends MyOrderParent {
      */
     @Override
     void loadMore() {
-        if((MyOrderData.order_all==null||MyOrderData.order_all.size()<=0)&&MyOrderData.isFinish){
-            CommonTools.showShortToast(this,"已无更多订单");
+        if ((MyOrderData.order_all == null || MyOrderData.order_all.size() <= 0) && MyOrderData.isFinish) {
+            CommonTools.showShortToast(this, "已无更多订单");
             lv_order.stopLoadMore();
+            lv_order.setPullLoadEnable(false);
             return;
         }
         loadData();
@@ -52,20 +57,17 @@ public class MyOrderListAllActivity extends MyOrderParent {
     }
 
     private void loadData() {
-        if(MyOrderData.order_all.size()>MyOrderData.LIST_INIT_SIZE){
+        if (MyOrderData.order_all.size() > MyOrderData.LIST_INIT_SIZE) {
             for (int i = 0; i < MyOrderData.LIST_INIT_SIZE; i++) {
-                data2.add(data2.size(),MyOrderData.order_all.get(0));
+                data2.add(data2.size(), MyOrderData.order_all.get(0));
                 MyOrderData.order_all.remove(0);
             }
-        }else {
-            data2.addAll(data2.size(),MyOrderData.order_all);
+        } else {
+            data2.addAll(data2.size(), MyOrderData.order_all);
             MyOrderData.order_all.clear();
         }
         adapter.notifyDataSetChanged();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+
 }

@@ -72,12 +72,12 @@ public class LoginActivity extends BaseWebActivity implements PlatformActionList
 
         Button opera = (Button) findViewById(R.id.b_title_operation2);
         opera.setVisibility(View.GONE);
-		opera.setText("微信授权登录");
-		opera.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				authorizeLogin(Wechat.NAME);
-			}
-		});
+        opera.setText("微信授权登录");
+        opera.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                authorizeLogin(Wechat.NAME);
+            }
+        });
     }
 
     @JavascriptInterface
@@ -95,7 +95,7 @@ public class LoginActivity extends BaseWebActivity implements PlatformActionList
             return;
         }
         showLoadDialog();
-        if(plat.isAuthValid()){
+        if (plat.isAuthValid()) {
             plat.removeAccount(true);
         }
         plat.setPlatformActionListener(this);
@@ -132,6 +132,7 @@ public class LoginActivity extends BaseWebActivity implements PlatformActionList
 
     @JavascriptInterface
     public void login(final String account, final String passwd) {
+        Logger.e(TAG, account + "/" + passwd);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -269,7 +270,7 @@ public class LoginActivity extends BaseWebActivity implements PlatformActionList
 
     public void finish() {
         SQLiteDatabase dbr = DBHelper.getInstance(getContext()).getReadableDatabase();
-        Cursor cursor = dbr.query("userLoginInfo", new String[]{"uId", "pwd", "email", "score", "loginTime"}, " isLogin=1", null, null,null, null);
+        Cursor cursor = dbr.query("userLoginInfo", new String[]{"uId", "pwd", "email", "score", "loginTime"}, " isLogin=1", null, null, null, null);
         if (cursor.moveToNext()) {
             jsShowMsg("登录成功");
             //发送登录成功广播，提示首页刷新

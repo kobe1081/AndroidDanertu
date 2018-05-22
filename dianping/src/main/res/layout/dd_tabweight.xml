@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white">
-
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="#f2f2f2">
+    <!--android:background="@color/white"-->
     <TextView
         android:id="@+id/tv_dd_tabweight"
         android:layout_width="match_parent"
@@ -11,9 +12,10 @@
         android:layout_centerVertical="true"
         android:ellipsize="middle"
         android:gravity="center"
-        android:lines="1"
-        android:padding="10dp"
-        android:background="@drawable/b_dd_opera_click"
-        android:textColor="@drawable/tabwidget_order_text"/>
-
+        android:textSize="14sp"
+        android:singleLine="true"
+        android:textColor="@drawable/tabwidget_order_text"
+        />
+    <!---->
+    <!--android:background="@drawable/b_dd_opera_click"-->
 </RelativeLayout>

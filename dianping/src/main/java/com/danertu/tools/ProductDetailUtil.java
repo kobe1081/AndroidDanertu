@@ -172,6 +172,18 @@ public class ProductDetailUtil {
             return false;
         }
     }
+//    public boolean putInShopCar(String productID, String prouctName, String aID, String buyPrice,String marketPrice, String proImage, String buyCount, String uid, String supId, String shopID, String attrParam, String shopName, String createUser) {
+//        if (isCheckOutError(1, buyCount, canBuyCount)) {
+//            return false;
+//        }
+//        // 确定按钮事件
+//        try {
+//            return db.InsertShopCar(base, productID, prouctName, aID, buyPrice,marketPrice, proImage, buyCount, uid, supId, shopID, attrParam, shopName, createUser);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 
     public void setXNUtil(XNUtil xnUtil) {
         this.xnUtil = xnUtil;

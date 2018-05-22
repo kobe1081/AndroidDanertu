@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="选择联系人"
+            android:textColor="@color/gray_text"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:src="@mipmap/icon_close2" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/diver_color" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/tv_no_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:drawablePadding="10dp"
+            android:drawableTop="@drawable/order_null_img"
+            android:gravity="center"
+            android:text="暂无联系人"
+            android:textColor="@color/gray_text_bbb"
+            android:textSize="@dimen/small_middle_text_size"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/ll_data"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/search_btn"
+                android:background="@drawable/bg_bottom_gray_line"
+                android:ems="10"
+                android:hint="搜索联系人"
+                android:imeOptions="actionSearch"
+                android:lines="1"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/gray_text"
+                android:textSize="25sp" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <com.danertu.widget.XListView
+                    android:id="@+id/xlv_contact"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:divider="@drawable/divider_order_item"
+                    android:padding="5dp" />
+
+                <FrameLayout
+                    android:id="@+id/fl_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tv_search_no_data"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="20dp"
+                        android:drawablePadding="10dp"
+                        android:drawableTop="@drawable/order_null_img"
+                        android:gravity="center"
+                        android:text="无搜索结果"
+                        android:textColor="@color/gray_text_bbb"
+                        android:textSize="@dimen/small_middle_text_size"
+                        android:visibility="gone" />
+
+                    <com.danertu.widget.XListView
+                        android:id="@+id/xlv_search"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:divider="@drawable/divider_order_item"
+                        android:background="@color/white" />
+                </FrameLayout>
+
+
+            </FrameLayout>
+        </LinearLayout>
+
+    </FrameLayout>
+
+
+</LinearLayout>

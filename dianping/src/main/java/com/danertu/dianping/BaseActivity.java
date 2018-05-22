@@ -7,6 +7,7 @@ import java.util.Map;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
 import android.annotation.TargetApi;
+import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,6 +24,7 @@ import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Process;
 import android.os.Vibrator;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -47,6 +49,7 @@ import android.widget.Toast;
 import com.config.Constants;
 import com.danertu.db.DBManager;
 import com.danertu.entity.MyOrderData;
+import com.danertu.entity.MyOrderDataQRCode;
 import com.danertu.tools.AESEncrypt;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.AppUtil;
@@ -57,6 +60,7 @@ import com.danertu.tools.ImageLoaderConfig;
 import com.danertu.tools.LocationUtil;
 import com.danertu.tools.Logger;
 import com.danertu.tools.MD5Util;
+import com.danertu.tools.PayUtils;
 import com.danertu.tools.ShareUtil;
 import com.danertu.tools.StatusBarUtil;
 import com.danertu.tools.SystemBarTintManager;
@@ -82,8 +86,10 @@ public abstract class BaseActivity extends SwipeBackActivity {
     private String shopId = "";
     private DeviceTag dTag = null;
     public static MyOrderData myOrderData;
+    public static MyOrderDataQRCode myOrderDataQRCode;
     public LocationUtil locationUtil;
     public long firstClick;//用于判定频繁点击的参数
+    public PayUtils payUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,8 +114,8 @@ public abstract class BaseActivity extends SwipeBackActivity {
         //get device information
         dTag = new DeviceTag(this, gson);
 
-        if (CommonTools.isNavigationBarShow(this)){
-            getWindow().setNavigationBarColor(ContextCompat.getColor(this,R.color.red));
+        if (CommonTools.isNavigationBarShow(this)) {
+            getWindow().setNavigationBarColor(ContextCompat.getColor(this, R.color.red));
         }
     }
 
@@ -225,14 +231,8 @@ public abstract class BaseActivity extends SwipeBackActivity {
         jsToOrderActivity(index, false);
     }
 
-    /**
-     * 到订单中心
-     *
-     * @param index       0全部 1待付款 2
-     * @param isOnlyHotel 酒店订单
-     */
     @JavascriptInterface
-    public void jsToOrderActivity(final int index, final boolean isOnlyHotel) {
+    public void jsToOrderActivity(final int index, boolean isOnlyHotel, boolean isOnlyQuanYan) {
         if (index < 0) {
             Intent intent = new Intent(getContext(), MyOrderActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -248,7 +248,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
             intent.putExtra("isOnlyHotel", isOnlyHotel);
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
-            myOrderData = new MyOrderData(this, isOnlyHotel) {
+            myOrderData = new MyOrderData(this, isOnlyHotel, isOnlyQuanYan) {
                 @Override
                 public void getDataSuccess() {
 //
@@ -266,6 +266,18 @@ public abstract class BaseActivity extends SwipeBackActivity {
             };
 
         }
+
+    }
+
+    /**
+     * 到订单中心
+     *
+     * @param index       0全部 1待付款 2
+     * @param isOnlyHotel 酒店订单
+     */
+    @JavascriptInterface
+    public void jsToOrderActivity(final int index, final boolean isOnlyHotel) {
+        jsToOrderActivity(index, isOnlyHotel, false);
     }
 
     /**
@@ -1254,8 +1266,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
      * @param taskUrl
      * @param taskArgs
      */
-    public void doTaskAsync(int taskId, String taskUrl,
-                            HashMap<String, String> taskArgs) {
+    public void doTaskAsync(int taskId, String taskUrl, HashMap<String, String> taskArgs) {
         showLoadDialog();
         BaseTask baseTask = new BaseTask() {
             @Override
@@ -1455,6 +1466,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
             return false;
         }
     }
+
     public boolean isClickMoreTimesShortTime() {
         return isClickMoreTimesShortTime(System.currentTimeMillis());
     }
@@ -1465,10 +1477,173 @@ public abstract class BaseActivity extends SwipeBackActivity {
 
     /**
      * 囤货相关页面获取图片路径
+     *
      * @param imgName
      * @return
      */
     public String getStockSmallImgPath(String imgName) {
         return Constants.imgServer + "sysProduct/" + imgName;
+    }
+
+    public void setTopPadding(View view, int top) {
+        view.setPadding(view.getPaddingLeft(), top, view.getPaddingRight(), view.getPaddingBottom());
+    }
+
+    private boolean isPayLoading = false;
+
+    @JavascriptInterface
+    public void payOrder(String orderNumber) {
+        payOrder(orderNumber, true);
+    }
+
+    /**
+     * 支付后原生跳转至订单详情
+     *
+     * @param orderNumber     订单号
+     * @param isShowArrivePay 是否可以使用到付
+     */
+    @JavascriptInterface
+    public void payOrder(String orderNumber, boolean isShowArrivePay) {
+        payOrder(orderNumber, true, isShowArrivePay);
+    }
+
+    /**
+     * 支付后原生跳转至订单详情
+     *
+     * @param orderNumber      订单号
+     * @param isShowAccountPay 是否可以使用单耳兔钱包支付
+     * @param isShowArrivePay  是否可以使用到付
+     */
+    @JavascriptInterface
+    public void payOrder(final String orderNumber, boolean isShowAccountPay, boolean isShowArrivePay) {
+        payOrder(orderNumber, true, true, isShowAccountPay, isShowArrivePay);
+    }
+
+    @JavascriptInterface
+    public void payOrder(final String orderNumber, boolean isShowAliPay, boolean isShowWechatPay, boolean isShowAccountPay, boolean isShowArrivePay) {
+        if (isPayLoading) {
+            return;
+        }
+        isPayLoading = true;
+        payUtils = new PayUtils(this, getUid(), orderNumber, isShowAliPay, isShowWechatPay, isShowAccountPay, isShowArrivePay) {
+            @Override
+            public void paySuccess() {
+                isPayLoading = false;
+                jsShowMsg("支付成功");
+                toOrderDetail(orderNumber);
+            }
+
+            @Override
+            public void payFail() {
+                isPayLoading = false;
+                jsShowMsg("支付失败,请检查");
+            }
+
+            @Override
+            public void payCancel() {
+                isPayLoading = false;
+                jsShowMsg("您已取消支付");
+                toOrderDetail(orderNumber);
+            }
+
+            @Override
+            public void payError(String message) {
+                isPayLoading = false;
+                jsShowMsg(message);
+            }
+
+            @Override
+            public void dismissOption() {
+                if (!isPaying()) {
+                    finish();
+                    toOrderDetail(orderNumber);
+                }
+                isPayLoading = false;
+            }
+        };
+    }
+
+    @JavascriptInterface
+    public void payOrder(String orderNumber, String callBackMethod) {
+        payOrder(orderNumber, true, true, callBackMethod);
+    }
+
+    @JavascriptInterface
+    public void payOrder(String orderNumber, boolean isShowArrivePay, String callBackMethod) {
+        payOrder(orderNumber, true, isShowArrivePay, callBackMethod);
+    }
+
+    /**
+     * 支付后回调页面方法处理
+     *
+     * @param orderNumber      订单号
+     * @param isShowAccountPay 是否可以使用单耳兔钱包支付
+     * @param isShowArrivePay  是否可以使用到付
+     * @param callBackMethod   回调的页面方法  1-支付成功，2-支付失败，3-取消支付，4-发生错误
+     */
+    @JavascriptInterface
+    public void payOrder(String orderNumber, boolean isShowAccountPay, boolean isShowArrivePay, final String callBackMethod) {
+        payOrder(orderNumber, true, true, isShowAccountPay, isShowArrivePay, callBackMethod);
+    }
+
+    @JavascriptInterface
+    public void payOrder(String orderNumber, boolean isShowAliPay, boolean isShowWechatPay, boolean isShowAccountPay, boolean isShowArrivePay, final String callBackMethod) {
+        if (isPayLoading) {
+            return;
+        }
+        isPayLoading = true;
+        payUtils = new PayUtils(this, getUid(), orderNumber, isShowAliPay, isShowWechatPay, isShowAccountPay, isShowArrivePay) {
+            @Override
+            public void paySuccess() {
+                isPayLoading = false;
+                if (webView != null)
+                    webView.loadUrl(Constants.IFACE + callBackMethod + "(‘1’)");
+            }
+
+            @Override
+            public void payFail() {
+                isPayLoading = false;
+                if (webView != null)
+                    webView.loadUrl(Constants.IFACE + callBackMethod + "(‘2’)");
+            }
+
+            @Override
+            public void payCancel() {
+                isPayLoading = false;
+                if (webView != null)
+                    webView.loadUrl(Constants.IFACE + callBackMethod + "(‘3’)");
+            }
+
+            @Override
+            public void payError(String message) {
+                isPayLoading = false;
+                if (webView != null)
+                    webView.loadUrl(Constants.IFACE + callBackMethod + "(‘4’)");
+            }
+
+            @Override
+            public void dismissOption() {
+                isPayLoading = false;
+                if (TAG.contains("HtmlActivity")) {
+                    finish();
+                }
+            }
+        };
+    }
+
+    @JavascriptInterface
+    public boolean checkOpsPermission(Context context, String permission) {
+        try {
+            AppOpsManager appOpsManager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+            String opsName = AppOpsManager.permissionToOp(permission);
+            if (opsName == null) {
+                return true;
+            }
+            int opsMode = appOpsManager.checkOpNoThrow(opsName, Process.myUid(), context.getPackageName());
+            return opsMode == AppOpsManager.MODE_ALLOWED;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return true;
+        }
     }
 }

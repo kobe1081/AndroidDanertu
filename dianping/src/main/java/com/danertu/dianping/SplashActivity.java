@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -25,6 +26,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +46,7 @@ import com.danertu.tools.AppManager;
 import com.danertu.tools.ImageLoaderConfig;
 import com.danertu.tools.LocationUtil;
 import com.danertu.tools.Logger;
+import com.danertu.tools.MIUIUtils;
 import com.danertu.widget.CommonTools;
 import com.joker.annotation.PermissionsGranted;
 import com.joker.api.Permissions4M;
@@ -59,6 +64,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+
+import static com.danertu.tools.MIUIUtils.isMIUI;
 
 public class SplashActivity extends BaseActivity {
     @SuppressWarnings("unused")
@@ -79,6 +86,8 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        locationUtil = new LocationUtil(this);
+        locate();
         DBHelper.getInstance(getContext()).getWritableDatabase().close();//创建数据库
         new ChinaArea(getContext()).getWritableDatabase().close();
         MobclickAgent.setDebugMode(false);
@@ -91,13 +100,48 @@ public class SplashActivity extends BaseActivity {
         setContentView(v);
         TestinAgent.init(this, "5556ffbe482f07894420f903d174758d", "");
         setSystemBar(R.color.splash_gbColor);
-        locationUtil=new LocationUtil(this);
-        locationUtil.startLocate();
+
         mHandler = new Handler(getMainLooper());
         findViewById();
         initView();
         setSwipeBackEnable(false);
         setOverrideExitAniamtion(false);
+    }
+
+    private boolean isRequestPermission = false;
+
+    public void locate() {
+        //如果当前系统为MIUI
+        if (isMIUI() && isRequestPermission) {
+            isRequestPermission = true;
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                if (!checkOpsPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    jsShowMsg("请授予单耳兔定位权限");
+                    MIUIUtils.gotoMiuiPermission(this);
+                    return;
+                }
+
+            }
+        }
+
+        /**权限检查*/
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && !isRequestPermission) {
+            isRequestPermission = true;
+            jsShowMsg("请授予单耳兔定位权限");
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 290);
+            return;
+        }
+        locationUtil.startLocate();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 290:
+                locate();
+                break;
+        }
     }
 
     private final String k_upgradeTips = "upgradeTips";
@@ -235,7 +279,7 @@ public class SplashActivity extends BaseActivity {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            Logger.e("splash",result);
+            Logger.e("splash", result);
             ImageLoader.getInstance().displayImage(result, (ImageView) findViewById(R.id.bg_splash), ImageLoaderConfig.initDisplayOptions(false));
         }
     }
@@ -245,7 +289,6 @@ public class SplashActivity extends BaseActivity {
      * 获取手机imei码
      * 如果城市数据不存在，导入
      * 检查app更新
-     *
      */
     public Runnable rdb = new Runnable() {
         public void run() {

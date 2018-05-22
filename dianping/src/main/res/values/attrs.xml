@@ -10,7 +10,7 @@
         <attr name="metaButtonBarStyle" format="reference" />
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
-<declare-styleable name="JazzyViewPager">
+    <declare-styleable name="JazzyViewPager">
         <attr name="style">
             <enum name="standard" value="0" />
             <enum name="tablet" value="1" />

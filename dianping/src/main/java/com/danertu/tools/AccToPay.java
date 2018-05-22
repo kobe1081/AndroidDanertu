@@ -57,6 +57,7 @@ public abstract class AccToPay extends AsyncTask<String, Integer, String> {
 //		Log.e("账户支付结果", result+"");
         if (result == null || result.equals("")) {
             CommonTools.showShortToast(context, "支付出错了");
+            payFail();
             return;
         }
         JSONObject obj;

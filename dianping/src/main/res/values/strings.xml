@@ -272,4 +272,9 @@
     <string name="car_done">完成</string>
 
     <string name="payback_policy">入住前24小时可获得100入住前24小时可获得100入住前24小时可获得100入住前24小时可获得100入住前24小时可获得100</string>
+
+    <string name="order_detail_receive_people">收货人&#8194;&#8194;</string>
+    <string name="order_detail_pay_info">支付信息</string>
+    <string name="order_detail_hotel_date">时间&#8194;&#8194;&#8194;&#8194;</string>
+    <string name="order_detail_more">更多&#8194;&#8194;&#8194;&#8194;</string>
 </resources>

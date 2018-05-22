@@ -104,6 +104,11 @@ public interface BaseView {
      */
     @JavascriptInterface
     void jsShowToast(String message);
+    /**
+     * @param message 要toast的消息
+     */
+    @JavascriptInterface
+    void jsShowMsg(String message);
 
 
     /**

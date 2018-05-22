@@ -254,6 +254,9 @@ public class CalendarActivity extends BaseActivity implements OnGestureListener,
         super.finish();
     }
 
+    /**
+     * 向服务器请求当前账户的签到记录
+     */
     private Thread GetThread = new Thread(new Runnable() {
         public void run() {
             try {
@@ -264,16 +267,14 @@ public class CalendarActivity extends BaseActivity implements OnGestureListener,
                     seference.clearPreData(seference.signFileName);
                 }
                 while (c.moveToNext()) {
-                    String historyDate = c.getString(1);
-                    seference.savePreferenceData(seference.signFileName,
-                            historyDate, true + "");
+                    String historyDate = c.getString(1).replace("/","-");
+                    seference.savePreferenceData(seference.signFileName, historyDate, true + "");
                 }
                 c.close();
-
                 GetResult = AppManager.getInstance().getSignIn("0052", MID);
                 BindData();
             } catch (Exception e) {
-                System.out.print("错误：" + e.toString());
+                e.printStackTrace();
             }
             sendMessage(1);
         }
@@ -284,17 +285,14 @@ public class CalendarActivity extends BaseActivity implements OnGestureListener,
             return;
         }
         try {
-            JSONObject jsonObject = new JSONObject(GetResult)
-                    .getJSONObject("signdateList");
+            JSONObject jsonObject = new JSONObject(GetResult).getJSONObject("signdateList");
             JSONArray jsonArray = jsonObject.getJSONArray("signdatebean");
-
             for (int i = jsonArray.length(); i > 0; i--) {
                 String signdate = "";
                 JSONObject oj = jsonArray.getJSONObject(i - 1);
-                signdate = oj.getString("singdate").split(" ")[0];
+                signdate = oj.getString("singdate").split(" ")[0].replace("/","-");
                 seference.savePreferenceData(seference.signFileName, signdate, true + "");
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
             Logger.e("test", "CalendarActivity Thread bindData 错误：" + e.toString());

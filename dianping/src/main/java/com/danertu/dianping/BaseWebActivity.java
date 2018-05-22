@@ -2,27 +2,43 @@ package com.danertu.dianping;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.AppOpsManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Looper;
+import android.os.Process;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -34,19 +50,27 @@ import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.config.Constants;
 import com.danertu.db.DBHelper;
 import com.danertu.download.FileUtil;
+import com.danertu.entity.ContactBean;
 import com.danertu.tools.AsyncTask;
 import com.danertu.tools.Base64;
 import com.danertu.tools.FWorkUtil;
 import com.danertu.tools.Logger;
+import com.danertu.tools.MIUIUtils;
 import com.danertu.widget.MWebChromeClient;
 import com.danertu.widget.MWebViewClient;
+import com.danertu.widget.XListView;
 import com.google.gson.Gson;
 
 /**
@@ -254,7 +278,7 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
 
     public void startWebView(String url) {
         showLoadDialog();
-        Logger.e(TAG," startWebView url="+url);
+        Logger.e(TAG, " startWebView url=" + url);
         webView.loadUrl(url);
     }
 
@@ -378,6 +402,10 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
 
     @Override
     public void onBackPressed() {
+        if (popupContactList != null && popupContactList.isShowing()) {
+            popupContactList.dismiss();
+            return;
+        }
         if (!canBack)
             return;
         else if (isBackListen && webView != null) {
@@ -428,7 +456,7 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
     private void showPopupWindow() {
         //设置contentView
         View contentView = LayoutInflater.from(this).inflate(R.layout.popup_base_web_select_photo, null);
-        final PopupWindow popupWindow = new PopupWindow(contentView,ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        final PopupWindow popupWindow = new PopupWindow(contentView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
         popupWindow.setContentView(contentView);
         TextView tvSelectCamera = (TextView) contentView.findViewById(R.id.tv_select_camera);
         TextView tvSelectGallery = (TextView) contentView.findViewById(R.id.tv_select_gallery);
@@ -555,6 +583,7 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
 
     /**
      * 收藏商品
+     *
      * @param guid
      * @param proName
      * @param agentId
@@ -594,14 +623,15 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
 
     /**
      * 获取用户收藏的商品
+     *
      * @param uid 用户uid
      * @return
      */
     @JavascriptInterface
     public String jsGetCollectPro(String uid) {
         uid = TextUtils.isEmpty(uid) ? getUid() : uid;
-        StringBuilder sb =new StringBuilder();
-        String json="";
+        StringBuilder sb = new StringBuilder();
+        String json = "";
         if (TextUtils.isEmpty(uid)) {
             return json;
         }
@@ -611,7 +641,7 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
 //                json += cursor.getString(0) + ",";
                 sb.append(cursor.getString(0)).append(",");
             }
-            json=sb.toString();
+            json = sb.toString();
             json = json.length() > 0 ? json.substring(0, json.length() - 1) : "";
 
         } catch (Exception e) {
@@ -622,6 +652,7 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
 
     /**
      * 取消商品收藏
+     *
      * @param guid 商品id
      * @return
      */
@@ -632,6 +663,7 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
 
     /**
      * 收藏商品
+     *
      * @param guid 商品id
      * @return
      */
@@ -640,5 +672,281 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
         return db.isCollectedPro(getContext(), getUid(), guid);
     }
 
+    @JavascriptInterface
+    public  boolean isMIUI() {
+        return MIUIUtils.isMIUI();
+    }
 
+    private PopupWindow popupContactList;
+
+    /**
+     * 初始化联系人列表
+     */
+    private String methodName;//回调页面的方法名
+
+    @JavascriptInterface
+    public void jsInitContactList(String methodName) {
+        this.methodName = methodName;
+        //如果当前系统为MIUI
+        if (isMIUI()) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                if (!checkOpsPermission(this, android.Manifest.permission.READ_CONTACTS)) {
+                    jsShowMsg("请授予单耳兔读取您的联系人权限");
+                    MIUIUtils.gotoMiuiPermission(this);
+                    return;
+                }
+
+            }
+        }
+
+        /**权限检查*/
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            jsShowMsg("请授予单耳兔读取您的联系人权限");
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_CONTACTS}, 1);
+            return;
+        }
+        final List<ContactBean> list = readContacts(getContext());
+        if (popupContactList == null) {
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.popup_contact_list, null);
+            popupContactList = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
+            popupContactList.setContentView(view);
+            ImageView ivClose = (ImageView) view.findViewById(R.id.iv_close);
+            //关闭
+            ivClose.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    popupContactList.dismiss();
+                }
+            });
+            LinearLayout llData = (LinearLayout) view.findViewById(R.id.ll_data);
+            TextView tvNoData = ((TextView) view.findViewById(R.id.tv_no_data));
+            final TextView tvSearchNoData = ((TextView) view.findViewById(R.id.tv_search_no_data));
+            EditText etSearch = (EditText) view.findViewById(R.id.et_search);
+
+            XListView lvContact = (XListView) view.findViewById(R.id.xlv_contact);
+            final XListView lvSearch = (XListView) view.findViewById(R.id.xlv_search);
+            final FrameLayout flSearch = (FrameLayout) view.findViewById(R.id.fl_search);
+            lvContact.setPullLoadEnable(false);
+            lvContact.setPullRefreshEnable(false);
+            lvSearch.setPullLoadEnable(false);
+            lvSearch.setPullRefreshEnable(false);
+
+            if (list.size() > 0) {
+                ContactAdapter contactAdapter = new ContactAdapter();
+                lvContact.setAdapter(contactAdapter);
+                contactAdapter.putData(list);
+                final ContactAdapter searchAdapter = new ContactAdapter();
+                lvSearch.setAdapter(searchAdapter);
+                //搜索
+                etSearch.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        List<ContactBean> searchContact = searchContact(list, s.toString());
+                        if (searchContact.size() > 0) {
+                            searchAdapter.clearData();
+                            searchAdapter.putData(searchContact);
+                            lvSearch.setVisibility(View.VISIBLE);
+                            tvSearchNoData.setVisibility(View.GONE);
+                        } else {
+                            lvSearch.setVisibility(View.GONE);
+                            tvSearchNoData.setVisibility(View.VISIBLE);
+                        }
+                        //
+                        if (TextUtils.isEmpty(s)) {
+                            flSearch.setVisibility(View.GONE);
+                        } else {
+                            flSearch.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+
+            } else {
+                llData.setVisibility(View.GONE);
+                tvNoData.setVisibility(View.VISIBLE);
+            }
+
+        }
+
+        //显示PopupWindow
+        popupContactList.setOutsideTouchable(true);
+        popupContactList.setAnimationStyle(R.style.AnimationBottomFade);
+        //得到当前activity的rootView
+        View rootView = ((ViewGroup) this.findViewById(android.R.id.content)).getChildAt(0);
+        //底部弹出
+        popupContactList.showAtLocation(rootView, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
+
+    }
+
+
+
+    /**
+     * 搜索联系人列表
+     *
+     * @param keyWord 关键字
+     * @return 搜索结果
+     */
+    public List<ContactBean> searchContact(List<ContactBean> list, String keyWord) {
+        List<ContactBean> result = new ArrayList<>();
+        for (ContactBean bean : list) {
+            if (bean.getName().contains(keyWord) || bean.getPhone().contains(keyWord)) {
+                result.add(bean);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 读取联系人
+     *
+     * @param context
+     * @return
+     */
+    public List<ContactBean> readContacts(Context context) {
+        List<ContactBean> list = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            //cursor指针 query询问 contract协议 kinds种类
+            cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    String displayName = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                    String number = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)).replace("+86", "");
+                    ContactBean bean = new ContactBean(displayName, number);
+                    list.add(bean);
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return list;
+    }
+
+    /**
+     * 给页面传递联系人信息
+     *
+     * @param bean
+     */
+    public void setWebContactInfo(final ContactBean bean) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Gson gson = new Gson();
+                String toJson = gson.toJson(bean);
+                webView.loadUrl(Constants.IFACE + methodName + "('" + toJson + "')");
+            }
+        });
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    jsInitContactList(methodName);
+                } else {
+                    jsShowMsg("您尚未授予单耳兔读取您的联系人权限，无法使用此功能");
+                }
+                break;
+            default:
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+    }
+
+
+    /**
+     * 联系人适配器
+     */
+    class ContactAdapter extends BaseAdapter {
+        List<ContactBean> list = new ArrayList<>();
+
+        public ContactAdapter() {
+
+        }
+
+
+        public void putData(List<ContactBean> list) {
+            this.list.addAll(list);
+            notifyDataSetChanged();
+        }
+
+        public void clearData() {
+            if (list != null) {
+                list.clear();
+                notifyDataSetChanged();
+            }
+        }
+
+
+        @Override
+        public int getCount() {
+            return list.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return list.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder;
+            final ContactBean bean = list.get(position);
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_popup_contact, null);
+                holder = new ViewHolder(convertView);
+                convertView.setTag(holder);
+            } else {
+                holder = ((ViewHolder) convertView.getTag());
+            }
+
+            holder.tvName.setText(bean.getName());
+            holder.tvNumber.setText(bean.getPhone());
+
+            //
+            holder.llRoot.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    popupContactList.dismiss();
+                    setWebContactInfo(bean);
+                }
+            });
+            return convertView;
+        }
+
+        class ViewHolder {
+            private LinearLayout llRoot;
+            private TextView tvName;
+            private TextView tvNumber;
+
+            public ViewHolder(View view) {
+                llRoot = view.findViewById(R.id.ll_root);
+                tvName = view.findViewById(R.id.tv_name);
+                tvNumber = view.findViewById(R.id.tv_number);
+            }
+        }
+
+
+    }
 }

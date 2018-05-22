@@ -7,8 +7,10 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -138,23 +140,40 @@ public class CommonTools {
      * @param context
      * @param message
      */
+    public static Toast toast;
+
     public static void showShortToast(final Context context,
                                       final String message) {
 //		Logger.e("test","CommonTools showShortToast MESSAGE="+MESSAGE);
-        new Thread(new Runnable() {
-            public void run() {
-                Looper.prepare();
-                View view = LayoutInflater.from(context).inflate(R.layout.custom_toast, null);
-                TextView text = (TextView) view.findViewById(R.id.toast_message);
-                text.setText(message);
-                Toast toast = new Toast(context);
-                toast.setDuration(Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.BOTTOM, 0, 300);
-                toast.setView(view);
-                toast.show();
-                Looper.loop();
-            }
-        }).start();
+        if (toast == null) {
+            new Thread(new Runnable() {
+                public void run() {
+                    Looper.prepare();
+                    View view = LayoutInflater.from(context).inflate(R.layout.custom_toast, null);
+                    TextView text = (TextView) view.findViewById(R.id.toast_message);
+                    text.setText(message);
+                    toast = new Toast(context);
+                    toast.setDuration(Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.BOTTOM, 0, 300);
+                    toast.setView(view);
+                    toast.show();
+                    Looper.loop();
+                }
+            }).start();
+        }else {
+            new Thread(new Runnable() {
+                public void run() {
+                    Looper.prepare();
+                    View view = LayoutInflater.from(context).inflate(R.layout.custom_toast, null);
+                    TextView text = (TextView) view.findViewById(R.id.toast_message);
+                    text.setText(message);
+                    toast.setView(view);
+                    toast.show();
+                    Looper.loop();
+                }
+            }).start();
+        }
+
     }
 
     /**
@@ -663,5 +682,36 @@ public class CommonTools {
                 return true;
             }
         }
+    }
+
+    /**
+     * 比较两个日期,如果日期相等返回0,小于0，参数date1就是在date2之后,大于0，参数date1就是在date2之前
+     *
+     * @param date1
+     * @param date2
+     * @return
+     */
+    public static int compareDate(String date1, String date2) {
+        try {
+            SimpleDateFormat sdf;
+            if (date1.contains("-")) {
+                sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            } else if (date1.contains("/")) {
+                sdf = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+            } else {
+                sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            }
+
+            //将日期转成Date对象作比较
+            Date fomatDate1 = sdf.parse(date1);
+            Date fomatDate2 = sdf.parse(date2);
+
+            return fomatDate2.compareTo(fomatDate1);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
     }
 }

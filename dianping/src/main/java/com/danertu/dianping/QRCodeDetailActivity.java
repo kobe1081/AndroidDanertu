@@ -6,9 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.config.Constants;
@@ -25,17 +27,13 @@ import com.google.zxing.WriterException;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class QRCodeDetailActivity extends BaseActivity implements View.OnClickListener {
     private Button btn_back;
     private TextView tv_title;
-    private ImageView iv_product;
-    private TextView tv_shop_price;
-    private TextView tv_market_price;
-    private TextView tv_buy_count;
-    private TextView tv_product_name;
-    private TextView tv_sub_name;
+    private LinearLayout ll_order_item;
     private ImageView iv_qr_code;
     private TextView tv_use_state;
     private TextView tv_order_number;
@@ -55,6 +53,7 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
         findViewById();
         initView();
         initData();
+        setRes();
     }
 
     private void initData() {
@@ -85,12 +84,7 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
     protected void findViewById() {
         btn_back = $(R.id.b_title_back);
         tv_title = $(R.id.tv_title);
-        iv_product = $(R.id.iv_product);
-        tv_shop_price = $(R.id.tv_shop_price);
-        tv_market_price = $(R.id.tv_market_price);
-        tv_buy_count = $(R.id.tv_buy_count);
-        tv_product_name = $(R.id.tv_product_name);
-        tv_sub_name = $(R.id.tv_sub_name);
+        ll_order_item = $(R.id.ll_order_item);
         iv_qr_code = $(R.id.iv_qr_code);
         tv_use_state = $(R.id.tv_use_state);
         tv_order_number = $(R.id.tv_order_number);
@@ -114,7 +108,19 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void finish() {
         super.finish();
-        setResult(RESULT_QR_CODE);
+        setRes();
+    }
+
+    public void setRes() {
+        Intent intent = new Intent();
+        intent.putExtra("orderNumber", orderNumber);
+        setResult(RESULT_QR_CODE, intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
     /**
@@ -145,14 +151,26 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
                 }
                 //通过获取订单体来得到订单的使用状态
                 new GetOrderHead().execute(orderNumber);
-                OrderBody.OrderproductlistBean.OrderproductbeanBean bean = orderBody.getOrderproductlist().getOrderproductbean().get(0);
-                ImageLoader.getInstance().displayImage(getImgUrl(bean.getSmallImage(), bean.getAgentID(), bean.getSupplierLoginID()), iv_product);
-                tv_product_name.setText(bean.getName());
-                tv_shop_price.setText("￥" + bean.getShopPrice());
-                tv_market_price.setText("￥" + bean.getMarketPrice());
-                tv_market_price.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);//给原价加上删除线
-                tv_market_price.getPaint().setAntiAlias(true);
-                tv_buy_count.setText("x" + bean.getBuyNumber());
+                List<OrderBody.OrderproductlistBean.OrderproductbeanBean> beanList = orderBody.getOrderproductlist().getOrderproductbean();
+                for (OrderBody.OrderproductlistBean.OrderproductbeanBean bean : beanList) {
+                    View productItem = LayoutInflater.from(context).inflate(R.layout.item_qrcode_order, null, false);
+                    ImageView iv_product = ((ImageView) productItem.findViewById(R.id.iv_product));
+                    TextView tv_shop_price = ((TextView) productItem.findViewById(R.id.tv_shop_price));
+                    TextView tv_market_price = ((TextView) productItem.findViewById(R.id.tv_market_price));
+                    TextView tv_buy_count = ((TextView) productItem.findViewById(R.id.tv_buy_count));
+                    TextView tv_product_name = ((TextView) productItem.findViewById(R.id.tv_product_name));
+                    TextView tv_sub_name = ((TextView) productItem.findViewById(R.id.tv_sub_name));
+
+                    ImageLoader.getInstance().displayImage(getImgUrl(bean.getSmallImage(), bean.getAgentID(), bean.getSupplierLoginID()), iv_product);
+                    tv_product_name.setText(bean.getName());
+                    tv_shop_price.setText("￥" + bean.getShopPrice());
+                    tv_market_price.setText("￥" + bean.getMarketPrice());
+                    tv_market_price.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);//给原价加上删除线
+                    tv_market_price.getPaint().setAntiAlias(true);
+                    tv_buy_count.setText("x" + bean.getBuyNumber());
+                    ll_order_item.addView(productItem);
+                }
+
             } catch (JsonSyntaxException e) {
                 jsShowMsg("出错了");
                 if (Constants.isDebug) {
@@ -192,26 +210,29 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
                     return;
                 }
                 OrderHead.OrderinfolistBean.OrderinfobeanBean bean = orderHead.getOrderinfolist().getOrderinfobean().get(0);
-                 shipmentStatus = bean.getShipmentStatus();
-                 paymentStatus = bean.getPaymentStatus();
-                 orderStatus = bean.getOderStatus();
+                shipmentStatus = bean.getShipmentStatus();
+                paymentStatus = bean.getPaymentStatus();
+                orderStatus = bean.getOderStatus();
 
-                Logger.e(TAG,"oderStatus="+orderStatus+",shipmentStatus="+shipmentStatus+",paymentStatus="+paymentStatus);
+                Logger.e(TAG, "oderStatus=" + orderStatus + ",shipmentStatus=" + shipmentStatus + ",paymentStatus=" + paymentStatus);
                 //(OderStatus==0 || OderStatus==1 )&&ShipmentStatus==0&&PaymentStatus==2时说明未使用
-                if ((orderStatus.equals("0")||orderStatus.equals("1"))&&shipmentStatus.equals("0")&&paymentStatus.equals("2")){
+                if ((orderStatus.equals("0") || orderStatus.equals("1")) && shipmentStatus.equals("0") && paymentStatus.equals("2")) {
                     //已支付，未使用
                     tv_use_state.setText("未使用");
                     tv_use_state.setVisibility(View.VISIBLE);
                     hideLoadDialog();
-                }else if ((orderStatus.equals("0")||orderStatus.equals("1"))&&shipmentStatus.equals("0")&&paymentStatus.equals("0")){
+                } else if ((orderStatus.equals("0") || orderStatus.equals("1")) && shipmentStatus.equals("0") && paymentStatus.equals("0")) {
                     //未支付（即认为到付），未使用
                     tv_use_state.setText("未使用");
                     tv_use_state.setVisibility(View.VISIBLE);
                     hideLoadDialog();
-                }else {
-                    new GetOrderRecord().execute(orderNumber);
+                } else if ((orderStatus.equals("5") && paymentStatus.equals("2")) || (shipmentStatus.equals("1") && paymentStatus.equals("2"))) {
+                    tv_use_state.setText("已使用（" + bean.getDispatchTime().split(" ")[0].replace("/", ".") + ")");
+                    tv_use_state.setVisibility(View.VISIBLE);
+                } else {
+                    tv_use_state.setText("状态未知");
                 }
-
+                hideLoadDialog();
             } catch (JsonSyntaxException e) {
                 jsShowMsg("出错了");
                 if (Constants.isDebug) {
@@ -224,58 +245,4 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
-    /**
-     * 获取订单的操作记录
-     * apiid  QYHX_0004
-     */
-    class GetOrderRecord extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... param) {
-            String orderNumber = param[0];
-            Map<String, String> map = new HashMap<>();
-            map.put("apiid", "QYHX_0004");
-            map.put("orderNumber", orderNumber);
-            return AppManager.getInstance().doPost(map);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoadDialog();
-            HistoryRecordBean recordBean = gson.fromJson(result, HistoryRecordBean.class);
-            if (recordBean == null) {
-                jsShowMsg("获取券码使用状态失败");
-                if (Constants.isDebug) {
-                    Logger.e(TAG, "接口 QYHX_0004接口返回的数据为：" + result);
-                }
-                finish();
-                return;
-            }
-            if (recordBean.getVal().size() == 0) {
-                //旧订单没有核销平台的记录，所以需要判断是否已经使用过并提示
-                if (paymentStatus.equals("2")&&orderStatus.equals("5")&&(shipmentStatus.equals("1")||shipmentStatus.equals("2"))){
-                    tv_use_state.setVisibility(View.VISIBLE);
-                    tv_use_state.setText("已使用");
-                    return;
-                }
-
-                //记录为空，未使用
-                if (Constants.isDebug){
-                    jsShowMsg("QYHX_0004接口获取到的数据列表size为0");
-                }else {
-                    jsShowMsg("获取券码使用状态失败");
-                }
-//                finish();
-            } else {
-                String createTime = recordBean.getVal().get(0).getCreateTime();
-                tv_use_state.setVisibility(View.VISIBLE);
-                if (!TextUtils.isEmpty(createTime)) {
-                    tv_use_state.setText("已使用");
-                } else {
-                    //不为空，已使用
-                    tv_use_state.setText("已使用（" + createTime.split(" ")[0].replace("/", ".") + ")");
-                }
-            }
-        }
-    }
 }

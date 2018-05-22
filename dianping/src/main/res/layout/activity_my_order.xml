@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/home_backgroud"
-    android:gravity="fill" >
-
-    <include 
+    android:gravity="fill">
+    <!--android:background="@drawable/home_backgroud"-->
+    <include
         android:id="@+id/ll_title_order"
+        layout="@layout/app_title7"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/app_title6"/>
-    
+         />
+
     <include
         layout="@layout/tab_layout"
-        android:layout_below="@id/ll_title_order"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_below="@id/ll_title_order" />
 
-    <WebView 
+    <WebView
         android:id="@+id/wv_orderCenter"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/ll_title_order"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </RelativeLayout>

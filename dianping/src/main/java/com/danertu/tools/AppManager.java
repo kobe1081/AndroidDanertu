@@ -208,11 +208,38 @@ public class AppManager {
     }
 
     // post获取订单信息请求
+
+    /**
+     * @param ApiId
+     * @param uid
+     * @param type  为1时查询当月订单，否则为全部
+     * @return
+     */
     public String postGetUserOrderHead(String ApiId, String uid, String type) {
         HashMap<String, String> param = new HashMap<>();
         param.put("apiid", ApiId);
         param.put("uId", uid);
         param.put("type", type);
+        return doPost(param);
+    }
+
+    /**
+     * 2018年4月24日
+     * 添加分页查询
+     * @param ApiId
+     * @param uid
+     * @param type
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     */
+    public String postGetUserOrderHead(String ApiId, String uid, String type, int pageIndex, int pageSize) {
+        HashMap<String, String> param = new HashMap<>();
+        param.put("apiid", ApiId);
+        param.put("uId", uid);
+        param.put("type", type);
+        param.put("pageIndex", String.valueOf(pageIndex));
+        param.put("pageSize", String.valueOf(pageSize));
         return doPost(param);
     }
 
@@ -1283,7 +1310,9 @@ public class AppManager {
         HashMap<String, String> param = new HashMap<>();
         param.put("apiid", apiid);
         param.put("memloginid", uid);
-        return String.format("%.2f", Double.parseDouble(doPost(param).replaceAll("\n|\r| ", "")));
+        String all = TextUtils.isEmpty(doPost(param).replaceAll("\n|\r| ", ""))?"0":doPost(param).replaceAll("\n|\r| ", "");
+
+        return String.format("%.2f", Double.parseDouble(all));
     }
 
     public String bindBankCard(String uid, String cardNum) {
@@ -1386,6 +1415,7 @@ public class AppManager {
 
     /**
      * 支付退货运费
+     *
      * @param encryptStr
      * @return
      */
@@ -1559,6 +1589,12 @@ public class AppManager {
     public String postGetOrderHead(String orderNum) {
         HashMap<String, String> param = new HashMap<>();
         param.put("apiid", "0036");
+        param.put("ordernumber", orderNum);
+        return doPost(param);
+    }
+    public String postGetOrderBody(String orderNum) {
+        HashMap<String, String> param = new HashMap<>();
+        param.put("apiid", "0072");
         param.put("ordernumber", orderNum);
         return doPost(param);
     }

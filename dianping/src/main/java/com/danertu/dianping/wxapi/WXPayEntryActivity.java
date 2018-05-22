@@ -14,6 +14,7 @@ import com.danertu.dianping.PaymentCenterActivity;
 import com.danertu.dianping.PaymentCenterHandler;
 import com.danertu.dianping.PayPrepareActivity;
 import com.danertu.dianping.StockOrderDetailActivity;
+import com.danertu.tools.PayUtils;
 import com.tencent.mm.sdk.modelbase.BaseReq;
 import com.tencent.mm.sdk.modelbase.BaseResp;
 import com.tencent.mm.sdk.openapi.IWXAPI;
@@ -57,7 +58,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 //		Log.e("test","WXPayEntryActivity onResp resp.errCode="+resp.errCode);
 //		Log.e("test","WXPayEntryActivity onResp resp.transaction="+resp.transaction);
 
-        Handler[] handlers = {PaymentCenterActivity.handler, PayPrepareActivity.handler, PayHtmlActivity.handler, MyOrderDetail.handler, StockOrderDetailActivity.newHandler};
+        Handler[] handlers = {PaymentCenterActivity.handler, PayPrepareActivity.handler, PayHtmlActivity.handler, MyOrderDetail.handler, StockOrderDetailActivity.newHandler, PayUtils.handler};
         for (Handler handler : handlers) {
             if (handler != null) {
                 Message msg = Message.obtain();

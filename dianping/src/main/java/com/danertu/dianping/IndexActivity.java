@@ -58,7 +58,7 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
      */
     public static final String WV_INTERFACE = "index_wv_interface";
     private String wapTitle, wapUrl;
-    private Button mMsg;
+    //    private Button mMsg;
     String allJsonMsg = "";
     String secendPageJson = "";
     final String KEY_SHOPID = "shopid";
@@ -69,16 +69,18 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
     private RefreshIndexReceiver refreshIndexReceiver;
     private GetLocationReceiver getLocationReceiver;
     private boolean localSuccess = false;
-    private TextView tvLocation;
-    private TextView tvMsgCount;
+//    private TextView tvLocation;
+//    private TextView tvMsgCount;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         index_wap_name = WEBPAGE_NAME_RESERVE;
-        shopid = getUid();
         setContentView(R.layout.activity_index);
+        setSystemBarWhite();
+        shopid = getUid();
         getLocation();
         locationUtil = new LocationUtil(this);
+        locationUtil.startLocate();
         findViewById();
         showLoadDialog();
         initUI();
@@ -181,6 +183,7 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
 
     @Override
     protected void onNewIntent(Intent intent) {
+
         if (intent == null)
             return;
         super.onNewIntent(intent);
@@ -193,6 +196,7 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
             //底部提示不变
         }
         String param = bundleToJson(b);
+        Logger.e(TAG, "onNewIntent:" + param);
         initShop(param);
     }
 
@@ -220,7 +224,7 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
     public void initUI() {
         initWebContent();
 
-        tv_store_name.setOnClickListener(this);
+//        tv_store_name.setOnClickListener(this);
     }
 
     private void initWebContent() {
@@ -274,7 +278,9 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
     public static final int WHAT_SUBMIT_SHARECODE_SUCCESS = 111;
     public static final int WHAT_FAIL = -111;
     final static String WEBPAGE_NAME = "AndroidIndex2.htm";
+
     final static String WEBPAGE_NAME_RESERVE = "Android/AndroidIndex.html";
+//    final static String WEBPAGE_NAME_RESERVE = "new/index_android.html";
 
     public static class MyHandler extends Handler {
         WeakReference<IndexActivity> wAct;
@@ -305,8 +311,7 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
 
     @JavascriptInterface
     public void refresh() {
-        shopid=getUid();
-        Logger.e("test",shopid);
+        shopid = getUid();
         if (webView != null) {
             pageindex = 1;
             loadPage();
@@ -526,24 +531,24 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
     }
 
     private SwipeRefreshLayout srl_webView;
-    private TextView tv_store_name;
-    private LinearLayout fl_title;
-    private View top_bg;
+    //    private TextView tv_store_name;
+//    private LinearLayout fl_title;
+//    private View top_bg;
 
     @SuppressWarnings("deprecation")
     @Override
     protected void findViewById() {
-        top_bg = findViewById(R.id.top_bg);
-        fl_title = (LinearLayout) findViewById(R.id.index_top_layout);
+//        top_bg = findViewById(R.id.top_bg);
+//        fl_title = (LinearLayout) findViewById(R.id.index_top_layout);
         final int statusBarHeight = getStatusBarHeight();
         if (VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-            setMargins(fl_title, 0, statusBarHeight, 0, 0);
-        View parent = ((View) fl_title.getParent());
-        parent.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
-        top_bg.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, parent.getMeasuredHeight()));
+//            setMargins(fl_title, 0, statusBarHeight, 0, 0);
+//        View parent = ((View) fl_title.getParent());
+//        parent.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
+//        top_bg.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, parent.getMeasuredHeight()));
         setTitleBgAlpha(0);
 
-        tv_store_name = (TextView) findViewById(R.id.tv_store_name);
+//        tv_store_name = (TextView) findViewById(R.id.tv_store_name);
 
         srl_webView = (SwipeRefreshLayout) findViewById(R.id.srl_webView);
         srl_webView.setColorScheme(color.red, color.palegreen, color.yellow, color.green);
@@ -561,7 +566,7 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
         webView = (WebView) srl_webView.findViewById(R.id.wv_index_content);
         srl_webView.setOnRefreshScroll(new SwipeRefreshLayout.OnRefreshScroll() {
             public void onScroll(float percent) {
-                fl_title.setAlpha(percent);
+//                fl_title.setAlpha(percent);
             }
         });
         ((MWebView) webView).setOnScrollChangeListener(new MWebView.OnScrollChangeListener() {
@@ -570,31 +575,32 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
             }
         });
         //左上角定位
-        tvLocation = ((TextView) findViewById(R.id.tv_location));
+//        tvLocation = ((TextView) findViewById(R.id.tv_location));
         setLocation();
         //右上角消息计数
-        tvMsgCount = ((TextView) findViewById(R.id.tv_msg_count));
-        tvLocation.setOnClickListener(this);
-        mMsg = (Button) findViewById(R.id.msgbox);
-        mMsg.setOnClickListener(this);
+//        tvMsgCount = ((TextView) findViewById(R.id.tv_msg_count));
+//        tvLocation.setOnClickListener(this);
+//        mMsg = (Button) findViewById(R.id.msgbox);
+//        mMsg.setOnClickListener(this);
     }
 
     /**
      * 设置标题栏背景透明度
+     *
      * @param alpha
      */
     public void setTitleBgAlpha(int alpha) {
-        if (getAndroidVersion() >= 11) {
-            float a = (float) alpha / 255;
-            top_bg.setAlpha(a);
-        }
+//        if (getAndroidVersion() >= 11) {
+//            float a = (float) alpha / 255;
+//            top_bg.setAlpha(a);
+//        }
     }
 
     @JavascriptInterface
     public void setShopName(final String name) {
         runOnUiThread(new Runnable() {
             public void run() {
-                tv_store_name.setText(name);
+//                tv_store_name.setText(name);
             }
         });
     }
@@ -610,23 +616,23 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
                 openActivity(SearchActivityV2.class);
                 break;
 
-            case R.id.msgbox:
-                Intent intent = new Intent();
-                intent.putExtra("memberid", getUid());
-                intent.setClass(getApplicationContext(), MessageCenterActivity.class);
-                startActivity(intent);
-//                startActivity(new Intent(this,JPushMessageActivity.class));
-                break;
+//            case R.id.msgbox:
+//                Intent intent = new Intent();
+//                intent.putExtra("memberid", getUid());
+//                intent.setClass(getApplicationContext(), MessageCenterActivity.class);
+//                startActivity(intent);
+////                startActivity(new Intent(this,JPushMessageActivity.class));
+//                break;
 
-            case R.id.tv_store_name:
-                jsStartActivity("SearchActivityV2", KEY_SHOPID + "|" + shopid);
-                break;
-            case R.id.tv_location:
-                //定位按钮
-                CommonTools.showShortToast(context, "正在定位...");
-                localSuccess = true;
-                locationUtil.startLocate();
-                break;
+//            case R.id.tv_store_name:
+//                jsStartActivity("SearchActivityV2", KEY_SHOPID + "|" + shopid);
+//                break;
+//            case R.id.tv_location:
+//                //定位按钮
+//                CommonTools.showShortToast(context, "正在定位...");
+//                localSuccess = true;
+//                locationUtil.startLocate();
+//                break;
             default:
                 break;
 
@@ -676,6 +682,12 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
 
     };
 
+    @JavascriptInterface
+    public void startLocate() {
+        localSuccess = true;
+        locationUtil.startLocate();
+    }
+
     public void setLocation() {
         if (localSuccess) {
             if (TextUtils.isEmpty(Constants.getCityName())) {
@@ -686,11 +698,15 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
             }
             localSuccess = false;
         }
-        if (TextUtils.isEmpty(Constants.getCityName())) {
-            tvLocation.setText("定位");
-        } else {
-            tvLocation.setText(Constants.getCityName().length() > 3 ? Constants.getCityName().substring(0, 2) + "..." : Constants.getCityName().substring(0, 2));
-        }
+
+//        if (webView!=null){
+//            webView.loadUrl(Constants.IFACE + callBackMethod + "(‘4’)");
+//        }
+//        if (TextUtils.isEmpty(Constants.getCityName())) {
+//            tvLocation.setText("定位");
+//        } else {
+//            tvLocation.setText(Constants.getCityName().length() > 3 ? Constants.getCityName().substring(0, 2) + "..." : Constants.getCityName().substring(0, 2));
+//        }
     }
 
     /**
@@ -722,7 +738,7 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Logger.e("test",shopid);
+            Logger.e("RefreshIndexReceiver ", shopid);
             refresh();
         }
     }
@@ -734,7 +750,7 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Logger.e("test",shopid);
+            Logger.e("test", shopid);
             refresh();
         }
     }
@@ -746,7 +762,7 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Logger.e("test",shopid);
+            Logger.e("test", shopid);
             refresh();
         }
     }
