@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:background="@color/white"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <FrameLayout
@@ -18,7 +18,7 @@
             android:layout_height="match_parent"
             android:background="@null"
             android:drawableLeft="@drawable/ic_back_black"
-            android:padding="15dp"
+            android:padding="10dp"
             android:textColor="@android:color/white"
             android:textSize="16sp" />
 
@@ -68,13 +68,14 @@
                 android:id="@+id/tv_help"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:layout_marginLeft="30dp"
                 android:drawablePadding="2dp"
-                android:layout_margin="5dp"
                 android:drawableTop="@mipmap/icon_help"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:text="客服" />
+                android:text="客服"
+                android:textColor="#555555" />
 
             <View
                 android:layout_width="0dp"
@@ -125,7 +126,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
             android:orientation="vertical">
             <!--订单状态-->
             <LinearLayout
@@ -139,9 +139,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="right|center_vertical"
                     android:gravity="center_vertical"
-                    android:padding="10dp"
-                    android:textColor="@color/text_gray"
-                    android:textSize="20sp" />
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="10dp"
+                    android:textColor="#333333"
+                    android:textSize="27sp" />
 
                 <TextView
                     android:id="@+id/tv_order_trade_state_tips"
@@ -150,7 +151,7 @@
                     android:layout_gravity="center_vertical"
                     android:paddingBottom="10dp"
                     android:paddingLeft="10dp"
-                    android:textColor="@color/text_gray_999" />
+                    android:textColor="#333333" />
             </LinearLayout>
             <!--查看券码-->
             <FrameLayout
@@ -195,8 +196,8 @@
                     android:layout_height="wrap_content"
                     android:padding="10dp"
                     android:text="@string/order_detail_receive_people"
-                    android:textColor="@color/gray_text"
-                    android:textSize="19sp" />
+                    android:textColor="#333333"
+                    android:textSize="22sp" />
 
                 <LinearLayout
                     android:id="@+id/contact"
@@ -208,27 +209,21 @@
                     android:orientation="vertical"
                     android:padding="10dp">
                     <!--收货人姓名、号码-->
-                    <LinearLayout
+
+                    <TextView
+                        android:id="@+id/tv_payCenter_recName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:textColor="#333333"
+                        android:textSize="16sp" />
 
-                        <TextView
-                            android:id="@+id/tv_payCenter_recName"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="16sp"
-                            android:textColor="@color/gray_text" />
-
-                        <TextView
-                            android:id="@+id/tv_payCenter_recMobile"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="50dp"
-                            android:textSize="16sp"
-                            android:textColor="@color/gray_text" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tv_payCenter_recMobile"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:textColor="@color/gray_text"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/tv_payCenter_recAddress"
@@ -245,8 +240,8 @@
                 android:id="@+id/ll_hotel_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 android:layout_marginTop="15dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:visibility="gone">
 
@@ -323,8 +318,8 @@
                 android:id="@+id/ll_contact"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 android:layout_marginTop="15dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <TextView
@@ -332,8 +327,8 @@
                     android:layout_height="wrap_content"
                     android:padding="10dp"
                     android:text="@string/order_detail_pay_info"
-                    android:textColor="@color/gray_text"
-                    android:textSize="19sp" />
+                    android:textColor="#333333"
+                    android:textSize="22sp" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -344,63 +339,21 @@
                     android:orientation="vertical"
                     android:padding="10dp">
 
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/tv_order_count_price"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
                         android:gravity="bottom"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="共"
-                            android:textColor="@color/gray_text"
-                            android:textSize="12sp" />
-                        <TextView
-                            android:id="@+id/tv_buy_num"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/gray_text"
-                            android:textSize="12sp" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="件商品，共￥"
-                            android:textColor="@color/gray_text"
-                            android:textSize="12sp" />
-                        <TextView
-                            android:id="@+id/tv_total_price"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/gray_text"
-                            android:textSize="18sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="元（含运费"
-                            android:textColor="@color/gray_text"
-                            android:textSize="12sp" />
-                        <TextView
-                            android:id="@+id/tv_yunfei"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/gray_text"
-                            android:textSize="12sp" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="元）"
-                            android:textColor="@color/gray_text"
-                            android:textSize="12sp" />
-                    </LinearLayout>
+                        android:textColor="@color/gray_text"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/tv_order_payway"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:textColor="@color/gray_text_aaa"
+                        android:textColor="@color/gray_text"
                         android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -409,8 +362,8 @@
                 android:id="@+id/ll_contact"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 android:layout_marginTop="15dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <TextView
@@ -418,8 +371,8 @@
                     android:layout_height="wrap_content"
                     android:padding="10dp"
                     android:text="@string/order_detail_more"
-                    android:textColor="@color/gray_text"
-                    android:textSize="19sp" />
+                    android:textColor="#333333"
+                    android:textSize="22sp" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -467,7 +420,8 @@
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:text="商品信息"
-                android:textColor="@color/gray_text" />
+                android:textColor="#333333"
+                android:textSize="15sp" />
 
             <LinearLayout
                 android:id="@+id/ll_orderDetail_proParent"

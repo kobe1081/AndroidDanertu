@@ -226,6 +226,7 @@ public class AppManager {
     /**
      * 2018年4月24日
      * 添加分页查询
+     *
      * @param ApiId
      * @param uid
      * @param type
@@ -1310,7 +1311,7 @@ public class AppManager {
         HashMap<String, String> param = new HashMap<>();
         param.put("apiid", apiid);
         param.put("memloginid", uid);
-        String all = TextUtils.isEmpty(doPost(param).replaceAll("\n|\r| ", ""))?"0":doPost(param).replaceAll("\n|\r| ", "");
+        String all = TextUtils.isEmpty(doPost(param).replaceAll("\n|\r| ", "")) ? "0" : doPost(param).replaceAll("\n|\r| ", "");
 
         return String.format("%.2f", Double.parseDouble(all));
     }
@@ -1592,6 +1593,7 @@ public class AppManager {
         param.put("ordernumber", orderNum);
         return doPost(param);
     }
+
     public String postGetOrderBody(String orderNum) {
         HashMap<String, String> param = new HashMap<>();
         param.put("apiid", "0072");
@@ -1608,5 +1610,22 @@ public class AppManager {
         param.put("ordernumber", orderNum);
         return doPost(param);
     }
+
+    /**
+     * 2018年5月22日
+     * 获取温泉产品分类，订单详情页面跳转门票、客房使用
+     *
+     * @param productGuid 产品Guid
+     * @return ProductCategory:  1-门票，2-客房
+     * <p>
+     * ticket_route.html?productCategory=*&guid=*
+     */
+    public String postGetProductCategory(String productGuid) {
+        HashMap<String, String> param = new HashMap<>();
+        param.put("apiid", "0338");
+        param.put("productGuid", productGuid);
+        return doPost(param);
+    }
+
 
 }

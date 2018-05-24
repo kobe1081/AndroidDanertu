@@ -361,6 +361,8 @@ public class Constants {
             add("SplashActivity");
             add("AppShowActivity");
             add("MyOrderDetail");
+//            add("HtmlActivity");
+//            add("HtmlActivityNew");
         }
     };
     public final static String LOGIN_SUCCESS_BROADCAST = "com.danertu.dianping.LOGIN";
@@ -369,6 +371,7 @@ public class Constants {
     public final static String ORDER_FINISH = "com.danertu.dianping.ORDER_FINISH";
     public final static String ORDER_DATA_CHANGE = "com.danertu.dianping.ORDER_DATA_CHANGE";
     public final static String ORDER_DATA_ON_ACTIVITY_FOR_RESULT = "com.danertu.dianping.ORDER_DATA_ON_ACTIVITY_FOR_RESULT";
+    public final static String ORDER_DATA_ON_ACTIVITY_FOR_RESULT_QRCODE = "com.danertu.dianping.ORDER_DATA_ON_ACTIVITY_FOR_RESULT_QRCODE";
     public final static String GET_LOCATION_FINISH = "com.danertu.dianping.GET_LOCATION_FINISH";
 
     public final static String PAY_UTILS_RESULT = "com.danertu.dianping.PAY_UTILS_RESULT";

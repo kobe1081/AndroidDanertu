@@ -10,13 +10,18 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -35,9 +40,11 @@ import com.alipay.sdk.app.PayTask;
 import com.config.Constants;
 import com.danertu.entity.MyOrderData;
 import com.danertu.entity.MyOrderDataQRCode;
+import com.danertu.entity.ProductCategory;
 import com.danertu.tools.AccToPay;
 import com.danertu.tools.AlipayUtil;
 import com.danertu.tools.AppManager;
+import com.danertu.tools.AsyncTask;
 import com.danertu.tools.DateTimeUtils;
 import com.danertu.tools.LoadingDialog;
 import com.danertu.tools.Logger;
@@ -48,11 +55,12 @@ import com.danertu.tools.Result;
 import com.danertu.tools.WXPay;
 import com.danertu.widget.CommonTools;
 import com.danertu.widget.PayPswDialog;
+import com.google.gson.JsonSyntaxException;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
  * 订单详情页面
- *
+ * <p>
  * 2018年5月21日
  * 因为到付订单在核销机上可以修改订单数量，所以修改了onActivityResult中更新订单信息的代码,更新全部的订单信息
  * 注：原本只是修改订单状态
@@ -64,9 +72,13 @@ public class MyOrderDetail extends BaseActivity {
     private static final int REQUEST_SHOW_QRCODE = 22;
 
     /**
+     * 2018年5月22日
+     * 温泉产品新页面地址
+     */
+    public static final String QUANYAN_PRODUCT_URL = "Android/ticket_route.html";
+    /**
      * 订单状态
      */
-
     //未付款
     private final String ORDER_STATUS_NO_PAY = "订单还没付款";
     //门票未付款提示
@@ -137,10 +149,8 @@ public class MyOrderDetail extends BaseActivity {
     private TextView tv_orderCreateTime;    //订单创建时间
     private TextView tv_orderState;         //订单状态
     private TextView tv_orderStateTips;     //订单状态提示
-    private TextView tv_buyNum;             //购买数量
-    private TextView tv_totalPrice;         //总价格
-    private TextView tv_yunFei;             //运费
     private TextView tv_help;               //联系客服
+    private TextView tv_order_count_price;  //总数量、总价格、运费等信息  共998件商品，共￥12455504.00元（含运费0.00）
 
 
     private LinearLayout ll_proParent;
@@ -187,6 +197,7 @@ public class MyOrderDetail extends BaseActivity {
     private String sResult;//物流状态
     private String pResult;//支付状态
     public static final int RESULT_ORDER_STATUS_CHANGE = 123;
+    public static final int RESULT_QRCODE_STATUS_CHANGE = 124;
 
     private boolean isQuanyan = false;
 
@@ -270,10 +281,8 @@ public class MyOrderDetail extends BaseActivity {
         tv_orderCreateTime = (TextView) findViewById(R.id.tv_order_createTime);
         tv_orderState = (TextView) findViewById(R.id.tv_order_trade_state);
         tv_orderStateTips = (TextView) findViewById(R.id.tv_order_trade_state_tips);
-        tv_buyNum = (TextView) findViewById(R.id.tv_buy_num);
-        tv_totalPrice = (TextView) findViewById(R.id.tv_total_price);
-        tv_yunFei = (TextView) findViewById(R.id.tv_yunfei);
         tv_help = (TextView) findViewById(R.id.tv_help);
+        tv_order_count_price = (TextView) findViewById(R.id.tv_order_count_price);
 
 
         ll_proParent = (LinearLayout) findViewById(R.id.ll_orderDetail_proParent);
@@ -364,11 +373,7 @@ public class MyOrderDetail extends BaseActivity {
         //下单时间
         tv_recMobile.setText(recMobile);
         tv_orderCreateTime.setText("下单时间：" + orderCreate.replace("/", "."));
-        //总价格
-        tv_totalPrice.setText(totalprice);
-        //运费
-        tv_yunFei.setText(yunFei);
-//        tv_buyNum.setText();
+
         //订单号
         String tagOrderNum = getString(R.string.pay_orderNum_tips);
         tv_orderNum.setText(tagOrderNum + outOrderNumber);
@@ -769,7 +774,11 @@ public class MyOrderDetail extends BaseActivity {
             final String mobile = agentMobile;
             proMsg.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    startToProDetail(guid, proName, image, "", agentID, supID, price, mobile);
+                    if (isQuanyan) {
+                        new ToQuanyanProductPage().execute(guid);
+                    } else {
+                        startToProDetail(guid, proName, image, "", agentID, supID, price, mobile);
+                    }
                 }
             });
 
@@ -834,8 +843,14 @@ public class MyOrderDetail extends BaseActivity {
             ll_proParent.addView(v);
 //            }
         }
-        //购买总数
-        tv_buyNum.setText(String.valueOf(totalCount));
+
+        String unSignFomat = "共%s件商品，共￥%.2f元（含运费%.2f）";
+        double parseDouble = Double.parseDouble(shouldPay);
+        String format = String.format(unSignFomat, totalCount, parseDouble, Double.parseDouble(yunFei));
+        SpannableStringBuilder stringBuilder = setStyleForUnSignNum(format, parseDouble);
+        //总数量、总价格、运费等信息  共998件商品，共￥12455504.00元（含运费0.00）
+        tv_order_count_price.setText(stringBuilder);
+
         phoneAndShopName = phoneAndShopName.substring(0, phoneAndShopName.length() - 1);
 
         //暂时使用旧方案
@@ -905,6 +920,15 @@ public class MyOrderDetail extends BaseActivity {
 //            });
 //            ll_proParent.addView(v);
 //        }
+    }
+
+    public SpannableStringBuilder setStyleForUnSignNum(String text, double num) {
+        SpannableStringBuilder unSignNumBuilder = new SpannableStringBuilder(text);
+        int start = text.indexOf("" + num);
+        int end = start + String.valueOf(num).length() + 1;
+        unSignNumBuilder.setSpan(new RelativeSizeSpan(1.5f), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        unSignNumBuilder.setSpan(new ForegroundColorSpan(Color.parseColor("#555555")), start, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        return unSignNumBuilder;
     }
 
     /**
@@ -1384,15 +1408,9 @@ public class MyOrderDetail extends BaseActivity {
                                 String order_orderNumber = orderItem.get("order_orderNumber").toString();
                                 //更新所有订单列表
                                 if (outOrderNumber.equals(order_orderNumber)) {
-//                                    orderItem.remove("order_PaymentStatus");
-//                                    orderItem.put("order_PaymentStatus", payStatus);
-//                                    orderItem.remove("order_ShipmentStatus");
-//                                    orderItem.put("order_ShipmentStatus", shipmentStatus);
-//                                    orderItem.remove(MyOrderData.ORDER_ORDERSTATUS_KEY);
-//                                    orderItem.put(MyOrderData.ORDER_ORDERSTATUS_KEY, orderStatus);
 
                                     for (String s : orderItem.keySet()) {
-                                        orderItem.put(s,orderBean.get(s));
+                                        orderItem.put(s, orderBean.get(s));
                                     }
                                     hasAllChange = true;
                                     Logger.e(TAG, "  order_list_no_use change");
@@ -1407,14 +1425,8 @@ public class MyOrderDetail extends BaseActivity {
                                     if (outOrderNumber.equals(order_orderNumber)) {
 
                                         for (String s : orderItem.keySet()) {
-                                            orderItem.put(s,orderBean.get(s));
+                                            orderItem.put(s, orderBean.get(s));
                                         }
-//                                        orderItem.remove("order_PaymentStatus");
-//                                        orderItem.put("order_PaymentStatus", payStatus);
-//                                        orderItem.remove("order_ShipmentStatus");
-//                                        orderItem.put("order_ShipmentStatus", shipmentStatus);
-//                                        orderItem.remove(MyOrderData.ORDER_ORDERSTATUS_KEY);
-//                                        orderItem.put(MyOrderData.ORDER_ORDERSTATUS_KEY, orderStatus);
                                         Logger.e(TAG, "  order_no_use change");
                                         break;
                                     }
@@ -1425,6 +1437,8 @@ public class MyOrderDetail extends BaseActivity {
                                 MyOrderDataQRCode.order_list_complete.add(0, orderBean);
                                 MyOrderQRCodeActivity.dataChanges[1] = true;
                             }
+
+                            setResult(RESULT_QRCODE_STATUS_CHANGE);
                         }
                         initView();
                         hideLoadDialog();
@@ -1466,7 +1480,7 @@ public class MyOrderDetail extends BaseActivity {
 //                                    orderItem.put(MyOrderData.ORDER_ORDERSTATUS_KEY, orderStatus);
 
                                     for (String s : orderItem.keySet()) {
-                                        orderItem.put(s,orderBean.get(s));
+                                        orderItem.put(s, orderBean.get(s));
                                     }
                                     hasAllChange = true;
                                     Logger.e(TAG, "  order_list_all change");
@@ -1487,7 +1501,7 @@ public class MyOrderDetail extends BaseActivity {
 //                                        orderItem.put(MyOrderData.ORDER_ORDERSTATUS_KEY, orderStatus);
 
                                         for (String s : orderItem.keySet()) {
-                                            orderItem.put(s,orderBean.get(s));
+                                            orderItem.put(s, orderBean.get(s));
                                         }
                                         Logger.e(TAG, "  order_all change");
                                         break;
@@ -1606,5 +1620,45 @@ public class MyOrderDetail extends BaseActivity {
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(context);
         Intent intent = new Intent(Constants.ORDER_DATA_CHANGE);
         manager.sendBroadcast(intent);
+    }
+
+    /**
+     * 跳转至温泉产品页面,1-门票，2-客房
+     * ticket_route.html?productCategory=*&guid=*
+     */
+    class ToQuanyanProductPage extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... param) {
+            String productGuid = param[0];
+            if (TextUtils.isEmpty(productGuid)) {
+                return "";
+            }
+            return appManager.postGetProductCategory(productGuid);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (TextUtils.isEmpty(result)) {
+                jsShowMsg("商品信息有误");
+                return;
+            }
+            try {
+                ProductCategory category = gson.fromJson(result, ProductCategory.class);
+                ProductCategory.ValBean bean = category.getVal().get(0);
+                String productCategory = bean.getProductCategory();
+                String guid = bean.getProductGuid();
+
+                Intent intent = new Intent(context, HtmlActivityNew.class);
+                String url = Constants.appWebPageUrl + QUANYAN_PRODUCT_URL + "?productCategory=" + productCategory + "&guid=" + guid;
+                intent.putExtra("url", url);
+                startActivity(intent);
+            } catch (JsonSyntaxException e) {
+                jsShowMsg("商品信息有误");
+                e.printStackTrace();
+            }
+
+        }
     }
 }

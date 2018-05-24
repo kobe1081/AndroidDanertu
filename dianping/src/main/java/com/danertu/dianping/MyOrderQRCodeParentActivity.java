@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.danertu.adapter.MyOrderAdapter.REQUEST_ORDER_DETAIL;
+import static com.danertu.adapter.MyOrderQRCodeAdapter.REQUEST_QRCODE_NEW;
 
 
 public abstract class MyOrderQRCodeParentActivity extends BaseActivity implements XListView.IXListViewListener {
@@ -35,6 +36,7 @@ public abstract class MyOrderQRCodeParentActivity extends BaseActivity implement
     private LocalBroadcastManager broadcastManager;
     private LoadOrderReceiver receiver;
     private DataChangerReceiver dataChangerReceiver;
+    private AdapterOnActivityResult adapterOnActivityResult;
 
     public static final int TAB_NO_USE = 0;
     public static final int TAB_COMPLETE = 1;
@@ -82,6 +84,12 @@ public abstract class MyOrderQRCodeParentActivity extends BaseActivity implement
             dataChangerReceiver = new DataChangerReceiver();
             broadcastManager.registerReceiver(dataChangerReceiver, intentFilter);
         }
+        if (adapterOnActivityResult == null) {
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(Constants.ORDER_DATA_ON_ACTIVITY_FOR_RESULT_QRCODE);
+            adapterOnActivityResult = new AdapterOnActivityResult();
+            broadcastManager.registerReceiver(adapterOnActivityResult, intentFilter);
+        }
     }
 
     @Override
@@ -91,7 +99,7 @@ public abstract class MyOrderQRCodeParentActivity extends BaseActivity implement
 
     @Override
     protected void findViewById() {
-        
+
     }
 
     @Override
@@ -221,6 +229,82 @@ public abstract class MyOrderQRCodeParentActivity extends BaseActivity implement
                 Logger.e("DataChangerReceiver", " DataChangerReceiver 接收到数据变化");
                 adapter.notifyDataSetChanged();
             }
+        }
+    }
+
+
+    /**
+     * 为了避免出现问题(比如在全部列表进入券码页面核销，返回列表再进入未付款页面后，已核销的订单在未付款列表显示已使用)，直接在这里操作列表数据
+     */
+    class AdapterOnActivityResult extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+                int requestCode = intent.getIntExtra("requestCode", -1);
+                int resultCode = intent.getIntExtra("resultCode", -1);
+                final String orderNumber = intent.getStringExtra("orderNumber");
+                switch (requestCode) {
+                    case REQUEST_QRCODE_NEW:
+                        new MyOrderDataQRCode(MyOrderQRCodeParentActivity.this, true, orderNumber) {
+
+                            @Override
+                            public void getDataSuccess() {
+                                HashMap<String, Object> orderBean = getItemOrder();
+                                if (orderBean == null || orderBean.isEmpty()) {
+                                    jsShowMsg("订单数据有误");
+                                    finish();
+                                    return;
+                                }
+                                boolean hasAllChange = false;
+                                //------------------------------全部订单--------------------------------------------
+                                for (HashMap<String, Object> orderItem : MyOrderDataQRCode.order_list_no_use) {
+                                    String order_orderNumber = orderItem.get("order_orderNumber").toString();
+                                    //更新所有订单列表
+                                    if (orderNumber.equals(order_orderNumber)) {
+                                        for (String s : orderItem.keySet()) {
+                                            orderItem.put(s, orderBean.get(s));
+                                        }
+                                        hasAllChange = true;
+                                        Logger.e(TAG, "  order_list_no_use change");
+                                        MyOrderNoUseActivity.adapter.notifyDataSetChanged();
+                                        break;
+                                    }
+                                }
+                                if (!hasAllChange)
+                                    for (HashMap<String, Object> orderItem : MyOrderDataQRCode.order_no_use) {
+                                        String order_orderNumber = orderItem.get("order_orderNumber").toString();
+                                        //更新所有订单列表
+                                        if (orderNumber.equals(order_orderNumber)) {
+
+                                            for (String s : orderItem.keySet()) {
+                                                orderItem.put(s, orderBean.get(s));
+                                            }
+                                            Logger.e(TAG, "  order_no_use change");
+                                            break;
+                                        }
+                                    }
+//------------------------------全部订单--------------------------------------------------
+                                String orderStatus = orderBean.get(MyOrderData.ORDER_ORDERSTATUS_KEY).toString();
+                                String shipmentStatus = orderBean.get(MyOrderData.ORDER_SHIPSTATUS_KEY).toString();
+                                String payStatus = orderBean.get(MyOrderData.ORDER_PAYSTATUS_KEY).toString();
+                                if (orderStatus.equals("5") && shipmentStatus.equals("2") && payStatus.equals("2")) {
+                                    MyOrderDataQRCode.order_list_complete.add(0, orderBean);
+                                    MyOrderQRCodeActivity.dataChanges[1] = true;
+                                    MyOrderCompleteQRCodeActivity.adapter.notifyDataSetChanged();
+                                }
+
+                                Logger.e(TAG, "数据更新完毕");
+                            }
+                        };
+                        break;
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     }
 

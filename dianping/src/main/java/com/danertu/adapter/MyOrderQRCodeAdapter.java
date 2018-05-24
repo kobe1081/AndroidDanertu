@@ -30,7 +30,6 @@ import com.danertu.dianping.MyOrderShipmentActivity;
 import com.danertu.dianping.PayPrepareActivity;
 import com.danertu.dianping.QRCodeDetailActivity;
 import com.danertu.dianping.R;
-import com.danertu.entity.MyOrderData;
 import com.danertu.entity.MyOrderDataQRCode;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.Logger;
@@ -43,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MyOrderQRCodeAdapter extends BaseAdapter {
+    public static final int REQUEST_QRCODE_NEW = 1267;
     Context context = null;
     private List<HashMap<String, Object>> dataList = null;
     private DBManager db = null;
@@ -125,7 +125,7 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
                 vh.b_left.setEnabled(true);
                 vh.b_right.setEnabled(true);
             }
-            String orderNum = data_item.get(MyOrderData.ORDER_ORDERNUMBER_KEY).toString();
+            String orderNum = data_item.get(MyOrderDataQRCode.ORDER_ORDERNUMBER_KEY).toString();
             vh.tv_orderNum.setText("订单号：" + orderNum);
 
             String oResult = data_item.get("order_OderStatus").toString();
@@ -167,7 +167,7 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
         int yorderCount = 0;
         final HashMap<String, Object> headItems = dataList.get(p);
         Logger.i(getClass().getSimpleName(), headItems.toString());
-        List<HashMap<String, String>> list_orderSet = (List) headItems.get(MyOrderData.ORDER_ITEMSET_KEY);
+        List<HashMap<String, String>> list_orderSet = (List) headItems.get(MyOrderDataQRCode.ORDER_ITEMSET_KEY);
         ImageView iv_pro_logo = null;
         TextView tv_title = null;
         TextView tv_dec = null;
@@ -198,10 +198,10 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
             final String agentID = orderItem.get("AgentID");
             final String supplierLoginId = orderItem.get("SupplierLoginID");
             final String price = orderItem.get("ShopPrice");
-            final String marketPrice = orderItem.get(MyOrderData.ORDER_ITEM_MARKEPRICE_KEY);
+            final String marketPrice = orderItem.get(MyOrderDataQRCode.ORDER_ITEM_MARKEPRICE_KEY);
             final String smallImage = orderItem.get("SmallImage");
             final String num = orderItem.get("BuyNumber");
-            final String attrParam = orderItem.get(MyOrderData.ORDER_ITEM_ATTRIBUTE);
+            final String attrParam = orderItem.get(MyOrderDataQRCode.ORDER_ITEM_ATTRIBUTE);
 
             final String other1 = orderItem.get("other1");
             final String other2 = orderItem.get("other2");
@@ -272,7 +272,7 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
             int tCount = Integer.parseInt(num);//总数
             yorderCount += tCount;
             String joinString = orderItem.get("joinCount");
-            tCount = MyOrderData.getRealCount(tCount, joinString);
+            tCount = MyOrderDataQRCode.getRealCount(tCount, joinString);
 
             //TODO 门票票型、酒店入住时间
 //            if (isQuanyan){
@@ -292,7 +292,7 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
 
         }
 
-        String totalPrice = dataList.get(p).get(MyOrderData.ORDER_SHOULDPAY_KEY).toString();
+        String totalPrice = dataList.get(p).get(MyOrderDataQRCode.ORDER_SHOULDPAY_KEY).toString();
 
         tv_priceSum.setText("共" + yorderCount + "件商品(含运费)：" + "￥" + totalPrice);
 
@@ -375,8 +375,8 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
                 b_right.setVisibility(View.VISIBLE);
             } else {
                 b_right.setText(BTN_CANCEL_ORDER);
-                b_center.setVisibility(View.GONE);
                 b_right.setVisibility(View.VISIBLE);
+                b_center.setVisibility(View.GONE);
                 b_left.setVisibility(View.GONE);
                 tv_traceState.setText(STATUS_NO_SEND);
             }
@@ -457,7 +457,6 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
         setClickListener(p, b_left, b_center, b_right, sResult);
     }
 
-    String orderNumber = null;
     Dialog askDialog = null;
 
     /**
@@ -471,12 +470,12 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
      */
     private void setClickListener(final int p, final Button b_left, final Button b_center, final Button b_right, String shipmentStatus) {
         final HashMap<String, Object> headItems = dataList.get(p);
-        final String orderNum = headItems.get(MyOrderData.ORDER_ORDERNUMBER_KEY).toString();
+        final String orderNum = headItems.get(MyOrderDataQRCode.ORDER_ORDERNUMBER_KEY).toString();
         b_left.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
                 if (isClickOften()) return;
                 if (b_left.getText().toString().equals(BTN_PAYBACK)) {
-                    String priceSum = headItems.get(MyOrderData.ORDER_SHOULDPAY_KEY).toString();
+                    String priceSum = headItems.get(MyOrderDataQRCode.ORDER_SHOULDPAY_KEY).toString();
                     applyDrawBack(priceSum, orderNum);
                 }
             }
@@ -485,10 +484,10 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
         b_center.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (isClickOften()) return;
-                // List proItems = (List) headItems.get(MyOrderData.ORDER_ITEMSET_KEY);
+                // List proItems = (List) headItems.get(MyOrderDataQRCode.ORDER_ITEMSET_KEY);
 
                 String shipCode = headItems.get("order_LogisticsCompanyCode").toString();// 快递公司编码
-                String shipName = headItems.get(MyOrderData.ORDER_DISPATMODENAME_KEY).toString();
+                String shipName = headItems.get(MyOrderDataQRCode.ORDER_DISPATMODENAME_KEY).toString();
                 String shipNumber = headItems.get("order_ShipmentNumber").toString();// 快递单号
 
                 Logger.e("shipment", "shipCode=" + shipCode + "/shipName=" + shipName + "/shipNumber=" + shipNumber);
@@ -517,7 +516,20 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
                                 Logger.e("dialog_order", orderNum + "");
                                 b_sure.setText("正在取消...");
                                 b_sure.setEnabled(false);
-                                new Thread(cancelOrderRun).start();
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        /**
+                                         * 取消订单
+                                         */
+                                        if (AppManager.getInstance().postCancelOrder(orderNum)) {
+                                            mHandler.sendEmptyMessage(WHAT_CANCLEORDER_SUCCESS);
+                                        } else {
+                                            mHandler.sendEmptyMessage(WHAT_CANCLEORDER_FAIL);
+                                        }
+                                    }
+                                }).start();
+
                             }
                         });
                         askDialog.show();
@@ -527,61 +539,20 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
 
                         break;
                     case BTN_QRCODE: {
-//                        orderNum = headItems.get(MyOrderData.ORDER_ORDERNUMBER_KEY).toString();
                         Intent intent = new Intent(context, QRCodeDetailActivity.class);
                         intent.putExtra("orderNumber", orderNum);
-                        context.startActivity(intent);
-//                    ((MyOrderParent) context).startActivityForResult(intent,);
+                        ((MyOrderParent) context).getParent().startActivityForResult(intent, REQUEST_QRCODE_NEW);
                         break;
                     }
                     case BTN_PAYBACK:
-                        String priceSum = headItems.get(MyOrderData.ORDER_SHOULDPAY_KEY).toString();
+                        String priceSum = headItems.get(MyOrderDataQRCode.ORDER_SHOULDPAY_KEY).toString();
                         applyDrawBack(priceSum, orderNum);
                         break;
                     case BTN_PAY:
 
-                        List<HashMap<String, String>> list_orderSet = (List) headItems.get(MyOrderData.ORDER_ITEMSET_KEY);
+                        List<HashMap<String, String>> list_orderSet = (List) headItems.get(MyOrderDataQRCode.ORDER_ITEMSET_KEY);
                         String supplierLoginID = list_orderSet.get(0).get("SupplierLoginID").toString();
                         payOrder(orderNum, true, supplierLoginID.equals(Constants.QY_SUPPLIERID));
-//                        List<HashMap<String, String>> items = (List<HashMap<String, String>>) headItems.get(MyOrderData.ORDER_ITEMSET_KEY);
-//                        String body = "";
-//                        StringBuilder sb = new StringBuilder();
-//                        boolean isCanUserOrderPayWay = true;
-//                        int qyCount = 0;
-//                        for (int i = 0; i < items.size(); i++) {
-//                            HashMap<String, String> item = items.get(i);
-//                            String proName = item.get("Name");
-//                            String price = item.get("ShopPrice");
-//                            String buyCount1 = item.get("BuyNumber");//单项商品总数
-//                            String createUser = item.get(MyOrderData.ORDER_ITEM_CREATEUSER);
-//                            String agentid = item.get(MyOrderData.ORDER_ITEM_AGENTID_KEY);
-//                            String suppID = item.get(MyOrderData.ORDER_ITEM_SUPPLIERID_KEY);
-//                            if (!TextUtils.isEmpty(agentid))
-//                                isCanUserOrderPayWay = false;
-//                            if (suppID.equals(Constants.QY_SUPPLIERID)) {//泉眼商品
-//                                qyCount++;
-//                            }
-//                            int tCount = 0;
-//                            int yCount = Integer.parseInt(buyCount1);
-//                            String joinString = item.get("joinCount");
-//                            tCount = MyOrderData.getRealCount(yCount, joinString);
-//                            double tPrice = Double.parseDouble(price);
-//                            double singleSum = tCount * tPrice;
-//
-//                            body += proName + ",";
-//                            sb.append(createUser).append(",").append(singleSum).append("|");
-////                        pricedata += createUser + "," + singleSum + "|";
-//                        }
-//                        String pricedata = sb.toString();
-//
-//                        String createTime = headItems.get(MyOrderData.ORDER_CREATETIME_KEY).toString();
-////					String totalPrice = String.format("%.2f", priceSum);//保留两位小数
-//                        String totalPrice = headItems.get(MyOrderData.ORDER_SHOULDPAY_KEY).toString();//保留两位小数
-//
-//                        String subject = body.substring(0, body.length() - 1);
-//                        pricedata = pricedata.substring(0, pricedata.length() - 1);
-//                        String payWayName = headItems.get(MyOrderData.ORDER_PAYMENTNAME_KEY).toString();
-//                        toPayPrepare(createTime, totalPrice, orderNumber, subject, body, pricedata, isCanUserOrderPayWay, payWayName, qyCount == items.size());
 
                         break;
                 }
@@ -591,59 +562,20 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
             @SuppressWarnings("unchecked")
             public void onClick(View v) {
                 if (isClickOften()) return;
-                List<HashMap<String, String>> items = (List<HashMap<String, String>>) headItems.get(MyOrderData.ORDER_ITEMSET_KEY);
-                orderNumber = headItems.get("order_orderNumber").toString();
+                List<HashMap<String, String>> items = (List<HashMap<String, String>>) headItems.get(MyOrderDataQRCode.ORDER_ITEMSET_KEY);
                 final String agentID = headItems.get("order_AgentId").toString();// shopID
 
                 String btnRightStr = b_right.getText().toString();
                 if (btnRightStr.equals(BTN_PAYBACK)) {
-                    String priceSum = headItems.get(MyOrderData.ORDER_SHOULDPAY_KEY).toString();
-                    applyDrawBack(priceSum, orderNumber);
+                    String priceSum = headItems.get(MyOrderDataQRCode.ORDER_SHOULDPAY_KEY).toString();
+                    applyDrawBack(priceSum, orderNum);
                 }
 
                 switch (btnRightStr) {
                     case BTN_PAY:
 
                         String supplierLoginID = items.get(0).get("SupplierLoginID").toString();
-                        payOrder(orderNumber, true, supplierLoginID.equals(Constants.QY_SUPPLIERID));
-//                        String body = "";
-//                        StringBuilder sb = new StringBuilder();
-//                        boolean isCanUserOrderPayWay = true;
-//                        int qyCount = 0;
-//                        for (int i = 0; i < items.size(); i++) {
-//                            HashMap<String, String> item = items.get(i);
-//                            String proName = item.get("Name");
-//                            String price = item.get("ShopPrice");
-//                            String buyCount1 = item.get("BuyNumber");//单项商品总数
-//                            String createUser = item.get(MyOrderData.ORDER_ITEM_CREATEUSER);
-//                            String agentid = item.get(MyOrderData.ORDER_ITEM_AGENTID_KEY);
-//                            String suppID = item.get(MyOrderData.ORDER_ITEM_SUPPLIERID_KEY);
-//                            if (!TextUtils.isEmpty(agentid))
-//                                isCanUserOrderPayWay = false;
-//                            if (suppID.equals(Constants.QY_SUPPLIERID)) {//泉眼商品
-//                                qyCount++;
-//                            }
-//                            int tCount = 0;
-//                            int yCount = Integer.parseInt(buyCount1);
-//                            String joinString = item.get("joinCount");
-//                            tCount = MyOrderData.getRealCount(yCount, joinString);
-//                            double tPrice = Double.parseDouble(price);
-//                            double singleSum = tCount * tPrice;
-//
-//                            body += proName + ",";
-//                            sb.append(createUser).append(",").append(singleSum).append("|");
-////                        pricedata += createUser + "," + singleSum + "|";
-//                        }
-//                        String pricedata = sb.toString();
-//
-//                        String createTime = headItems.get(MyOrderData.ORDER_CREATETIME_KEY).toString();
-////					String totalPrice = String.format("%.2f", priceSum);//保留两位小数
-//                        String totalPrice = headItems.get(MyOrderData.ORDER_SHOULDPAY_KEY).toString();//保留两位小数
-//
-//                        String subject = body.substring(0, body.length() - 1);
-//                        pricedata = pricedata.substring(0, pricedata.length() - 1);
-//                        String payWayName = headItems.get(MyOrderData.ORDER_PAYMENTNAME_KEY).toString();
-//                        toPayPrepare(createTime, totalPrice, orderNumber, subject, body, pricedata, isCanUserOrderPayWay, payWayName, qyCount == items.size());
+                        payOrder(orderNum, true, supplierLoginID.equals(Constants.QY_SUPPLIERID));
 
                         break;
                     case BTN_SURE_TAKE_GOODS:
@@ -657,10 +589,61 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
                         });
                         b_sure.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View arg0) {
-                                Logger.e("dialog_order", orderNumber + "");
+                                Logger.e("dialog_order", orderNum + "");
                                 b_sure.setText("正在确定...");
                                 b_sure.setEnabled(false);
-                                new Thread(sureTakeGoods).start();
+                                new Thread(
+                                        new Runnable() {
+
+                                            @Override
+                                            public void run() {
+                                                /**
+                                                 * 确认收货
+                                                 */
+                                                if (AppManager.getInstance().postFinishOrder(orderNum)) {
+                                                    sendMessage(WHAT_TAKEGOODS_SUCCESS, orderNum);// 表示确定收货成功
+                                                } else {
+                                                    sendMessage(WHAT_TAKEGOODS_FAIL, orderNum);// 表示确定收货失败
+                                                }
+                                            }
+                                        }
+                                ).start();
+
+
+                            }
+                        });
+                        askDialog.show();
+
+                        break;
+                    case BTN_CANCEL_ORDER:
+
+                        askDialog = MyDialog.getDefineDialog(context, "取消订单", "注意： 订单取消后无法找回");
+                        final Button b_cancel2 = (Button) askDialog.findViewById(R.id.b_dialog_left);
+                        final Button b_sure2 = (Button) askDialog.findViewById(R.id.b_dialog_right);
+                        b_cancel2.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View arg0) {
+                                askDialog.dismiss();
+                            }
+                        });
+                        b_sure2.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View arg0) {
+                                Logger.e("dialog_order", orderNum + "");
+                                b_sure2.setText("正在取消...");
+                                b_sure2.setEnabled(false);
+
+//                                new Thread(cancelOrderRun).start();
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (AppManager.getInstance().postCancelOrder(orderNum)) {
+//                                            mHandler.sendEmptyMessage(WHAT_CANCLEORDER_SUCCESS);
+                                            sendMessage(WHAT_CANCLEORDER_SUCCESS, orderNum);
+                                        } else {
+//                                            mHandler.sendEmptyMessage(WHAT_CANCLEORDER_FAIL);
+                                            sendMessage(WHAT_CANCLEORDER_FAIL, orderNum);
+                                        }
+                                    }
+                                }).start();
                             }
                         });
                         askDialog.show();
@@ -669,7 +652,7 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
                     case "评价订单":
                         if (items != null && !items.isEmpty()) {
                             String guid = items.get(0).get("Guid");
-                            MyOrderData.startProductCommentAct(context, orderNumber, guid, agentID);
+                            MyOrderDataQRCode.startProductCommentAct(context, orderNum, guid, agentID);
 
                         } else {
                             CommonTools.showShortToast(context, "订单信息出错！");
@@ -688,10 +671,9 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
                         break;
                     }
                     case BTN_QRCODE: {
-                        orderNumber = headItems.get(MyOrderData.ORDER_ORDERNUMBER_KEY).toString();
                         Intent intent = new Intent(context, QRCodeDetailActivity.class);
-                        intent.putExtra("orderNumber", orderNumber);
-                        context.startActivity(intent);
+                        intent.putExtra("orderNumber", orderNum);
+                        ((MyOrderParent) context).getParent().startActivityForResult(intent, REQUEST_QRCODE_NEW);
 //                    ((MyOrderParent) context).startActivityForResult(intent,);
                         break;
                     }
@@ -794,47 +776,39 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
     public static final int WHAT_CANCLEORDER_FAIL = -2;
     public static final int WHAT_TAKEGOODS_SUCCESS = 10;
     public static final int WHAT_TAKEGOODS_FAIL = -10;
-    /**
-     * 取消订单
-     */
-    public Runnable cancelOrderRun = new Runnable() {
-        public void run() {
-            if (AppManager.getInstance().postCancelOrder(orderNumber)) {
-                mHandler.sendEmptyMessage(WHAT_CANCLEORDER_SUCCESS);
-            } else {
-                mHandler.sendEmptyMessage(WHAT_CANCLEORDER_FAIL);
-            }
-        }
-    };
-    /**
-     * 确认收货
-     */
-    public Runnable sureTakeGoods = new Runnable() {
-        public void run() {
-            if (AppManager.getInstance().postFinishOrder(orderNumber)) {
-                mHandler.sendEmptyMessage(WHAT_TAKEGOODS_SUCCESS);// 表示确定收货成功
-            } else {
-                mHandler.sendEmptyMessage(WHAT_TAKEGOODS_FAIL);
-            }
-        }
-    };
+
+    public void sendMessage(int what, Object obj) {
+        Message message = mHandler.obtainMessage();
+        message.what = what;
+        message.obj = obj;
+        mHandler.sendMessage(message);
+    }
 
     private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
-            if (msg.what == WHAT_TAKEGOODS_SUCCESS) {
-                if (askDialog.isShowing())
-                    askDialog.dismiss();
-                CommonTools.showShortToast(context, "确定收货成功");
-                MyOrderData.sureTakeGoods(orderNumber);
-                notifyDataSetChanged();
 
-            } else if (msg.what == WHAT_CANCLEORDER_SUCCESS) {
-                if (askDialog.isShowing())
-                    askDialog.dismiss();
-                CommonTools.showShortToast(context, "取消订单成功");
-                MyOrderData.cancelOrder(orderNumber);
-                MyOrderQRCodeActivity.isCurrentPage = false;
-                notifyDataSetChanged();
+            switch (msg.what) {
+                case WHAT_TAKEGOODS_SUCCESS:
+                    if (askDialog.isShowing())
+                        askDialog.dismiss();
+                    CommonTools.showShortToast(context, "确定收货成功");
+                    MyOrderDataQRCode.sureTakeGoods(msg.obj.toString());
+                    notifyDataSetChanged();
+                    break;
+                case WHAT_TAKEGOODS_FAIL:
+                    CommonTools.showShortToast(context, "确定收货失败");
+                    break;
+                case WHAT_CANCLEORDER_SUCCESS:
+                    if (askDialog.isShowing())
+                        askDialog.dismiss();
+                    CommonTools.showShortToast(context, "取消订单成功");
+                    MyOrderDataQRCode.cancelOrder(msg.obj.toString());
+                    MyOrderQRCodeActivity.isCurrentPage = false;
+                    notifyDataSetChanged();
+                    break;
+                case WHAT_CANCLEORDER_FAIL:
+                    CommonTools.showShortToast(context, "取消订单失败");
+                    break;
             }
         }
     };
@@ -847,7 +821,7 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
      */
     public void applyDrawBack(String priceSum, String orderNumber) {
         String uid = db.GetLoginUid(context);
-        MyOrderData.toPayBackActivity(context, orderNumber, uid, priceSum);
+        MyOrderDataQRCode.toPayBackActivity(context, orderNumber, uid, priceSum);
     }
 
     /**

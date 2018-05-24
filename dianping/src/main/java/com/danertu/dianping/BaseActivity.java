@@ -477,6 +477,10 @@ public abstract class BaseActivity extends SwipeBackActivity {
         fl.addView(v1);
         super.setContentView(fl);
 
+//        final int naviBarHeight = getNavigationBarHeight();
+//        if (navigationBarExist2())
+//            setMargins(fl, 0, 0, 0, naviBarHeight);
+
         if (Constants.ACT_FILL_STATUSBAR.contains(TAG)) {
             final int naviBarHeight = getNavigationBarHeight();
             if (navigationBarExist2())
@@ -566,6 +570,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
      */
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public void initSystemBar() {
+        Logger.e(TAG, "initSystemBar");
         if (VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             return;
         }
@@ -584,7 +589,10 @@ public abstract class BaseActivity extends SwipeBackActivity {
         manager.setNavigationBarTintEnabled(true);
 
         manager.setNavigationBarTintResource(R.color.black);
+//        setSystemBar(R.color.white);
         setSystemBar(R.color.tab_black);
+//        setSystemBar(R.color.transparent);
+
     }
 
     /**
@@ -630,6 +638,8 @@ public abstract class BaseActivity extends SwipeBackActivity {
      */
     @JavascriptInterface
     public void setSystemBarColor(final String color) {
+        Logger.e(TAG, "setSystemBarColor " + color);
+
         runOnUiThread(new Runnable() {
             public void run() {
                 if (manager != null && !TextUtils.isEmpty(color)) {

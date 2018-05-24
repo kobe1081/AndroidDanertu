@@ -504,33 +504,46 @@ public class MyOrderAdapter extends BaseAdapter {
                         context.startActivity(intent);
                         break;
                     }
-//                    case BTN_CANCEL_ORDER:
-//
-//                        askDialog = MyDialog.getDefineDialog(context, "取消订单", "注意： 订单取消后无法找回");
-//                        final Button b_cancel = (Button) askDialog.findViewById(R.id.b_dialog_left);
-//                        final Button b_sure = (Button) askDialog.findViewById(R.id.b_dialog_right);
-//                        b_cancel.setOnClickListener(new View.OnClickListener() {
-//                            public void onClick(View arg0) {
-//                                askDialog.dismiss();
-//                            }
-//                        });
-//                        b_sure.setOnClickListener(new View.OnClickListener() {
-//                            public void onClick(View arg0) {
-//                                Logger.e("dialog_order", orderNumber + "");
-//                                b_sure.setText("正在取消...");
-//                                b_sure.setEnabled(false);
-//                                new Thread(cancelOrderRun).start();
-//                            }
-//                        });
-//                        askDialog.show();
-//                        break;
+                    case BTN_CANCEL_ORDER:
+                        askDialog = MyDialog.getDefineDialog(context, "取消订单", "注意： 订单取消后无法找回");
+                        final Button b_cancel = (Button) askDialog.findViewById(R.id.b_dialog_left);
+                        final Button b_sure = (Button) askDialog.findViewById(R.id.b_dialog_right);
+                        b_cancel.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View arg0) {
+                                askDialog.dismiss();
+                            }
+                        });
+                        b_sure.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View arg0) {
+                                Logger.e("dialog_order", number + "");
+                                b_sure.setText("正在取消...");
+                                b_sure.setEnabled(false);
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        /**
+                                         * 取消订单
+                                         */
+                                        if (AppManager.getInstance().postCancelOrder(number)) {
+                                            mHandler.sendEmptyMessage(WHAT_CANCLEORDER_SUCCESS);
+                                        } else {
+                                            mHandler.sendEmptyMessage(WHAT_CANCLEORDER_FAIL);
+                                        }
+                                    }
+                                }).start();
+
+                            }
+                        });
+                        askDialog.show();
+
+                        break;
                     case "追加评论":
                         break;
                     case BTN_QRCODE: {
                         Intent intent = new Intent(context, QRCodeDetailActivity.class);
                         intent.putExtra("orderNumber", number);
 //                        context.startActivity(intent);
-                        ((MyOrderParent) context).startActivityForResult(intent, REQUEST_QRCODE);
+                        myOrderParent.getParent().startActivityForResult(intent, REQUEST_QRCODE);
                         break;
                     }
                     case BTN_PAYBACK:
@@ -591,7 +604,6 @@ public class MyOrderAdapter extends BaseAdapter {
             public void onClick(View v) {
                 if (isClickOften()) return;
                 List<HashMap<String, String>> items = (List<HashMap<String, String>>) headItems.get(MyOrderData.ORDER_ITEMSET_KEY);
-                final String number = headItems.get("order_orderNumber").toString();
                 final String agentID = headItems.get("order_AgentId").toString();// shopID
 
                 String btnRightStr = b_right.getText().toString();

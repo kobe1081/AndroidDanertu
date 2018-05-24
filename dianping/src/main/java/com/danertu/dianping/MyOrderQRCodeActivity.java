@@ -551,10 +551,27 @@ public class MyOrderQRCodeActivity extends BaseActivity implements MyOrderDataQR
     protected void initView() {
 
     }
+    private void sendActivityResultBroadcast(int requestCode, int resultCode, String orderNumber) {
+        LocalBroadcastManager manager = LocalBroadcastManager.getInstance(context);
+        Intent intent = new Intent(Constants.ORDER_DATA_ON_ACTIVITY_FOR_RESULT_QRCODE);
+        intent.putExtra("orderNumber", orderNumber);
+        intent.putExtra("requestCode", requestCode);
+        intent.putExtra("resultCode", resultCode);
+        manager.sendBroadcast(intent);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Logger.e(TAG, "onActivityResult");
+        /**
+         * 因为虚指向的问题，通过发广播的方式通知子tab页更新数据
+         */
+        try {
+            String orderNumber = data.getStringExtra("orderNumber");
+            sendActivityResultBroadcast(requestCode, resultCode, orderNumber);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 }

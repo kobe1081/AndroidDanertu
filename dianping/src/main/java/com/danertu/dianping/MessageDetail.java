@@ -25,6 +25,7 @@ public class MessageDetail extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initSystemBar();
         isFirstLoad = true;
         setContentView(R.layout.activity_msg_detail);
         Bundle bundle = getIntent().getExtras();
@@ -75,7 +76,7 @@ public class MessageDetail extends BaseActivity {
         id = bundle.getString(Messagebean.COL_ID);
         title = bundle.getString(Messagebean.COL_MESSAGETITLE);
         time = bundle.getString(Messagebean.COL_MODIFLYTIME);
-        Logger.e("web","url="+url+",title="+title+",time="+time);
+        Logger.e("web", "url=" + url + ",title=" + title + ",time=" + time);
     }
 
     protected void initWebSettings() {

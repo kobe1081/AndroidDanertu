@@ -497,7 +497,7 @@ public abstract class MyOrderDataQRCode {
                 } else if (PaymentStatus.equals("2") && ShipmentStatus.equals("0")) {// 已付款 ，未发货
                     sendMSG(ADD_DATA_NO_USE, item);
                 }
-            } else if (orderStatus.equals("4")) {
+            } else if (orderStatus.equals("5") && ShipmentStatus.equals("2") && PaymentStatus.equals("2")) {//已完成的订单
                 sendMSG(ADD_DATA_COMPLETE, item);
             }
         }
