@@ -41,6 +41,7 @@ import android.widget.TextView;
 
 import com.danertu.adapter.SearchProductAdapter;
 import com.danertu.adapter.SearchShopAdapter;
+import com.danertu.tools.Logger;
 import com.danertu.widget.CommonTools;
 import com.danertu.widget.SearchTipsGroupView;
 import com.danertu.widget.SearchTipsGroupView.OnItemClick;
@@ -234,7 +235,9 @@ public class SearchActivityV2 extends HomeActivity {
                         @SuppressWarnings("unchecked")
                         Map<String, Object> item = (Map<String, Object>) parent.getItemAtPosition(position);
                         String guid = String.valueOf(item.get("guid"));
-                        jsStartActivity("ProductDetailsActivity2", "guid|" + guid + ",;shopid|" + getShopId());
+                        String shopId = getShopId();
+                        Logger.e(TAG,"shopId="+shopId);
+                        jsStartActivity("ProductDetailsActivity2", "guid|" + guid + ",;shopid|" + shopId);
                     }
                 });
             } else if (i == 1) {

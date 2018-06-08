@@ -16,7 +16,6 @@ public class Constants {
     /**
      * 2017年10月12日添加说明
      * huangyeliang
-     * 联系方式：QQ:211096365
      * 百度地图sdk更换，应用编号：10096377 访问AK：LTPGyqxo7G0kH1xRi7ro3xYOsXMFbDzw
      */
     /**
@@ -26,7 +25,7 @@ public class Constants {
     /**
      * 是否开启日志输出，调试模式时异常捕捉交回给系统处理的
      */
-    public final static boolean isDebug = true;//发版本请设置为 ---false---
+    public final static boolean isDebug = false;//发版本请设置为 ---false---
     /**
      * 是否为业务员版本
      */
@@ -46,7 +45,7 @@ public class Constants {
     /**
      * -------------------------测试地址------------------------------------
      */
-//	public static final String appWebPageUrl = "http://115.28.55.222:8019/";
+//    public static final String appWebPageUrl = "http://115.28.55.222:8019/";//外网测试地址
 //常用
     public static final String appWebPageUrl = "http://192.168.1.137:778/";
 

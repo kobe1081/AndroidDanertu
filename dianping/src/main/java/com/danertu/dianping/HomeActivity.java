@@ -61,6 +61,7 @@ public class HomeActivity extends BaseActivity {
 
     public static boolean isForeground = false;
 
+    public String shopid = null;
     public void menuClick(View v) {
 //		v.setSelected(true);
         switch (v.getId()) {
@@ -114,8 +115,9 @@ public class HomeActivity extends BaseActivity {
     }
 
     protected void toSearch() {
-        if (!TAG.equals("SearchActivityV2"))
-            jsStartActivityClearTop("SearchActivityV2", "");
+        if (!TAG.equals("SearchActivityV2")){
+            jsStartActivity("SearchActivityV2", "shopid|" + shopid);
+        }
     }
 
     protected void toMessage() {
@@ -145,6 +147,7 @@ public class HomeActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getContext();
+
         mHandle = new HomeHandler(this);
 //		sp_index = getSharedPreferences(PRE_INDEX_PAGE, Context.MODE_PRIVATE);
 //		initView();

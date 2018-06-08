@@ -24,8 +24,8 @@ import com.danertu.db.DBManager;
 import com.danertu.dianping.ActivityUtils;
 import com.danertu.dianping.BaseActivity;
 import com.danertu.dianping.MyOrderDetail;
-import com.danertu.dianping.MyOrderParent;
 import com.danertu.dianping.MyOrderQRCodeActivity;
+import com.danertu.dianping.MyOrderQRCodeParentActivity;
 import com.danertu.dianping.MyOrderShipmentActivity;
 import com.danertu.dianping.PayPrepareActivity;
 import com.danertu.dianping.QRCodeDetailActivity;
@@ -541,7 +541,7 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
                     case BTN_QRCODE: {
                         Intent intent = new Intent(context, QRCodeDetailActivity.class);
                         intent.putExtra("orderNumber", orderNum);
-                        ((MyOrderParent) context).getParent().startActivityForResult(intent, REQUEST_QRCODE_NEW);
+                        ((MyOrderQRCodeParentActivity) context).getParent().startActivityForResult(intent, REQUEST_QRCODE_NEW);
                         break;
                     }
                     case BTN_PAYBACK:
@@ -673,8 +673,8 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
                     case BTN_QRCODE: {
                         Intent intent = new Intent(context, QRCodeDetailActivity.class);
                         intent.putExtra("orderNumber", orderNum);
-                        ((MyOrderParent) context).getParent().startActivityForResult(intent, REQUEST_QRCODE_NEW);
-//                    ((MyOrderParent) context).startActivityForResult(intent,);
+                        ((MyOrderQRCodeParentActivity) context).getParent().startActivityForResult(intent, REQUEST_QRCODE_NEW);
+//                    ((MyOrderQRCodeParentActivity) context).startActivityForResult(intent,);
                         break;
                     }
                 }
@@ -769,7 +769,7 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
         intent.putExtra(PayPrepareActivity.KEY_CANUSE_ORDER_PAYWAY, isCanUserOrder);
         intent.putExtra(PayPrepareActivity.KEY_PAYWAY_NAME, payWayName);
         intent.putExtra(PayPrepareActivity.KEY_CAN_ARRIVEPAY, isQyOrder);
-        ((Activity) context).startActivityForResult(intent, MyOrderParent.REQ_PAY);
+        ((Activity) context).startActivityForResult(intent, MyOrderQRCodeParentActivity.REQ_PAY);
     }
 
     public static final int WHAT_CANCLEORDER_SUCCESS = 2;

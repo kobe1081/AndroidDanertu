@@ -62,7 +62,7 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
     String allJsonMsg = "";
     String secendPageJson = "";
     final String KEY_SHOPID = "shopid";
-    private String shopid = null;
+
     private LocalBroadcastManager broadcastManager;
     private LoginSuccessReceiver loginSuccessReceiver;
     private LogoutSuccessReceiver logoutSuccessReceiver;
@@ -311,7 +311,8 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
 
     @JavascriptInterface
     public void refresh() {
-        shopid = getUid();
+//        shopid = getUid();
+        Logger.e(TAG,"shopid="+shopid);
         if (webView != null) {
             pageindex = 1;
             loadPage();

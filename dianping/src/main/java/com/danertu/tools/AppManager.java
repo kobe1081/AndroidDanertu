@@ -1627,5 +1627,17 @@ public class AppManager {
         return doPost(param);
     }
 
+    /**
+     * 下单时界面是否可用金萝卜
+     *
+     * @param productGuid 产品guid   多个产品时，使用  ,  隔开
+     * @return { "result":"false", "info": "1"}   true--可用  false--不可用
+     */
+    public String postCanUseJLB(String productGuid) {
+        HashMap<String, String> param = new HashMap<>();
+        param.put("apiid", "0339");
+        param.put("productGuid", productGuid);
+        return doPost(param);
+    }
 
 }

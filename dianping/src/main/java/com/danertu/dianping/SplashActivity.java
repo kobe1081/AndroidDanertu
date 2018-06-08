@@ -75,6 +75,8 @@ public class SplashActivity extends BaseActivity {
     public static String keyword = "请不要动这些代码，用于";
     public static String tranlateKeyword = "%E7%94%B5%E8%AF%9D";
 
+    public static final int REQUEST_LOCATION = 290;
+
     private TextView tv_version;
     Handler mHandler;
 
@@ -100,13 +102,14 @@ public class SplashActivity extends BaseActivity {
         setContentView(v);
         TestinAgent.init(this, "5556ffbe482f07894420f903d174758d", "");
         setSystemBar(R.color.splash_gbColor);
-
         mHandler = new Handler(getMainLooper());
+        getPhoneStatePermission();
         findViewById();
         initView();
         setSwipeBackEnable(false);
         setOverrideExitAniamtion(false);
     }
+
 
     private boolean isRequestPermission = false;
 
@@ -116,19 +119,18 @@ public class SplashActivity extends BaseActivity {
             isRequestPermission = true;
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 if (!checkOpsPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    jsShowMsg("请授予单耳兔定位权限");
+                    jsShowMsg("请授予单耳兔权限");
                     MIUIUtils.gotoMiuiPermission(this);
                     return;
                 }
 
             }
         }
-
         /**权限检查*/
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && !isRequestPermission) {
             isRequestPermission = true;
-            jsShowMsg("请授予单耳兔定位权限");
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 290);
+            jsShowMsg("请授予单耳兔权限");
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_LOCATION);
             return;
         }
         locationUtil.startLocate();
@@ -138,8 +140,10 @@ public class SplashActivity extends BaseActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case 290:
+            case REQUEST_LOCATION:
                 locate();
+                break;
+            case REQUEST_PHONE_STATE:
                 break;
         }
     }

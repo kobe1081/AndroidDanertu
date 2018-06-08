@@ -21,7 +21,9 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -48,6 +50,7 @@ import android.widget.TextView;
 import com.alipay.sdk.app.PayTask;
 import com.config.Constants;
 import com.danertu.db.DBHelper;
+import com.danertu.entity.BaseResultBean;
 import com.danertu.entity.FavTicket;
 import com.danertu.entity.PaymentPriceData;
 import com.danertu.tools.AccToPay;
@@ -63,6 +66,8 @@ import com.danertu.tools.WXPay;
 import com.danertu.widget.CommonTools;
 import com.danertu.widget.PayPswDialog;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import static com.danertu.dianping.StockOrderDetailActivity.newHandler;
 
 
 /**
@@ -210,6 +215,9 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
     //	private boolean isOnlyTasteWine = false;
     private List<FavTicket> favTickets;
 
+    private static final int WHAT_CAN_USE_JLB = 777;
+    private static final int WHAT_START_CAN_USR_JLB = 778;
+
     /**
      * 订单类型 -- 囤货、普通后台拿货、退货邮费支付
      */
@@ -231,13 +239,38 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
             return;
         }
         handler = new PaymentCenterHandler(this);
+        initHandler();
         findViewById();
         initTitle("结算中心");
         initIntent();
         initData();
         initPswDialog();
     }
+    private void initHandler() {
+        newHandler = new Handler(this.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case WHAT_START_CAN_USR_JLB:
+                        /**一个订单包含多个商品时，productGuid之间用 , 隔开*/
+                        String productId = msg.obj.toString();
+                        new CanUseJLB().execute(productId);
+                        break;
+                    case WHAT_CAN_USE_JLB:
+                        String result = msg.obj.toString();
+                        if ("true".equals(result) && !isBackCall) {
+                            cb_useJLB.setVisibility(View.VISIBLE);
+                        } else {
+                            cb_useJLB.setVisibility(View.GONE);
+                        }
 
+                        hideLoadDialog();
+                        break;
+                }
+                super.handleMessage(msg);
+            }
+        };
+    }
     /**
      * 初始化标题
      *
@@ -752,8 +785,8 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
         tv_ship_after_tip = ((TextView) findViewById(R.id.tv_ship_after_tip));
         ll_contact = ((LinearLayout) findViewById(R.id.ll_contact));
 
-        ll_stock_protocol=$(R.id.ll_stock_protocol);
-        tv_stock_protocol=$(R.id.tv_stock_protocol);
+        ll_stock_protocol = $(R.id.ll_stock_protocol);
+        tv_stock_protocol = $(R.id.tv_stock_protocol);
         tv_stock_protocol.setOnClickListener(this);
 
         rg_payment_ship_time.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -1360,7 +1393,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                 break;
             case R.id.tv_stock_protocol:
                 Intent intent = new Intent(context, HtmlActivityNew.class);
-                intent.putExtra("url",Constants.DANERTU_STOCK_PROTOCOL);
+                intent.putExtra("url", Constants.DANERTU_STOCK_PROTOCOL);
                 startActivity(intent);
                 break;
         }
@@ -1914,4 +1947,45 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
     public boolean isIsStock() {
         return isStock;
     }
+
+
+    /**
+     * 下单时，界面显示是否可用金萝卜
+     * apiid：0339
+     * { "result":"false", "info": "1"}
+     * true--可用,false--不可用
+     */
+    class CanUseJLB extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... param) {
+            try {
+                String productGuid = param[0];
+                if (TextUtils.isEmpty(productGuid)) {
+                    return "";
+                }
+                return appManager.postCanUseJLB(productGuid);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "";
+            }
+        }
+
+        @Override
+        protected void onPostExecute(final String result) {
+            super.onPostExecute(result);
+            if (TextUtils.isEmpty(result)) {
+                jsShowMsg("信息获取失败，请重试");
+                finish();
+                return;
+            }
+            BaseResultBean bean = gson.fromJson(result, BaseResultBean.class);
+            Message msg = newHandler.obtainMessage();
+            msg.what = WHAT_CAN_USE_JLB;
+            msg.obj = bean.getResult();
+            newHandler.sendMessage(msg);
+
+        }
+    }
+
 }

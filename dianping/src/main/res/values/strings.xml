@@ -2,7 +2,7 @@
 <resources>
 
     <string name="hello">Hello World, DianpingActivity!</string>
-    <string name="app_name">单耳兔商城</string>
+    <string name="app_name">单耳兔O2O</string>
     <string name="splash_version_info">一键导航、通话 </string>
     <string name="index_search_edit_hint">搜索单耳兔商品</string>
     <!-- 菜单 -->

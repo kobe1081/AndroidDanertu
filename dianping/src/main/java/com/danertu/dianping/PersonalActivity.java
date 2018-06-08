@@ -377,7 +377,7 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
                      * 修改指向地址
                      */
 //                    jsStartActivityForResult("HtmlActivity", "pageName|set_shop_base.html", 3);
-                    jsStartActivityForResult("HtmlActivity", "pageName|activity/20171012.html", 3);
+                    jsStartActivityForResult("HtmlActivity", "pageName|activity/20171012.html?agentid=chunkang&platform=android", 3);
                     break;
                 case R.id.ll_qr_code:
                     /**
@@ -413,6 +413,7 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
                         jsStartActivityForResult("HtmlActivity", "pageName|set_shop_base.html", 3);
                     } else {
                         jsStartActivity("HtmlActivityNew", "url|" + Constants.appWebPageUrl + "Android/seller_center.html,;showDialog|true");
+//                        jsStartActivity("DetailActivity", "shopid|" + getUid() + ",;shoptype|2");
                     }
                     break;
                 case R.id.ll_product_manager://商品管理

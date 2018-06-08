@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.ClipboardManager;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -155,7 +156,7 @@ public class MyOrderDetail extends BaseActivity {
 
     private LinearLayout ll_proParent;
     private TextView tv_payWayInfo;
-    //    private Button b_copy_orderNum;
+    private TextView tv_copy_order_num;
     private Button b_order_opera1;
     private Button b_order_opera2;
     /**
@@ -286,7 +287,7 @@ public class MyOrderDetail extends BaseActivity {
 
 
         ll_proParent = (LinearLayout) findViewById(R.id.ll_orderDetail_proParent);
-//        b_copy_orderNum = (Button) findViewById(R.id.b_copy_orderNum);
+        tv_copy_order_num = (TextView) findViewById(R.id.tv_copy_order_num);
         b_order_opera1 = (Button) findViewById(R.id.b_order_opera1);
         b_order_opera2 = (Button) findViewById(R.id.b_order_opera2);
         ll_hotel_date = (LinearLayout) findViewById(R.id.ll_hotel_date);
@@ -414,14 +415,15 @@ public class MyOrderDetail extends BaseActivity {
 //                tv_payWay.setText("支付方式：" + paymentName);
 //            }
 
-//            final ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-//            b_copy_orderNum.setOnClickListener(new View.OnClickListener() {
-//                @SuppressWarnings("deprecation")
-//                public void onClick(View v) {
-//                    cm.setText(outOrderNumber);
-//                    jsShowMsg("复制成功");
-//                }
-//            });
+            final ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            tv_copy_order_num.setOnClickListener(new View.OnClickListener() {
+                @SuppressWarnings("deprecation")
+                public void onClick(View v) {
+                    cm.setText(outOrderNumber);
+                    jsShowMsg("复制成功");
+                }
+            });
+
         b_order_opera1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 final String tag = b_order_opera1.getText().toString();

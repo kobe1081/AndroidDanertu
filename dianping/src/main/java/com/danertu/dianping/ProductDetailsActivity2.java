@@ -77,6 +77,7 @@ public class ProductDetailsActivity2 extends BaseWebActivity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.product_detail);
         findViewById();
+        getPhoneStatePermission();
         initIntentMsg();
     }
 

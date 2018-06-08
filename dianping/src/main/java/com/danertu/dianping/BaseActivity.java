@@ -6,11 +6,13 @@ import java.util.Map;
 
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -26,6 +28,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
 import android.os.Vibrator;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
@@ -60,6 +63,7 @@ import com.danertu.tools.ImageLoaderConfig;
 import com.danertu.tools.LocationUtil;
 import com.danertu.tools.Logger;
 import com.danertu.tools.MD5Util;
+import com.danertu.tools.MIUIUtils;
 import com.danertu.tools.PayUtils;
 import com.danertu.tools.ShareUtil;
 import com.danertu.tools.StatusBarUtil;
@@ -68,6 +72,8 @@ import com.danertu.widget.CommonTools;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.umeng.analytics.MobclickAgent;
+
+import static com.danertu.tools.MIUIUtils.isMIUI;
 
 /**
  * Activity基类
@@ -90,6 +96,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
     public LocationUtil locationUtil;
     public long firstClick;//用于判定频繁点击的参数
     public PayUtils payUtils;
+    public static final int REQUEST_PHONE_STATE = 291;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1540,6 +1547,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
             public void paySuccess() {
                 isPayLoading = false;
                 jsShowMsg("支付成功");
+                finish();
                 toOrderDetail(orderNumber);
             }
 
@@ -1547,12 +1555,15 @@ public abstract class BaseActivity extends SwipeBackActivity {
             public void payFail() {
                 isPayLoading = false;
                 jsShowMsg("支付失败,请检查");
+                finish();
+                toOrderDetail(orderNumber);
             }
 
             @Override
             public void payCancel() {
                 isPayLoading = false;
                 jsShowMsg("您已取消支付");
+                finish();
                 toOrderDetail(orderNumber);
             }
 
@@ -1641,6 +1652,12 @@ public abstract class BaseActivity extends SwipeBackActivity {
         };
     }
 
+
+    @JavascriptInterface
+    public boolean checkOpsPermission(String permission) {
+        return checkOpsPermission(this, permission);
+    }
+
     @JavascriptInterface
     public boolean checkOpsPermission(Context context, String permission) {
         try {
@@ -1654,6 +1671,33 @@ public abstract class BaseActivity extends SwipeBackActivity {
         } catch (Exception ex) {
             ex.printStackTrace();
             return true;
+        }
+    }
+
+    private boolean isPhoneStatePermission = false;
+
+    /**
+     * 获取读取手机状态权限，用于获取mac、imei、设备id
+     */
+    public void getPhoneStatePermission() {
+        //如果当前系统为MIUI
+        if (isMIUI() && isPhoneStatePermission) {
+            isPhoneStatePermission = true;
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                if (!checkOpsPermission(this, android.Manifest.permission.READ_PHONE_STATE)) {
+                    jsShowMsg("请授予单耳兔权限");
+                    MIUIUtils.gotoMiuiPermission(this);
+                    return;
+                }
+
+            }
+        }
+
+        /**权限检查*/
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED && !isPhoneStatePermission) {
+            isPhoneStatePermission = true;
+            jsShowMsg("请授予单耳兔权限");
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_PHONE_STATE}, REQUEST_PHONE_STATE);
         }
     }
 }

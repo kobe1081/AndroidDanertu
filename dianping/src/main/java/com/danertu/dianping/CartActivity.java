@@ -1,6 +1,8 @@
 package com.danertu.dianping;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +37,10 @@ import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import wl.codelibrary.widget.IOSDialog;
+
+import static com.baidu.location.d.g.S;
+import static com.baidu.location.d.g.b;
+import static com.baidu.location.d.g.l;
 
 public class CartActivity extends HomeActivity {
 
@@ -73,11 +79,11 @@ public class CartActivity extends HomeActivity {
     public static final String TAG_ITEM_PRODUCT = "item_product";
     public static final String TAG_ITEM_PRODUCT_INFO = "item_product_info";
     public static final String TAG_ITEM_PRODUCT_INFO_PRICES = "item_product_info_price";
+    Map<Integer, Boolean> shopSelectMap = new HashMap<>();
 
     private boolean isEditMode = false;
 
     private boolean isNotCancelAllSelect = false;
-    private boolean isNotCancelAllShopSelect = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,14 +200,22 @@ public class CartActivity extends HomeActivity {
                     return;
                 }
 
+                shopSelectMap.clear();
+
                 int childCount = llCar.getChildCount();
                 for (int i = 0; i < childCount; i++) {
                     LinearLayout llTop = (LinearLayout) llCar.getChildAt(i).findViewWithTag(TAG_ITEM_TOP);
                     if (llTop != null) {
-                        CheckBox box = (CheckBox) llTop.findViewWithTag(TAG_SHOP_CHECKBOX);
-                        if (box != null) {
-                            box.setChecked(isChecked);
+                        int llTopChildCount = llTop.getChildCount();
+                        for (int i1 = 0; i1 < llTopChildCount; i1++) {
+                            CheckBox box = (CheckBox) llTop.getChildAt(i1).findViewWithTag(TAG_SHOP_CHECKBOX);
+                            if (box != null)
+                                box.setChecked(isChecked);
                         }
+//                        CheckBox box = (CheckBox) llTop.findViewWithTag(TAG_ITEM_CHECKBOX);
+//                        if (box != null) {
+//                            box.setChecked(isChecked);
+//                        }
                     }
                 }
 
@@ -296,6 +310,7 @@ public class CartActivity extends HomeActivity {
         String lastShopName = "";
 
         int size = list.size();
+
         for (int i = 0; i < size; i++) {
             Map<String, Object> map = list.get(i);
             String imgURL = map.get("imgURL").toString();
@@ -338,7 +353,7 @@ public class CartActivity extends HomeActivity {
 
             llItemRoot.addView(llItemTop);
 
-            CheckBox cbShop = new CheckBox(context);
+            final CheckBox cbShop = new CheckBox(context);
             cbShop.setLayoutParams(wrapContentLayoutParams);
             cbShop.setButtonDrawable(R.drawable.bg_shopcar_cb);
             cbShop.setTag(TAG_SHOP_CHECKBOX);
@@ -524,15 +539,13 @@ public class CartActivity extends HomeActivity {
                 setMargins(llItemRoot, 0, dp20, 0, 0);
             }
 
-            //各类事件
+            //各个按钮触发事件
 
-
-            //商品选择
+            //单个商品选择
             final int finalI = i;
             cbProduct.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    //编辑模式下
                     if (isChecked) {
                         curselectcount++;
                     } else {
@@ -558,19 +571,17 @@ public class CartActivity extends HomeActivity {
                             }
                         }
                     }
-
                     isShopAllSelect = selectCount == childCount - 2;
                     CheckBox box = (CheckBox) lRoot.findViewWithTag(TAG_ITEM_TOP).findViewWithTag(TAG_SHOP_CHECKBOX);
+
                     if (box != null) {
+                        shopSelectMap.put(finalI, isShopAllSelect);
                         box.setChecked(isShopAllSelect);
                     }
 
                     Map<String, Object> objectMap = list.get(finalI);
                     objectMap.put("selected", isChecked);
                     calculateTotalPrice(objectMap, isChecked, tvCount.getText().toString());
-
-
-                    isSelectAll();
 
                     /**如果已经是全选状态，那么再点击任意一项，都要取消全选按钮的选中状态*/
                     if (cbSelectAll.isChecked()) {
@@ -580,19 +591,19 @@ public class CartActivity extends HomeActivity {
                             cbSelectAll.setChecked(false);
                         }
                     }
+                    isSelectAll();
+
                 }
             });
 
             //店铺全选
-            final int finalI1 = i;
             cbShop.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                    if (isNotCancelAllShopSelect) {
+                    if (shopSelectMap.get(finalI) != null && !shopSelectMap.get(finalI)&&!isChecked) {
                         return;
                     }
-                    int childCount = ((LinearLayout) llCar.getChildAt(finalI1)).getChildCount();
+                    int childCount = ((LinearLayout) llCar.getChildAt(finalI)).getChildCount();
                     for (int i1 = 1; i1 < childCount; i1++) {
                         CheckBox cb = (llItemRoot.getChildAt(i1)).findViewWithTag(TAG_ITEM_CHECKBOX);
                         if (cb != null)
@@ -602,7 +613,6 @@ public class CartActivity extends HomeActivity {
             });
 
             //数量-
-            final int finalI2 = i;
             ivReduce.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -617,16 +627,16 @@ public class CartActivity extends HomeActivity {
                         tvBuyNum.setText("x" + parseInt);
                         tvCount.setText("" + parseInt);
 
-                        list.get(finalI2).put("count", parseInt);
+                        list.get(finalI).put("count", parseInt);
 
                         LinearLayout lProduct = (LinearLayout) ivReduce.getParent().getParent().getParent();
                         if (lProduct != null) {
                             CheckBox box = (CheckBox) lProduct.findViewWithTag(TAG_ITEM_CHECKBOX);
                             if (box != null && box.isChecked()) {
-                                calculateTotalPrice(list.get(finalI2), false, 1);
+                                calculateTotalPrice(list.get(finalI), false, 1);
                             }
                         }
-                        jsUpdateProductCount(finalI2, parseInt);
+                        jsUpdateProductCount(finalI, parseInt);
                     } catch (Exception e) {
                         e.printStackTrace();
                         jsShowMsg("出错了，请重试");
@@ -634,7 +644,6 @@ public class CartActivity extends HomeActivity {
                 }
             });
 
-            final int finalI3 = i;
             ivAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -645,16 +654,16 @@ public class CartActivity extends HomeActivity {
                         tvBuyNum.setText("x" + parseInt);
                         tvCount.setText("" + parseInt);
 
-                        list.get(finalI3).put("count", parseInt);
+                        list.get(finalI).put("count", parseInt);
 
                         LinearLayout lProduct = (LinearLayout) ivReduce.getParent().getParent().getParent();
                         if (lProduct != null) {
                             CheckBox box = (CheckBox) lProduct.findViewWithTag(TAG_ITEM_CHECKBOX);
                             if (box != null && box.isChecked()) {
-                                calculateTotalPrice(list.get(finalI3), true, 1);
+                                calculateTotalPrice(list.get(finalI), true, 1);
                             }
                         }
-                        jsUpdateProductCount(finalI3, parseInt);
+                        jsUpdateProductCount(finalI, parseInt);
                     } catch (Exception e) {
                         e.printStackTrace();
                         jsShowMsg("出错了，请重试");
@@ -672,7 +681,7 @@ public class CartActivity extends HomeActivity {
     private void isSelectAll() {
         int selectCount = 0;
         for (Map<String, Object> map : list) {
-            if (map.get("selected").equals("true")) {
+            if (map.get("selected").toString().equals("true")) {
                 selectCount++;
             }
         }
@@ -1009,7 +1018,19 @@ public class CartActivity extends HomeActivity {
             HashMap<String, Object> dataMap = ActivityUtils.getShopCarItem(false, productID, count, imgName, supplierID, shopID, agentID, proName, price, "", createUser, attrJson, "", "", shopName, "", "");
             list.add(dataMap);
         }
+        Collections.sort(list, new CarComparator());
     }
 
+    /**
+     * 购物车比较器，用于归类购物车同一店铺的产品
+     */
+    class CarComparator implements Comparator<Map<String, Object>> {
 
+        @Override
+        public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+            String shopName1 = o1.get(DBHelper.SHOPCAR_SHOPNAME).toString();
+            String shopName2 = o2.get(DBHelper.SHOPCAR_SHOPNAME).toString();
+            return shopName1.equals(shopName2) ? -1 : 0;
+        }
+    }
 }
