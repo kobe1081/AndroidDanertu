@@ -18,27 +18,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2bd52f5d-e648-4b27-8c5d-6add5230634d" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/BaseResultBean.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/res/drawable/b_corner_gray4.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/build.gradle" afterPath="$PROJECT_DIR$/dianping/build.gradle" />
-      <change beforePath="$PROJECT_DIR$/dianping/dianping.iml" afterPath="$PROJECT_DIR$/dianping/dianping.iml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/config/Constants.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/config/Constants.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/adapter/MyOrderQRCodeAdapter.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/adapter/MyOrderQRCodeAdapter.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/CartActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/CartActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/HomeActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/HomeActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/IndexActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/IndexActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderDetail.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderDetail.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/PaymentCenterActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/PaymentCenterActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/PersonalActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/PersonalActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/ProductDetailsActivity2.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/ProductDetailsActivity2.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/SearchActivityV2.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/SearchActivityV2.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/SplashActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/SplashActivity.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AppManager.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AppManager.java" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/layout/order_detail.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/layout/order_detail.xml" />
-      <change beforePath="$PROJECT_DIR$/dianping/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/dianping/src/main/res/values/strings.xml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -6731,7 +6711,14 @@
       <option name="project" value="LOCAL" />
       <updated>1527146359559</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="1、88 RELEASE">
+      <created>1528422742481</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1528422742482</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TodoView">
@@ -6844,7 +6831,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="87大改版" />
     <MESSAGE value="1、修复消费码已完成列表不显示问题&#10;2、修复消费码列表进入券码核销后列表不更新问题&#10;3、修改订单中心收货人UI" />
-    <option name="LAST_COMMIT_MESSAGE" value="1、修复消费码已完成列表不显示问题&#10;2、修复消费码列表进入券码核销后列表不更新问题&#10;3、修改订单中心收货人UI" />
+    <MESSAGE value="1、88 RELEASE" />
+    <option name="LAST_COMMIT_MESSAGE" value="1、88 RELEASE" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
