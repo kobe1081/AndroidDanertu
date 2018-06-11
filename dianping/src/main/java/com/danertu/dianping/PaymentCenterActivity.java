@@ -969,7 +969,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
         if (!isBackCall) {
             rl_fav_ticket.setVisibility(View.VISIBLE);
             rl_fav_num.setVisibility(View.VISIBLE);
-            cb_useJLB.setVisibility(View.VISIBLE);
+//            cb_useJLB.setVisibility(View.VISIBLE);
             //隐藏拿货价标签
             tv_order_2.setVisibility(View.GONE);
             tv_price.setVisibility(View.GONE);
