@@ -89,7 +89,7 @@ public class AppManager {
         }
     }
 
-    // post取用户输入的登录信息判断登录状态
+    // post取用户输入的登录信息判断登录状态   0009
     public String postLoginInfo(String ApiId, String uId, String pwd) {
         // 设置HTTP POST请求参数必须用NameValuePair对象
         List<NameValuePair> params = new ArrayList<>();
@@ -145,7 +145,7 @@ public class AppManager {
 
     }
 
-    // post取用户输入的登录信息判断登录名是否存在?
+    // post取用户输入的登录信息判断登录名是否存在? 0029
     public String postUserIsExist(String ApiId, String uId) {
         // 设置HTTP POST请求参数必须用NameValuePair对象
         List<NameValuePair> params = new ArrayList<>();
@@ -154,7 +154,7 @@ public class AppManager {
         return getHttpPostResult(params);
     }
 
-    // post取用户收货地址
+    // post取用户收货地址  0030
     public String postGetUserAddress(String ApiId, String uId) {
         // 设置HTTP POST请求参数必须用NameValuePair对象
         List<NameValuePair> params = new ArrayList<>();
@@ -163,7 +163,7 @@ public class AppManager {
         return getHttpPostResult(params);
     }
 
-    // post取用户删除收货地址
+    // post取用户删除收货地址  0014
     public String postDeleteUserAddress(String ApiId, String guid) {
         // 设置HTTP POST请求参数必须用NameValuePair对象
         List<NameValuePair> params = new ArrayList<>();
@@ -172,7 +172,7 @@ public class AppManager {
         return getHttpPostResult(params);
     }
 
-    // post保存用户收货地址
+    // post保存用户收货地址  0015
     public String postInsertUserAddress(String ApiId, String uId, String uName, String mobile, String address, String isDefault, String guid) {
         HashMap<String, String> param = new HashMap<>();
         param.put("apiid", ApiId);
@@ -185,7 +185,7 @@ public class AppManager {
         return doPost(param);
     }
 
-    // post用户设置收货地址为默认操作请求
+    // post用户设置收货地址为默认操作请求  0031
     public String postSetAddressIsDefault(String ApiId, String guid, String uid) {
         // 设置HTTP POST请求参数必须用NameValuePair对象
         List<NameValuePair> params = new ArrayList<>();
@@ -210,7 +210,7 @@ public class AppManager {
     // post获取订单信息请求
 
     /**
-     * @param ApiId
+     * @param ApiId  0033
      * @param uid
      * @param type  为1时查询当月订单，否则为全部
      * @return
@@ -245,7 +245,7 @@ public class AppManager {
     }
 
     /*
-     * post留言到服务器 liujun 2014-7-15
+     * post留言到服务器 liujun 2014-7-15  0032
      */
     public String postInsertMessage(String ApiId, String uid, String message, String guid) {
         // 设置HTTP POST请求参数必须用NameValuePair对象
@@ -258,7 +258,7 @@ public class AppManager {
     }
 
     /*
-     * post获取留言列表 liujun 2014-7-16
+     * post获取留言列表 liujun 2014-7-16  0034
      */
     public String postGetMessage(String ApiId, String uId) {
         // 设置HTTP POST请求参数必须用NameValuePair对象
@@ -269,7 +269,7 @@ public class AppManager {
     }
 
     /*
-     * 更新消息状态 liujun 2014-7-16
+     * 更新消息状态 liujun 2014-7-16  0035
      */
     public String postUpdateMsgState(String ApiId, String guid) {
         // 设置HTTP POST请求参数必须用NameValuePair对象
@@ -279,7 +279,7 @@ public class AppManager {
         return getHttpPostResult(params);
     }
 
-    // 取订单详情
+    // 取订单详情  0072
     public String postGetOrderInfoShow(String ApiId, String orderNumber) {
         // 设置HTTP POST请求参数必须用NameValuePair对象
         List<NameValuePair> params = new ArrayList<>();
@@ -288,7 +288,7 @@ public class AppManager {
         return getHttpPostResult(params);
     }
 
-    // 根据参数取店铺列表
+    // 根据参数取店铺列表  0037
     public String postGetIndexShopList(String ApiId, String cityName, int pageSize, int pageIndex, String keyword, String type) {
         HashMap<String, String> param = new HashMap<>();
         param.put("apiid", ApiId);
@@ -367,7 +367,7 @@ public class AppManager {
     }
 
     // post 提交一元订单
-    // liujun 2014-12-31
+    // liujun 2014-12-31  0096
     public String postYiYuanOrder(String ApiId, String postString, String uid, String pid) {
         // 设置HTTP POST请求参数必须用NameValuePair对象
         List<NameValuePair> params = new ArrayList<>();
@@ -379,7 +379,7 @@ public class AppManager {
     }
 
 
-    // 获取店铺详细
+    // 获取店铺详细  0041
     public String postGetShopDetails(String ApiId, String shopid) {
         String result = "";
         HashMap<String, String> param = new HashMap<>();
@@ -897,7 +897,7 @@ public class AppManager {
         return getHttpPostResult(params);
     }
 
-    // 获取商品买就赠的信息
+    // 获取商品买就赠的信息  apiid=0082
     public String getPJoinedInfo(String ApiId, String pguid) {
         // 设置HTTP POST请求参数必须用NameValuePair对象
         List<NameValuePair> params = new ArrayList<>();
@@ -1615,7 +1615,7 @@ public class AppManager {
      * 2018年5月22日
      * 获取温泉产品分类，订单详情页面跳转门票、客房使用
      *
-     * @param productGuid 产品Guid
+     * @param productGuid 产品Guid00
      * @return ProductCategory:  1-门票，2-客房
      * <p>
      * ticket_route.html?productCategory=*&guid=*

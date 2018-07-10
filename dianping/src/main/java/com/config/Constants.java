@@ -25,7 +25,9 @@ public class Constants {
     /**
      * 是否开启日志输出，调试模式时异常捕捉交回给系统处理的
      */
-    public final static boolean isDebug = false;//发版本请设置为 ---false---
+    public final static boolean isDebug = true;//发版本请设置为 ---false---
+
+    public final static boolean isLocal=true;
     /**
      * 是否为业务员版本
      */
@@ -41,6 +43,10 @@ public class Constants {
 
 //	public static final String apiSrcUrl = "http://115.28.55.222:88/RequestApi.aspx";//山西API地址
 
+    //温泉首页地址
+//    public static final String SPRING_URL ="http://www.danertu.com/mobile/qyyd/quanyan_index.htm";
+
+    //------------------------------------------------------------------------------------------
 
     /**
      * -------------------------测试地址------------------------------------
@@ -54,8 +60,15 @@ public class Constants {
      * @see 2017/7/7
      */
     public static final String apiSrcUrl = "http://192.168.1.137:511/RequestApi.aspx";
+    /**
+     * https测试
+     */
+//    public static final String apiSrcUrl = "https://api.danertu.com/requestapi.aspx";
 
 //	public static final String apiSrcUrl = "http://192.168.1.253:8085/RequestApi.aspx";
+
+    //温泉首页地址
+    public static final String SPRING_URL = "http://192.168.1.137:411/qyyd/quanyan_index.htm";
     //------------------------------------------------------------
 
     /**
@@ -109,6 +122,7 @@ public class Constants {
     public final static String SP_PSW_WRONG_RECORD = "psw_wrong_record";
 
     public final static String SP_SHOPCAR = "shopCar";
+    public static final String BASE_PACKAGE = "com.danertu.dianping.";
 
     /**
      * 经验证手机号，用于活动，优先级最高

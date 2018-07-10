@@ -2,6 +2,7 @@ package com.danertu.base;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Process;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -26,6 +28,7 @@ import android.widget.ProgressBar;
 import com.config.Constants;
 import com.danertu.db.DBManager;
 import com.danertu.dianping.ActivityUtils;
+import com.danertu.dianping.BaseActivity;
 import com.danertu.dianping.R;
 import com.danertu.tools.DeviceTag;
 import com.danertu.tools.ShareUtil;
@@ -94,6 +97,10 @@ public abstract class BaseFragment<V, T extends BasePresenter<V>> extends Fragme
         presenter.detach();
     }
 
+    @Override
+    public String getShopId() {
+        return ((BaseActivity) getActivity()).getShopId();
+    }
     /**
      * 定义一个Presenter 用于解绑持有的View
      * 在onCreate进行初始化Presenter的操作
@@ -216,38 +223,16 @@ public abstract class BaseFragment<V, T extends BasePresenter<V>> extends Fragme
 
     @Override
     public void jsShowLoading() {
-//        if (isLoading)
-//            return;
-//        isLoading = true;
-//        getActivity().runOnUiThread(new Runnable() {
-//            public void run() {
-//                pb_loading.setVisibility(View.VISIBLE);
-//                Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.push_left_in);
-//                pb_loading.startAnimation(anim);
-//            }
-//        });
+        if (getUserVisibleHint()) {
+            ((NewBaseActivity) getActivity()).showLoadDialog();
+        }
     }
 
     @Override
     public void jsHideLoading() {
-//        if (!isLoading)
-//            return;
-//        isLoading = false;
-//        getActivity().runOnUiThread(new Runnable() {
-//            public void run() {
-//                if (handler == null) {
-//                    pb_loading.setVisibility(View.GONE);
-//                    return;
-//                }
-//                Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.push_left_out);
-//                pb_loading.startAnimation(anim);
-//                handler.postDelayed(new Runnable() {
-//                    public void run() {
-//                        pb_loading.setVisibility(View.GONE);
-//                    }
-//                }, anim.getDuration());
-//            }
-//        });
+        if (getUserVisibleHint()) {
+            ((NewBaseActivity) getActivity()).jsHideLoading();
+        }
     }
 
     /**
@@ -338,17 +323,17 @@ public abstract class BaseFragment<V, T extends BasePresenter<V>> extends Fragme
 
     @Override
     public String jsGetIMEI() {
-        return new DeviceTag(context).getImei();
+        return presenter.getImei();
     }
 
     @Override
     public String jsGetMac() {
-        return new DeviceTag(context).getMac();
+        return presenter.getMac();
     }
 
     @Override
     public String jsGetDeviceID() {
-        return new DeviceTag(context).getDeviceID();
+        return presenter.getDeviceID();
     }
 
     @Override
@@ -383,7 +368,7 @@ public abstract class BaseFragment<V, T extends BasePresenter<V>> extends Fragme
         return metric.widthPixels;
     }
 
-    public int getSreenHeight() {
+    public int getScreenHeight() {
         WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         return manager.getDefaultDisplay().getHeight();
     }
@@ -440,19 +425,17 @@ public abstract class BaseFragment<V, T extends BasePresenter<V>> extends Fragme
 
 
     @Override
-    public void setTopPadding(View view, int top) {
-        view.setPadding(view.getPaddingLeft(), top, view.getPaddingRight(), view.getPaddingBottom());
-    }
-
-
-    @Override
     public boolean isClickMoreTimesShortTime(long secondClick) {
-        if (secondClick - firstClick > 1500) {
+        if (secondClick - firstClick > 800) {
             firstClick = secondClick;
             return true;
         } else {
             return false;
         }
+    }
+
+    public boolean isClickMoreTimesShortTime() {
+        return isClickMoreTimesShortTime(System.currentTimeMillis());
     }
 
     @Override
@@ -462,5 +445,228 @@ public abstract class BaseFragment<V, T extends BasePresenter<V>> extends Fragme
 
     public String getStockSmallImgPath(String imgName) {
         return Constants.imgServer + "sysProduct/" + imgName;
+    }
+
+    public void setTopPadding(View view, int top) {
+        view.setPadding(view.getPaddingLeft(), top, view.getPaddingRight(), view.getPaddingBottom());
+    }
+
+    private boolean isPayLoading = false;
+
+    @JavascriptInterface
+    public void payOrder(String orderNumber) {
+        payOrder(orderNumber, true);
+    }
+
+    /**
+     * 支付后原生跳转至订单详情
+     *
+     * @param orderNumber     订单号
+     * @param isShowArrivePay 是否可以使用到付
+     */
+    @JavascriptInterface
+    public void payOrder(String orderNumber, boolean isShowArrivePay) {
+        payOrder(orderNumber, true, isShowArrivePay);
+    }
+
+    /**
+     * 支付后原生跳转至订单详情
+     *
+     * @param orderNumber      订单号
+     * @param isShowAccountPay 是否可以使用单耳兔钱包支付
+     * @param isShowArrivePay  是否可以使用到付
+     */
+    @JavascriptInterface
+    public void payOrder(final String orderNumber, boolean isShowAccountPay, boolean isShowArrivePay) {
+        payOrder(orderNumber, true, true, isShowAccountPay, isShowArrivePay);
+    }
+
+    @JavascriptInterface
+    public void payOrder(final String orderNumber, boolean isShowAliPay, boolean isShowWechatPay, boolean isShowAccountPay, boolean isShowArrivePay) {
+//        if (isPayLoading) {
+//            return;
+//        }
+//        isPayLoading = true;
+//        payUtils = new PayUtils(this, getUid(), orderNumber, isShowAliPay, isShowWechatPay, isShowAccountPay, isShowArrivePay) {
+//            @Override
+//            public void paySuccess() {
+//                isPayLoading = false;
+//                jsShowMsg("支付成功");
+//                finish();
+//                toOrderDetail(orderNumber);
+//            }
+//
+//            @Override
+//            public void payFail() {
+//                isPayLoading = false;
+//                jsShowMsg("支付失败,请检查");
+//                finish();
+//                toOrderDetail(orderNumber);
+//            }
+//
+//            @Override
+//            public void payCancel() {
+//                isPayLoading = false;
+//                jsShowMsg("您已取消支付");
+//                finish();
+//                toOrderDetail(orderNumber);
+//            }
+//
+//            @Override
+//            public void payError(String message) {
+//                isPayLoading = false;
+//                jsShowMsg(message);
+//            }
+//
+//            @Override
+//            public void dismissOption() {
+//                if (!isPaying()) {
+//                    finish();
+//                    toOrderDetail(orderNumber);
+//                }
+//                isPayLoading = false;
+//            }
+//        };
+    }
+
+    @JavascriptInterface
+    public void payOrder(String orderNumber, String callBackMethod) {
+        payOrder(orderNumber, true, true, callBackMethod);
+    }
+
+    @JavascriptInterface
+    public void payOrder(String orderNumber, boolean isShowArrivePay, String callBackMethod) {
+        payOrder(orderNumber, true, isShowArrivePay, callBackMethod);
+    }
+
+    /**
+     * 支付后回调页面方法处理
+     *
+     * @param orderNumber      订单号
+     * @param isShowAccountPay 是否可以使用单耳兔钱包支付
+     * @param isShowArrivePay  是否可以使用到付
+     * @param callBackMethod   回调的页面方法  1-支付成功，2-支付失败，3-取消支付，4-发生错误
+     */
+    @JavascriptInterface
+    public void payOrder(String orderNumber, boolean isShowAccountPay, boolean isShowArrivePay, final String callBackMethod) {
+        payOrder(orderNumber, true, true, isShowAccountPay, isShowArrivePay, callBackMethod);
+    }
+
+    @JavascriptInterface
+    public void payOrder(String orderNumber, boolean isShowAliPay, boolean isShowWechatPay, boolean isShowAccountPay, boolean isShowArrivePay, final String callBackMethod) {
+//        if (isPayLoading) {
+//            return;
+//        }
+//        isPayLoading = true;
+//        payUtils = new PayUtils(this, getUid(), orderNumber, isShowAliPay, isShowWechatPay, isShowAccountPay, isShowArrivePay) {
+//            @Override
+//            public void paySuccess() {
+//                isPayLoading = false;
+//                if (webView != null)
+//                    webView.loadUrl(Constants.IFACE + callBackMethod + "(‘1’)");
+//            }
+//
+//            @Override
+//            public void payFail() {
+//                isPayLoading = false;
+//                if (webView != null)
+//                    webView.loadUrl(Constants.IFACE + callBackMethod + "(‘2’)");
+//            }
+//
+//            @Override
+//            public void payCancel() {
+//                isPayLoading = false;
+//                if (webView != null)
+//                    webView.loadUrl(Constants.IFACE + callBackMethod + "(‘3’)");
+//            }
+//
+//            @Override
+//            public void payError(String message) {
+//                isPayLoading = false;
+//                if (webView != null)
+//                    webView.loadUrl(Constants.IFACE + callBackMethod + "(‘4’)");
+//            }
+//
+//            @Override
+//            public void dismissOption() {
+//                isPayLoading = false;
+//                if (TAG.contains("HtmlActivity")) {
+//                    finish();
+//                }
+//            }
+//        };
+    }
+
+
+    @JavascriptInterface
+    public boolean checkOpsPermission(String permission) {
+        return checkOpsPermission(context, permission);
+    }
+
+    @JavascriptInterface
+    public boolean checkOpsPermission(Context context, String permission) {
+        try {
+            AppOpsManager appOpsManager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+            String opsName = AppOpsManager.permissionToOp(permission);
+            if (opsName == null) {
+                return true;
+            }
+            int opsMode = appOpsManager.checkOpNoThrow(opsName, Process.myUid(), context.getPackageName());
+            return opsMode == AppOpsManager.MODE_ALLOWED;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return true;
+        }
+    }
+
+    private boolean isPhoneStatePermission = false;
+
+    /**
+     * 获取读取手机状态权限，用于获取mac、imei、设备id
+     */
+    public void getPhoneStatePermission() {
+        //如果当前系统为MIUI
+//        if (isMIUI() && isPhoneStatePermission) {
+//            isPhoneStatePermission = true;
+//            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+//                if (!checkOpsPermission(context, android.Manifest.permission.READ_PHONE_STATE)) {
+//                    jsShowMsg("请授予单耳兔权限");
+//                    MIUIUtils.gotoMiuiPermission(context);
+//                    return;
+//                }
+//
+//            }
+//        }
+//
+//        /**权限检查*/
+//        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED && !isPhoneStatePermission) {
+//            isPhoneStatePermission = true;
+//            jsShowMsg("请授予单耳兔权限");
+//            ActivityCompat.requestPermissions(context, new String[]{android.Manifest.permission.READ_PHONE_STATE}, REQUEST_PHONE_STATE);
+//        }
+    }
+
+    private boolean isStoragePermission = false;
+
+    public void getStoragePermission() {
+        //如果当前系统为MIUI
+//        if (isMIUI() && isStoragePermission) {
+//            isStoragePermission = true;
+//            if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+//                if (!checkOpsPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+//                    jsShowMsg("请授予单耳兔权限");
+//                    MIUIUtils.gotoMiuiPermission(context);
+//                    return;
+//                }
+//
+//            }
+//        }
+//
+//        /**权限检查*/
+//        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && !isStoragePermission) {
+//            isStoragePermission = true;
+//            jsShowMsg("请授予单耳兔权限");
+//            ActivityCompat.requestPermissions(context, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PHONE_STATE);
+//        }
     }
 }

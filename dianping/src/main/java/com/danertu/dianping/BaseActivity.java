@@ -83,8 +83,8 @@ public abstract class BaseActivity extends SwipeBackActivity {
     public final String TAG = getClass().getSimpleName();
     protected Handler handler;
     protected BaseTaskPool taskPool;
-    private boolean isLoading = false;
-    private ProgressBar pb_loading = null;
+    public boolean isLoading = false;
+    public ProgressBar pb_loading = null;
     protected DBManager db = null;
     protected AppManager appManager = null;
     public boolean isPause;
@@ -97,6 +97,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
     public long firstClick;//用于判定频繁点击的参数
     public PayUtils payUtils;
     public static final int REQUEST_PHONE_STATE = 291;
+    public static final int REQUEST_WRITE_STORAGE = 292;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -455,7 +456,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
         super.setContentView(view, params);
     }
 
-    private FrameLayout fl;
+    protected FrameLayout fl;
 
     @JavascriptInterface
     public void setFitsSystemWindows(final boolean isFits) {
@@ -570,7 +571,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
         return resourceId > 0 ? getResources().getDimensionPixelSize(resourceId) : 0;
     }
 
-    private SystemBarTintManager manager;
+    protected SystemBarTintManager manager;
 
     /**
      * 设置状态栏样式
@@ -883,7 +884,6 @@ public abstract class BaseActivity extends SwipeBackActivity {
         if (!actName.contains(".")) {
             actName = "com.danertu.dianping." + actName;
         }
-        Logger.e("test", actName);
         Intent intent = new Intent(this, Class.forName(actName));
         if (TextUtils.isEmpty(paraStr)) {
             return intent;
@@ -1698,6 +1698,30 @@ public abstract class BaseActivity extends SwipeBackActivity {
             isPhoneStatePermission = true;
             jsShowMsg("请授予单耳兔权限");
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_PHONE_STATE}, REQUEST_PHONE_STATE);
+        }
+    }
+
+    private boolean isStoragePermission = false;
+
+    public void getStoragePermission() {
+        //如果当前系统为MIUI
+        if (isMIUI() && isStoragePermission) {
+            isStoragePermission = true;
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                if (!checkOpsPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    jsShowMsg("请授予单耳兔权限");
+                    MIUIUtils.gotoMiuiPermission(this);
+                    return;
+                }
+
+            }
+        }
+
+        /**权限检查*/
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && !isStoragePermission) {
+            isStoragePermission = true;
+            jsShowMsg("请授予单耳兔权限");
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PHONE_STATE);
         }
     }
 }

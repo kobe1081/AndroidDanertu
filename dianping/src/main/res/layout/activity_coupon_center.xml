@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/activity_bg">
+
+    <include layout="@layout/app_title6" />
+
+    <RadioGroup
+        android:id="@+id/rg_coupon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        app:layout_constraintTop_toBottomOf="@id/personal_top_layout">
+
+        <RadioButton
+            android:id="@+id/rb_coupon_mall"
+            style="@style/my_coupon_radio"
+            android:layout_marginLeft="0dp"
+            android:padding="5dp"
+            android:text="@string/coupon_center_mall" />
+
+        <RadioButton
+            android:id="@+id/rb_coupon_spring"
+            style="@style/my_coupon_radio"
+            android:padding="5dp"
+            android:text="@string/coupon_center_spring" />
+
+        <RadioButton
+            android:id="@+id/rb_coupon_drink"
+            style="@style/my_coupon_radio"
+            android:padding="5dp"
+            android:text="@string/coupon_center_drinking" />
+    </RadioGroup>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_coupon"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintTop_toBottomOf="@id/rg_coupon" />
+</android.support.constraint.ConstraintLayout>

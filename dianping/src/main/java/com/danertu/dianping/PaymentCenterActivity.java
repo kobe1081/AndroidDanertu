@@ -246,6 +246,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
         initData();
         initPswDialog();
     }
+
     private void initHandler() {
         newHandler = new Handler(this.getMainLooper()) {
             @Override
@@ -271,6 +272,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
             }
         };
     }
+
     /**
      * 初始化标题
      *
@@ -888,6 +890,9 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
 
     FavTicket selectedTicket;
 
+    /**
+     * 使用优惠券
+     */
     @SuppressWarnings("deprecation")
     public void setFavTicketDialog() {
         if (favTickets == null || favTickets.size() <= 0)
@@ -1239,9 +1244,9 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
     }
 
     /**
-     * 使用优惠券
+     * 使用代金券
      *
-     * @param cashTicketList 优惠券
+     * @param cashTicketList 代金券
      * @return 结果
      * @throws Exception 抛出异常
      */
@@ -1662,12 +1667,15 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
             favTickets.clear();
             favNumGuids = "";
 
+            StringBuilder builder = new StringBuilder();
+
             while (carListIterator.hasNext()) {
                 Map<String, Object> item = carListIterator.next();
                 yunfei = "0";
                 supid = item.get("supplierID").toString();
                 area = recAddress;
                 productID = item.get("productID").toString();
+                builder.append(productID).append(",");
                 agentID = item.get("agentID").toString();
                 tempcount = item.get("count").toString();
                 arriveTime = item.get(KEY_arriveTime).toString();
@@ -1772,6 +1780,14 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                 }
                 favNumGuids += productID + ",";
             }
+
+
+            //向服务器请求当前订单的商品是否可使用金萝卜
+            Message message = newHandler.obtainMessage();
+            message.what = WHAT_START_CAN_USR_JLB;
+            message.obj = builder.toString().substring(0, builder.toString().length() - 1);
+            newHandler.sendMessage(message);
+
             favNumGuids = favNumGuids.substring(0, favNumGuids.length() - 1);
             if (favTickets.size() > 0) {
                 favTickets.add(new FavTicket("不使用优惠券", "", "0", "1"));
@@ -1811,7 +1827,11 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
             sendEmptyMessage(what);
         }
 
-
+        /**
+         * 获取可使用的优惠券  --0294
+         * @param guid
+         * @return
+         */
         private List<FavTicket> getFavTickets(String guid) {
             List<FavTicket> list = null;
             try {

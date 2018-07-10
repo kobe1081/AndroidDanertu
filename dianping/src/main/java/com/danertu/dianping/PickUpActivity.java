@@ -44,7 +44,7 @@ import static com.danertu.dianping.StockpileActivity.POSITION_PAGE_ORDER;
  * 2017年11月15日
  *
  * @author huangyueliang
- *         提货页面
+ * 提货页面
  */
 public class PickUpActivity extends BaseActivity implements View.OnClickListener {
     private ImageView iv_goods;//商品图片
@@ -450,17 +450,17 @@ public class PickUpActivity extends BaseActivity implements View.OnClickListener
         iv_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                tvPickUp.setEnabled(true);
                 popupWindow.dismiss();
                 hideLoadDialog();
-                tvPickUp.setEnabled(true);
             }
         });
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                tvPickUp.setEnabled(true);
                 popupWindow.dismiss();
                 hideLoadDialog();
-                tvPickUp.setEnabled(true);
             }
         });
 

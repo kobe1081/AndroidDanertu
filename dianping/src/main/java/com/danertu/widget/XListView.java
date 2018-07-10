@@ -269,7 +269,7 @@ public class XListView extends ListView implements OnScrollListener {
             case MotionEvent.ACTION_MOVE:
                 final float deltaY = ev.getRawY() - mLastY;
                 mLastY = ev.getRawY();
-                System.out.println("数据监测：" + getFirstVisiblePosition() + "---->" + getLastVisiblePosition());
+//                System.out.println("数据监测：" + getFirstVisiblePosition() + "---->" + getLastVisiblePosition());
                 if (getFirstVisiblePosition() == 0 && (mHeaderView.getVisibleHeight() > 0 || deltaY > 0)) {
                     // 第一项显示,标题显示或拉下来.
                     updateHeaderHeight(deltaY / OFFSET_RADIO);
@@ -331,8 +331,7 @@ public class XListView extends ListView implements OnScrollListener {
     }
 
     @Override
-    public void onScroll(AbsListView view, int firstVisibleItem,
-                         int visibleItemCount, int totalItemCount) {
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         // 发送到用户的监听器
         mTotalItemCount = totalItemCount;
         if (mScrollListener != null) {

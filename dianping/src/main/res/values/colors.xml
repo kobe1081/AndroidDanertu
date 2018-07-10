@@ -395,5 +395,9 @@
     <color name="diver_color">#f2f2f2</color>
 
     <color name="bg_gray">#F7F7F7</color>
+    <color name="black_3">#333</color>
 
+    <color name="coupon_text_red">#FF3B3B</color>
+    <color name="coupon_text_red_money">#FF6565</color>
+    <color name="activity_bg">#F7F7F7</color>
 </resources>

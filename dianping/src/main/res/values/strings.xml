@@ -222,6 +222,7 @@
     <string name="title_activity_category_product">CategoryProductActivity</string>
     <string name="title_activity_announcement">AnnouncementActivity</string>
     <string name="title_activity_message_center">MessageCenterActivity</string>
+    <string name="title_activity_system_message">SystemMessageActivity</string>
 
     <!-- 店铺评价 -->
     <string name="shopComment_star1">很差，来了就是吃亏上当</string>
@@ -277,4 +278,13 @@
     <string name="order_detail_pay_info">支付信息</string>
     <string name="order_detail_hotel_date">时间&#8194;&#8194;&#8194;&#8194;</string>
     <string name="order_detail_more">更多&#8194;&#8194;&#8194;&#8194;</string>
+    <string name="qrcode_detail_save">保存至手机</string>
+    <string name="title_my_coupon">优惠券</string>
+    <string name="title_coupong_center">领券中心</string>
+    <string name="title_coupon_history">优惠券历史</string>
+    <string name="coupon_center_drinking">酒水券</string>
+    <string name="coupon_center_spring">温泉券</string>
+    <string name="coupon_center_mall">商城券</string>
+    <string name="coupon_history_use">使用记录</string>
+    <string name="coupon_history_out_date">已过期</string>
 </resources>

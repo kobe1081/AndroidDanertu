@@ -1,5 +1,6 @@
 package com.danertu.base;
 
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
@@ -81,6 +82,9 @@ public interface BaseView {
     @JavascriptInterface
     String getUid();
 
+    @JavascriptInterface
+    String getShopId();
+
     /**
      * @return imei码
      */
@@ -104,6 +108,7 @@ public interface BaseView {
      */
     @JavascriptInterface
     void jsShowToast(String message);
+
     /**
      * @param message 要toast的消息
      */
@@ -188,4 +193,38 @@ public interface BaseView {
      */
     @JavascriptInterface
     boolean isClickMoreTimesShortTime(long secondClick);
+
+    int getScreenWidth();
+
+    int getScreenHeight();
+
+    String getImgUrl(String imgName, String agentID, String supplierID);
+
+    boolean isClickMoreTimesShortTime();
+
+    String getStockSmallImgPath(String imgName);
+
+    void payOrder(String orderNumber);
+
+    void payOrder(String orderNumber, boolean isShowArrivePay);
+
+    void payOrder(final String orderNumber, boolean isShowAccountPay, boolean isShowArrivePay);
+
+    void payOrder(final String orderNumber, boolean isShowAliPay, boolean isShowWechatPay, boolean isShowAccountPay, boolean isShowArrivePay);
+
+    void payOrder(String orderNumber, String callBackMethod);
+
+    void payOrder(String orderNumber, boolean isShowArrivePay, String callBackMethod);
+
+    void payOrder(String orderNumber, boolean isShowAccountPay, boolean isShowArrivePay, final String callBackMethod);
+
+    void payOrder(String orderNumber, boolean isShowAliPay, boolean isShowWechatPay, boolean isShowAccountPay, boolean isShowArrivePay, final String callBackMethod);
+
+    boolean checkOpsPermission(String permission);
+
+    boolean checkOpsPermission(Context context, String permission);
+
+    void getPhoneStatePermission();
+
+    void getStoragePermission();
 }

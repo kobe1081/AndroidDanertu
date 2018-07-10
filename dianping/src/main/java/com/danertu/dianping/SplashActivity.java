@@ -103,6 +103,7 @@ public class SplashActivity extends BaseActivity {
         TestinAgent.init(this, "5556ffbe482f07894420f903d174758d", "");
         setSystemBar(R.color.splash_gbColor);
         mHandler = new Handler(getMainLooper());
+        getStoragePermission();
         getPhoneStatePermission();
         findViewById();
         initView();

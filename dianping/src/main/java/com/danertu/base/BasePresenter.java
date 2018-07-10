@@ -25,6 +25,7 @@ public abstract class BasePresenter<T> {
     public final String TAG = this.getClass().getSimpleName();
     public Handler handler;
     public BaseModel model;
+
     public BasePresenter(Context context) {
         this.context = context;
     }
@@ -61,6 +62,9 @@ public abstract class BasePresenter<T> {
      */
     public Intent parseToIntent(String targetActivity, String param) {
 //        targetActivity = Constants.BASE_PACKAGE + targetActivity;
+        if (!targetActivity.contains(".")) {
+            targetActivity = Constants.BASE_PACKAGE + targetActivity;
+        }
         Intent intent = null;
         try {
             intent = new Intent(context, Class.forName(targetActivity));
@@ -85,10 +89,10 @@ public abstract class BasePresenter<T> {
             return null;
         }
         Bundle bundle = new Bundle();
-//        String[] strings = param.split(Constants.PARAM_SEPARATOR);
-//        for (String string : strings) {
-//            bundle.putString(string.substring(0, string.indexOf(Constants.KEY_VALUE_SEPARATOR)), string.substring(string.indexOf(Constants.KEY_VALUE_SEPARATOR) + 1));
-//        }
+        String[] strings = param.split(",;");
+        for (String string : strings) {
+            bundle.putString(string.substring(0, string.indexOf("|")), string.substring(string.indexOf("|") + 1));
+        }
         return bundle;
     }
 
@@ -126,5 +130,19 @@ public abstract class BasePresenter<T> {
     }
 
 
+    public String getImei() {
+        return model.getImei(context);
+    }
 
+    public String getMac() {
+        return model.getMac(context);
+    }
+
+    public String getDeviceID() {
+        return model.getDeviceID(context);
+    }
+
+    public boolean isViewAttached() {
+        return view != null;
+    }
 }

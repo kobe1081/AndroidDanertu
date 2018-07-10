@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/home_backgroud"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/fraHead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:id="@+id/tv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:drawableLeft="@drawable/ic_back_black"
+            android:padding="10dp"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/b_title_operation"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/b_back_click"
+            android:padding="10dp"
+            android:text="清空"
+            android:textColor="#6BB8FF"
+            android:textSize="16sp"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="10dp"
+            android:textColor="@color/gray"
+            android:textSize="18sp" />
+
+        <!--<View-->
+        <!--style="@style/Line3"-->
+        <!--android:layout_gravity="bottom"/>-->
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/noresult_text"
+        style="@style/style_18_666666"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fraHead"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="亲，当前暂时没有消息"
+        android:visibility="gone" />
+
+    <com.danertu.widget.XListView
+        android:id="@+id/msgList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/fraHead"
+        android:divider="@drawable/divider_order_item"
+        android:dividerHeight="1dp"
+        android:visibility="visible" />
+</RelativeLayout>

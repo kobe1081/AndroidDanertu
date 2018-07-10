@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.config.Constants;
+import com.danertu.tools.Logger;
 import com.danertu.widget.CommonTools;
 
 import java.util.LinkedHashMap;
@@ -82,6 +83,9 @@ public abstract class NewBasePresenter<T,V extends BaseModel> {
      */
     public Intent parseToIntent(String targetActivity, String param) {
 //        targetActivity = Constants.BASE_PACKAGE + targetActivity;
+        if (!targetActivity.contains(".")) {
+            targetActivity = Constants.BASE_PACKAGE + targetActivity;
+        }
         Intent intent = null;
         try {
             intent = new Intent(context, Class.forName(targetActivity));
@@ -106,10 +110,10 @@ public abstract class NewBasePresenter<T,V extends BaseModel> {
             return null;
         }
         Bundle bundle = new Bundle();
-//        String[] strings = param.split(Constants.PARAM_SEPARATOR);
-//        for (String string : strings) {
-//            bundle.putString(string.substring(0, string.indexOf(Constants.KEY_VALUE_SEPARATOR)), string.substring(string.indexOf(Constants.KEY_VALUE_SEPARATOR) + 1));
-//        }
+        String[] strings = param.split(",;");
+        for (String string : strings) {
+            bundle.putString(string.substring(0, string.indexOf("|")), string.substring(string.indexOf("|") + 1));
+        }
         return bundle;
     }
 

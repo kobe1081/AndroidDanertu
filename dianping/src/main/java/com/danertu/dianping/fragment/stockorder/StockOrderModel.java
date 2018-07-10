@@ -52,11 +52,34 @@ public class StockOrderModel extends BaseModel {
                     return;
                 }
                 List<WareHouseOrderBean.WareHouseOrderListBean> list = response.body().getWareHouseOrderList();
-                println(list);
 
                 try {
                     totalPage = response.body().getTotalPageCount_o();
                     totalCount = response.body().getTotalCount_o();
+
+                    if (pageIndex > 1) {
+                        //第2、3、4.....页
+                        if ((pageIndex >= Integer.parseInt(totalPage))) {
+                            //要加载的页大于等于总页数
+                            if (orderLists.size() + list.size() <= (Integer.parseInt(totalCount))) {
+                                //已经是最后一页，正常添加
+                                orderLists.addAll(orderLists.size(), list);
+                                handler.sendEmptyMessage(MSG_LOAD_MORE_SUCCESS);
+                            } else {
+                                //当前列表的总数加上返回的列表数量大于总数，说明肯定超过了最大页，说明数据已经加载完
+                                handler.sendEmptyMessage(MSG_NO_MORE_DATA);
+                            }
+                        }else {
+                            orderLists.addAll(orderLists.size(), list);
+                            handler.sendEmptyMessage(MSG_LOAD_MORE_SUCCESS);
+                        }
+                    } else {
+                        //第一页，正常添加
+                        orderLists.addAll(orderLists.size(), list);
+                        handler.sendEmptyMessage(MSG_GET_DATA_SUCCESS);
+                    }
+
+
                 } catch (NumberFormatException e) {
                     if (pageIndex > 1) {
                         handler.sendEmptyMessage(MSG_LOAD_MORE_FAIL);
@@ -67,29 +90,7 @@ public class StockOrderModel extends BaseModel {
                     return;
                 }
 
-//                printlnE("总页数："+totalPage);
-//                printlnE("总计数："+totalCount);
-                if (pageIndex > 1) {
-                    //第2、3、4.....页
-                    if ((pageIndex >= Integer.parseInt(totalPage))) {
-                        //要加载的页大于等于总页数
-                        if (orderLists.size() + list.size() <= (Integer.parseInt(totalCount))) {
-                            //已经是最后一页，正常添加
-                            handler.sendEmptyMessage(MSG_LOAD_MORE_SUCCESS);
-                            orderLists.addAll(orderLists.size(), list);
-                        } else {
-                            //当前列表的总数加上返回的列表数量大于总数，说明肯定超过了最大页，说明数据已经加载完
-                            handler.sendEmptyMessage(MSG_NO_MORE_DATA);
-                        }
-                    }else {
-                        handler.sendEmptyMessage(MSG_LOAD_MORE_SUCCESS);
-                        orderLists.addAll(orderLists.size(), list);
-                    }
-                } else {
-                    //第一页，正常添加
-                    handler.sendEmptyMessage(MSG_GET_DATA_SUCCESS);
-                    orderLists.addAll(orderLists.size(), list);
-                }
+
 
             }
 

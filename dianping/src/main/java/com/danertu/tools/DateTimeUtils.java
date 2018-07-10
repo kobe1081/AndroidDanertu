@@ -189,6 +189,8 @@ public class DateTimeUtils {
                 sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             } else if (date1.contains("/")) {
                 sdf = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+            } else if (date1.contains(".")) {
+                sdf = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
             } else {
                 sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             }
@@ -200,5 +202,26 @@ public class DateTimeUtils {
             return false;
         }
 
+    }
+
+    public static boolean isAfterToday(String date) {
+        try {
+            SimpleDateFormat sdf;
+            if (date.contains("-")) {
+                sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            } else if (date.contains("/")) {
+                sdf = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+            } else if (date.contains(".")) {
+                sdf = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
+            } else {
+                sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            }
+            long time1 = sdf.parse(date).getTime();
+            long time2 = new Date().getTime();
+            return time1 > time2;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

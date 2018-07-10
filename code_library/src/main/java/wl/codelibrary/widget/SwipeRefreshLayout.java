@@ -100,18 +100,18 @@ public class SwipeRefreshLayout extends ViewGroup {
             android.R.attr.enabled
     };
     private Mode mMode = Mode.getDefault();
-    //Ö®Ç°ÊÖÊÆµÄ·½Ïò£¬ÎªÁË½â¾öÍ¬Ò»¸ö´¥µãÇ°ºóÒÆ¶¯·½Ïò²»Í¬µ¼ÖÂºóÒ»¸ö·½Ïò»áË¢ĞÂµÄÎÊÌâ£¬
-    //ÕâÀïMode.DISABLEDÎŞÒâÒå£¬Ö»ÊÇÒ»¸ö³õÊ¼Öµ£¬ºÍÉÏÀ­/ÏÂÀ­·½Ïò½øĞĞÇø·Ö
+    //ä¹‹å‰æ‰‹åŠ¿çš„æ–¹å‘ï¼Œä¸ºäº†è§£å†³åŒä¸€ä¸ªè§¦ç‚¹å‰åç§»åŠ¨æ–¹å‘ä¸åŒå¯¼è‡´åä¸€ä¸ªæ–¹å‘ä¼šåˆ·æ–°çš„é—®é¢˜ï¼Œ
+    //è¿™é‡ŒMode.DISABLEDæ— æ„ä¹‰ï¼Œåªæ˜¯ä¸€ä¸ªåˆå§‹å€¼ï¼Œå’Œä¸Šæ‹‰/ä¸‹æ‹‰æ–¹å‘è¿›è¡ŒåŒºåˆ†
     private Mode mLastDirection = Mode.DISABLED;
     private int mDirection = 0;
-    //µ±×Ó¿Ø¼şÒÆ¶¯µ½¾¡Í·Ê±²Å¿ªÊ¼¼ÆËã³õÊ¼µãµÄÎ»ÖÃ
+    //å½“å­æ§ä»¶ç§»åŠ¨åˆ°å°½å¤´æ—¶æ‰å¼€å§‹è®¡ç®—åˆå§‹ç‚¹çš„ä½ç½®
     private float mStartPoint;
     private boolean up;
     private boolean down;
-    //Êı¾İ²»×ãÒ»ÆÁÊ±ÊÇ·ñ´ò¿ªÉÏÀ­¼ÓÔØÄ£Ê½
+    //æ•°æ®ä¸è¶³ä¸€å±æ—¶æ˜¯å¦æ‰“å¼€ä¸Šæ‹‰åŠ è½½æ¨¡å¼
     private boolean loadNoFull = false;
 
-    //¶ÔÏÂÀ­»òÉÏÀ­½øĞĞ¸´Î»
+    //å¯¹ä¸‹æ‹‰æˆ–ä¸Šæ‹‰è¿›è¡Œå¤ä½
     private final Animation mAnimateToStartPosition = new Animation() {
         @Override
         public void applyTransformation(float interpolatedTime, Transformation t) {
@@ -120,7 +120,7 @@ public class SwipeRefreshLayout extends ViewGroup {
                 targetTop = (mFrom + (int)((mOriginalOffsetTop - mFrom) * interpolatedTime));
             }
             int offset = targetTop - mTarget.getTop();
-            //×¢ÊÍµôÕâÀï£¬²»È»ÉÏÀ­ºó»Ø¸´Ô­Î»ÖÃ»áºÜ¿ì£¬²»Æ½»¬
+            //æ³¨é‡Šæ‰è¿™é‡Œï¼Œä¸ç„¶ä¸Šæ‹‰åå›å¤åŸä½ç½®ä¼šå¾ˆå¿«ï¼Œä¸å¹³æ»‘
 //            final int currentTop = mTarget.getTop();
 //            if (offset + currentTop < 0) {
 //                offset = 0 - currentTop;
@@ -129,7 +129,7 @@ public class SwipeRefreshLayout extends ViewGroup {
         }
     };
 
-    //ÉèÖÃÉÏ·½½ø¶ÈÌõµÄÍê³É¶È°Ù·Ö±È
+    //è®¾ç½®ä¸Šæ–¹è¿›åº¦æ¡çš„å®Œæˆåº¦ç™¾åˆ†æ¯”
     private Animation mShrinkTrigger = new Animation() {
         @Override
         public void applyTransformation(float interpolatedTime, Transformation t) {
@@ -138,7 +138,7 @@ public class SwipeRefreshLayout extends ViewGroup {
         }
     };
 
-    //ÉèÖÃÏÂ·½½ø¶ÈÌõµÄÍê³É¶È°Ù·Ö±È
+    //è®¾ç½®ä¸‹æ–¹è¿›åº¦æ¡çš„å®Œæˆåº¦ç™¾åˆ†æ¯”
     private Animation mShrinkTriggerBottom = new Animation() {
         @Override
         public void applyTransformation(float interpolatedTime, Transformation t) {
@@ -147,7 +147,7 @@ public class SwipeRefreshLayout extends ViewGroup {
         }
     };
 
-    //¼àÌı£¬»Ø¸´³õÊ¼Î»ÖÃ
+    //ç›‘å¬ï¼Œå›å¤åˆå§‹ä½ç½®
     private final AnimationListener mReturnToStartPositionListener = new BaseAnimationListener() {
         @Override
         public void onAnimationEnd(Animation animation) {
@@ -158,7 +158,7 @@ public class SwipeRefreshLayout extends ViewGroup {
         }
     };
 
-    //»Ø¸´½ø¶ÈÌõ°Ù·Ö±È
+    //å›å¤è¿›åº¦æ¡ç™¾åˆ†æ¯”
     private final AnimationListener mShrinkAnimationListener = new BaseAnimationListener() {
         @Override
         public void onAnimationEnd(Animation animation) {
@@ -166,7 +166,7 @@ public class SwipeRefreshLayout extends ViewGroup {
         }
     };
 
-    //»Ø¸´³õÊ¼Î»ÖÃ
+    //å›å¤åˆå§‹ä½ç½®
     private final Runnable mReturnToStartPosition = new Runnable() {
 
         @Override
@@ -260,7 +260,7 @@ public class SwipeRefreshLayout extends ViewGroup {
         removeCallbacks(mCancel);
     }
 
-    //¶Ô×Ó¿Ø¼ş½øĞĞÒÆ¶¯
+    //å¯¹å­æ§ä»¶è¿›è¡Œç§»åŠ¨
     private void animateOffsetToStartPosition(int from, AnimationListener listener) {
         mFrom = from;
         mAnimateToStartPosition.reset();
@@ -282,7 +282,7 @@ public class SwipeRefreshLayout extends ViewGroup {
         mLoadListener = listener;
     }
 
-    //ÉèÖÃ½ø¶ÈÌõµÄÏÔÊ¾°Ù·Ö±È
+    //è®¾ç½®è¿›åº¦æ¡çš„æ˜¾ç¤ºç™¾åˆ†æ¯”
     private void setTriggerPercentage(float percent) {
         if (percent == 0f) {
             // No-op. A null trigger means it's uninitialized, and setting it to zero-percent
@@ -532,9 +532,9 @@ public class SwipeRefreshLayout extends ViewGroup {
                 mCurrPercentage = 0;
                 mStartPoint = mInitialMotionY;
 
-                //ÕâÀïÓÃup/down¼ÇÂ¼×Ó¿Ø¼şÄÜ·ñÏÂÀ­£¬Èç¹ûµ±Ç°×Ó¿Ø¼ş²»ÄÜÉÏÏÂ»¬¶¯£¬µ«µ±ÊÖÖ¸°´ÏÂ²¢ÒÆ¶¯×Ó¿Ø¼şÊ±£¬¿Ø¼ş¾Í»á±äµÃ¿É»¬¶¯
-                //ºóÃæµÄÒ»Ğ©´¦Àí²»ÄÜÖ±½ÓÊ¹ÓÃcanChildScrollUp/canChildScrollDown
-                //µ«ÈÔ´æÔÚÎÊÌâ£ºµ±Êı¾İ²»ÂúÒ»ÆÁÇÒÉèÖÃ¿ÉÒÔÉÏÀ­Ä£Ê½ºó£¬¶à´Î¿ìËÙÉÏÀ­»á¼¤·¢ÉÏÀ­¼ÓÔØ
+                //è¿™é‡Œç”¨up/downè®°å½•å­æ§ä»¶èƒ½å¦ä¸‹æ‹‰ï¼Œå¦‚æœå½“å‰å­æ§ä»¶ä¸èƒ½ä¸Šä¸‹æ»‘åŠ¨ï¼Œä½†å½“æ‰‹æŒ‡æŒ‰ä¸‹å¹¶ç§»åŠ¨å­æ§ä»¶æ—¶ï¼Œæ§ä»¶å°±ä¼šå˜å¾—å¯æ»‘åŠ¨
+                //åé¢çš„ä¸€äº›å¤„ç†ä¸èƒ½ç›´æ¥ä½¿ç”¨canChildScrollUp/canChildScrollDown
+                //ä½†ä»å­˜åœ¨é—®é¢˜ï¼šå½“æ•°æ®ä¸æ»¡ä¸€å±ä¸”è®¾ç½®å¯ä»¥ä¸Šæ‹‰æ¨¡å¼åï¼Œå¤šæ¬¡å¿«é€Ÿä¸Šæ‹‰ä¼šæ¿€å‘ä¸Šæ‹‰åŠ è½½
                 up = canChildScrollUp();
                 down = canChildScrollDown();
                 break;
@@ -554,23 +554,23 @@ public class SwipeRefreshLayout extends ViewGroup {
                 final float y = MotionEventCompat.getY(ev, pointerIndex);
 //                final float yDiff = y - mInitialMotionY;
                 final float yDiff = y - mStartPoint;
-                //ÈôÉÏ¸öÊÖÊÆµÄ·½ÏòºÍµ±Ç°ÊÖÊÆ·½Ïò²»Ò»ÖÂ£¬·µ»Ø
+                //è‹¥ä¸Šä¸ªæ‰‹åŠ¿çš„æ–¹å‘å’Œå½“å‰æ‰‹åŠ¿æ–¹å‘ä¸ä¸€è‡´ï¼Œè¿”å›
                 if((mLastDirection == Mode.PULL_FROM_START && yDiff < 0) ||
                         (mLastDirection == Mode.PULL_FROM_END && yDiff > 0))
                 {
                     return false;
                 }
-                //ÏÂÀ­»òÉÏÀ­Ê±£¬×Ó¿Ø¼ş±¾ÉíÄÜ¹»»¬¶¯Ê±£¬¼ÇÂ¼µ±Ç°ÊÖÖ¸Î»ÖÃ£¬µ±Æä»¬¶¯µ½¾¡Í·Ê±£¬
-                //mStartPoint×÷ÎªÏÂÀ­Ë¢ĞÂ»òÉÏÀ­¼ÓÔØµÄÊÖÊÆÆğµã
+                //ä¸‹æ‹‰æˆ–ä¸Šæ‹‰æ—¶ï¼Œå­æ§ä»¶æœ¬èº«èƒ½å¤Ÿæ»‘åŠ¨æ—¶ï¼Œè®°å½•å½“å‰æ‰‹æŒ‡ä½ç½®ï¼Œå½“å…¶æ»‘åŠ¨åˆ°å°½å¤´æ—¶ï¼Œ
+                //mStartPointä½œä¸ºä¸‹æ‹‰åˆ·æ–°æˆ–ä¸Šæ‹‰åŠ è½½çš„æ‰‹åŠ¿èµ·ç‚¹
                 if ((canChildScrollUp() && yDiff > 0) || (canChildScrollDown() && yDiff < 0))
                 {
                     mStartPoint = y;
                 }
 
-                //ÏÂÀ­
+                //ä¸‹æ‹‰
                 if (yDiff > mTouchSlop)
                 {
-                    //Èôµ±Ç°×Ó¿Ø¼şÄÜÏòÏÂ»¬¶¯£¬»òÕßÉÏ¸öÊÖÊÆÎªÉÏÀ­£¬Ôò·µ»Ø
+                    //è‹¥å½“å‰å­æ§ä»¶èƒ½å‘ä¸‹æ»‘åŠ¨ï¼Œæˆ–è€…ä¸Šä¸ªæ‰‹åŠ¿ä¸ºä¸Šæ‹‰ï¼Œåˆ™è¿”å›
                     if (canChildScrollUp() || mLastDirection == Mode.PULL_FROM_END)
                     {
                         mIsBeingDragged = false;
@@ -583,15 +583,15 @@ public class SwipeRefreshLayout extends ViewGroup {
                         mLastDirection = Mode.PULL_FROM_START;
                     }
                 }
-                //ÉÏÀ­
+                //ä¸Šæ‹‰
                 else if (-yDiff > mTouchSlop) {
-                    //Èôµ±Ç°×Ó¿Ø¼şÄÜÏòÉÏ»¬¶¯£¬»òÕßÉÏ¸öÊÖÊÆÎªÏÂÀ­£¬Ôò·µ»Ø
+                    //è‹¥å½“å‰å­æ§ä»¶èƒ½å‘ä¸Šæ»‘åŠ¨ï¼Œæˆ–è€…ä¸Šä¸ªæ‰‹åŠ¿ä¸ºä¸‹æ‹‰ï¼Œåˆ™è¿”å›
                     if (canChildScrollDown() || mLastDirection == Mode.PULL_FROM_START)
                     {
                         mIsBeingDragged = false;
                         return false;
                     }
-                    //Èô×Ó¿Ø¼ş²»ÄÜÉÏÏÂ»¬¶¯£¬ËµÃ÷Êı¾İ²»×ãÒ»ÆÁ£¬Èô²»ÂúÆÁ²»¼ÓÔØ£¬·µ»Ø
+                    //è‹¥å­æ§ä»¶ä¸èƒ½ä¸Šä¸‹æ»‘åŠ¨ï¼Œè¯´æ˜æ•°æ®ä¸è¶³ä¸€å±ï¼Œè‹¥ä¸æ»¡å±ä¸åŠ è½½ï¼Œè¿”å›
                     if (!up && !down && !loadNoFull)
                     {
                         mIsBeingDragged = false;
@@ -705,7 +705,7 @@ public class SwipeRefreshLayout extends ViewGroup {
                             return true;
                         }
                         // Just track the user's movement
-                        //¸ù¾İÊÖÖ¸ÒÆ¶¯¾àÀëÉèÖÃ½ø¶ÈÌõÏÔÊ¾µÄ°Ù·Ö±È
+                        //æ ¹æ®æ‰‹æŒ‡ç§»åŠ¨è·ç¦»è®¾ç½®è¿›åº¦æ¡æ˜¾ç¤ºçš„ç™¾åˆ†æ¯”
                         setTriggerPercentage(
                                 mAccelerateInterpolator.getInterpolation(
                                         Math.abs(yDiff) / mDistanceToTriggerSync));
@@ -768,20 +768,20 @@ public class SwipeRefreshLayout extends ViewGroup {
         }
     }
 
-    //ÊÖÖ¸ÒÆ¶¯Ê±¸üĞÂ×Ó¿Ø¼şµÄÎ»ÖÃ
+    //æ‰‹æŒ‡ç§»åŠ¨æ—¶æ›´æ–°å­æ§ä»¶çš„ä½ç½®
     private void updateContentOffsetTop(int targetTop) {
         final int currentTop = mTarget.getTop();
         if (targetTop > mDistanceToTriggerSync) {
             targetTop = (int) mDistanceToTriggerSync;
         }
-        //×¢ÊÍµô£¬·ñÔòÉÏÀ­µÄÊ±ºò×Ó¿Ø¼ş»áÏòÏÂÒÆ¶¯
+        //æ³¨é‡Šæ‰ï¼Œå¦åˆ™ä¸Šæ‹‰çš„æ—¶å€™å­æ§ä»¶ä¼šå‘ä¸‹ç§»åŠ¨
 //        else if (targetTop < 0) {
 //            targetTop = 0;
 //        }
         setTargetOffsetTopAndBottom(targetTop - currentTop);
     }
 
-    //¸ù¾İÆ«ÒÆÁ¿¶Ô×Ó¿Ø¼ş½øĞĞÒÆ¶¯
+    //æ ¹æ®åç§»é‡å¯¹å­æ§ä»¶è¿›è¡Œç§»åŠ¨
     private void setTargetOffsetTopAndBottom(int offset) {
         mTarget.offsetTopAndBottom(offset);
         mCurrentTargetOffsetTop = mTarget.getTop();

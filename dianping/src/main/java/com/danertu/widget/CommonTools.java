@@ -247,12 +247,33 @@ public class CommonTools {
      * 判断是否为正确号码
      */
     public static boolean isMobileNO(String mobiles) {
-        String regular = "^(0|86|17951)?(13[0-9]|15[^4,\\D]|17[4678]|18[0-9]|14[57])[0-9]{8}$";//大陆号码
-        String regularAomen = "^(853|852)?(28[0-9]{2}|((6|8)[0-9]{3}))[0-9]{4}$";//澳门号码
-        String regularHongkong = "^(886)?[1-9]{2}[-_－—]?[0-9]{3}[-_－—]?[0-9]{3}$";//香港号码
-        String regularTaiwan = "^(886)?[1-9]{1}[1-9]{2}[-_－—]?[0-9]{3}[-_－—]?[0-9]{3}$";//台湾号码
-        String[] regs = {regular, regularAomen, regularHongkong, regularTaiwan};
         boolean isPhoneNum = false;
+//        String regular = "^(0|86|17951)?(13[0-9]|14[57]|15[^4,\\D]|16[0-9]|17[4678]|18[0-9])[0-9]{8}$";//大陆号码
+//        String regularAomen = "^(853|852)?(28[0-9]{2}|((6|8)[0-9]{3}))[0-9]{4}$";//澳门号码
+//        String regularHongkong = "^(886)?[1-9]{2}[-_－—]?[0-9]{3}[-_－—]?[0-9]{3}$";//香港号码
+//        String regularTaiwan = "^(886)?[1-9]{1}[1-9]{2}[-_－—]?[0-9]{3}[-_－—]?[0-9]{3}$";//台湾号码
+//        String[] regs = {regular, regularAomen, regularHongkong, regularTaiwan};
+
+
+        //移动
+        //134 135 136 137 138 139 147 150 151 152 157 158 159 172 178 182 183 184 187 188 198
+        String cnMob="^((13[4-9])|147|(15[0-2,7-9])|178|(18[2-4,7,8])|198)\\d{8}$";
+        //联通
+        //130 131 132 145 155 156 166 171 175 176 185 186
+        String cnUn="^((13[0-2])|145|(15[5,6])|166|(17[5,6])|(18[5,6]))\\d{8}$";
+        //电信
+        //133 149 153 173 177 180 181 189 199
+        String cnNet="^(133|149|153|(17[3,4])|177|(18[0,1,9])|199)\\d{8}$";
+        //# 虚拟运营商
+        //# 电信 - 1700 1701 1702
+        //# 移动 - 1703 1705 1706
+        //# 联通 - 1704 1707 1708 1709 171
+        String cnV="^((170[0-9])\\d{7})|171\\d{8}$";
+        //港澳台
+//        String cnHAT="^((((0?)|((00)?))(((\\s){0,2})|([-_－—\\s]?)))|([+]?))((853)|(852))()?([]?)([-_－—\\s]?)(28[0-9]{2}|((6|8)[0-9]{3}))[-_－—\\s]?[0-9]{4}$";
+//        String[] regs = {cnMob, cnUn, cnNet, cnV,cnHAT};
+        String[] regs = {cnMob, cnUn, cnNet, cnV};
+
         for (String item : regs) {
             if ((isPhoneNum = Pattern.compile(item).matcher(mobiles).matches()))
                 break;

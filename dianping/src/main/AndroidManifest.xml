@@ -35,7 +35,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- 允许应用读取低级别的系统日志文件 -->
     <uses-permission android:name="android.permission.READ_LOGS" />
-
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!-- 百度地图定位功能所需权限 -->
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
@@ -251,7 +250,6 @@
         <activity
             android:name=".SearchActivity"
             android:label="@string/title_activity_search"
-
             android:screenOrientation="portrait" />
         <activity
             android:name=".CartActivity"
@@ -518,9 +516,13 @@
         <activity
             android:name=".MessageCenterActivity"
             android:label="@string/title_activity_message_center"
-            android:screenOrientation="portrait"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/noActivityAnimStyle" />
+        <activity
+            android:name=".SystemMessageActivity"
+            android:label="@string/title_activity_message_center"
+            android:screenOrientation="portrait" />
         <!-- android:theme="@android:style/Theme.NoTitleBar" -->
         <activity
             android:name=".JPushMessageActivity"
@@ -791,13 +793,16 @@
         <activity android:name=".PickUpActivity" />
         <activity android:name=".StockOrderDetailActivity" />
         <activity android:name=".QRCodeDetailActivity" />
-        <activity android:name=".IndexNewActivity"></activity>
-        <activity android:name=".OrderCenterActivity"></activity>
+        <activity android:name=".IndexNewActivity" />
+        <activity android:name=".OrderCenterActivity" />
         <activity
             android:name=".MessageActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/noActivityAnimStyle" />
+        <activity android:name=".MyCouponActivity" />
+        <activity android:name=".CouponCenterActivity" />
+        <activity android:name=".CouponHistoryActivity"></activity>
     </application>
 
 </manifest>

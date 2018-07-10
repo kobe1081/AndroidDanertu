@@ -183,7 +183,6 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
 
     @Override
     protected void onNewIntent(Intent intent) {
-
         if (intent == null)
             return;
         super.onNewIntent(intent);

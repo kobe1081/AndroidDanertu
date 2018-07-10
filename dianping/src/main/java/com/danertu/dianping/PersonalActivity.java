@@ -366,7 +366,16 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
                     jsToActivity("com.danertu.dianping.MyWalletActivity");
                     break;
                 case R.id.ll_coupon:
-                    jsStartActivity("HtmlActivity", "pageName|person_coupon_list2.html");
+                    /**
+                     * 优惠券
+                     */
+                    if (isLogin()) {
+                        jsToActivity("com.danertu.dianping.MyCouponActivity");
+                    } else {
+                        jsShowMsg("请先登录");
+                        jsStartActivityForResult("LoginActivity", "", REQ_LOGIN);
+                    }
+//                    jsStartActivity("HtmlActivity", "pageName|person_coupon_list2.html");
                     break;
                 case R.id.ll_jlb:
                     jsToActivity("com.danertu.dianping.ScoreCenterActivity");

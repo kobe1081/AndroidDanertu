@@ -1,10 +1,16 @@
 package com.danertu.dianping;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,18 +20,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.config.Constants;
-import com.danertu.entity.HistoryRecordBean;
 import com.danertu.entity.OrderBody;
 import com.danertu.entity.OrderHead;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.AsyncTask;
+import com.danertu.tools.DateTimeUtils;
 import com.danertu.tools.Logger;
 import com.danertu.tools.QRCodeUtils;
 import com.danertu.widget.CommonTools;
 import com.google.gson.JsonSyntaxException;
-import com.google.zxing.WriterException;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.io.File;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,12 +44,16 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
     private ImageView iv_qr_code;
     private TextView tv_use_state;
     private TextView tv_order_number;
+    private TextView tv_save_qrcode;
+    private LinearLayout ll_qr_code;
     private Context context;
     public static final int RESULT_QR_CODE = 21;
     private String orderNumber;
     private String orderStatus;
     private String shipmentStatus;
     private String paymentStatus;
+    private String saveDirName;
+    private String saveImgName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +61,7 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
         setContentView(R.layout.activity_qrconde_detail);
         setSystemBarWhite();
         setSwipeBackEnable(true);
+        getStoragePermission();
         findViewById();
         initView();
         initData();
@@ -71,9 +83,11 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
         new GetOrderBody().execute(orderNumber);
 
         try {
-            Bitmap qrCode = QRCodeUtils.createQRCode(orderNumber, CommonTools.dip2px(context, 170));
+//            Bitmap qrCode = QRCodeUtils.createQRCode(orderNumber, CommonTools.dip2px(context, 170));
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.icon);
+            Bitmap qrCode = QRCodeUtils.createQRImage(orderNumber, CommonTools.dip2px(context, 200), bitmap);
             iv_qr_code.setImageBitmap(qrCode);
-        } catch (WriterException e) {
+        } catch (Exception e) {
             jsShowMsg("出错了，请重试");
             e.printStackTrace();
             finish();
@@ -88,6 +102,9 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
         iv_qr_code = $(R.id.iv_qr_code);
         tv_use_state = $(R.id.tv_use_state);
         tv_order_number = $(R.id.tv_order_number);
+        tv_save_qrcode = $(R.id.tv_save_qrcode);
+        ll_qr_code = $(R.id.ll_qr_code);
+        tv_save_qrcode.setOnClickListener(this);
     }
 
     @Override
@@ -96,11 +113,82 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
         btn_back.setOnClickListener(this);
     }
 
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.b_title_back:
                 finish();
+                break;
+            case R.id.tv_save_qrcode:
+                /**
+                 * 保存二维码到手机上
+                 */
+                saveDirName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + File.separator + "Danertu";
+                saveImgName = "Danertu_"+ DateTimeUtils.getDateToyyyyMMddHHmm()+"_" + orderNumber + ".png";
+                File saveFile = new File(saveDirName);
+                if (!saveFile.exists()) {
+                    saveFile.mkdir();
+                }
+                try {
+                    int width = ll_qr_code.getWidth();
+                    int height = ll_qr_code.getHeight();
+                    //打开图像缓存
+                    ll_qr_code.setDrawingCacheEnabled(true);
+                    //测量Linearlayout的大小
+                    ll_qr_code.measure(0, 0);
+                    width = ll_qr_code.getMeasuredWidth();
+                    height = ll_qr_code.getMeasuredHeight();
+                    //发送位置和尺寸到LienarLayout及其所有的子View
+                    //简单地说，就是我们截取的屏幕区域，注意是以Linearlayout左上角为基准的，而不是屏幕左上角
+                    ll_qr_code.layout(0, 0, width, height);
+                    //拿到截取图像的bitmap
+                    Bitmap drawingCache = ll_qr_code.getDrawingCache();
+//                    File file = new File(saveDirName + File.separator + saveImgName);
+//                    FileOutputStream fos2 = new FileOutputStream(file);
+//                    drawingCache.compress(Bitmap.CompressFormat.PNG, 90, fos2);
+//                    fos2.flush();
+//                    fos2.close();
+                    File file = new File(saveDirName + File.separator + saveImgName);
+                    if (file.exists()) {
+                        jsShowMsg("二维码已保存");
+                        return;
+                    }
+                    // 系统时间
+                    long currentTimeMillis = System.currentTimeMillis();
+                    long dateSeconds = currentTimeMillis / 1000;
+                    // 保存截屏到系统MediaStore
+                    ContentValues values = new ContentValues();
+                    ContentResolver resolver = context.getContentResolver();
+                    values.put(MediaStore.Images.ImageColumns.DATA, saveDirName + File.separator + saveImgName);
+                    values.put(MediaStore.Images.ImageColumns.TITLE, saveImgName);
+                    values.put(MediaStore.Images.ImageColumns.DISPLAY_NAME, saveImgName);
+                    values.put(MediaStore.Images.ImageColumns.DATE_TAKEN, currentTimeMillis);
+                    values.put(MediaStore.Images.ImageColumns.DATE_ADDED, dateSeconds);
+                    values.put(MediaStore.Images.ImageColumns.DATE_MODIFIED, dateSeconds);
+                    values.put(MediaStore.Images.ImageColumns.MIME_TYPE, "image/png");
+                    values.put(MediaStore.Images.ImageColumns.WIDTH, drawingCache.getWidth());
+                    values.put(MediaStore.Images.ImageColumns.HEIGHT, drawingCache.getHeight());
+                    Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                    try {
+                        OutputStream out = resolver.openOutputStream(uri);
+                        drawingCache.compress(Bitmap.CompressFormat.PNG, 100, out);// bitmap转换成输出流，写入文件
+                        out.flush();
+                        out.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    // update file size in the database
+                    values.clear();
+                    values.put(MediaStore.Images.ImageColumns.SIZE, new File(saveDirName + File.separator + saveImgName).length());
+                    resolver.update(uri, values, null, null);
+                    jsShowMsg("订单二维码保存成功");
+                } catch (Exception e) {
+                    jsShowMsg("订单二维码保存失败，请重试");
+                    //保存失败，可能是没有存储权限引起，所以重新请求存储权限
+                    getStoragePermission();
+                    e.printStackTrace();
+                }
                 break;
         }
     }
@@ -168,7 +256,7 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
                     tv_market_price.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);//给原价加上删除线
                     tv_market_price.getPaint().setAntiAlias(true);
                     tv_buy_count.setText("x" + bean.getBuyNumber());
-                    ll_order_item.addView(productItem);
+                    ll_order_item.addView(productItem, 0);
                 }
 
             } catch (JsonSyntaxException e) {

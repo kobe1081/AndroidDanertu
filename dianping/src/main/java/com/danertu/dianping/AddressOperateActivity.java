@@ -59,6 +59,7 @@ public class AddressOperateActivity extends BaseActivity implements OnClickListe
 
     /**
      * 解析raw存放的地址数据
+     *
      * @param table
      * @param pcode
      * @param provinceKey
@@ -168,6 +169,7 @@ public class AddressOperateActivity extends BaseActivity implements OnClickListe
 
     /**
      * 获取省级列表
+     *
      * @return
      */
     public List<CNAddressListItem> getProvince() {
@@ -179,6 +181,7 @@ public class AddressOperateActivity extends BaseActivity implements OnClickListe
 
 
     private String province = null;
+
     /**
      * 获取市级列表
      */
@@ -190,6 +193,7 @@ public class AddressOperateActivity extends BaseActivity implements OnClickListe
 
     /**
      * 获取区/县级列表
+     *
      * @param pcode
      * @return
      */
@@ -357,7 +361,7 @@ public class AddressOperateActivity extends BaseActivity implements OnClickListe
     }
 
     /**
-     *  上传地址至服务器
+     * 上传地址至服务器
      */
     private Runnable tAddAddress = new Runnable() {
         @Override
@@ -408,6 +412,7 @@ public class AddressOperateActivity extends BaseActivity implements OnClickListe
 
     /**
      * 数据（姓名/地址/手机号码/）格式检查
+     *
      * @return 判断结果
      */
     private String checkData() {

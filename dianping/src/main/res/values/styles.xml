@@ -838,6 +838,7 @@
         <item name="android:orientation">vertical</item>
         <item name="android:padding">10dp</item>
     </style>
+
     <style name="personal_shop_manager_item_iv">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -846,6 +847,7 @@
         <item name="android:paddingRight">10dp</item>
         <item name="android:paddingTop">10dp</item>
     </style>
+
     <style name="personal_shop_manager_item_point">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -860,5 +862,15 @@
         <item name="android:textColor">@color/solid_while</item>
         <item name="android:gravity">center</item>
         <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="my_coupon_radio">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_marginLeft">40dp</item>
+        <item name="android:background">@drawable/red_bottom_line</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:button">@null</item>
+        <item name="android:textColor">@drawable/text_color_coupon_radio</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 </resources>

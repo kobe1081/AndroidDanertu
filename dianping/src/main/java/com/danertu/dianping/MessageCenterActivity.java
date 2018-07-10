@@ -101,10 +101,14 @@ public class MessageCenterActivity extends HomeActivity implements OnItemClickLi
                             } else {
                                 dataList.addAll(NoticeManager.getInstance().getMsgLists());
                             }
-                            dataList.addAll(localNoticeList);
+
                             Logger.e(TAG, localNoticeList.toString());
-                            sortData();
-                            Logger.e(TAG, "排序后的数据:" + dataList.toString());
+                            if (localNoticeList.size() > 0) {
+                                dataList.add(0,localNoticeList.get(0));
+                            } else {
+                                //String id, String messageTitle, String modiflyTime, String subtitle, String image, int messageType
+                                dataList.add(0,new Messagebean("123", "系统消息", DateTimeUtils.getDateToyyyyMMddHHmmss(), "暂无系统消息", "", Messagebean.NOTICE_TYPE_SYSTEM));
+                            }
                             adapter.notifyDataSetChanged();
                             if (dataList.size() <= 0) {
                                 mList.setVisibility(View.GONE);
@@ -304,6 +308,10 @@ public class MessageCenterActivity extends HomeActivity implements OnItemClickLi
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (position == 1) {
+            startActivity(new Intent(context, SystemMessageActivity.class));
+            return;
+        }
         Messagebean bean = dataList.get(position - 1);
         if (bean.getMessageType() == NOTICE_TYPE_ORDER) {
             //如果是订单，跳转至订单中心
@@ -329,14 +337,14 @@ public class MessageCenterActivity extends HomeActivity implements OnItemClickLi
 
         @Override
         public int compare(Messagebean o1, Messagebean o2) {
-            String modiflyTime1 = o1.getModiflyTime().replace("/","-");
-            String modiflyTime2 = o2.getModiflyTime().replace("/","-");
+            String modiflyTime1 = o1.getModiflyTime().replace("/", "-");
+            String modiflyTime2 = o2.getModiflyTime().replace("/", "-");
 
             //小于0，参数date1就是在date2之后,大于0，参数date1就是在date2之前
             boolean result = DateTimeUtils.compareDate2(modiflyTime1, modiflyTime2);
-            if (result){
+            if (result) {
                 return -1;
-            }else {
+            } else {
                 return 1;
             }
         }
