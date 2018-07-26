@@ -135,7 +135,7 @@ public class ProductCommentActivity extends Activity implements
         @Override
         public void run() {
 
-            String result = AppManager.getInstance().getProductComment("0066", productGuid, Constants.pagesize, 1);
+            String result = AppManager.getInstance().getProductComment("0066", productGuid, Constants.pageSize, 1);
             JSONObject jsonObject;
             try {
                 jsonObject = new JSONObject(result).getJSONObject("procommentList");
@@ -209,7 +209,7 @@ public class ProductCommentActivity extends Activity implements
         @Override
         public void run() {
 
-            String result = AppManager.getInstance().getProductComment("0066", productGuid, Constants.pagesize, pageIndex);
+            String result = AppManager.getInstance().getProductComment("0066", productGuid, Constants.pageSize, pageIndex);
             JSONObject jsonObject;
             try {
                 jsonObject = new JSONObject(result).getJSONObject("procommentList");

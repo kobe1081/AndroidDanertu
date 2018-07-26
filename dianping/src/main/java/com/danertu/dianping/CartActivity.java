@@ -104,8 +104,8 @@ public class CartActivity extends HomeActivity {
         });
         if (!isLogin()) {
             jsStartActivityForResult("LoginActivity", "", REQ_LOGIN);
+            return;
         }
-
     }
 
 
@@ -265,6 +265,7 @@ public class CartActivity extends HomeActivity {
     public void onResume() {
         super.onResume();
         initShopCar(false);
+        cbSelectAll.setChecked(false);
     }
 
     private void initShopCar(boolean isShowEdit) {
@@ -600,7 +601,7 @@ public class CartActivity extends HomeActivity {
             cbShop.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (shopSelectMap.get(finalI) != null && !shopSelectMap.get(finalI)&&!isChecked) {
+                    if (shopSelectMap.get(finalI) != null && !shopSelectMap.get(finalI) && !isChecked) {
                         return;
                     }
                     int childCount = ((LinearLayout) llCar.getChildAt(finalI)).getChildCount();
@@ -871,6 +872,7 @@ public class CartActivity extends HomeActivity {
                     mIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     // Bundle类用作携带数据，它类似于Map，用于存放key-value名值对形式的值
                     Bundle b = new Bundle();
+                    b.putString("shopid", getShopId());
                     b.putString("allCount", String.valueOf(allCount + totalgivecount));
                     b.putString("allMoney", String.valueOf(totalMoney));
                     // 此处使用putExtras，接受方就响应的使用getExtra

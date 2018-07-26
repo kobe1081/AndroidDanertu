@@ -1,11 +1,18 @@
 package com.config;
 
-import com.config.Constants;
 import com.danertu.entity.BaseResultBean;
+import com.danertu.entity.ChooseCouponBean;
 import com.danertu.entity.CouponBean;
+import com.danertu.entity.CouponCountBean;
+import com.danertu.entity.CouponProductsBean;
+import com.danertu.entity.LeaderBean;
 import com.danertu.entity.MyCouponBean;
+import com.danertu.entity.NewOrderHeadBean;
+import com.danertu.entity.OrderBody;
 import com.danertu.entity.OrderHead;
+import com.danertu.entity.QuanYanProductCategory;
 import com.danertu.entity.ShopDetailBean;
+import com.danertu.entity.ShopStateBean;
 import com.danertu.entity.WareHouseOrderBean;
 import com.danertu.entity.WarehouseBean;
 
@@ -20,6 +27,106 @@ import retrofit2.http.POST;
  */
 
 public interface ApiService {
+    /**
+     * 获取订单头
+     *
+     * @param apiId       0036
+     * @param orderNumber 订单号
+     * @return
+     */
+    @POST(Constants.API_ADDRESS)
+    @FormUrlEncoded
+    Call<OrderHead> getOrderHead(@Field("apiid") String apiId,
+                                 @Field("ordernumber") String orderNumber);
+
+    /**
+     * 获取店铺详细信息
+     *
+     * @param apiId  0041
+     * @param shopId
+     * @param la
+     * @param lt
+     * @return
+     */
+    @POST(Constants.API_ADDRESS)
+    @FormUrlEncoded
+    Call<ShopDetailBean> getShopDetail(@Field("apiid") String apiId,
+                                       @Field("shopid") String shopId,
+                                       @Field("la") String la,
+                                       @Field("lt") String lt);
+
+    /**
+     * 获取订单体
+     *
+     * @param apiId       0072
+     * @param orderNumber 订单号
+     * @return
+     */
+    @POST(Constants.API_ADDRESS)
+    @FormUrlEncoded
+    Call<OrderBody> getOrderBody(@Field("apiid") String apiId,
+                                 @Field("ordernumber") String orderNumber);
+
+    /**
+     * 取消订单
+     *
+     * @param apiId       0075
+     * @param orderNumber 订单号
+     * @return true:取消订单成功，false:取消失败
+     */
+    @POST(Constants.API_ADDRESS)
+    @FormUrlEncoded
+    Call<String> cancelOrder(@Field("apiid") String apiId,
+                             @Field("ordernumber") String orderNumber);
+
+    /**
+     * 确认收货
+     *
+     * @param apiId       0076
+     * @param orderNumber 订单号
+     * @return
+     */
+    @POST(Constants.API_ADDRESS)
+    @FormUrlEncoded
+    Call<String> sureTakeGoods(@Field("apiid") String apiId,
+                               @Field("ordernumber") String orderNumber);
+
+
+    /**
+     * 检查当前登录用户是否为店主
+     *
+     * @param apiId  0141
+     * @param shopId 登录id
+     * @return
+     */
+    @POST(Constants.API_ADDRESS)
+    @FormUrlEncoded
+    Call<ShopStateBean> checkShopState(@Field("apiid") String apiId,
+                                       @Field("shopid") String shopId);
+
+    /**
+     * 获取上级店铺信息
+     *
+     * @param apiId  0245
+     * @param shopId
+     * @return
+     */
+    @POST(Constants.API_ADDRESS)
+    @FormUrlEncoded
+    Call<LeaderBean> getLeaderInfo(@Field("apiid") String apiId,
+                                   @Field("shopid") String shopId);
+
+    /**
+     * 获取囤货列表
+     *
+     * @param apiId             0325
+     * @param memLoginId
+     * @param pageIndex
+     * @param pageSize
+     * @param productCategoryId
+     * @param orderBy
+     * @return
+     */
     @POST(Constants.API_ADDRESS)
     @FormUrlEncoded
     Call<WarehouseBean> getStockList(@Field("apiid") String apiId,
@@ -30,6 +137,8 @@ public interface ApiService {
                                      @Field("orderBy") String orderBy);
 
     /**
+     * 获取囤货订单列表
+     *
      * @param apiId      0328
      * @param memLoginId
      * @param pageIndex
@@ -55,31 +164,23 @@ public interface ApiService {
      */
     @POST(Constants.API_ADDRESS)
     @FormUrlEncoded
-    Call<OrderHead> getOrderByType(@Field("apiid") String apiId,
-                                   @Field("memLoginId") String memLoginId,
-                                   @Field("pageIndex") int pageIndex,
-                                   @Field("pageSize") int pageSize,
-                                   @Field("orderType") int orderType);
+    Call<NewOrderHeadBean> getOrderByType(@Field("apiid") String apiId,
+                                          @Field("memLoginId") String memLoginId,
+                                          @Field("pageIndex") int pageIndex,
+                                          @Field("pageSize") int pageSize,
+                                          @Field("orderType") String orderType);
 
     /**
-     * @param apiId            0343
-     * @param memLoginId       用户id
-     * @param isUsedOrIsDelete 0-个人优惠券列表，1-使用记录列表，2-已过期列表
-     * @param pageIndex        页码
-     * @param pageSize         页容量
+     * 获取温泉产品分类
+     * @param apiId 0338
+     * @param productGuid 产品guid
      * @return
      */
-//    @POST(Constants.API_ADDRESS)
-    @POST("http://192.168.1.195:8081/ApiTest/RequestApi.aspx")
-    @FormUrlEncoded
-    Call<MyCouponBean> getMyCouponList(@Field("apiid") String apiId,
-                                       @Field("memLoginId") String memLoginId,
-                                       @Field("isUsedOrIsDelete") String isUsedOrIsDelete,
-                                       @Field("pageIndex") int pageIndex,
-                                       @Field("pageSize") int pageSize);
+    Call<QuanYanProductCategory> getQuanYanProductCategory(@Field("apiid") String apiId,
+                                                           @Field("productGuid") String productGuid);
 
     /**
-     * 获取优惠券列表
+     * 获取可领的温泉/酒水/商城优惠券
      *
      * @param apiId     0341
      * @param useScope  1-温泉券，2-酒水券，0-商城券
@@ -87,8 +188,8 @@ public interface ApiService {
      * @param pageSize  页容量
      * @return
      */
-//    @POST(Constants.API_ADDRESS)
-    @POST("http://192.168.1.195:8081/ApiTest/RequestApi.aspx")
+    @POST(Constants.API_ADDRESS)
+//    @POST("http://192.168.1.195:8081/ApiTest/RequestApi.aspx")
     @FormUrlEncoded
     Call<CouponBean> getCouponCenterList(@Field("apiid") String apiId,
                                          @Field("memLoginId") String memLoginId,
@@ -100,30 +201,83 @@ public interface ApiService {
      * 领取指定优惠券
      *
      * @param apiId      0342
+     * @param shopId     店铺id
      * @param memLoginId 登录id
      * @param couponGuid 优惠券guid
      * @return
      */
-//    @POST(Constants.API_ADDRESS)
-    @POST("http://192.168.1.195:8081/ApiTest/RequestApi.aspx")
+    @POST(Constants.API_ADDRESS)
+//    @POST("http://192.168.1.195:8081/ApiTest/RequestApi.aspx")
     @FormUrlEncoded
     Call<BaseResultBean> getCoupon(@Field("apiid") String apiId,
+                                   @Field("shopId") String shopId,
                                    @Field("memLoginId") String memLoginId,
                                    @Field("couponGuid") String couponGuid);
 
     /**
-     * 获取店铺详细信息
+     * 获取指定用户的已领取/已使用/已过期优惠券
      *
-     * @param apiId  0041
-     * @param shopId
-     * @param la
-     * @param lt
+     * @param apiId            0343
+     * @param memLoginId       用户id
+     * @param isUsedOrIsDelete 0-个人优惠券列表，1-使用记录列表，2-已过期列表
+     * @param pageIndex        页码
+     * @param pageSize         页容量
      * @return
      */
     @POST(Constants.API_ADDRESS)
+//    @POST("http://192.168.1.195:8081/ApiTest/RequestApi.aspx")
     @FormUrlEncoded
-    Call<ShopDetailBean> getShopDetail(@Field("apiid") String apiId,
-                                       @Field("shopid") String shopId,
-                                       @Field("la") String la,
-                                       @Field("lt") String lt);
+    Call<MyCouponBean> getMyCouponList(@Field("apiid") String apiId,
+                                       @Field("memLoginId") String memLoginId,
+                                       @Field("isUsedOrIsDelete") String isUsedOrIsDelete,
+                                       @Field("pageIndex") int pageIndex,
+                                       @Field("pageSize") int pageSize);
+
+    /**
+     * 获取商品可用的优惠券
+     *
+     * @param apiId      0344
+     * @param multiParam 混合参数    [{"productGuids":["ff6c4fa4-f891-4dac-bd86-523abbeb6235"],"shopId":"13925340017"},{"productGuids":["dd70d3e2-580b-4531-90d1-07e04ef8cced"],"shopId":"13557013342"}]
+     * @param memLoginId 登录id
+     * @param pageIndex  页码
+     * @param pageSize   页容量
+     * @return
+     */
+    @POST(Constants.API_ADDRESS)
+//    @POST("http://192.168.1.195:8081/ApiTest/RequestApi.aspx")
+    @FormUrlEncoded
+    Call<ChooseCouponBean> chooseCoupon(@Field("apiid") String apiId,
+                                        @Field("multiParam") String multiParam,
+                                        @Field("memLoginId") String memLoginId,
+                                        @Field("pageIndex") int pageIndex,
+                                        @Field("pageSize") int pageSize);
+
+    /**
+     * 获取指定优惠券适用的商品列表
+     *
+     * @param apiId      0345
+     * @param couponGuid 优惠券guid
+     * @return
+     */
+    @POST(Constants.API_ADDRESS)
+//    @POST("http://192.168.1.195:8081/ApiTest/RequestApi.aspx")
+    @FormUrlEncoded
+    Call<CouponProductsBean> getProductsFromCoupon(@Field("apiid") String apiId,
+                                                   @Field("memLoginId") String memLoginId,
+                                                   @Field("couponGuid") String couponGuid);
+
+    /**
+     * 获取优惠券数量
+     *
+     * @param apiId      0346
+     * @param memLoginId 登录id
+     * @return
+     */
+    @POST(Constants.API_ADDRESS)
+//    @POST("http://192.168.1.195:8081/ApiTest/RequestApi.aspx")
+    @FormUrlEncoded
+    Call<CouponCountBean> getCouponCount(@Field("apiid") String apiId,
+                                         @Field("memLoginId") String memLoginId);
+
 }
+

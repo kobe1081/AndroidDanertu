@@ -70,7 +70,7 @@ public class BadgeView extends TextView {
     /**
      * Constructor -
      * <p>
-     * create a new BadgeView instance attached to a target
+     * onCreate a new BadgeView instance attached to a target
      * {@link android.view.View}.
      *
      * @param context context for this view.
@@ -83,7 +83,7 @@ public class BadgeView extends TextView {
     /**
      * Constructor -
      * <p>
-     * create a new BadgeView instance attached to a target
+     * onCreate a new BadgeView instance attached to a target
      * {@link android.widget.TabWidget} tab at a given index.
      *
      * @param context context for this view.

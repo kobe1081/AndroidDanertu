@@ -210,7 +210,7 @@ public class AppManager {
     // post获取订单信息请求
 
     /**
-     * @param ApiId  0033
+     * @param ApiId 0033
      * @param uid
      * @param type  为1时查询当月订单，否则为全部
      * @return
@@ -292,7 +292,7 @@ public class AppManager {
     public String postGetIndexShopList(String ApiId, String cityName, int pageSize, int pageIndex, String keyword, String type) {
         HashMap<String, String> param = new HashMap<>();
         param.put("apiid", ApiId);
-        param.put("pagesize", String.valueOf(pageSize));
+        param.put("pageSize", String.valueOf(pageSize));
         param.put("pageIndex", String.valueOf(pageIndex));
         param.put("kword", keyword);
         param.put("type", type);
@@ -458,7 +458,7 @@ public class AppManager {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("apiid", ApiId));
         params.add(new BasicNameValuePair("areaCode", cityName));
-        params.add(new BasicNameValuePair("pagesize", String.valueOf(pageSize)));
+        params.add(new BasicNameValuePair("pageSize", String.valueOf(pageSize)));
         params.add(new BasicNameValuePair("pageIndex", String.valueOf(pageIndex)));
         params.add(new BasicNameValuePair("kword", keyword));
         params.add(new BasicNameValuePair("type", type));
@@ -666,7 +666,7 @@ public class AppManager {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("apiid", ApiId));
         params.add(new BasicNameValuePair("productguid", productGuid));
-        params.add(new BasicNameValuePair("pagesize", String.valueOf(pagesize)));
+        params.add(new BasicNameValuePair("pageSize", String.valueOf(pagesize)));
         params.add(new BasicNameValuePair("pageindex", String.valueOf(pageIndex)));
         return getHttpPostResult(params);
     }
@@ -717,7 +717,7 @@ public class AppManager {
         params.add(new BasicNameValuePair("apiid", ApiId));
         params.add(new BasicNameValuePair("shopid", shopId));
         params.add(new BasicNameValuePair("keyword", keyword));
-        params.add(new BasicNameValuePair("pagesize", String.valueOf(pagesize)));
+        params.add(new BasicNameValuePair("pageSize", String.valueOf(pagesize)));
         params.add(new BasicNameValuePair("pageindex", String.valueOf(pageindex)));
         return getHttpPostResult(params);
     }
@@ -1637,6 +1637,38 @@ public class AppManager {
         HashMap<String, String> param = new HashMap<>();
         param.put("apiid", "0339");
         param.put("productGuid", productGuid);
+        return doPost(param);
+    }
+
+    /**
+     * 获取优惠券数量
+     *
+     * @param loginId 登录id
+     * @return
+     */
+    public String postGetCouponCount(String loginId) {
+        HashMap<String, String> param = new HashMap<>();
+        param.put("apiid", "0346");
+        param.put("memLoginId", loginId);
+        return doPost(param);
+    }
+
+    /**
+     * 分类获取订单头信息
+     *
+     * @param loginId   登录id
+     * @param type      类型  0-全部，1-待付款，2-待发货，3-待收货，4-退款
+     * @param pageIndex 页码
+     * @param pageSize  页容量
+     * @return
+     */
+    public String postGetOrderByType(String loginId, String type, int pageIndex, int pageSize) {
+        HashMap<String, String> param = new HashMap<>();
+        param.put("apiid", "0337");
+        param.put("memLoginId", loginId);
+        param.put("orderType", type);
+        param.put("pageIndex", String.valueOf(pageIndex));
+        param.put("pageSize", String.valueOf(pageSize));
         return doPost(param);
     }
 

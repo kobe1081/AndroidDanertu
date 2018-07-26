@@ -41,6 +41,7 @@ import com.danertu.tools.MyDialog;
 import com.danertu.tools.PayUtils;
 import com.danertu.widget.CommonTools;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.testin.agent.TestinAgent;
 
 public class MyOrderAdapter extends BaseAdapter {
     public static final int REQUEST_QRCODE = 122;

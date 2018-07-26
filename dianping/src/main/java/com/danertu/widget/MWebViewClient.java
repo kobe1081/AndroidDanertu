@@ -15,10 +15,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -36,7 +38,10 @@ public class MWebViewClient extends WebViewClient {
     public MWebViewClient(Context act, String ifaceName) {
         this.act = act;
         this.iface = ifaceName;
+
     }
+
+
 
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
@@ -90,6 +95,21 @@ public class MWebViewClient extends WebViewClient {
         super.onReceivedError(view, errorCode, description, failingUrl);
         view.loadUrl(ERROR_PAGE);
         isError = true;
+    }
+
+    /**
+     * https发生错误回调
+     * @param view
+     * @param handler
+     * @param error
+     */
+    @Override
+    public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+        Logger.v(TAG, "onReceivedSslError( handler " + handler.toString() + ", SslError " + error.toString() + ")");
+//        super.onReceivedSslError(view, handler,error);
+//        view.loadUrl(ERROR_PAGE);
+//        isError = true;
+        handler.proceed();//继续加载发生错误的网址
     }
 
     @Override

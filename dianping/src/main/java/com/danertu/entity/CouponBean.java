@@ -24,13 +24,23 @@ import java.util.List;
  * UseEndTime : 1900/1/1 0:00:00  --自定义结束使用时间
  * UseFromTomorrow  : 0    --领取后次日N天内可用
  * UseFromToday : 2     --领取后当日N天内可用
+ * ShopId :
+ * ProductCategoryID : 779
+ * WenQuanUrl :
+ * AppUrl :
+ * JumpType : 3
  * Description : 1.详细信息@@2.详细信息@@3.详细信息 --使用说明
+ * <p>
+ * GetTime :2018/7/1 0:00:00 --领取时间
+ * EndTime:                 --截止有效期
+ * AppointProductUrl: 产品地址
+ * AppointProductType  1-成人票、儿童票  2-团体票  3-客房
  */
 public class CouponBean {
 
     /**
-     * CouponList : [{"Guid":"f1fd9c9e-fe07-4bbb-93dd-3371ae716081","CouponName":"温泉儿童优惠券3","RemainCount":"8","DiscountType":"0","DiscountPrice":"10.00","DiscountPercent":"0.00","GetStartTime":"2018/7/1 0:00:00","GetEndTime":"2018/7/10 0:00:00","UseCondition":"0","UseConditionLimitPrice":"0.00","IsUsed":"0","UseScope":"1","UseAgentAppoint":"","UseProductAppointGuid":"","UseProductExceptGuid":"","UseValidityType":"2","UseStartTime":"1900/1/1 0:00:00","UseEndTime":"1900/1/1 0:00:00","UseFromTomorrow":"0","UseFromToday":"2","Description":"1.说明说明说明说明说明说明说明说明说明说明说明说明说明@@2.说明说明说明说明说明说明说明@@3.说明说明说明说明说明说明说明"},{"Guid":"d2af1874-9c43-4db7-8e3e-1215a3723460","CouponName":"温泉儿童优惠券2","RemainCount":"8","DiscountType":"1","DiscountPrice":"0.00","DiscountPercent":"8.80","GetStartTime":"2018/7/1 0:00:00","GetEndTime":"2018/7/10 0:00:00","UseCondition":"1","UseConditionLimitPrice":"300.00","IsUsed":"0","UseScope":"1","UseAgentAppoint":"","UseProductAppointGuid":"","UseProductExceptGuid":"","UseValidityType":"0","UseStartTime":"2018/7/8 0:00:00","UseEndTime":"2018/7/20 0:00:00","UseFromTomorrow ":"0","UseFromToday":"0","Description":"1.说明说明说明说明说明说明说明说明说明说明说明@@2.说明说明说明说明说明说明说明说明"},{"Guid":"e02ab45b-830a-4f9f-82c3-03c3fe8c0e85","CouponName":"温泉儿童优惠券1","RemainCount":"8","DiscountType":"0","DiscountPrice":"10.00","DiscountPercent":"0.00","GetStartTime":"2018/7/1 0:00:00","GetEndTime":"2018/7/10 0:00:00","UseCondition":"1","UseConditionLimitPrice":"200.00","IsUsed":"0","UseScope":"1","UseAgentAppoint":"","UseProductAppointGuid":"","UseProductExceptGuid":"","UseValidityType":"1","UseStartTime":"1900/1/1 0:00:00","UseEndTime":"1900/1/1 0:00:00","UseFromTomorrow ":"3","UseFromToday":"0","Description":"1.说明说明说明说明说明说明说明说明说明@@2.说明说明说明说明说明说明说明说明说明@@3.说明说明说明说明说明说明说明说明"}]
-     * TotalCount_o : 3
+     * CouponList : [{"Guid":"d6d7d5eb-eaae-404c-b4f4-20c630f89c49","CouponName":"全平台优惠券-新用户专享","RemainCount":"47","DiscountType":"0","DiscountPrice":"10.00","DiscountPercent":"0.00","GetStartTime":"2018/7/1 0:00:00","GetEndTime":"2018/7/28 0:00:00","UseCondition":"0","UseConditionLimitPrice":"0.00","IsUsed":"","UseScope":"0","UseAgentAppoint":"","UseProductAppointGuid":"","UseProductExceptGuid":"","UseValidityType":"0","UseStartTime":"2018/7/8 0:00:00","UseEndTime":"2018/7/28 0:00:00","UseFromTomorrow":"0","UseFromToday":"0","ShopId":"","GetTime":"","ProductCategoryID":"","WenQuanUrl":"","AppUrl":"","JumpType":"5","Description":""},{"Guid":"68886d70-7b43-44c6-93ef-4afac2a4a96c","CouponName":"全平台优惠券-限领1张","RemainCount":"47","DiscountType":"0","DiscountPrice":"10.00","DiscountPercent":"0.00","GetStartTime":"2018/7/8 0:00:00","GetEndTime":"2018/7/28 0:00:00","UseCondition":"0","UseConditionLimitPrice":"0.00","IsUsed":"0","UseScope":"0","UseAgentAppoint":"","UseProductAppointGuid":"","UseProductExceptGuid":"","UseValidityType":"0","UseStartTime":"2018/7/8 0:00:00","UseEndTime":"2018/7/28 0:00:00","UseFromTomorrow":"0","UseFromToday":"0","ShopId":"15017339307","GetTime":"2018/7/20 10:25:04","ProductCategoryID":"","WenQuanUrl":"","AppUrl":"","JumpType":"5","Description":""},{"Guid":"f4c5e8ea-3de2-4837-aa88-697e9f7e6495","CouponName":"全平台优惠券-普通用户可领","RemainCount":"50","DiscountType":"0","DiscountPrice":"10.00","DiscountPercent":"0.00","GetStartTime":"2018/7/8 0:00:00","GetEndTime":"2018/7/28 0:00:00","UseCondition":"0","UseConditionLimitPrice":"0.00","IsUsed":"","UseScope":"0","UseAgentAppoint":"","UseProductAppointGuid":"","UseProductExceptGuid":"","UseValidityType":"0","UseStartTime":"2018/7/8 0:00:00","UseEndTime":"2018/7/28 0:00:00","UseFromTomorrow":"0","UseFromToday":"0","ShopId":"","GetTime":"","ProductCategoryID":"","WenQuanUrl":"","AppUrl":"","JumpType":"5","Description":""},{"Guid":"f7e67739-6f86-4e67-b174-77c90d472a32","CouponName":"全平台优惠券-无限制","RemainCount":"49","DiscountType":"0","DiscountPrice":"10.00","DiscountPercent":"0.00","GetStartTime":"2018/7/8 0:00:00","GetEndTime":"2018/7/28 0:00:00","UseCondition":"0","UseConditionLimitPrice":"0.00","IsUsed":"0","UseScope":"0","UseAgentAppoint":"","UseProductAppointGuid":"","UseProductExceptGuid":"","UseValidityType":"0","UseStartTime":"2018/7/8 0:00:00","UseEndTime":"2018/7/28 0:00:00","UseFromTomorrow":"0","UseFromToday":"0","ShopId":"15017339307","GetTime":"2018/7/20 10:25:29","ProductCategoryID":"","WenQuanUrl":"","AppUrl":"","JumpType":"5","Description":""},{"Guid":"239fb240-1cf0-49e9-ae7a-7b7fddc43575","CouponName":"全平台优惠券-满100元可使用","RemainCount":"48","DiscountType":"1","DiscountPrice":"1.00","DiscountPercent":"9.80","GetStartTime":"2018/7/8 0:00:00","GetEndTime":"2018/7/28 0:00:00","UseCondition":"1","UseConditionLimitPrice":"100.00","IsUsed":"0","UseScope":"0","UseAgentAppoint":"","UseProductAppointGuid":"","UseProductExceptGuid":"","UseValidityType":"0","UseStartTime":"2018/7/8 0:00:00","UseEndTime":"2018/7/28 0:00:00","UseFromTomorrow":"0","UseFromToday":"0","ShopId":"15017339307","GetTime":"2018/7/20 10:25:31","ProductCategoryID":"","WenQuanUrl":"","AppUrl":"","JumpType":"5","Description":""},{"Guid":"69aa1363-ac51-47db-bb4e-8eb5c1eacc5e","CouponName":"全平台优惠券-区代理、代理商可领","RemainCount":"50","DiscountType":"0","DiscountPrice":"10.00","DiscountPercent":"0.00","GetStartTime":"2018/7/9 0:00:00","GetEndTime":"2018/7/28 0:00:00","UseCondition":"0","UseConditionLimitPrice":"0.00","IsUsed":"","UseScope":"0","UseAgentAppoint":"","UseProductAppointGuid":"","UseProductExceptGuid":"","UseValidityType":"0","UseStartTime":"2018/7/8 0:00:00","UseEndTime":"2018/7/28 0:00:00","UseFromTomorrow":"0","UseFromToday":"0","ShopId":"","GetTime":"","ProductCategoryID":"","WenQuanUrl":"","AppUrl":"","JumpType":"5","Description":""},{"Guid":"feb5b1db-fbda-4c63-818f-bf86e67a3b44","CouponName":"全平台优惠券-领取后当日5天内可用","RemainCount":"44","DiscountType":"0","DiscountPrice":"10.00","DiscountPercent":"0.00","GetStartTime":"2018/7/8 0:00:00","GetEndTime":"2018/7/28 0:00:00","UseCondition":"0","UseConditionLimitPrice":"0.00","IsUsed":"0","UseScope":"0","UseAgentAppoint":"","UseProductAppointGuid":"","UseProductExceptGuid":"","UseValidityType":"2","UseStartTime":"1900/1/1 0:00:00","UseEndTime":"1900/1/1 0:00:00","UseFromTomorrow":"0","UseFromToday":"5","ShopId":"13557013342","GetTime":"2018/7/20 11:07:21","ProductCategoryID":"","WenQuanUrl":"","AppUrl":"","JumpType":"5","Description":"1.教育的最首要功能是促进个体发展，包括个体的社会化和个性化；@@2.教育的最基础功能是影响社会人才体系的变化以及经济发展。现代社会重教育的经济功能主要包括：为经济的持续稳定发展提供良好的背景；提高受教育者的潜在劳动能力；形成适应现代经济生活的观念态度和行为方式；@@3.教育的社会功能是为国家的发展培养人才，服务于国家的政治、经济发展。@@4.教育的最深远功能是影响文化发展，教育不仅要传递文化，还"},{"Guid":"f51ba858-03af-472f-9dae-d27503f341fd","CouponName":"全平台优惠券-四级代理都可领","RemainCount":"50","DiscountType":"0","DiscountPrice":"10.00","DiscountPercent":"0.00","GetStartTime":"2018/7/1 0:00:00","GetEndTime":"2018/7/28 0:00:00","UseCondition":"0","UseConditionLimitPrice":"0.00","IsUsed":"","UseScope":"0","UseAgentAppoint":"","UseProductAppointGuid":"","UseProductExceptGuid":"","UseValidityType":"0","UseStartTime":"2018/7/1 0:00:00","UseEndTime":"2018/7/28 0:00:00","UseFromTomorrow":"0","UseFromToday":"0","ShopId":"","GetTime":"","ProductCategoryID":"","WenQuanUrl":"","AppUrl":"","JumpType":"5","Description":"1.教育的最首要功能是促进个体发展，包括个体的社会化和个性化；@@2.教育的最基础功能是影响社会人才体系的变化以及经济发展。现代社会重教育的经济功能主要包括：为经济的持续稳定发展提供良好的背景；提高受教育者的潜在劳动能力；形成适应现代经济生活的观念态度和行为方式；@@3.教育的社会功能是为国家的发展培养人才，服务于国家的政治、经济发展。@@4.教育的最深远功能是影响文化发展，教育不仅要传递文化，还"},{"Guid":"c80777c4-e7cc-44b1-bf8b-e4d7aa1d969b","CouponName":"领取后次日2天可用","RemainCount":"49","DiscountType":"0","DiscountPrice":"10.00","DiscountPercent":"0.00","GetStartTime":"2018/7/8 0:00:00","GetEndTime":"2018/7/28 0:00:00","UseCondition":"0","UseConditionLimitPrice":"0.00","IsUsed":"0","UseScope":"0","UseAgentAppoint":"","UseProductAppointGuid":"","UseProductExceptGuid":"","UseValidityType":"1","UseStartTime":"1900/1/1 0:00:00","UseEndTime":"1900/1/1 0:00:00","UseFromTomorrow":"2","UseFromToday":"0","ShopId":"15017339307","GetTime":"2018/7/20 11:28:35","ProductCategoryID":"","WenQuanUrl":"","AppUrl":"","JumpType":"5","Description":""}]
+     * TotalCount_o : 9
      * TotalPageCount_o : 1
      */
 
@@ -64,27 +74,34 @@ public class CouponBean {
 
     public static class CouponListBean {
         /**
-         * Guid : f1fd9c9e-fe07-4bbb-93dd-3371ae716081
-         * CouponName : 温泉儿童优惠券3
-         * RemainCount : 8
+         * Guid : d6d7d5eb-eaae-404c-b4f4-20c630f89c49
+         * CouponName : 全平台优惠券-新用户专享
+         * RemainCount : 47
          * DiscountType : 0
          * DiscountPrice : 10.00
          * DiscountPercent : 0.00
          * GetStartTime : 2018/7/1 0:00:00
-         * GetEndTime : 2018/7/10 0:00:00
+         * GetEndTime : 2018/7/28 0:00:00
          * UseCondition : 0
          * UseConditionLimitPrice : 0.00
-         * IsUsed : 0
-         * UseScope : 1
+         * IsUsed :
+         * UseScope : 0
          * UseAgentAppoint :
          * UseProductAppointGuid :
          * UseProductExceptGuid :
-         * UseValidityType : 2
-         * UseStartTime : 1900/1/1 0:00:00
-         * UseEndTime : 1900/1/1 0:00:00
+         * UseValidityType : 0
+         * UseStartTime : 2018/7/8 0:00:00
+         * UseEndTime : 2018/7/28 0:00:00
          * UseFromTomorrow : 0
-         * UseFromToday : 2
-         * Description : 1.说明说明说明说明说明说明说明说明说明说明说明说明说明@@2.说明说明说明说明说明说明说明@@3.说明说明说明说明说明说明说明
+         * UseFromToday : 0
+         * ShopId :
+         * GetTime :
+         * ProductCategoryID :
+         * WenQuanUrl :
+         * AppUrl :
+         * JumpType : 5
+         * Description :
+         * AppointProductUrl
          */
 
         private String Guid;
@@ -107,7 +124,32 @@ public class CouponBean {
         private String UseEndTime;
         private String UseFromTomorrow;
         private String UseFromToday;
+        private String ShopId;
+        private String GetTime;
+        private String ProductCategoryID;
+        private String WenQuanUrl;
+        private String AppUrl;
+        private String JumpType;
         private String Description;
+        private String EndTime;
+        private String AppointProductUrl;
+        private String AppointProductType;
+
+        public String getAppointProductType() {
+            return AppointProductType;
+        }
+
+        public void setAppointProductType(String appointProductType) {
+            AppointProductType = appointProductType;
+        }
+
+        public String getAppointProductUrl() {
+            return AppointProductUrl;
+        }
+
+        public void setAppointProductUrl(String appointProductUrl) {
+            AppointProductUrl = appointProductUrl;
+        }
 
         public String getGuid() {
             return Guid;
@@ -269,12 +311,68 @@ public class CouponBean {
             this.UseFromToday = UseFromToday;
         }
 
+        public String getShopId() {
+            return ShopId;
+        }
+
+        public void setShopId(String ShopId) {
+            this.ShopId = ShopId;
+        }
+
+        public String getGetTime() {
+            return GetTime;
+        }
+
+        public void setGetTime(String GetTime) {
+            this.GetTime = GetTime;
+        }
+
+        public String getProductCategoryID() {
+            return ProductCategoryID;
+        }
+
+        public void setProductCategoryID(String ProductCategoryID) {
+            this.ProductCategoryID = ProductCategoryID;
+        }
+
+        public String getWenQuanUrl() {
+            return WenQuanUrl;
+        }
+
+        public void setWenQuanUrl(String WenQuanUrl) {
+            this.WenQuanUrl = WenQuanUrl;
+        }
+
+        public String getAppUrl() {
+            return AppUrl;
+        }
+
+        public void setAppUrl(String AppUrl) {
+            this.AppUrl = AppUrl;
+        }
+
+        public String getJumpType() {
+            return JumpType;
+        }
+
+        public void setJumpType(String JumpType) {
+            this.JumpType = JumpType;
+        }
+
         public String getDescription() {
             return Description;
         }
 
         public void setDescription(String Description) {
             this.Description = Description;
+        }
+
+        public String getEndTime() {
+            return EndTime;
+        }
+
+        public void setEndTime(String endTime) {
+            EndTime = endTime;
         }
     }
 }

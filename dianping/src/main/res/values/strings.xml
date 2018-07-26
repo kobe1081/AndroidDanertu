@@ -287,4 +287,9 @@
     <string name="coupon_center_mall">商城券</string>
     <string name="coupon_history_use">使用记录</string>
     <string name="coupon_history_out_date">已过期</string>
+    <string name="order_center_all">全部</string>
+    <string name="order_center_no_pay">待付款</string>
+    <string name="order_center_no_send">待发货</string>
+    <string name="order_center_no_receive">待收货</string>
+    <string name="order_center_pay_back">退款</string>
 </resources>

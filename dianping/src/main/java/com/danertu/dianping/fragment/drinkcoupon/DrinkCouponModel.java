@@ -1,6 +1,7 @@
 package com.danertu.dianping.fragment.drinkcoupon;
 
 import android.os.Handler;
+import android.text.TextUtils;
 
 import com.config.ApiService;
 import com.danertu.base.BaseModel;
@@ -96,8 +97,8 @@ public class DrinkCouponModel extends BaseModel {
         });
     }
 
-    public void getCoupon(final Handler handler, final int position, String loginId, String couponGuid) {
-        Call<BaseResultBean> call = retrofit.create(ApiService.class).getCoupon("0342", loginId, couponGuid);
+    public void getCoupon(final Handler handler, final int position,String shopId, String loginId, String couponGuid) {
+        Call<BaseResultBean> call = retrofit.create(ApiService.class).getCoupon("0342", shopId,loginId, couponGuid);
         call.enqueue(new Callback<BaseResultBean>() {
             @Override
             public void onResponse(Call<BaseResultBean> call, Response<BaseResultBean> response) {
@@ -129,7 +130,13 @@ public class DrinkCouponModel extends BaseModel {
                     handler.sendEmptyMessage(WHAT_SHOP_DETAIL_ERROR);
                     return;
                 }
-                sendMessage(handler, WHAT_SHOP_DETAIL_SUCCESS, Integer.parseInt(response.body().getShopdetails().getShopbean().get(0).getLeveltype()), shopId);
+                List<ShopDetailBean.ShopdetailsBean.ShopbeanBean> shopbean = response.body().getShopdetails().getShopbean();
+                if (shopbean == null || shopbean.size() == 0) {
+                    handler.sendEmptyMessage(WHAT_SHOP_DETAIL_ERROR);
+                    return;
+                }
+                String leveltype = shopbean.get(0).getLeveltype();
+                sendMessage(handler, WHAT_SHOP_DETAIL_SUCCESS, Integer.parseInt(TextUtils.isEmpty(leveltype)?"1":leveltype), shopId);
             }
 
             @Override

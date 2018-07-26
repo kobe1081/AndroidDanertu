@@ -4,6 +4,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".OrderCenterActivity">
+    android:background="#f2f2f2">
 
+    <include
+        android:id="@+id/ll_title_order"
+        layout="@layout/app_title7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <RadioGroup
+        android:id="@+id/rg_order_center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|bottom"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/ll_title_order">
+
+        <RadioButton
+            android:id="@+id/rb_all"
+            style="@style/order_center_radio"
+            android:text="@string/order_center_all" />
+
+        <RadioButton
+            android:id="@+id/rb_no_pay"
+            style="@style/order_center_radio"
+            android:text="@string/order_center_no_pay" />
+
+        <RadioButton
+            android:id="@+id/rb_no_send"
+            style="@style/order_center_radio"
+            android:text="@string/order_center_no_send" />
+
+        <RadioButton
+            android:id="@+id/rb_no_receive"
+            style="@style/order_center_radio"
+            android:text="@string/order_center_no_receive" />
+
+        <RadioButton
+            android:id="@+id/rb_pay_back"
+            style="@style/order_center_radio"
+            android:text="@string/order_center_pay_back" />
+    </RadioGroup>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/rg_order_center"
+        app:layout_constraintVertical_weight="1" />
 </android.support.constraint.ConstraintLayout>

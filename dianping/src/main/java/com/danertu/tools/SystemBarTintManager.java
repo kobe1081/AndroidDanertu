@@ -77,7 +77,7 @@ public class SystemBarTintManager {
 
     /**
      * Constructor. Call this in the host activityWeakReference onCreate method after its
-     * content view has been set. You should always create new instances when
+     * content view has been set. You should always onCreate new instances when
      * the host activityWeakReference is recreated.
      *
      * @param activity The host activityWeakReference.

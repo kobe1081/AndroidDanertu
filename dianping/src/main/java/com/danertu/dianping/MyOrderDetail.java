@@ -371,8 +371,8 @@ public class MyOrderDetail extends BaseActivity {
             tv_recAddress.setText(recAddress);
             tv_recName.setText(recName);
         }
-        //下单时间
         tv_recMobile.setText(recMobile);
+        //下单时间
         tv_orderCreateTime.setText("下单时间：" + orderCreate.replace("/", "."));
 
         //订单号
@@ -415,14 +415,14 @@ public class MyOrderDetail extends BaseActivity {
 //                tv_payWay.setText("支付方式：" + paymentName);
 //            }
 
-            final ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-            tv_copy_order_num.setOnClickListener(new View.OnClickListener() {
-                @SuppressWarnings("deprecation")
-                public void onClick(View v) {
-                    cm.setText(outOrderNumber);
-                    jsShowMsg("复制成功");
-                }
-            });
+        final ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        tv_copy_order_num.setOnClickListener(new View.OnClickListener() {
+            @SuppressWarnings("deprecation")
+            public void onClick(View v) {
+                cm.setText(outOrderNumber);
+                jsShowMsg("复制成功");
+            }
+        });
 
         b_order_opera1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -777,7 +777,7 @@ public class MyOrderDetail extends BaseActivity {
             proMsg.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     if (isQuanyan) {
-                        new ToQuanyanProductPage().execute(guid);
+                        new ToQuanyanProductPage().execute(guid,agentID);
                     } else {
                         startToProDetail(guid, proName, image, "", agentID, supID, price, mobile);
                     }
@@ -1636,26 +1636,29 @@ public class MyOrderDetail extends BaseActivity {
             if (TextUtils.isEmpty(productGuid)) {
                 return "";
             }
-            return appManager.postGetProductCategory(productGuid);
+            return param[1]+",;"+appManager.postGetProductCategory(productGuid);
         }
 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            if (TextUtils.isEmpty(result)) {
+            String[] split = result.split(",;");
+            if (TextUtils.isEmpty(split[1])) {
                 jsShowMsg("商品信息有误");
                 return;
             }
             try {
-                ProductCategory category = gson.fromJson(result, ProductCategory.class);
+                ProductCategory category = gson.fromJson(split[1], ProductCategory.class);
                 ProductCategory.ValBean bean = category.getVal().get(0);
                 String productCategory = bean.getProductCategory();
                 String guid = bean.getProductGuid();
 
-                Intent intent = new Intent(context, HtmlActivityNew.class);
-                String url = Constants.appWebPageUrl + QUANYAN_PRODUCT_URL + "?productCategory=" + productCategory + "&guid=" + guid;
-                intent.putExtra("url", url);
-                startActivity(intent);
+                jsStartActivity("com.danertu.dianping.HtmlActivity", "pageName|"  + QUANYAN_PRODUCT_URL + "?&platform=android&timestamp=" + System.currentTimeMillis() + ",;guid|" + bean.getProductGuid() + ",;shopid|" + split[0] + ",;productCategory|" + bean.getProductCategory());
+
+//                Intent intent = new Intent(context, HtmlActivityNew.class);
+//                String url = Constants.appWebPageUrl + QUANYAN_PRODUCT_URL + "?productCategory=" + productCategory + "&guid=" + guid;
+//                intent.putExtra("url", url);
+//                startActivity(intent);
             } catch (JsonSyntaxException e) {
                 jsShowMsg("商品信息有误");
                 e.printStackTrace();

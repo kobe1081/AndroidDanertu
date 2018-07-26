@@ -105,7 +105,7 @@ public class WarehousePresenter extends BasePresenter<WarehouseView> implements 
     }
 
     public void loadData(int page, String productCategoryId, String orderBy) {
-        model.getStockList(handler, view.getUid(), page, Constants.pagesize, productCategoryId, orderBy);
+        model.getStockList(handler, view.getUid(), page, Constants.pageSize, productCategoryId, orderBy);
     }
 
     /**
@@ -116,13 +116,13 @@ public class WarehousePresenter extends BasePresenter<WarehouseView> implements 
         model.clearData();
         view.updateView();
         currentPage = 1;
-        model.getStockList(handler, view.getUid(), currentPage, Constants.pagesize, productCategoryId, orderBy);
+        model.getStockList(handler, view.getUid(), currentPage, Constants.pageSize, productCategoryId, orderBy);
     }
 
     public void filterData(String productCategoryId, String orderBy) {
         this.productCategoryId = productCategoryId;
         this.orderBy = orderBy;
-        model.getStockList(handler, view.getUid(), currentPage, Constants.pagesize, productCategoryId, orderBy);
+        model.getStockList(handler, view.getUid(), currentPage, Constants.pageSize, productCategoryId, orderBy);
     }
 
     /**

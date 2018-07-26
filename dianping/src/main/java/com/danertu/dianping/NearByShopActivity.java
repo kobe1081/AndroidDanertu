@@ -137,7 +137,7 @@ public class NearByShopActivity extends Activity implements IXListViewListener {
     Runnable sendAble = new Runnable() {
         @Override
         public void run() {
-            String result = AppManager.getInstance().postGetNearByShopList("0037", Constants.getCityName(), Constants.pagesize, 1, "", "");
+            String result = AppManager.getInstance().postGetNearByShopList("0037", Constants.getCityName(), Constants.pageSize, 1, "", "");
             JSONObject jsonObject;
             try {
                 jsonObject = new JSONObject(result).getJSONObject("shoplist");
@@ -270,7 +270,7 @@ public class NearByShopActivity extends Activity implements IXListViewListener {
     Runnable moresendable = new Runnable() {
         @Override
         public void run() {
-            String result = AppManager.getInstance().postGetNearByShopList("0037", Constants.getCityName(), Constants.pagesize, pageIndex, "", "");
+            String result = AppManager.getInstance().postGetNearByShopList("0037", Constants.getCityName(), Constants.pageSize, pageIndex, "", "");
             JSONObject jsonObject;
             try {
                 jsonObject = new JSONObject(result).getJSONObject("shoplist");

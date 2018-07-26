@@ -315,7 +315,7 @@
             </LinearLayout>
             <!--支付信息-->
             <LinearLayout
-                android:id="@+id/ll_contact"
+                android:id="@+id/ll_pay_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
@@ -359,7 +359,7 @@
             </LinearLayout>
             <!--更多-->
             <LinearLayout
-                android:id="@+id/ll_contact"
+                android:id="@+id/ll_more"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +49,10 @@ import static com.danertu.dianping.activity.mycoupon.MyCouponPresenter.REQUEST_G
  * 下单页面返回至下单页面
  * <p>
  * 当优惠券的使用日期未到时不可点击
+ * <p>
+ * <p>
+ * shopId：当用户为店主时shopId为用户的shopId，不是店主则为上级的shoId
+ * 同时领券中心的shopId从本页面传递，不需要再重新获取
  */
 public class MyCouponActivity extends NewBaseActivity<MyCouponContact.MyCouponView, MyCouponPresenter> implements MyCouponContact.MyCouponView, SwipeRefreshLayout.OnRefreshListener, XListView.IXListViewListener {
     @BindView(R.id.b_title_back)
@@ -100,7 +105,7 @@ public class MyCouponActivity extends NewBaseActivity<MyCouponContact.MyCouponVi
 
     @OnClick({R.id.tv_coupon_get_more, R.id.tv_no_data})
     public void onTvMoreClick(View view) {
-        jsStartActivityForResult("com.danertu.dianping.CouponCenterActivity", "", REQUEST_GET_COUPON);
+        jsStartActivityForResult("com.danertu.dianping.CouponCenterActivity", "shopid|" + getShopId(), REQUEST_GET_COUPON);
     }
 
     @OnClick(R.id.tv_try_again)
@@ -110,7 +115,6 @@ public class MyCouponActivity extends NewBaseActivity<MyCouponContact.MyCouponVi
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Logger.e(TAG, "onActivityResult");
         presenter.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -278,19 +282,25 @@ public class MyCouponActivity extends NewBaseActivity<MyCouponContact.MyCouponVi
                     String[] startTimes = useStartTime.split(" ");
                     String[] endTimes = bean.getUseEndTime().replace("/", ".").replace("-", ".").split(" ");
                     useDate = startTimes[0] + "-" + endTimes[0];
-                    isCanUse(holder.tvMyCouponUse,useStartTime);
+//                    isCanUse(holder.tvMyCouponUse, useStartTime);
                     break;
                 case "1":
                     //领取后次日N天内可用
-                    String useFromTomorrowStart=bean.getUseFromTomorrowStart();
-                    useDate = "领取后次日"+bean.getUseFromTomorrow()+"天内有效";
-                    isCanUse(holder.tvMyCouponUse,useFromTomorrowStart);
+//                    String useFromTomorrowStart = bean.getUseFromTomorrowStart();
+                    String[] splitTomorrowStart = bean.getUseFromTomorrowStart().replace("/", ".").replace("-", ".").split(" ");
+                    String[] splitTomorrowEnd = bean.getUseFromTomorrowEnd().replace("/", ".").replace("-", ".").split(" ");
+//                    useDate = "领取后次日" + bean.getUseFromTomorrow() + "天内有效";
+                    useDate=splitTomorrowStart[0]+"-"+splitTomorrowEnd[0];
+//                    isCanUse(holder.tvMyCouponUse, useFromTomorrowStart);
                     break;
                 case "2":
                     //领取后当日N天内可用
-                    String useFromTodayStart = bean.getUseFromTodayStart();
-                    useDate="领取后"+bean.getUseFromToday()+"天内有效";
-                    isCanUse(holder.tvMyCouponUse,useFromTodayStart);
+//                    String useFromTodayStart = bean.getUseFromTodayStart();
+                    String[] splitTodayStart = bean.getUseFromTodayStart().replace("/", ".").replace("-", ".").split(" ");
+                    String[] splitTodayEnd = bean.getUseFromTodayEnd().replace("/", ".").replace("-", ".").split(" ");
+//                    useDate = "领取后" + bean.getUseFromToday() + "天内有效";
+                    useDate=splitTodayStart[0]+"-"+splitTodayEnd[0];
+//                    isCanUse(holder.tvMyCouponUse, useFromTodayStart);
                     break;
             }
 
@@ -330,40 +340,143 @@ public class MyCouponActivity extends NewBaseActivity<MyCouponContact.MyCouponVi
                 }
             });
 
+//            holder.tvMyCouponUse.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    switch (bean.getUseScope()) {
+//                        case "0"://全平台--点击使用跳转至首页。
+//                            backToHome();
+//                            break;
+//                        case "1"://温泉--点击使用跳转至温泉预订页面。
+//                            //app.jsStartActivity('HtmlActivityNew', 'url|' + sp.qyyd + '?agentid=' + shopid + '&platform=android&timestamp=' + Date.parse(new Date()));
+//                            Intent intent = new Intent(context, HtmlActivityNew.class);
+//                            intent.putExtra("url", Constants.SPRING_URL + "?agentid=" + getUid() + "&platform=android&timestamp=" + System.currentTimeMillis());
+//                            startActivity(intent);
+//                            break;
+//                        case "2"://酒水 --跳转至酒水列表  cateid=779
+//                            //app.jsStartActivity('CategoryActivity', 'cateid|' + categoryId + ',;shopid|' + shopid);
+//                            jsStartActivity("com.danertu.dianping.CategoryActivity", "cateid|779,;shopid|" + getShopId());
+//                            break;
+//                        case "3"://指定代理商 --当优惠券指定代理商时，点击使用跳转至该代理商店铺首页，不可指定多个代理商。
+//                            presenter.toAgentShopIndex(bean.getUseAgentAppoint());
+//                            break;
+//                        case "4"://指定商品 --指定商品，当指定特定商品时，跳转至该商品详情。 当同时指定多个商品时，跳转至首页。（后续可指定商品集合表）
+//                            String[] guids = bean.getUseProductAppointGuid().split(",");
+//                            if (guids.length > 1) {
+//                                //跳转至列表  目前仅跳首页
+//                                backToHome();
+//                            } else {
+//                                //只有一个的时候跳转至商品详情
+//                                //app.jsStartActivity('ProductDetailsActivity2', 'guid|' + guid + ',;shopid|' + shopid);
+//                                jsStartActivity("com.danertu.dianping.ProductDetailsActivity2", "guid|" + guids[0] + ",;shopid|" + getShopId());
+//                            }
+//                            break;
+//                        case "5"://除指定商品--指定商品除外跳转至首页。
+//                            backToHome();
+//                            break;
+//                    }
+//                }
+//            });
+
+
+
             holder.tvMyCouponUse.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    switch (bean.getUseScope()) {
-                        case "0"://全平台--点击使用跳转至首页。
-                            backToHome();
+                    //判断优惠券是否在有效期
+                    boolean isCanUse = false;
+                    switch (bean.getUseValidityType()) {
+                        case "0"://自定义日期
+                            try {
+                                String useStartTime = bean.getUseStartTime().replace("/","-");
+                                String useEndTime = bean.getUseEndTime().replace("/","-");
+                                //比较两个日期,如果日期相等返回0；小于0，参数date1就是在date2之后,大于0，参数date1就是在date2之前
+                                isCanUse= DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(),useStartTime)<0&&DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(),useEndTime)>=0;
+                            } catch (Exception e) {
+                                isCanUse=false;
+//                                        e.printStackTrace();
+                            }
                             break;
-                        case "1"://温泉--点击使用跳转至温泉预订页面。
-                            //app.jsStartActivity('HtmlActivityNew', 'url|' + sp.qyyd + '?agentid=' + shopid + '&platform=android&timestamp=' + Date.parse(new Date()));
+                        case "1"://领取后次日N天内可用
+                            try {
+                                String useStartTime = bean.getUseFromTomorrowStart().replace("/","-");
+                                String useEndTime = bean.getUseFromTomorrowEnd().replace("/","-");
+                                //比较两个日期,如果日期相等返回0；小于0，参数date1就是在date2之后,大于0，参数date1就是在date2之前
+                                isCanUse= DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(),useStartTime)<0&&DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(),useEndTime)>=0;
+                            } catch (Exception e) {
+                                isCanUse=false;
+//                                        e.printStackTrace();
+                            }
+                            break;
+                        case "2"://领取后当日N天内可用
+                            try {
+                                String useStartTime = bean.getUseFromTodayStart().replace("/","-");
+                                String useEndTime = bean.getUseFromTodayEnd().replace("/","-");
+                                //比较两个日期,如果日期相等返回0；小于0，参数date1就是在date2之后,大于0，参数date1就是在date2之前
+                                isCanUse= DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(),useStartTime)<0&&DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(),useEndTime)>=0;
+                            } catch (Exception e) {
+                                isCanUse=false;
+//                                        e.printStackTrace();
+                            }
+                            break;
+                    }
+
+                    if (!isCanUse) {
+                        jsShowMsg("当前日期不可用");
+                        return;
+                    }
+                    switch (bean.getJumpType()) {
+                        case "0"://--独立页面 --温泉/酒店
                             Intent intent = new Intent(context, HtmlActivityNew.class);
-                            intent.putExtra("url", Constants.SPRING_URL + "?agentid=" + getUid() + "&platform=android&timestamp=" + System.currentTimeMillis());
+//                            intent.putExtra("url", bean.getWenQuanUrl() +  "&platform=android&timestamp=" + System.currentTimeMillis());
+                            intent.putExtra("url", bean.getWenQuanUrl().contains("agentid") ? bean.getWenQuanUrl() : (bean.getWenQuanUrl() + "agentid=" + bean.getShopId()) + "&platform=android&timestamp=" + System.currentTimeMillis());
                             startActivity(intent);
                             break;
-                        case "2"://酒水 --跳转至酒水列表  cateid=779
-                            //app.jsStartActivity('CategoryActivity', 'cateid|' + categoryId + ',;shopid|' + shopid);
-                            jsStartActivity("com.danertu.dianping.CategoryActivity", "cateid|779,;shopid|" + getShopId());
-                            break;
-                        case "3"://指定代理商 --当优惠券指定代理商时，点击使用跳转至该代理商店铺首页，不可指定多个代理商。
-                            presenter.toAgentShopIndex(bean.getUseAgentAppoint());
-                            break;
-                        case "4"://指定商品 --指定商品，当指定特定商品时，跳转至该商品详情。 当同时指定多个商品时，跳转至首页。（后续可指定商品集合表）
+                        case "1"://--原生产品列表
                             String[] guids = bean.getUseProductAppointGuid().split(",");
                             if (guids.length > 1) {
-                                //跳转至列表  目前仅跳首页
-                                backToHome();
+                                //跳去新页面,请求新接口展示数据
+                                jsStartActivity("com.danertu.dianping.CouponProductsActivity", "shopid|" + bean.getShopId() + ",;couponGuid|" + bean.getCouponGuid());
                             } else {
                                 //只有一个的时候跳转至商品详情
                                 //app.jsStartActivity('ProductDetailsActivity2', 'guid|' + guid + ',;shopid|' + shopid);
-                                jsStartActivity("com.danertu.dianping.ProductDetailsActivity2", "guid|" + guids[0] + ",;shopid|" + getShopId());
+                                if (TextUtils.isEmpty(bean.getAppointProductUrl())) {
+                                    jsStartActivity("com.danertu.dianping.ProductDetailsActivity2", "guid|" + guids[0] + ",;shopid|" + bean.getShopId());
+                                } else {
+                                    //门票/客房   AppointProductType  1-成人票、儿童票  2-团体票  3-客房
+                                    switch (bean.getAppointProductType()) {
+                                        case "1":case "2":
+                                            jsStartActivity("com.danertu.dianping.HtmlActivity", "pageName|"+"android/"+bean.getAppointProductUrl()+ "&platform=android&timestamp=" + System.currentTimeMillis()+",;guid|" + guids[0] + ",;shopid|" + bean.getShopId()+",;productCategory|"+bean.getAppointProductType());
+                                            break;
+                                        case "3":
+                                            jsStartActivity("com.danertu.dianping.ProductDetailsActivity2", "guid|" + guids[0] + ",;shopid|" + bean.getShopId());
+                                            break;
+                                        default:
+                                            jsStartActivity("com.danertu.dianping.ProductDetailsActivity2", "guid|" + guids[0] + ",;shopid|" + bean.getShopId());
+                                            break;
+                                    }
+                                }
                             }
                             break;
-                        case "5"://除指定商品--指定商品除外跳转至首页。
+                        case "2"://app页面,
+                            Intent intent2 = new Intent(context, HtmlActivityNew.class);
+                            intent2.putExtra("url", bean.getAppUrl());
+                            startActivity(intent2);
+                            break;
+                        case "3"://原生的分类页面
+                            //比如 酒水 --779
+                            jsStartActivity("com.danertu.dianping.CategoryActivity", "cateid|" + bean.getProductCategoryID() + ",;shopid|" + bean.getShopId());
+                            break;
+                        case "4"://跳转至店铺首页
+                            presenter.toAgentShopIndex(bean.getUseAgentAppoint());
+                            break;
+                        case "5":
+                            presenter.toAgentShopIndex(bean.getShopId());
+                            break;
+                        default:
                             backToHome();
                             break;
+
                     }
                 }
             });

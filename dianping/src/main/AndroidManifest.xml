@@ -794,7 +794,10 @@
         <activity android:name=".StockOrderDetailActivity" />
         <activity android:name=".QRCodeDetailActivity" />
         <activity android:name=".IndexNewActivity" />
-        <activity android:name=".OrderCenterActivity" />
+        <activity
+            android:name=".OrderCenterActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MessageActivity"
             android:launchMode="singleTask"
@@ -802,7 +805,10 @@
             android:theme="@style/noActivityAnimStyle" />
         <activity android:name=".MyCouponActivity" />
         <activity android:name=".CouponCenterActivity" />
-        <activity android:name=".CouponHistoryActivity"></activity>
+        <activity android:name=".CouponHistoryActivity" />
+        <activity android:name=".ChooseCouponActivity" />
+        <activity android:name=".CouponProductsActivity" />
+        <activity android:name=".OrderDetailActivity"></activity>
     </application>
 
 </manifest>

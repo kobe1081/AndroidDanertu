@@ -37,6 +37,8 @@ public class DateTimeUtils {
             sdf = new SimpleDateFormat("yyyy-MM-dd");
         } else if (day.contains("/")) {
             sdf = new SimpleDateFormat("yyyy/MM/dd");
+        } else if (day.contains(".")) {
+            sdf = new SimpleDateFormat("yyyy.MM.dd");
         } else {
             sdf = new SimpleDateFormat("yyyy-MM-dd");
         }
@@ -139,18 +141,51 @@ public class DateTimeUtils {
     }
 
     public static String getSpecifiedDayAfter(String specifiedDay) {
-
+        String pattern = "";
+        if (specifiedDay.contains("/")) {
+            pattern = "yyyy/MM/dd";
+        } else if (specifiedDay.contains("-")) {
+            pattern = "yyyy-MM-dd";
+        } else if (specifiedDay.contains(".")) {
+            pattern = "yyyy.MM.dd";
+        } else {
+            pattern = "yyyy-MM-dd";
+        }
         Calendar c = Calendar.getInstance();
         Date date = null;
         try {
-            date = new SimpleDateFormat("yy-MM-dd").parse(specifiedDay);
+            date = new SimpleDateFormat(pattern).parse(specifiedDay);
         } catch (ParseException e) {
             e.printStackTrace();
         }
         c.setTime(date);
         int day = c.get(Calendar.DATE);
         c.set(Calendar.DATE, day + 1);
-        return new SimpleDateFormat("yyyy-MM-dd").format(c.getTime());
+        return new SimpleDateFormat(pattern).format(c.getTime());
+    }
+
+    public static String getSpecifiedDayAfterN(String specifiedDay, int n) {
+        String pattern = "";
+        if (specifiedDay.contains("/")) {
+            pattern = "yyyy/MM/dd";
+        } else if (specifiedDay.contains("-")) {
+            pattern = "yyyy-MM-dd";
+        } else if (specifiedDay.contains(".")) {
+            pattern = "yyyy.MM.dd";
+        } else {
+            pattern = "yyyy-MM-dd";
+        }
+        Calendar c = Calendar.getInstance();
+        Date date = null;
+        try {
+            date = new SimpleDateFormat(pattern).parse(specifiedDay);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        c.setTime(date);
+        int day = c.get(Calendar.DATE);
+        c.set(Calendar.DATE, day + n);
+        return new SimpleDateFormat(pattern).format(c.getTime());
     }
 
     /**

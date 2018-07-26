@@ -73,6 +73,15 @@ public class OrderHead {
             private String ShipmentStatus;
             private String DispatchPrice;
             private String DispatchTime;
+            private String LogisticsCompanyCode;
+
+            public String getLogisticsCompanyCode() {
+                return LogisticsCompanyCode;
+            }
+
+            public void setLogisticsCompanyCode(String logisticsCompanyCode) {
+                LogisticsCompanyCode = logisticsCompanyCode;
+            }
 
             public String getName() {
                 return Name;

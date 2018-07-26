@@ -1,12 +1,15 @@
 package com.danertu.dianping.activity.mycoupon;
 
 import android.os.Handler;
+import android.text.TextUtils;
 
 import com.config.ApiService;
+import com.config.Constants;
 import com.danertu.base.BaseModel;
 import com.danertu.entity.CouponBean;
 import com.danertu.entity.MyCouponBean;
 import com.danertu.entity.ShopDetailBean;
+import com.danertu.tools.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +78,9 @@ public class MyCouponModel extends BaseModel {
                     } else {
                         handler.sendEmptyMessage(WHAT_COUPON_LIST_ERROR);
                     }
-                    e.printStackTrace();
+                    if (Constants.isDebug) {
+                        e.printStackTrace();
+                    }
                 }
 
             }
@@ -101,7 +106,13 @@ public class MyCouponModel extends BaseModel {
                     handler.sendEmptyMessage(WHAT_SHOP_DETAIL_ERROR);
                     return;
                 }
-                sendMessage(handler, WHAT_SHOP_DETAIL_SUCCESS, Integer.parseInt(response.body().getShopdetails().getShopbean().get(0).getLeveltype()),shopId);
+                List<ShopDetailBean.ShopdetailsBean.ShopbeanBean> shopbean = response.body().getShopdetails().getShopbean();
+                if (shopbean == null || shopbean.size() == 0) {
+                    handler.sendEmptyMessage(WHAT_SHOP_DETAIL_ERROR);
+                    return;
+                }
+                String leveltype = shopbean.get(0).getLeveltype();
+                sendMessage(handler, WHAT_SHOP_DETAIL_SUCCESS, Integer.parseInt(TextUtils.isEmpty(leveltype)?"1":leveltype), shopId);
             }
 
             @Override

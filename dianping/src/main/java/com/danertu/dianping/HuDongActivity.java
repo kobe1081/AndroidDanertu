@@ -239,7 +239,7 @@ public class HuDongActivity extends Activity implements OnGestureListener {
 //                                        .request();
 //                            }
 //                        })
-//                        .create()
+//                        .onCreate()
 //                        .show();
                 showiOSDialog("", "请给予应用获取手机状态权限，否则您无法进行活动",
                         "确定", new View.OnClickListener() {
@@ -268,7 +268,7 @@ public class HuDongActivity extends Activity implements OnGestureListener {
 //                                        .request();
 //                            }
 //                        })
-//                        .create()
+//                        .onCreate()
 //                        .show();
                 showiOSDialog("", "请给予应用读取/写入多媒体权限，否则您无法进行活动",
                         "确定", new View.OnClickListener() {
@@ -296,7 +296,7 @@ public class HuDongActivity extends Activity implements OnGestureListener {
 //                                        .request();
 //                            }
 //                        })
-//                        .create()
+//                        .onCreate()
 //                        .show();
                 showiOSDialog("", "请给予应用录音权限，否则您无法进行活动",
                         "确定", new View.OnClickListener() {
@@ -343,7 +343,7 @@ public class HuDongActivity extends Activity implements OnGestureListener {
 //                                startActivity(intent);
 //                            }
 //                        })
-//                        .create()
+//                        .onCreate()
 //                        .show();
 //                break;
 //
@@ -356,7 +356,7 @@ public class HuDongActivity extends Activity implements OnGestureListener {
 //                                startActivity(intent);
 //                            }
 //                        })
-//                        .create()
+//                        .onCreate()
 //                        .show();
 //                break;
 //            case Constants.RECORD_CODE:
@@ -368,7 +368,7 @@ public class HuDongActivity extends Activity implements OnGestureListener {
 //                                startActivity(intent);
 //                            }
 //                        })
-//                        .create()
+//                        .onCreate()
 //                        .show();
 //                break;
 //        }

@@ -700,7 +700,7 @@ public abstract class MyOrderData {
                  * 是后台拿货时
                  *  "ProductRank":[
                  *                  {
-                 *                      "DiscountButNum":"10",
+                 *                      "DiscountBuyNum":"10",
                  *                      "DiscountPrice":"100.00"
                  *                  }
                  *                ]

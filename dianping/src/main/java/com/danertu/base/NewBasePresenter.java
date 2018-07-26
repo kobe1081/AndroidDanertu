@@ -23,7 +23,7 @@ public abstract class NewBasePresenter<T,V extends BaseModel> {
     public Context context;
     public final String TAG = this.getClass().getSimpleName();
     public Handler handler;
-    public V model;
+    protected V model;
 
     public NewBasePresenter(Context context) {
         this.context = context;
@@ -150,5 +150,7 @@ public abstract class NewBasePresenter<T,V extends BaseModel> {
         return params.toString();
     }
 
-
+    public boolean isViewAttached() {
+        return view != null;
+    }
 }

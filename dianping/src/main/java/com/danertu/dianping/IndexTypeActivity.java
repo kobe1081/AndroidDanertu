@@ -580,7 +580,7 @@ public class IndexTypeActivity extends BaseActivity {
         @Override
         public void run() {
             try {
-                String result = AppManager.getInstance().postGetIndexShopList("0037", Constants.getCityName(), Constants.pagesize, pageindex, "", type);
+                String result = AppManager.getInstance().postGetIndexShopList("0037", Constants.getCityName(), Constants.pageSize, pageindex, "", type);
                 JSONObject jsonObject;
                 jsonObject = new JSONObject(result).getJSONObject("shoplist");
                 JSONArray jsonArray = jsonObject.getJSONArray("shopbean");

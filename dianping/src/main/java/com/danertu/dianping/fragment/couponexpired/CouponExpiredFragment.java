@@ -221,7 +221,7 @@ public class CouponExpiredFragment extends NewBaseFragment<CouponExpiredContact.
                     break;
                 case "2":
                     //领取后当日N天内可用
-                    useDate="领取后"+bean.getUseFromTomorrow()+"天内有效";
+                    useDate="领取后"+bean.getUseFromToday()+"天内有效";
                     break;
             }
 

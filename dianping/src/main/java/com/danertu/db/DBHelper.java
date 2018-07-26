@@ -188,7 +188,7 @@ public class DBHelper extends SQLiteOpenHelper {
     //创建数据库
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //	Log.i(SWORD,"create a Database");
+        //	Log.i(SWORD,"onCreate a Database");
         //创建数据库sql语句
         try {
             createUserLoginInfo(db);

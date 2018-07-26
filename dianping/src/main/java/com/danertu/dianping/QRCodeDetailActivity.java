@@ -49,6 +49,7 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
     private Context context;
     public static final int RESULT_QR_CODE = 21;
     private String orderNumber;
+    private int position;
     private String orderStatus;
     private String shipmentStatus;
     private String paymentStatus;
@@ -72,6 +73,7 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
         context = this;
         Intent intent = getIntent();
         orderNumber = intent.getStringExtra("orderNumber");
+        position=intent.getIntExtra("position",-1);
         if (TextUtils.isEmpty(orderNumber)) {
             if (Constants.isDebug)
                 jsShowMsg("传递过来的订单号为空");
@@ -202,6 +204,7 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
     public void setRes() {
         Intent intent = new Intent();
         intent.putExtra("orderNumber", orderNumber);
+        intent.putExtra("position",position);
         setResult(RESULT_QR_CODE, intent);
     }
 

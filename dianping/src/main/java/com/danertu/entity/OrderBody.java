@@ -1,15 +1,37 @@
 package com.danertu.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
 /**
  * Created by Viz on 2018/1/25.
  */
 
-public class OrderBody {
+/**
+ * ShopName : 测试42
+ * Guid : dd70d3e2-580b-4531-90d1-07e04ef8cced
+ * MarketPrice : 336.00
+ * Name : 土豪醇 窖藏 500ml〖单支〗
+ * CreateUser : chunkang
+ * BuyNumber : 1
+ * AgentID :
+ * Detail :
+ * SupplierLoginID :
+ * iSGive : 0
+ * tel :
+ * ShopPrice : 208.00
+ * SmallImage : 20170817170738450.jpg_300x300.jpg
+ * other1 :
+ * other2 :
+ * attribute :
+ * ProductRank : [{"DiscountBuyNum":"10","DiscountPrice":"100.00"}]  //后台拿货才有的值
+ */
+public class OrderBody implements Parcelable {
 
     /**
-     * orderproductlist : {"orderproductbean":[{"ShopName":"测试42","Guid":"20d7d9ad-4913-4d34-a61e-f757220ad1d8","MarketPrice":"980.00","Name":"豪华室内温泉双人房","CreateUser":"shopnum1","BuyNumber":"1","AgentID":"","Detail":"","SupplierLoginID":"shopnum1","iSGive":"0","tel":"076085883668","ShopPrice":"686.00","SmallImage":"20170424112806442.jpg_300x300.jpg","other1":"2018-02-01","other2":"2018-02-02","attribute":"","ProductRank":[]}]}
+     * orderproductlist : {"orderproductbean":[{"ShopName":"测试42","Guid":"dd70d3e2-580b-4531-90d1-07e04ef8cced","MarketPrice":"336.00","Name":"土豪醇 窖藏 500ml〖单支〗","CreateUser":"chunkang","BuyNumber":"1","AgentID":"","Detail":"","SupplierLoginID":"","iSGive":"0","tel":"","ShopPrice":"208.00","SmallImage":"20170817170738450.jpg_300x300.jpg","other1":"","other2":"","attribute":"","ProductRank":[{"DiscountBuyNum":"10","DiscountPrice":"100.00"}]}]}
      */
 
     private OrderproductlistBean orderproductlist;
@@ -22,7 +44,17 @@ public class OrderBody {
         this.orderproductlist = orderproductlist;
     }
 
-    public static class OrderproductlistBean {
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+    }
+
+    public static class OrderproductlistBean implements Parcelable {
         private List<OrderproductbeanBean> orderproductbean;
 
         public List<OrderproductbeanBean> getOrderproductbean() {
@@ -33,25 +65,35 @@ public class OrderBody {
             this.orderproductbean = orderproductbean;
         }
 
-        public static class OrderproductbeanBean {
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+
+        }
+
+        public static class OrderproductbeanBean implements Parcelable {
             /**
              * ShopName : 测试42
-             * Guid : 20d7d9ad-4913-4d34-a61e-f757220ad1d8
-             * MarketPrice : 980.00
-             * Name : 豪华室内温泉双人房
-             * CreateUser : shopnum1
+             * Guid : dd70d3e2-580b-4531-90d1-07e04ef8cced
+             * MarketPrice : 336.00
+             * Name : 土豪醇 窖藏 500ml〖单支〗
+             * CreateUser : chunkang
              * BuyNumber : 1
              * AgentID :
              * Detail :
-             * SupplierLoginID : shopnum1
+             * SupplierLoginID :
              * iSGive : 0
-             * tel : 076085883668
-             * ShopPrice : 686.00
-             * SmallImage : 20170424112806442.jpg_300x300.jpg
-             * other1 : 2018-02-01
-             * other2 : 2018-02-02
+             * tel :
+             * ShopPrice : 208.00
+             * SmallImage : 20170817170738450.jpg_300x300.jpg
+             * other1 :
+             * other2 :
              * attribute :
-             * ProductRank : []
+             * ProductRank : [{"DiscountBuyNum":"10","DiscountPrice":"100.00"}]  //后台拿货才有的值
              */
 
             private String ShopName;
@@ -70,7 +112,7 @@ public class OrderBody {
             private String other1;
             private String other2;
             private String attribute;
-            private List<?> ProductRank;
+            private List<ProductRankBean> ProductRank;
 
             public String getShopName() {
                 return ShopName;
@@ -200,43 +242,59 @@ public class OrderBody {
                 this.attribute = attribute;
             }
 
-            public List<?> getProductRank() {
+            public List<ProductRankBean> getProductRank() {
                 return ProductRank;
             }
 
-            public void setProductRank(List<?> ProductRank) {
+            public void setProductRank(List<ProductRankBean> ProductRank) {
                 this.ProductRank = ProductRank;
             }
 
             @Override
-            public String toString() {
-                return "OrderproductbeanBean{" +
-                        "ShopName='" + ShopName + '\'' +
-                        ", Guid='" + Guid + '\'' +
-                        ", MarketPrice='" + MarketPrice + '\'' +
-                        ", Name='" + Name + '\'' +
-                        ", CreateUser='" + CreateUser + '\'' +
-                        ", BuyNumber='" + BuyNumber + '\'' +
-                        ", AgentID='" + AgentID + '\'' +
-                        ", Detail='" + Detail + '\'' +
-                        ", SupplierLoginID='" + SupplierLoginID + '\'' +
-                        ", iSGive='" + iSGive + '\'' +
-                        ", tel='" + tel + '\'' +
-                        ", ShopPrice='" + ShopPrice + '\'' +
-                        ", SmallImage='" + SmallImage + '\'' +
-                        ", other1='" + other1 + '\'' +
-                        ", other2='" + other2 + '\'' +
-                        ", attribute='" + attribute + '\'' +
-                        ", ProductRank=" + ProductRank +
-                        '}';
+            public int describeContents() {
+                return 0;
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+
+            }
+
+            public static class ProductRankBean implements Parcelable {
+                /**
+                 * DiscountBuyNum : 10
+                 * DiscountPrice : 100.00
+                 */
+
+                private String DiscountBuyNum;
+                private String DiscountPrice;
+
+                public String getDiscountBuyNum() {
+                    return DiscountBuyNum;
+                }
+
+                public void setDiscountBuyNum(String DiscountButNum) {
+                    this.DiscountBuyNum = DiscountButNum;
+                }
+
+                public String getDiscountPrice() {
+                    return DiscountPrice;
+                }
+
+                public void setDiscountPrice(String DiscountPrice) {
+                    this.DiscountPrice = DiscountPrice;
+                }
+
+                @Override
+                public int describeContents() {
+                    return 0;
+                }
+
+                @Override
+                public void writeToParcel(Parcel dest, int flags) {
+
+                }
             }
         }
-    }
-
-    @Override
-    public String toString() {
-        return "OrderBody{" +
-                "orderproductlist=" + orderproductlist +
-                '}';
     }
 }

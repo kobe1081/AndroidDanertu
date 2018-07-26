@@ -157,7 +157,7 @@ public class FoodShopActivity extends BaseWebActivity implements OnClickListener
     public String getShopList(String type, String isCanorder, String isCanSell) {
         HashMap<String, String> param = new HashMap<>();
         param.put("apiid", "0037");
-        param.put("pagesize", String.valueOf(Constants.pagesize));
+        param.put("pageSize", String.valueOf(Constants.pageSize));
         param.put("pageIndex", String.valueOf(pageindex));
         param.put("kword", "");
         param.put("type", type);

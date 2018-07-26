@@ -23,6 +23,7 @@ import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TextView;
 
 import com.danertu.tools.AppManager;
+import com.danertu.tools.Logger;
 import com.danertu.widget.CommonTools;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -61,7 +62,6 @@ public class HomeActivity extends BaseActivity {
 
     public static boolean isForeground = false;
 
-    public String shopid = null;
     public void menuClick(View v) {
 //		v.setSelected(true);
         switch (v.getId()) {
@@ -85,7 +85,7 @@ public class HomeActivity extends BaseActivity {
                 break;
             case R.id.personal:
                 if (!TAG.equals("PersonalActivity"))
-                    jsStartActivityClearTop("PersonalActivity", "");
+                    jsStartActivityClearTop("PersonalActivity", "shopid|" + getShopId());
                 break;
             case R.id.share:
                 toShare();
@@ -111,12 +111,12 @@ public class HomeActivity extends BaseActivity {
      */
     protected void toCar() {
         if (!TAG.equals("CartActivity"))
-            jsStartActivityClearTop("CartActivity", "");
+            jsStartActivityClearTop("CartActivity", "shopid|" + getShopId());
     }
 
     protected void toSearch() {
-        if (!TAG.equals("SearchActivityV2")){
-            jsStartActivity("SearchActivityV2", "shopid|" + shopid);
+        if (!TAG.equals("SearchActivityV2")) {
+            jsStartActivity("SearchActivityV2", "shopid|" + getShopId());
         }
     }
 

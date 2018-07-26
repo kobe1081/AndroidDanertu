@@ -1,12 +1,15 @@
 package com.danertu.base;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Handler;
 import android.os.Message;
 
+import com.config.ApiService;
 import com.config.Constants;
 import com.danertu.db.DBManager;
+import com.danertu.entity.CouponCountBean;
+import com.danertu.entity.LeaderBean;
+import com.danertu.entity.ShopStateBean;
 import com.danertu.tools.DeviceTag;
 import com.danertu.tools.Logger;
 
@@ -24,6 +27,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import okio.Buffer;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -46,7 +52,7 @@ public abstract class BaseModel {
             @Override
             public okhttp3.Response intercept(Chain chain) throws IOException {
                 Request request = chain.request();
-                Logger.e(TAG, request.toString());
+                Logger.i(TAG, request.toString());
                 //在这里获取到request后就可以做任何事情了
                 String paramsStr = "";
                 Headers headers = request.headers();
@@ -88,7 +94,7 @@ public abstract class BaseModel {
 
         builder.addInterceptor(loggingInterceptor)
                 .addInterceptor(myInterceptor)
-                .connectTimeout(10, TimeUnit.SECONDS);//设置超时时间为10s
+                .connectTimeout(30, TimeUnit.SECONDS);//设置超时时间为10s
 
         retrofit = new Retrofit.Builder()
                 .client(builder.build())
@@ -97,6 +103,81 @@ public abstract class BaseModel {
                 .build();
     }
 
+    /**
+     * 检查用户是否已开店
+     *
+     * @param loginId
+     * @param callBack
+     */
+    public void checkIsOpenShop(String loginId, final ModelParamCallBack callBack) {
+        Call<ShopStateBean> call = retrofit.create(ApiService.class).checkShopState("0141", loginId);
+        call.enqueue(new Callback<ShopStateBean>() {
+            @Override
+            public void onResponse(Call<ShopStateBean> call, Response<ShopStateBean> response) {
+                if (response.code() != RESULT_OK || response.body() == null) {
+                    callBack.requestError(null);
+                    return;
+                }
+                callBack.requestSuccess(response.body());
+
+            }
+
+            @Override
+            public void onFailure(Call<ShopStateBean> call, Throwable t) {
+                callBack.requestFailure(null);
+            }
+        });
+    }
+
+    /**
+     * 获取用户上级的信息
+     *
+     * @param loginId
+     * @param callBack
+     */
+    public void getLeaderInfo(String loginId, final ModelParamCallBack callBack) {
+        Call<LeaderBean> call = retrofit.create(ApiService.class).getLeaderInfo("0245", loginId);
+        call.enqueue(new Callback<LeaderBean>() {
+            @Override
+            public void onResponse(Call<LeaderBean> call, Response<LeaderBean> response) {
+                if (response.code() != RESULT_OK || response.body() == null) {
+                    callBack.requestError(null);
+                    return;
+                }
+                callBack.requestSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<LeaderBean> call, Throwable t) {
+                callBack.requestError(null);
+            }
+        });
+    }
+
+    /**
+     * 获取优惠券数量
+     * @param loginId 登录id
+     * @param callBack 回调
+     */
+    public void getCouponCount(String loginId, final ModelParamCallBack callBack) {
+        Call<CouponCountBean> call = retrofit.create(ApiService.class).getCouponCount("0346", loginId);
+        call.enqueue(new Callback<CouponCountBean>() {
+            @Override
+            public void onResponse(Call<CouponCountBean> call, Response<CouponCountBean> response) {
+                CouponCountBean body = response.body();
+                if (response.code() != RESULT_OK || body == null) {
+                    callBack.requestError(null);
+                    return;
+                }
+                callBack.requestSuccess(body);
+            }
+
+            @Override
+            public void onFailure(Call<CouponCountBean> call, Throwable t) {
+                callBack.requestFailure(null);
+            }
+        });
+    }
 
     public String parseToString(LinkedHashMap<String, Object> map) {
         StringBuilder params = new StringBuilder();
@@ -146,6 +227,9 @@ public abstract class BaseModel {
     }
 
     public void sendMessage(Handler handler, int what, int arg1, Object object) {
+        if (handler==null){
+            return;
+        }
         Message message = handler.obtainMessage();
         message.what = what;
         message.obj = object;
@@ -160,4 +244,9 @@ public abstract class BaseModel {
     public void sendMessage(Handler handler, int what, Object obj) {
         sendMessage(handler, what, -1, obj);
     }
+
+    public void sendMessage(Handler handler,int what){
+        sendMessage(handler,what,null);
+    }
+
 }

@@ -17,7 +17,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -36,10 +35,12 @@ import android.widget.TextView;
 
 import com.config.Constants;
 import com.danertu.db.DBHelper;
+import com.danertu.db.DBManager;
 import com.danertu.dianping.sign.Seference;
-import com.danertu.entity.MyOrderData;
+import com.danertu.entity.CouponCountBean;
 import com.danertu.entity.MyOrderDataQRCode;
 import com.danertu.tools.AppManager;
+import com.danertu.tools.AsyncTask;
 import com.danertu.tools.DateTimeUtils;
 import com.danertu.tools.FWorkUtil;
 import com.danertu.tools.Logger;
@@ -94,6 +95,8 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
     public TextView tv_wallet_count = null;     //钱包余额
     public TextView tv_jlb = null;              //金萝卜
     private TextView tv_coupon;                 //优惠券
+    private TextView tv_collect_count;          //收藏
+
     final int CHECK_IN = 101;
 
     private String headImgUrl = null;
@@ -117,7 +120,6 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
             return;
         }
         Intent intent = getIntent();
-
         init();
         /**
          * 从推送调起的话，起中转作用，先打开此页面然后打开订单页面
@@ -149,6 +151,9 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
         }
     }
 
+    /**
+     * 废弃，使用新接口获取
+     */
     private Runnable rInitFav = new Runnable() {
         public void run() {
             HashMap<String, String> param = new HashMap<>();
@@ -235,7 +240,8 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
         findViewById();
         setMessage();
         new CheckShopState().execute();
-        new Thread(rInitFav).start();
+        new ShowCouponCount().execute(loginId);
+        new ShowCollectCount().execute(loginId);
     }
 
     public void setMessage() {
@@ -290,6 +296,7 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
         tv_wallet_count = (TextView) findViewById(R.id.tv_wallet_count);
         llSignIn = (LinearLayout) findViewById(R.id.ll_sign_in);
         iv_head = (ImageView) findViewById(R.id.iv_personal_head);
+        tv_collect_count = $(R.id.tv_collect_count);
 
         tv_sign_in_tip.setOnClickListener(this);
         tv_wallet_count.setOnClickListener(this);
@@ -306,6 +313,7 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
         findViewById(R.id.ll_qr_code).setOnClickListener(this);
         findViewById(R.id.ll_my_order).setOnClickListener(this);
         findViewById(R.id.ll_open_shop).setOnClickListener(this);
+
 
 
         /**
@@ -370,7 +378,7 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
                      * 优惠券
                      */
                     if (isLogin()) {
-                        jsToActivity("com.danertu.dianping.MyCouponActivity");
+                        jsStartActivity("com.danertu.dianping.MyCouponActivity", "shopid|" + getShopId());
                     } else {
                         jsShowMsg("请先登录");
                         jsStartActivityForResult("LoginActivity", "", REQ_LOGIN);
@@ -447,7 +455,7 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
                     jsStartActivity("HtmlActivityNew", "url|" + Constants.appWebPageUrl + "seller_learn.html");
                     break;
 //                case R.id.test:
-//                    startActivity(new Intent(context,IndexNewActivity.class));
+//                    startActivity(new Intent(context,OrderCenterActivity.class));
 //                    break;
 
 
@@ -788,6 +796,73 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    /**
+     * 获取优惠券数量并显示
+     */
+    class ShowCouponCount extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            String param = params[0];
+            if (TextUtils.isEmpty(param)) {
+                return null;
+            }
+            return appManager.postGetCouponCount(param);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if (TextUtils.isEmpty(s)) {
+                tv_coupon.setText("0");
+                return;
+            }
+            CouponCountBean countBean = gson.fromJson(s, CouponCountBean.class);
+            if (countBean == null || countBean.getVal() == null || countBean.getVal().size() == 0) {
+                tv_coupon.setText("0");
+                return;
+            }
+            tv_coupon.setText(countBean.getTotal() == null ? "0" : countBean.getTotal());
+            super.onPostExecute(s);
+        }
+    }
+
+    class ShowCollectCount extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            String uid = params[0];
+            if (TextUtils.isEmpty(uid)) {
+                return null;
+            }
+            if (db == null) {
+                db = DBManager.getInstance();
+            }
+            Cursor productCursor = db.GetCollectProduct(context, uid);
+            int productCount = 0;
+            if (productCursor != null) {
+                productCount = productCursor.getCount();
+                productCursor.close();
+            }
+            Cursor shopCursor = db.GetCollectShop(context, uid);
+            int shopCount = 0;
+            if (shopCursor != null) {
+                shopCount = shopCursor.getCount();
+                shopCursor.close();
+            }
+            return "" + (productCount + shopCount);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if (TextUtils.isEmpty(s)) {
+                tv_collect_count.setText("0");
+                return;
+            }
+            tv_collect_count.setText(s);
+            super.onPostExecute(s);
+        }
     }
 
 

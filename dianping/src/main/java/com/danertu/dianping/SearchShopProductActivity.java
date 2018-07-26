@@ -37,7 +37,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.config.Constants;
-import com.danertu.db.DBManager;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.AsyncTask;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -180,7 +179,7 @@ public class SearchShopProductActivity extends BaseActivity implements OnItemCli
 
         @Override
         protected String doInBackground(String... params) {
-            String result = AppManager.getInstance().postGetSearchShopProduct("0071", shopId, keyword, Constants.pagesize, pageindex);
+            String result = AppManager.getInstance().postGetSearchShopProduct("0071", shopId, keyword, Constants.pageSize, pageindex);
             if (!result.equals(lastResult)) {
                 lastResult = result;
                 dataTemp = new ArrayList<>();

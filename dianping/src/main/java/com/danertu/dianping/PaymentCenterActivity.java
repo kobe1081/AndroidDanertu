@@ -24,6 +24,7 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -51,11 +52,14 @@ import com.alipay.sdk.app.PayTask;
 import com.config.Constants;
 import com.danertu.db.DBHelper;
 import com.danertu.entity.BaseResultBean;
+import com.danertu.entity.ChooseCouponBean;
 import com.danertu.entity.FavTicket;
+import com.danertu.entity.MyCouponBean;
 import com.danertu.entity.PaymentPriceData;
 import com.danertu.tools.AccToPay;
 import com.danertu.tools.AlipayUtil;
 import com.danertu.tools.AppManager;
+import com.danertu.tools.ArithUtils;
 import com.danertu.tools.Logger;
 import com.danertu.tools.MyDialog;
 import com.danertu.tools.Result;
@@ -68,6 +72,7 @@ import com.danertu.widget.PayPswDialog;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import static com.danertu.dianping.StockOrderDetailActivity.newHandler;
+import static com.danertu.dianping.activity.choosecoupon.ChooseCouponPresenter.REQUEST_CHOOSE_COUPON;
 
 
 /**
@@ -213,10 +218,15 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
     private boolean isStock = false;
     private String cbText = "";
     //	private boolean isOnlyTasteWine = false;
-    private List<FavTicket> favTickets;
+//    private List<FavTicket> favTickets;
 
     private static final int WHAT_CAN_USE_JLB = 777;
     private static final int WHAT_START_CAN_USR_JLB = 778;
+
+//    private String shopId = "";
+//    private String productGuid = "";
+
+    private Map<String, List<String>> paramMap;//保存店铺对应的商品 用于获取可用优惠券
 
     /**
      * 订单类型 -- 囤货、普通后台拿货、退货邮费支付
@@ -438,6 +448,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
     private void initData() {
         // 初始化数据
         subject = "单耳兔商城" + getString(R.string.pay_tips);
+        paramMap = new HashMap<>();
         isDispatch = true;
         existsAgent = false;
         isQuanYan = false;
@@ -584,8 +595,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
             tv_order_proMarketPrice.setText("￥" + marketPrice);
             tv_order_discountPrice.setText("￥" + CommonTools.formatZero2Str(price));
             tv_num.setText("x" + tempcount);
-
-            tv_totalPrice.setText("￥" + CommonTools.formatZero2Str(Integer.parseInt(tempcount) * price));//订单总价
+            tv_totalPrice.setText("￥" + CommonTools.formatZero2Str(Integer.parseInt(tempcount) * price));//商品总价
 
             ll_itemOne_parent.addView(v);
             if (ji > 0) {
@@ -894,45 +904,45 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
      * 使用优惠券
      */
     @SuppressWarnings("deprecation")
-    public void setFavTicketDialog() {
-        if (favTickets == null || favTickets.size() <= 0)
-            return;
-        LayoutInflater lif = LayoutInflater.from(context);
-        View v = lif.inflate(R.layout.dialog_fav_ticket, null);
-        favTicketDialog = MyDialog.getDefineDialog(context, v);
-        favTicketDialog.setCanceledOnTouchOutside(true);
-        RadioGroup rg = (RadioGroup) v.findViewById(R.id.rg_fav_tickets);
-        rg.removeAllViews();
-        int id = 0;
-        RadioButton rb;
-        int size = favTickets.size();
-        for (int i = 0; i < size; i++) {
-            FavTicket item = favTickets.get(i);
-            rb = (RadioButton) lif.inflate(R.layout.item_radiobtn_favticket, null);
-            rb.setId(id++);
-            rb.setText(item.getName());
-            rg.addView(rb);
-            if (i == size - 1) {
-                rb.setBackgroundDrawable(null);
-            }
-        }
-        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-                if (checkedId >= 0 && checkedId < favTickets.size()) {
-                    selectedTicket = favTickets.get(checkedId);
-                    price.setFavTicket(Double.parseDouble(selectedTicket.getMoney()));
-                    tv_fav_ticket.setText(selectedTicket.getName());
-                    if (cb_useJLB.isChecked() && selectedTicket.getWithOthers().equals("0")) {
-                        cb_useJLB.setChecked(false);
-
-                    }
-                }
-                setTotalMoneyText();
-            }
-        });
-        ((RadioButton) rg.getChildAt(0)).setChecked(true);
-    }
+//    public void setFavTicketDialog() {
+//        if (favTickets == null || favTickets.size() <= 0)
+//            return;
+//        LayoutInflater lif = LayoutInflater.from(context);
+//        View v = lif.inflate(R.layout.dialog_fav_ticket, null);
+//        favTicketDialog = MyDialog.getDefineDialog(context, v);
+//        favTicketDialog.setCanceledOnTouchOutside(true);
+//        RadioGroup rg = (RadioGroup) v.findViewById(R.id.rg_fav_tickets);
+//        rg.removeAllViews();
+//        int id = 0;
+//        RadioButton rb;
+//        int size = favTickets.size();
+//        for (int i = 0; i < size; i++) {
+//            FavTicket item = favTickets.get(i);
+//            rb = (RadioButton) lif.inflate(R.layout.item_radiobtn_favticket, null);
+//            rb.setId(id++);
+//            rb.setText(item.getName());
+//            rg.addView(rb);
+//            if (i == size - 1) {
+//                rb.setBackgroundDrawable(null);
+//            }
+//        }
+//        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+//            public void onCheckedChanged(RadioGroup group, int checkedId) {
+//
+//                if (checkedId >= 0 && checkedId < favTickets.size()) {
+//                    selectedTicket = favTickets.get(checkedId);
+//                    price.setFavTicket(Double.parseDouble(selectedTicket.getMoney()));
+//                    tv_fav_ticket.setText(selectedTicket.getName());
+//                    if (cb_useJLB.isChecked() && selectedTicket.getWithOthers().equals("0")) {
+//                        cb_useJLB.setChecked(false);
+//
+//                    }
+//                }
+//                setTotalMoneyText();
+//            }
+//        });
+//        ((RadioButton) rg.getChildAt(0)).setChecked(true);
+//    }
 
     public Runnable scoreRunnable = new Runnable() {
         public void run() {
@@ -960,7 +970,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
         setTotalMoneyText();
 
         checkQuanYan();
-        setFavTicketDialog();
+//        setFavTicketDialog();
 
         Set<String> keys = shopGroup.keySet();
         ll_proParent.removeAllViews();
@@ -988,7 +998,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
         } else {
             cb_useJLB.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                    if (selectedTicket != null && selectedTicket.getWithOthers().equals("0")) {
+                    if (selectedTicket != null && selectedTicket.getWithOthers().equals("1")) {
                         price.setUseJLB(false);
                         cb_useJLB.setChecked(false);
                         jsShowMsg("金萝卜不能与此优惠券同用");
@@ -1394,7 +1404,29 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                 break;
 
             case R.id.tv_fav_ticket:
-                showFavTicketDialog();
+//                showFavTicketDialog();
+                /**
+                 * 2018年7月11日 修改为新的优惠券页面
+                 */
+//                jsStartActivityForResult("ChooseCouponActivity", "couponRecordGuid|" + (tv_fav_ticket.getTag() == null ? "" : tv_fav_ticket.getTag().toString()) + ",;shopid|" + shopId.substring(0, shopId.length() - 1) + ",;productGuid|" + productGuid.substring(0, productGuid.length() -1) + ",;totalPrice|" + price.getTotalPrice(), REQUEST_CHOOSE_COUPON);
+                try {
+                    JSONArray paramJSONArray = new JSONArray();
+                    for (String s : paramMap.keySet()) {
+                        JSONObject arrayItemJSONObject = new JSONObject();
+                        arrayItemJSONObject.put("shopId", s);
+                        JSONArray goodsArray = new JSONArray();
+                        List<String> list = paramMap.get(s);
+                        for (String s1 : list) {
+                            goodsArray.put(s1);
+                        }
+                        arrayItemJSONObject.put("productGuids", goodsArray);
+                        paramJSONArray.put(arrayItemJSONObject);
+                    }
+                    Logger.e(TAG, "拼接的字符串" + paramJSONArray.toString());
+                    jsStartActivityForResult("ChooseCouponActivity", "couponRecordGuid|" + (tv_fav_ticket.getTag() == null ? "" : tv_fav_ticket.getTag().toString()) + ",;shopid|" + getShopId() + ",;multiParam|" + paramJSONArray.toString() + ",;totalPrice|" + price.getTotalPrice(), REQUEST_CHOOSE_COUPON);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
             case R.id.tv_stock_protocol:
                 Intent intent = new Intent(context, HtmlActivityNew.class);
@@ -1636,7 +1668,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
             this.shoppingcarlist = shoppingcarlist;
             cashTicketList = new ArrayList<>();
             carCount = shoppingcarlist.size();
-            favTickets = new ArrayList<>();
+//            favTickets = new ArrayList<>();
             shopGroup = new LinkedHashMap<>();
         }
 
@@ -1664,7 +1696,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
             String discountNum = "";
             double discountPrice = 0;
             int qyCount = 0;
-            favTickets.clear();
+//            favTickets.clear();
             favNumGuids = "";
 
             StringBuilder builder = new StringBuilder();
@@ -1675,6 +1707,8 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                 supid = item.get("supplierID").toString();
                 area = recAddress;
                 productID = item.get("productID").toString();
+
+
                 builder.append(productID).append(",");
                 agentID = item.get("agentID").toString();
                 tempcount = item.get("count").toString();
@@ -1685,6 +1719,19 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                 attrParam = item.get(KEY_ATTRS).toString();
                 createUser = item.get(KEY_CREATE_USER).toString();
                 shopid = item.get(KEY_shopID).toString();
+
+//                shopId+=shopid;
+//                productGuid+=productID;
+
+                List<String> list = paramMap.get(shopid);
+                if (list == null) {
+                    list = new ArrayList<>();
+                    paramMap.put(shopid, list);
+                }
+                if (!list.contains(productID)) {
+                    list.add(productID);
+                }
+
                 if (isBackCall) {
                     discountNum = item.get("discountNum").toString();
                     discountCondition = Integer.parseInt(discountNum);
@@ -1772,12 +1819,14 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                 item.put(KEY_SONG_COUNT, song);
                 item.put(KEY_JOIN_COUNT, ji);
 
-                List<FavTicket> listFavTickets = getFavTickets(productID);
-                if (listFavTickets != null && listFavTickets.size() > 0) {
-                    for (FavTicket itemFavTicket : listFavTickets) {
-                        favTickets.add(itemFavTicket);
-                    }
-                }
+                //获取可用的优惠券
+//                List<FavTicket> listFavTickets = getFavTickets(productID);
+//                if (listFavTickets != null && listFavTickets.size() > 0) {
+//                    for (FavTicket itemFavTicket : listFavTickets) {
+//                        favTickets.add(itemFavTicket);
+//                    }
+//                }
+
                 favNumGuids += productID + ",";
             }
 
@@ -1789,9 +1838,10 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
             newHandler.sendMessage(message);
 
             favNumGuids = favNumGuids.substring(0, favNumGuids.length() - 1);
-            if (favTickets.size() > 0) {
-                favTickets.add(new FavTicket("不使用优惠券", "", "0", "1"));
-            }
+
+//            if (favTickets.size() > 0) {
+//                favTickets.add(new FavTicket("不使用优惠券", "", "0", "1"));
+//            }
             if (qyCount == carCount) {
                 isQuanYan = true;
             }
@@ -1829,6 +1879,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
 
         /**
          * 获取可使用的优惠券  --0294
+         *
          * @param guid
          * @return
          */
@@ -1855,6 +1906,11 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
             return list;
         }
 
+        /**
+         * 代金券
+         *
+         * @param shopid
+         */
         private void initCashTickets(String shopid) {
             isCanUseCashTicket = true;
             String cashTickets;
@@ -1879,6 +1935,9 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
             }
         }
 
+        /**
+         * 金萝卜
+         */
         private void initJLB() {
             try {
                 score = AppManager.getInstance().postGetMemberScore("0085", uid);
@@ -1913,6 +1972,63 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_CHOOSE_COUPON:
+                if (resultCode != RESULT_CANCELED) {
+                    //从领取优惠券页面返回
+                    Bundle bundle = data.getExtras();
+                    String callBackMethod = bundle.getString("callbackMethod");
+                    String isUseCoupon = bundle.getString("isUseCoupon");
+                    String bundleString = bundle.getString("data");
+                    if ("0".equals(isUseCoupon)) {
+                        //不使用优惠券
+                        tv_fav_ticket.setText("不使用");
+                        tv_fav_ticket.setTag("");
+                        price.setFavTicket(0f);
+                        selectedTicket = null;
+                    } else {
+                        //使用优惠券
+                        ChooseCouponBean.ValBean bean = gson.fromJson(bundleString, ChooseCouponBean.ValBean.class);
+                        String couponName = bean.getCouponName();
+                        tv_fav_ticket.setTag(bean.getCouponRecordGuid());
+                        tv_fav_ticket.setText(couponName);
+                        double discount = 0f;
+                        switch (bean.getDiscountType()) {
+                            case "0"://优惠金额
+                                discount = Double.parseDouble(bean.getDiscountPrice());
+                                break;
+                            case "1"://优惠折扣
+                                double parseDouble = Double.parseDouble(bean.getDiscountPercent());
+                                double aDouble = ArithUtils.div(parseDouble, 10, 15);
+                                double total = price.getTotalPriceDouble();
+                                discount = total - total * aDouble;
+                                break;
+                        }
+                        if (selectedTicket == null) {
+                            selectedTicket = new FavTicket();
+                        }
+                        selectedTicket.setGuid(bean.getCouponRecordGuid());
+                        selectedTicket.setMoney(String.valueOf(discount));
+                        selectedTicket.setName(bean.getCouponName());
+                        //此优惠券是否可用同其他优惠同时使用
+                        selectedTicket.setWithOthers(bean.getLimitType());
+                        price.setFavTicket(discount);
+                        switch (bean.getLimitType()) {
+                            case "0"://可与金萝卜一起使用
+//                                cb_useJLB.setEnabled(true);
+                                break;
+                            case "1"://不可与金萝卜一起使用
+                                cb_useJLB.setChecked(false);
+//                                cb_useJLB.setEnabled(false);
+                                break;
+                        }
+
+                    }
+                    setTotalMoneyText();
+
+                }
+                break;
+        }
         if (resultCode == REQ_ADDRESS) {
             initData();
         } else if (resultCode == LoginActivity.LOGIN_SUCCESS) {

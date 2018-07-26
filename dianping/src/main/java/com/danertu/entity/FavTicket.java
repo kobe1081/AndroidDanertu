@@ -5,7 +5,10 @@ public class FavTicket {
 	private String guid;
 	private String money;
 	private String withOthers;
-	
+
+	public FavTicket() {
+	}
+
 	public FavTicket(String name, String guid, String money, String withOthers) {
 		super();
 		this.name = name;

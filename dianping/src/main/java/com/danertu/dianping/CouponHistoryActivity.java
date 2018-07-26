@@ -53,6 +53,8 @@ public class CouponHistoryActivity extends NewBaseActivity<CouponHistoryContact.
     private List<Fragment> fragmentList;
     private int pageIndex = 0;
     private PageAdapter adapter;
+    private float dimen18;
+    private float dimen14;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +83,10 @@ public class CouponHistoryActivity extends NewBaseActivity<CouponHistoryContact.
         if (adapter == null) {
             adapter = new PageAdapter(getSupportFragmentManager());
         }
+//        dimen14 = getResources().getDimension(R.dimen.text_size_14);
+//        dimen18 = getResources().getDimension(R.dimen.text_size_18);
+        dimen14 = 14;
+        dimen18 = 18;
         vpCoupon.setAdapter(adapter);
         vpCoupon.setOffscreenPageLimit(fragmentList.size());
         rgCoupon.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -89,9 +95,13 @@ public class CouponHistoryActivity extends NewBaseActivity<CouponHistoryContact.
                 switch (checkedId) {
                     case R.id.rb_coupon_use_history:
                         vpCoupon.setCurrentItem(0);
+                        rbCouponUseHistory.setTextSize(dimen18);
+                        rbCouponOutDate.setTextSize(dimen14);
                         break;
                     case R.id.rb_coupon_out_date:
                         vpCoupon.setCurrentItem(1);
+                        rbCouponUseHistory.setTextSize(dimen14);
+                        rbCouponOutDate.setTextSize(dimen18);
                         break;
                 }
             }
@@ -105,7 +115,7 @@ public class CouponHistoryActivity extends NewBaseActivity<CouponHistoryContact.
 
             @Override
             public void onPageSelected(int position) {
-                pageIndex=position;
+                pageIndex = position;
                 switch (position) {
                     case 0:
                         rbCouponUseHistory.setChecked(true);

@@ -21,6 +21,7 @@ import com.alipay.sdk.app.PayTask;
 import com.config.Constants;
 import com.danertu.dianping.BaseActivity;
 import com.danertu.dianping.MyOrderDetail;
+import com.danertu.dianping.OrderDetailActivity;
 import com.danertu.dianping.R;
 import com.danertu.entity.OrderBody;
 import com.danertu.entity.OrderHead;
@@ -274,7 +275,7 @@ public abstract class PayUtils {
      * @param orderNumber
      */
     public void toOrderDetail(String orderNumber) {
-        Intent intent = new Intent(context, MyOrderDetail.class);
+        Intent intent = new Intent(context, OrderDetailActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("orderNumber", orderNumber);
 //        bundle.putBoolean("isNotToComplete", true);

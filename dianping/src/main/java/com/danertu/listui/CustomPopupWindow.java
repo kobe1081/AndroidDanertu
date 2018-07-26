@@ -65,7 +65,7 @@ public class CustomPopupWindow {
     }
 
     /**
-     * Anything you want to have happen when created. Probably should create a view and setup the event listeners on
+     * Anything you want to have happen when created. Probably should onCreate a view and setup the event listeners on
      * child views.
      */
     protected void onCreate() {

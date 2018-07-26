@@ -1,6 +1,8 @@
 package com.danertu.dianping;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,7 +36,10 @@ import android.widget.Toast;
 
 import com.config.Constants;
 import com.danertu.dianping.R.color;
+import com.danertu.entity.LeaderBean;
+import com.danertu.entity.ShopDetailBean;
 import com.danertu.tools.AppManager;
+import com.danertu.tools.AsyncTask;
 import com.danertu.tools.LocationUtil;
 import com.danertu.tools.Logger;
 import com.danertu.widget.CommonTools;
@@ -62,7 +67,6 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
     String allJsonMsg = "";
     String secendPageJson = "";
     final String KEY_SHOPID = "shopid";
-
     private LocalBroadcastManager broadcastManager;
     private LoginSuccessReceiver loginSuccessReceiver;
     private LogoutSuccessReceiver logoutSuccessReceiver;
@@ -76,22 +80,58 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
         index_wap_name = WEBPAGE_NAME_RESERVE;
         setContentView(R.layout.activity_index);
-        setSystemBarWhite();
-        shopid = getUid();
         getLocation();
         locationUtil = new LocationUtil(this);
         locationUtil.startLocate();
+        setSystemBarWhite();
+        setSwipeBackEnable(false);
+        new GetShop().execute(getUid());
         findViewById();
         showLoadDialog();
         initUI();
         new Thread(getParamsRunnable).start();
         initPage();
-        setSwipeBackEnable(false);
         initBroadcastReceiver();
     }
 
+    class GetShop extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... param) {
+            String uid = param[0];
+            if (TextUtils.isEmpty(uid)) {
+                setShopId(Constants.CK_SHOPID);
+                return null;
+            }
+            String details = appManager.postGetShopDetails("0041", uid);
+            ShopDetailBean shopDetailBean = gson.fromJson(details, ShopDetailBean.class);
+            if (shopDetailBean == null || shopDetailBean.getShopdetails().getShopbean() == null || shopDetailBean.getShopdetails().getShopbean().size() == 0) {
+                String data = getData("apiid|0245,;shopid|" + uid);
+                LeaderBean leaderBean = gson.fromJson(data, LeaderBean.class);
+                if (leaderBean == null || leaderBean.getLeaderInfo() == null || leaderBean.getLeaderInfo().getLeaderBean().size() == 0) {
+                    setShopId(Constants.CK_SHOPID);
+                } else {
+                    LeaderBean.LeaderInfoBean.LeaderBeanBean bean = leaderBean.getLeaderInfo().getLeaderBean().get(0);
+                    if ("chunkang".equals(bean.getMemberid())) {
+                        setShopId(Constants.CK_SHOPID);
+                    } else {
+                        setShopId(bean.getMemberid());
+                    }
+                }
+            } else {
+                setShopId(uid);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            super.onPostExecute(result);
+        }
+    }
+
     /**
-     * 获取位置信息
+     * 获取位置信息权限
      */
     private void getLocation() {
         Permissions4M.get(this)
@@ -160,20 +200,21 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
 
     @JavascriptInterface
     public boolean backToHome() {
-        if (isLoading() || shopid == null)
+        String shopId = getShopId();
+        if (isLoading() || shopId == null)
             return false;
         boolean isBack = super.backToHome();
         if (!isBack) {
             Bundle b = getIntent().getExtras();
             if (b != null) {
-                shopid = b.getString(KEY_SHOPID);
-                shopid = shopid == null ? "" : shopid;
+                shopId = b.getString(KEY_SHOPID);
+                shopId = shopId == null ? "" : shopId;
             }
 
-            if (!shopid.equals(getUid())) {
-                shopid = getUid();
+            if (!shopId.equals(getUid())) {
+                shopId = getUid();
                 b = b == null ? new Bundle() : b;
-                b.putString(KEY_SHOPID, shopid);
+                b.putString(KEY_SHOPID, shopId);
                 getIntent().putExtras(b);
                 initShop(bundleToJson(b));
             }
@@ -186,12 +227,13 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
         if (intent == null)
             return;
         super.onNewIntent(intent);
+        String shopId = getShopId();
         Bundle b = intent.getExtras();
         if (b == null)
             return;
         setIntent(intent);
-        shopid = b.getString(KEY_SHOPID);
-        if (!TextUtils.isEmpty(shopid) && shopid.equals(getUid())) {
+        shopId = b.getString(KEY_SHOPID);
+        if (!TextUtils.isEmpty(shopId) && shopId.equals(getUid())) {
             //底部提示不变
         }
         String param = bundleToJson(b);
@@ -310,8 +352,8 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
 
     @JavascriptInterface
     public void refresh() {
-//        shopid = getUid();
-        Logger.e(TAG,"shopid="+shopid);
+//        shopId = getUid();
+        new GetShop().execute(getUid());
         if (webView != null) {
             pageindex = 1;
             loadPage();
@@ -546,7 +588,7 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
 //        View parent = ((View) fl_title.getParent());
 //        parent.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
 //        top_bg.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, parent.getMeasuredHeight()));
-        setTitleBgAlpha(0);
+            setTitleBgAlpha(0);
 
 //        tv_store_name = (TextView) findViewById(R.id.tv_store_name);
 
@@ -738,7 +780,7 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Logger.e("RefreshIndexReceiver ", shopid);
+            Logger.e("RefreshIndexReceiver ", getShopId());
             refresh();
         }
     }
@@ -750,7 +792,7 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Logger.e("test", shopid);
+            Logger.e("test", getShopId());
             refresh();
         }
     }
@@ -762,7 +804,7 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Logger.e("test", shopid);
+            Logger.e("test", getShopId());
             refresh();
         }
     }
@@ -774,5 +816,6 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
             setLocation();
         }
     }
+
 
 }

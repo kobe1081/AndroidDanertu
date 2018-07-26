@@ -54,6 +54,8 @@ public class CouponCenterActivity extends NewBaseActivity<CouponCenterContact.Co
     private List<Fragment> fragmentList;
     private int pageIndex = 0;
     private PageAdapter adapter;
+    private float dimen18;
+    private float dimen14;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +86,10 @@ public class CouponCenterActivity extends NewBaseActivity<CouponCenterContact.Co
         if (adapter == null) {
             adapter = new PageAdapter(getSupportFragmentManager());
         }
+//        dimen18=getResources().getDimension(R.dimen.text_size_18);
+//        dimen14=getResources().getDimension(R.dimen.text_size_14);
+        dimen18 = 18;
+        dimen14 = 14;
         vpCoupon.setAdapter(adapter);
         vpCoupon.setOffscreenPageLimit(fragmentList.size());
         rgCoupon.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -92,12 +98,21 @@ public class CouponCenterActivity extends NewBaseActivity<CouponCenterContact.Co
                 switch (checkedId) {
                     case R.id.rb_coupon_mall:
                         vpCoupon.setCurrentItem(0);
+                        rbCouponMall.setTextSize(dimen18);
+                        rbCouponSpring.setTextSize(dimen14);
+                        rbCouponDrink.setTextSize(dimen14);
                         break;
                     case R.id.rb_coupon_spring:
                         vpCoupon.setCurrentItem(1);
+                        rbCouponMall.setTextSize(dimen14);
+                        rbCouponSpring.setTextSize(dimen18);
+                        rbCouponDrink.setTextSize(dimen14);
                         break;
                     case R.id.rb_coupon_drink:
                         vpCoupon.setCurrentItem(2);
+                        rbCouponMall.setTextSize(dimen14);
+                        rbCouponSpring.setTextSize(dimen14);
+                        rbCouponDrink.setTextSize(dimen18);
                         break;
                 }
             }
@@ -170,7 +185,7 @@ public class CouponCenterActivity extends NewBaseActivity<CouponCenterContact.Co
                 rbCouponSpring.setText(getResources().getString(R.string.coupon_center_spring) + "(" + count + ")");
                 break;
             case 2:
-                rbCouponDrink.setText(getResources().getString(R.string.coupon_center_drinking)+ "(" + count + ")");
+                rbCouponDrink.setText(getResources().getString(R.string.coupon_center_drinking) + "(" + count + ")");
                 break;
         }
     }

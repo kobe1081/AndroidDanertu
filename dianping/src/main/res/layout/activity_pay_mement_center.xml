@@ -184,7 +184,7 @@
                         android:layout_alignParentRight="true"
                         android:drawablePadding="10dp"
                         android:drawableRight="@drawable/arrow_r_gray1"
-                        android:text="无可用优惠券"
+                        android:text="不使用"
                         android:textColor="@color/gray_text_bbb"
                         android:textSize="@dimen/small_text_size"/>
                 </RelativeLayout>

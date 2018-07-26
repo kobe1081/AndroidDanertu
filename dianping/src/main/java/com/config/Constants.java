@@ -27,7 +27,7 @@ public class Constants {
      */
     public final static boolean isDebug = true;//发版本请设置为 ---false---
 
-    public final static boolean isLocal=true;
+    public final static boolean isLocal = true;
     /**
      * 是否为业务员版本
      */
@@ -216,7 +216,7 @@ public class Constants {
     }
 
     public static int MaxDateNum = 100000; // 设置最大数据条数
-    public static int pagesize = 10; // 分页每页显示数
+    public static int pageSize = 10; // 分页每页显示数
 
     //	public static String imgServer = "http://115.28.77.246/"; // 图片服务器
     public final static String imgServer = "http://img.danertu.com/"; // 图片服务器

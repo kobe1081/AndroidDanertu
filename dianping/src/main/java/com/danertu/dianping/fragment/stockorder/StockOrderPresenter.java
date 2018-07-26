@@ -83,7 +83,7 @@ public class StockOrderPresenter extends BasePresenter<StockOrderView> implement
     }
 
     public void loadData(int page) {
-        model.getStockOrder(handler, view.getUid(), page, Constants.pagesize);
+        model.getStockOrder(handler, view.getUid(), page, Constants.pageSize);
     }
 
     public void loadMore() {

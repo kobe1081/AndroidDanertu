@@ -520,6 +520,17 @@ public abstract class NewBaseActivity<V, T extends NewBasePresenter> extends Bas
         return Constants.imgServer + "sysProduct/" + imgName;
     }
 
+    /**
+     * 获取商品图片路径
+     *
+     * @param imgName
+     * @param agentID
+     * @param supplierID
+     * @return
+     */
+    public String getSmallImgPath(String imgName, String agentID, String supplierID) {
+        return ActivityUtils.getImgUrl(imgName, agentID, supplierID);
+    }
 
     private boolean isPayLoading = false;
 

@@ -56,9 +56,7 @@ public abstract class NewBaseFragment<V, T extends NewBasePresenter> extends Fra
     private SystemBarTintManager manager;
     public T presenter;
     public ShareUtil shareUtil;
-    private ProgressBar progressBar;
     private long firstClick;
-    private boolean isLoading = false;
     private DBManager db;
 
     @Override
@@ -75,7 +73,6 @@ public abstract class NewBaseFragment<V, T extends NewBasePresenter> extends Fra
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         presenter.attach((V) this);
-        progressBar = new ProgressBar(context);
     }
 
     @Override
@@ -120,6 +117,11 @@ public abstract class NewBaseFragment<V, T extends NewBasePresenter> extends Fra
     @Override
     public String getShopId() {
         return ((NewBaseActivity) getActivity()).getShopId();
+    }
+
+    @Override
+    public void setShopId(String shopId) {
+        ((NewBaseActivity) getActivity()).setShopId(shopId);
     }
 
     /**
@@ -455,6 +457,18 @@ public abstract class NewBaseFragment<V, T extends NewBasePresenter> extends Fra
         return Constants.imgServer + "sysProduct/" + imgName;
     }
 
+    /**
+     * 获取商品图片路径
+     *
+     * @param imgName
+     * @param agentID
+     * @param supplierID
+     * @return
+     */
+    public String getSmallImgPath(String imgName, String agentID, String supplierID) {
+        return ActivityUtils.getImgUrl(imgName, agentID, supplierID);
+    }
+
     public void setTopPadding(View view, int top) {
         view.setPadding(view.getPaddingLeft(), top, view.getPaddingRight(), view.getPaddingBottom());
     }
@@ -491,50 +505,7 @@ public abstract class NewBaseFragment<V, T extends NewBasePresenter> extends Fra
 
     @JavascriptInterface
     public void payOrder(final String orderNumber, boolean isShowAliPay, boolean isShowWechatPay, boolean isShowAccountPay, boolean isShowArrivePay) {
-//        if (isPayLoading) {
-//            return;
-//        }
-//        isPayLoading = true;
-//        payUtils = new PayUtils(this, getUid(), orderNumber, isShowAliPay, isShowWechatPay, isShowAccountPay, isShowArrivePay) {
-//            @Override
-//            public void paySuccess() {
-//                isPayLoading = false;
-//                jsShowMsg("支付成功");
-//                finish();
-//                toOrderDetail(orderNumber);
-//            }
-//
-//            @Override
-//            public void payFail() {
-//                isPayLoading = false;
-//                jsShowMsg("支付失败,请检查");
-//                finish();
-//                toOrderDetail(orderNumber);
-//            }
-//
-//            @Override
-//            public void payCancel() {
-//                isPayLoading = false;
-//                jsShowMsg("您已取消支付");
-//                finish();
-//                toOrderDetail(orderNumber);
-//            }
-//
-//            @Override
-//            public void payError(String message) {
-//                isPayLoading = false;
-//                jsShowMsg(message);
-//            }
-//
-//            @Override
-//            public void dismissOption() {
-//                if (!isPaying()) {
-//                    finish();
-//                    toOrderDetail(orderNumber);
-//                }
-//                isPayLoading = false;
-//            }
-//        };
+        ((NewBaseActivity) getActivity()).payOrder(orderNumber,isShowAliPay,isShowWechatPay,isShowAccountPay,isShowArrivePay);
     }
 
     @JavascriptInterface
@@ -545,6 +516,7 @@ public abstract class NewBaseFragment<V, T extends NewBasePresenter> extends Fra
     @JavascriptInterface
     public void payOrder(String orderNumber, boolean isShowArrivePay, String callBackMethod) {
         payOrder(orderNumber, true, isShowArrivePay, callBackMethod);
+
     }
 
     /**
@@ -562,47 +534,7 @@ public abstract class NewBaseFragment<V, T extends NewBasePresenter> extends Fra
 
     @JavascriptInterface
     public void payOrder(String orderNumber, boolean isShowAliPay, boolean isShowWechatPay, boolean isShowAccountPay, boolean isShowArrivePay, final String callBackMethod) {
-//        if (isPayLoading) {
-//            return;
-//        }
-//        isPayLoading = true;
-//        payUtils = new PayUtils(this, getUid(), orderNumber, isShowAliPay, isShowWechatPay, isShowAccountPay, isShowArrivePay) {
-//            @Override
-//            public void paySuccess() {
-//                isPayLoading = false;
-//                if (webView != null)
-//                    webView.loadUrl(Constants.IFACE + callBackMethod + "(‘1’)");
-//            }
-//
-//            @Override
-//            public void payFail() {
-//                isPayLoading = false;
-//                if (webView != null)
-//                    webView.loadUrl(Constants.IFACE + callBackMethod + "(‘2’)");
-//            }
-//
-//            @Override
-//            public void payCancel() {
-//                isPayLoading = false;
-//                if (webView != null)
-//                    webView.loadUrl(Constants.IFACE + callBackMethod + "(‘3’)");
-//            }
-//
-//            @Override
-//            public void payError(String message) {
-//                isPayLoading = false;
-//                if (webView != null)
-//                    webView.loadUrl(Constants.IFACE + callBackMethod + "(‘4’)");
-//            }
-//
-//            @Override
-//            public void dismissOption() {
-//                isPayLoading = false;
-//                if (TAG.contains("HtmlActivity")) {
-//                    finish();
-//                }
-//            }
-//        };
+        ((NewBaseActivity) getActivity()).payOrder(orderNumber,isShowAliPay,isShowWechatPay,isShowAccountPay,isShowAccountPay,callBackMethod);
     }
 
 

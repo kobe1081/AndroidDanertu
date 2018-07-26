@@ -73,6 +73,7 @@ import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.umeng.analytics.MobclickAgent;
 
+import static com.danertu.dianping.activity.choosecoupon.ChooseCouponPresenter.REQUEST_CHOOSE_COUPON;
 import static com.danertu.tools.MIUIUtils.isMIUI;
 
 /**
@@ -240,25 +241,28 @@ public abstract class BaseActivity extends SwipeBackActivity {
     }
 
     @JavascriptInterface
-    public void jsToOrderActivity(final int index, boolean isOnlyHotel, boolean isOnlyQuanYan) {
-        if (index < 0) {
-            Intent intent = new Intent(getContext(), MyOrderActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            intent.putExtra("TabIndex", index);
-            startActivity(intent);
-        } else {
-            if (isLoading)
-                return;
+    public void jsToOrderActivity(final int index, final boolean isOnlyHotel, final boolean isOnlyQuanYan) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (index < 0) {
+                    Intent intent = new Intent(getContext(), OrderCenterActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    intent.putExtra("TabIndex", index);
+                    startActivity(intent);
+                } else {
+                    if (isLoading)
+                        return;
 //            showLoadDialog();
 //            Intent intent = new Intent(getContext(), MyOrderActivityNew.class);
-            Intent intent = new Intent(getContext(), MyOrderActivity.class);
-            intent.putExtra("TabIndex", index);
-            intent.putExtra("isOnlyHotel", isOnlyHotel);
-            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-            myOrderData = new MyOrderData(this, isOnlyHotel, isOnlyQuanYan) {
-                @Override
-                public void getDataSuccess() {
+                    Intent intent = new Intent(getContext(), OrderCenterActivity.class);
+                    intent.putExtra("TabIndex", index);
+                    intent.putExtra("isOnlyHotel", isOnlyHotel);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+//                    myOrderData = new MyOrderData((BaseActivity) getContext(), isOnlyHotel, isOnlyQuanYan) {
+//                        @Override
+//                        public void getDataSuccess() {
 //
 //                    if (handler != null) {
 //                        handler.postDelayed(new Runnable() {
@@ -270,17 +274,66 @@ public abstract class BaseActivity extends SwipeBackActivity {
 //                    } else {
 //                        hideLoadDialog();
 //                    }
+//                        }
+//                    };
+
                 }
-            };
+            }
+        });
+    }
 
-        }
+    /**
+     * 保留旧的
+     * @param index
+     * @param isOnlyHotel
+     * @param isOnlyQuanYan
+     */
+    @JavascriptInterface
+    public void jsToOldOrderActivity(final int index, final boolean isOnlyHotel, final boolean isOnlyQuanYan) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (index < 0) {
+                    Intent intent = new Intent(getContext(), MyOrderActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    intent.putExtra("TabIndex", index);
+                    startActivity(intent);
+                } else {
+                    if (isLoading)
+                        return;
+//            showLoadDialog();
+//            Intent intent = new Intent(getContext(), MyOrderActivityNew.class);
+                    Intent intent = new Intent(getContext(), MyOrderActivity.class);
+                    intent.putExtra("TabIndex", index);
+                    intent.putExtra("isOnlyHotel", isOnlyHotel);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                    myOrderData = new MyOrderData((BaseActivity) getContext(), isOnlyHotel, isOnlyQuanYan) {
+                        @Override
+                        public void getDataSuccess() {
+//
+//                    if (handler != null) {
+//                        handler.postDelayed(new Runnable() {
+//                            public void run() {
+//                                hideLoadDialog();
+//
+//                            }
+//                        }, 1000);
+//                    } else {
+//                        hideLoadDialog();
+//                    }
+                        }
+                    };
 
+                }
+            }
+        });
     }
 
     /**
      * 到订单中心
      *
-     * @param index       0全部 1待付款 2
+     * @param index       0-全部 1-待付款 2-待发货 3-待收货 4-退款
      * @param isOnlyHotel 酒店订单
      */
     @JavascriptInterface
@@ -322,12 +375,12 @@ public abstract class BaseActivity extends SwipeBackActivity {
     protected String bundleToJson(Bundle bundle) {
         if (bundle == null || bundle.isEmpty())
             return "";
-        shopId = bundle.getString("shopid");
-        shopId = shopId == null ? "" : shopId;
         HashMap<String, Object> param = new HashMap<>();
         for (String key : bundle.keySet()) {
             param.put(key, bundle.get(key));
         }
+        shopId = bundle.getString("shopid");
+        shopId = shopId == null ? "" : shopId;
         return gson.toJson(param);
     }
 
@@ -340,6 +393,10 @@ public abstract class BaseActivity extends SwipeBackActivity {
         return shopId;
     }
 
+    @JavascriptInterface
+    public void setShopId(String shopId) {
+        this.shopId = shopId;
+    }
 
     /**
      * 缩放图片
@@ -1723,5 +1780,26 @@ public abstract class BaseActivity extends SwipeBackActivity {
             jsShowMsg("请授予单耳兔权限");
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PHONE_STATE);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_CHOOSE_COUPON:
+                if (resultCode != RESULT_CANCELED) {
+                    //从领取优惠券页面返回
+                    Bundle bundle = data.getExtras();
+                    String callBackMethod = bundle.getString("callbackMethod"); //页面回调方法
+                    String isUseCoupon = bundle.getString("isUseCoupon");       //0-不使用优惠券,1-使用优惠券
+                    String bundleString = bundle.getString("data");             //优惠券数据
+                    Logger.i(TAG, "callBackMethod=" + callBackMethod + ",isUseCoupon=" + isUseCoupon + ",bundleString=" + bundleString);
+                    if (webView != null) {
+                        webView.loadUrl(Constants.IFACE + callBackMethod + "(\'" + isUseCoupon + "\',\'" + bundleString + "\')");
+                    }
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 }

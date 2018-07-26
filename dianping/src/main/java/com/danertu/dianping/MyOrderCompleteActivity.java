@@ -89,17 +89,17 @@ public class MyOrderCompleteActivity extends BaseActivity implements OnClickList
     public void onClick(View v) {
         if (v == b_lookOrder && !isLoading()) {
             if (isBooking) {
-                Intent intent = new Intent(this, MyOrderActivity.class);
+                Intent intent = new Intent(this, OrderCenterActivity.class);
                 intent.putExtra(MyOrderActivity.KEY_TABINDEX, -1);
                 startActivity(intent);
                 return;
             }
-            myOrderData = new MyOrderData(this) {
-                @Override
-                public void getDataSuccess() {
-
-                }
-            };
+//            myOrderData = new MyOrderData(this) {
+//                @Override
+//                public void getDataSuccess() {
+//
+//                }
+//            };
 
             int index = 2;
             if (isPayed) {
@@ -107,7 +107,7 @@ public class MyOrderCompleteActivity extends BaseActivity implements OnClickList
             } else {
                 index = 1;//待付款
             }
-            Intent intent = new Intent(getContext(), MyOrderActivity.class);
+            Intent intent = new Intent(getContext(), OrderCenterActivity.class);
             intent.putExtra(MyOrderActivity.KEY_TABINDEX, index);
             startActivity(intent);
 

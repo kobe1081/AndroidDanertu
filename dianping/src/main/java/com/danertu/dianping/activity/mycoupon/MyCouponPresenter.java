@@ -5,7 +5,11 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 
+import com.config.Constants;
+import com.danertu.base.ModelParamCallBack;
 import com.danertu.base.NewBasePresenter;
+import com.danertu.entity.LeaderBean;
+import com.danertu.entity.ShopStateBean;
 import com.danertu.tools.Logger;
 
 import java.util.List;
@@ -40,7 +44,75 @@ public class MyCouponPresenter extends NewBasePresenter<MyCouponContact.MyCoupon
         view.jsShowLoading();
         view.initList(model.getCouponList());
         currentPage = 1;
-        loadData(currentPage);
+        model.checkIsOpenShop(view.getUid(), new ModelParamCallBack<ShopStateBean>() {
+            @Override
+            public void requestSuccess(ShopStateBean type) {
+                final List<ShopStateBean.ValBean> val = type.getVal();
+                if (val == null || val.size() == 0 || val.get(0) == null) {
+                    //未开店,店铺id为上级的
+                    model.getLeaderInfo(view.getUid(), new ModelParamCallBack<LeaderBean>() {
+
+                        @Override
+                        public void requestSuccess(LeaderBean type) {
+                            if (type == null || type.getLeaderInfo() == null || type.getLeaderInfo().getLeaderBean() == null || type.getLeaderInfo().getLeaderBean().size() == 0 || type.getLeaderInfo().getLeaderBean().get(0) == null) {
+                                if (isViewAttached()) {
+                                    view.jsShowMsg("出现错误");
+                                    view.jsFinish();
+                                }
+                            } else {
+                                String memberid = type.getLeaderInfo().getLeaderBean().get(0).getMemberid();
+                                if ("chunkang".equals(memberid)) {
+                                    memberid = Constants.CK_SHOPID;
+                                }
+                                if (isViewAttached()){
+                                    view.setShopId(memberid);
+                                    loadData(currentPage);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void requestError(LeaderBean type) {
+                            if (isViewAttached()) {
+                                view.jsShowMsg("出现错误");
+                                view.jsFinish();
+                            }
+                        }
+
+                        @Override
+                        public void requestFailure(LeaderBean type) {
+                            if (isViewAttached()) {
+                                view.jsShowMsg("出现错误");
+                                view.jsFinish();
+                            }
+                        }
+                    });
+                } else {
+                    //已开店，店铺id为自己的
+                    if (isViewAttached()){
+                        view.setShopId(val.get(0).getMemberID());
+                        loadData(currentPage);
+                    }
+                }
+            }
+
+            @Override
+            public void requestError(ShopStateBean type) {
+                if (isViewAttached()) {
+                    view.jsShowMsg("出现错误");
+                    view.jsFinish();
+                }
+            }
+
+            @Override
+            public void requestFailure(ShopStateBean type) {
+                if (isViewAttached()) {
+                    view.jsShowMsg("出现错误");
+                    view.jsFinish();
+                }
+            }
+        });
+
     }
 
     @Override
@@ -51,57 +123,83 @@ public class MyCouponPresenter extends NewBasePresenter<MyCouponContact.MyCoupon
                 view.jsHideLoading();
                 switch (msg.what) {
                     case WHAT_COUPON_LIST_SUCCESS:
-                        view.stopRefresh();
-                        view.notifyChange(model.getCouponList().size());
+                        if (isViewAttached()){
+                            view.stopRefresh();
+                            view.notifyChange(model.getCouponList().size());
+                        }
                         break;
                     case WHAT_COUPON_LIST_FAIL:
-                        view.jsShowMsg("数据获取失败");
-                        view.stopRefresh();
-                        view.getDataFail();
+                        if (isViewAttached()){
+                            view.jsShowMsg("数据获取失败");
+                            view.stopRefresh();
+                            view.getDataFail();
+                        }
                         break;
                     case WHAT_COUPON_LIST_ERROR:
-                        view.jsShowMsg("数据获取失败");
-                        view.stopRefresh();
-                        view.getDataFail();
+                        if (isViewAttached()){
+                            view.jsShowMsg("数据获取失败");
+                            view.stopRefresh();
+                            view.getDataFail();
+                        }
                         break;
                     case WHAT_LOAD_MORE_SUCCESS:
-                        view.notifyChange(model.getCouponList().size());
-                        view.stopLoadMore();
+                        if (isViewAttached()){
+                            view.notifyChange(model.getCouponList().size());
+                            view.stopLoadMore();
+                        }
                         break;
                     case WHAT_LOAD_MORE_FAIL:
                         --currentPage;
-                        view.jsShowMsg("加载更多数据失败");
-                        view.stopLoadMore();
+                        if (isViewAttached()){
+                            view.jsShowMsg("加载更多数据失败");
+                            view.stopLoadMore();
+                        }
                         break;
                     case WHAT_LOAD_MORE_ERROR:
                         --currentPage;
-                        view.jsShowMsg("加载更多数据失败");
-                        view.stopLoadMore();
+                        if (isViewAttached()){
+                            view.jsShowMsg("加载更多数据失败");
+                            view.stopLoadMore();
+                        }
                         break;
                     case WHAT_REFRESH_SUCCESS:
                         currentPage = 0;
-                        view.notifyChange(model.getCouponList().size());
+                        if (isViewAttached()) {
+                            view.notifyChange(model.getCouponList().size());
+                        }
                         break;
                     case WHAT_REFRESH_FAIL:
-                        view.jsShowMsg("刷新失败");
-                        view.stopRefresh();
+                        if (isViewAttached()){
+                            view.jsShowMsg("刷新失败");
+                            view.stopRefresh();
+                        }
                         break;
                     case WHAT_REFRESH_ERROR:
-                        view.jsShowMsg("刷新失败");
-                        view.stopRefresh();
+                        if (isViewAttached()){
+                            view.jsShowMsg("刷新失败");
+                            view.stopRefresh();
+                        }
                         break;
                     case WHAT_NO_MORE_DATA:
-                        view.jsShowMsg("已无更多优惠券");
-                        view.stopLoadMore();
+                        if (isViewAttached()){
+                            view.jsShowMsg("已无更多优惠券");
+                            view.stopLoadMore();
+                        }
                         break;
                     case WHAT_SHOP_DETAIL_SUCCESS:
-                        view.toAgentShop(msg.arg1,msg.obj.toString());
+                        if (isViewAttached()){
+                            view.toAgentShop(msg.arg1, msg.obj.toString());
+                        }
                         break;
                     case WHAT_SHOP_DETAIL_FAIL:
-                        view.jsShowMsg("获取经销商信息失败");
+                        if (isViewAttached()){
+                            view.jsShowMsg("获取经销商信息失败");
+                        }
                         break;
                     case WHAT_SHOP_DETAIL_ERROR:
-                        view.jsShowMsg("获取经销商信息失败");
+                        if (isViewAttached()){
+                            view.jsShowMsg("获取经销商信息失败");
+                        }
                         break;
                 }
                 super.handleMessage(msg);
@@ -113,6 +211,7 @@ public class MyCouponPresenter extends NewBasePresenter<MyCouponContact.MyCoupon
     public void onDestroy() {
         if (handler != null) {
             handler.removeCallbacksAndMessages("");
+            handler=null;
         }
     }
 
@@ -129,7 +228,7 @@ public class MyCouponPresenter extends NewBasePresenter<MyCouponContact.MyCoupon
 
     @Override
     public void loadData(int page) {
-        model.getMyCouponList(handler, model.getUid(context), "0", page, 12);
+        model.getMyCouponList(handler, model.getUid(context), "0", page, Constants.pageSize);
     }
 
     @Override
@@ -157,7 +256,16 @@ public class MyCouponPresenter extends NewBasePresenter<MyCouponContact.MyCoupon
 
     @Override
     public void toAgentShopIndex(String useAgentAppoint) {
-        view.jsShowLoading();
+        if (isViewAttached()) {
+            view.jsShowLoading();
+        }
+        if (useAgentAppoint.equals(Constants.CK_SHOPID)||useAgentAppoint.equals("chunkang")){
+            if (isViewAttached()){
+                view.jsHideLoading();
+                view.toAgentShop(1,Constants.CK_SHOPID);
+            }
+            return;
+        }
         model.getShopDetail(handler, useAgentAppoint);
     }
 }

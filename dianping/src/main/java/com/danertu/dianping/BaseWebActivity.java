@@ -254,6 +254,7 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
      */
     @SuppressLint("SetJavaScriptEnabled")
     protected void initWebSettings() {
+
         WebSettings mWebSettings;
         mWebSettings = webView.getSettings();
         mWebSettings.setDefaultTextEncodingName("utf-8");

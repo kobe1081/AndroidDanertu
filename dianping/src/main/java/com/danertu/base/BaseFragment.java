@@ -101,6 +101,12 @@ public abstract class BaseFragment<V, T extends BasePresenter<V>> extends Fragme
     public String getShopId() {
         return ((BaseActivity) getActivity()).getShopId();
     }
+
+    @Override
+    public void setShopId(String shopId) {
+        ((BaseActivity) getActivity()).setShopId(shopId);
+    }
+
     /**
      * 定义一个Presenter 用于解绑持有的View
      * 在onCreate进行初始化Presenter的操作
@@ -445,6 +451,18 @@ public abstract class BaseFragment<V, T extends BasePresenter<V>> extends Fragme
 
     public String getStockSmallImgPath(String imgName) {
         return Constants.imgServer + "sysProduct/" + imgName;
+    }
+
+    /**
+     * 获取商品图片路径
+     *
+     * @param imgName
+     * @param agentID
+     * @param supplierID
+     * @return
+     */
+    public String getSmallImgPath(String imgName, String agentID, String supplierID) {
+        return ActivityUtils.getImgUrl(imgName, agentID, supplierID);
     }
 
     public void setTopPadding(View view, int top) {

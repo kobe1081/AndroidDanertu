@@ -85,6 +85,9 @@ public interface BaseView {
     @JavascriptInterface
     String getShopId();
 
+    @JavascriptInterface
+    void setShopId(String shopId);
+
     /**
      * @return imei码
      */
@@ -201,6 +204,8 @@ public interface BaseView {
     String getImgUrl(String imgName, String agentID, String supplierID);
 
     boolean isClickMoreTimesShortTime();
+
+    String getSmallImgPath(String imgName, String agentID, String supplierID);
 
     String getStockSmallImgPath(String imgName);
 

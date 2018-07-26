@@ -5,6 +5,7 @@ import wl.codelibrary.widget.IOSDialog;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
+import android.webkit.ConsoleMessage;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
@@ -32,17 +33,20 @@ public class MWebChromeClient extends WebChromeClient {
     }
 
     @Override
-    public boolean onJsConfirm(WebView view, String url, String message,
-                               JsResult result) {
+    public boolean onJsConfirm(WebView view, String url, String message, JsResult result) {
         alert(1, message, result);
         return true;
     }
 
     @Override
-    public boolean onJsPrompt(WebView view, String url, String message,
-                              String defaultValue, JsPromptResult result) {
+    public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, JsPromptResult result) {
         alert(2, message, result);
         return true;
+    }
+
+    @Override
+    public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+        return super.onConsoleMessage(consoleMessage);
     }
 
     public void alert(int title_index, String content, final JsResult result) {
