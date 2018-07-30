@@ -14,7 +14,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.danertu.adapter.MyOrderAdapter.REQUEST_QRCODE;
-
+/**
+ * 作者:  Viz
+ * 日期:  2018/7/30 12:03
+ *
+ * 描述： 待发货列表页面  已弃用
+*/
 public class MyOrderNoSendActivity extends MyOrderParent {
     public static boolean isInit = false;
 

@@ -287,6 +287,8 @@ public class OrderDetailPresenter extends NewBasePresenter<OrderDetailContact.Or
         newOrderBean.setLogisticsCompanyCode(bean.getLogisticsCompanyCode());
         newOrderBean.setProductItems(orderproductbean);
         bundle.putParcelable("orderBean", newOrderBean);
+
+        intent.putExtras(bundle);
         manager.sendBroadcast(intent);
     }
 

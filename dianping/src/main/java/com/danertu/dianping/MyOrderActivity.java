@@ -39,7 +39,12 @@ import com.danertu.widget.MWebViewClient;
 
 import static com.danertu.dianping.MyOrderParent.REQ_PAY;
 
-
+/**
+ *
+ * 旧订单中心，新的订单中心为  OrderCenterActivity
+ * 作者:  Viz
+ * 日期:  2018/7/30 11:54
+*/
 public class MyOrderActivity extends BaseActivity implements MyOrderData.LoadDataListener {
     /**
      * tab页标题

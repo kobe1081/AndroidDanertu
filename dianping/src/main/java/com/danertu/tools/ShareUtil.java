@@ -105,6 +105,8 @@ public class ShareUtil {
         new GetImgToShare(onlyShow).execute(this.imgPath);
     }
 
+
+
     public void share(String type, String shopid, String title, String imgPath, String targetPath, String description) {
         share(type, shopid, title, imgPath, targetPath, description, null);
     }
@@ -395,7 +397,7 @@ public class ShareUtil {
                     public void run() {
                         // 耗时操作
                         try {
-                            String result = AppManager.getInstance().sendErrInfo("分享失败，message=：\n"+msg);
+                            String result = AppManager.getInstance().sendErrInfo("分享失败，message=：\n" + msg);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -409,6 +411,129 @@ public class ShareUtil {
             }
         });
         // 启动分享
+        oks.show(context);
+    }
+
+    /**
+     * 分享图片
+     *
+     * @param title
+     * @param text
+     * @param imgPath
+     */
+    public void shareImg(String title, String text, String imgPath,final String platformList, final PlatformActionListener listener) {
+        OnekeyShare oks = new OnekeyShare();
+        onlyShow(oks, platformList);
+        if (TextUtils.isEmpty(title)) {
+            title = "单耳兔商城";
+        }
+        oks.setTitle(title);
+        oks.setImagePath(imgPath);
+        //ShareSDK快捷分享提供两个界面第一个是九宫格 CLASSIC  第二个是SKYBLUE
+        oks.setTheme(OnekeyShareTheme.CLASSIC);
+        // 令编辑页面显示为Dialog模式
+        oks.setDialogMode(true);
+        // 在自动授权时可以禁用SSO方式
+        oks.disableSSOWhenAuthorize();
+        if (!TextUtils.isEmpty(text)) {
+            oks.setText(text);
+        }
+
+        if (TextUtils.isEmpty(imgPath)) {
+            CommonTools.showShortToast(context, "图片地址不能为空");
+            return;
+        }
+
+//        final String finalTitle = title;
+//        oks.setShareContentCustomizeCallback(new ShareContentCustomizeCallback() {
+//            @Override
+//            public void onShare(Platform platform, Platform.ShareParams paramsToShare) {
+//                //分享至微信
+//                if (Wechat.NAME.equals(platform.getName())) {
+//                    // url仅在微信（包括好友和朋友圈）中使用
+//                    paramsToShare.setShareType(Platform.SHARE_WEBPAGE);
+//                    paramsToShare.setTitle(finalTitle);
+//                    paramsToShare.setTitleUrl(targetPath);
+//                    paramsToShare.setUrl(targetPath);
+//                }
+//                //微信朋友圈
+//                if (WechatMoments.NAME.equals(platform.getName())) {
+//                    // url仅在微信（包括好友和朋友圈）中使用
+//                    paramsToShare.setShareType(Platform.SHARE_WEBPAGE);
+//                    paramsToShare.setTitle(finalTitle);
+//                    paramsToShare.setTitleUrl(targetPath);
+//                    paramsToShare.setUrl(targetPath);
+//                    Logger.e("share", "paramsToShare.toString()=" + paramsToShare.toString());
+//
+//                }
+//                if (WechatFavorite.NAME.equals(platform.getName())) {
+//                    // url仅在微信（包括好友和朋友圈）中使用
+//                    paramsToShare.setShareType(Platform.SHARE_WEBPAGE);
+//                    paramsToShare.setTitle(finalTitle);
+//                    paramsToShare.setTitleUrl(targetPath);
+//                    paramsToShare.setUrl(targetPath);
+//                }
+//                //分享至QQ
+//                if (QQ.NAME.equals(platform.getName())) {
+//                    paramsToShare.setTitle(finalTitle);
+//                    paramsToShare.setTitleUrl(targetPath);
+//                    paramsToShare.setUrl(targetPath);
+//                    // site是分享此内容的网站名称，仅在QQ空间使用
+//                    paramsToShare.setSite(context.getString(R.string.app_name));
+//                    paramsToShare.setSiteUrl("http://www.danertu.com");//QZone分享参数
+//                }
+//                //分享至QQ空间
+//                if (QZone.NAME.equals(platform.getName())) {
+//                    paramsToShare.setTitle(finalTitle);
+//                    paramsToShare.setTitleUrl(targetPath);
+//                    // site是分享此内容的网站名称，仅在QQ空间使用
+//                    paramsToShare.setSite(context.getString(R.string.app_name));
+//                    paramsToShare.setSiteUrl("http://www.danertu.com");//QZone分享参数
+//                    platform.isClientValid();
+//                }
+//                //分享至新浪微博
+//                if (SinaWeibo.NAME.equals(platform.getName())) {
+//
+//                }
+//                //分享至腾讯微博
+//                if (TencentWeibo.NAME.equals(platform.getName())) {
+//
+//                }
+//                //分享至短信
+//                if (ShortMessage.NAME.equals(platform.getName())) {
+//                    paramsToShare.setTitle(finalTitle);
+//                }
+//                //分享至Facebook
+//                if (Facebook.NAME.equals(platform.getName())) {
+//
+//                }
+//                //分享至Twitter
+//                if (Twitter.NAME.equals(platform.getName())) {
+//
+//                }
+//                //分享至Email
+//                if (Email.NAME.equals(platform.getName())) {
+//                    paramsToShare.setTitle(finalTitle);
+//                }
+//
+//            }
+//        });
+        oks.setCallback(new PlatformActionListener() {
+            @Override
+            public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
+                listener.onComplete(platform, i, hashMap);
+            }
+
+            @Override
+            public void onError(Platform platform, int i, Throwable throwable) {
+                listener.onError(platform, i, throwable);
+            }
+
+            @Override
+            public void onCancel(Platform platform, int i) {
+                listener.onCancel(platform, i);
+            }
+        });
         oks.show(context);
     }
 

@@ -234,6 +234,7 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
                             view.notifyChange(list.size());
                             break;
                     }
+
                 }
             }
 
@@ -259,30 +260,25 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_QRCODE:
-//                Bundle bundle = data.getExtras();
-//                final int position = bundle.getInt("position", -1);
-//                final String orderNumber = bundle.getString("orderNumber");
-//                Logger.e(TAG, "返回的订单号=" + orderNumber);
-//                Logger.e(TAG, "返回的下标位置=" + position);
-//                if (TextUtils.isEmpty(orderNumber)) {
-//                    return;
-//                }
-//                if (position == -1) {
-//                    return;
-//                }
-//
+
                 break;
         }
     }
 
     @Override
     public void changeOrderStatue(int position, String orderNumber, String orderStatue, String payStatue, String shipStatue) {
-        view.changeOrderStatue(position, orderNumber, orderNumber, payStatue, shipStatue);
+        if (isViewAttached()){
+            view.changeOrderStatue(position, orderNumber, orderStatue, payStatue, shipStatue);
+            view.sendDataChangeBroadcast(orderNumber,position,model.getList().get(position));
+        }
     }
 
     @Override
     public void dataChange(Intent intent) {
         Bundle bundle = intent.getExtras();
+        if (bundle == null) {
+            return;
+        }
         String orderNumber = bundle.getString("orderNumber");
         if (TextUtils.isEmpty(orderNumber)) {
             return;
@@ -294,9 +290,12 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
         }
         List<OrderBody.OrderproductlistBean.OrderproductbeanBean> productItems = orderBean.getProductItems();
         List<NewOrderBean> newOrderBeanList = model.getList();
-        NewOrderBean bean = newOrderBeanList.get(position);
         switch (orderType) {
             case "0":
+                if (position >= newOrderBeanList.size()) {
+                    return;
+                }
+                NewOrderBean bean = newOrderBeanList.get(position);
                 if (bean.getOrderNumber().equals(orderNumber)) {
                     bean.setPaymentName(orderBean.getPaymentName());
                     bean.setPaymentStatus(orderBean.getPaymentStatus());
@@ -343,38 +342,57 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
                 }
                 break;
             case "1":
-                if (removeData(orderNumber, position, orderBean, newOrderBeanList, bean)) return;
+                if (removeData(orderNumber, position, orderBean, newOrderBeanList))
+                    return;
 
-                if ("1".equals(orderBean.getOderStatus()) && "0".equals(orderBean.getShipmentStatus()) && "0".equals(orderBean.getPaymentName())) {
+                if ("1".equals(orderBean.getOderStatus()) && "0".equals(orderBean.getShipmentStatus()) && "0".equals(orderBean.getPaymentStatus())) {
                     newOrderBeanList.add(0, orderBean);
+                    if (isViewAttached()) {
+                        view.notifyChange(model.getList().size());
+                    }
                 }
                 break;
             case "2":
-                if (removeData(orderNumber, position, orderBean, newOrderBeanList, bean)) return;
+                if (removeData(orderNumber, position, orderBean, newOrderBeanList))
+                    return;
 
-                if ("1".equals(orderBean.getOderStatus()) && "0".equals(orderBean.getShipmentStatus()) && "2".equals(orderBean.getPaymentName())) {
+                if ("1".equals(orderBean.getOderStatus()) && "0".equals(orderBean.getShipmentStatus()) && "2".equals(orderBean.getPaymentStatus())) {
                     newOrderBeanList.add(0, orderBean);
+                    if (isViewAttached()) {
+                        view.notifyChange(model.getList().size());
+                    }
                 }
                 break;
             case "3":
-                if (removeData(orderNumber, position, orderBean, newOrderBeanList, bean)) return;
+                if (removeData(orderNumber, position, orderBean, newOrderBeanList))
+                    return;
 
-                if ("1".equals(orderBean.getOderStatus()) && "1".equals(orderBean.getShipmentStatus()) && "2".equals(orderBean.getPaymentName())) {
+                if ("1".equals(orderBean.getOderStatus()) && "1".equals(orderBean.getShipmentStatus()) && "2".equals(orderBean.getPaymentStatus())) {
                     newOrderBeanList.add(0, orderBean);
+                    if (isViewAttached()) {
+                        view.notifyChange(model.getList().size());
+                    }
                 }
                 break;
             case "4":
-                if (removeData(orderNumber, position, orderBean, newOrderBeanList, bean)) return;
-
+                if (removeData(orderNumber, position, orderBean, newOrderBeanList))
+                    return;
                 if ("3".equals(orderBean.getPaymentName())) {
                     newOrderBeanList.add(0, orderBean);
+                    if (isViewAttached()) {
+                        view.notifyChange(model.getList().size());
+                    }
                 }
                 break;
         }
 
     }
 
-    private boolean removeData(String orderNumber, int position, NewOrderBean orderBean, List<NewOrderBean> newOrderBeanList, NewOrderBean bean) {
+    private boolean removeData(String orderNumber, int position, NewOrderBean orderBean, List<NewOrderBean> newOrderBeanList) {
+        if (position >= newOrderBeanList.size()) {
+            return false;
+        }
+        NewOrderBean bean = newOrderBeanList.get(position);
         if (bean.getOrderNumber().equals(orderNumber)) {
             if (!bean.getOderStatus().equals(orderBean.getOderStatus())) {
                 newOrderBeanList.remove(position);

@@ -1,14 +1,21 @@
 package com.danertu.dianping;
 
 
+import java.io.File;
+import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.PlatformActionListener;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AppOpsManager;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,16 +25,19 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
 import android.os.Vibrator;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -57,6 +67,7 @@ import com.danertu.tools.AESEncrypt;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.AppUtil;
 import com.danertu.tools.AsyncTask;
+import com.danertu.tools.DateTimeUtils;
 import com.danertu.tools.DemoApplication;
 import com.danertu.tools.DeviceTag;
 import com.danertu.tools.ImageLoaderConfig;
@@ -65,12 +76,16 @@ import com.danertu.tools.Logger;
 import com.danertu.tools.MD5Util;
 import com.danertu.tools.MIUIUtils;
 import com.danertu.tools.PayUtils;
+import com.danertu.tools.QRCodeUtils;
 import com.danertu.tools.ShareUtil;
 import com.danertu.tools.StatusBarUtil;
 import com.danertu.tools.SystemBarTintManager;
 import com.danertu.widget.CommonTools;
 import com.google.gson.Gson;
+import com.google.zxing.WriterException;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.umeng.analytics.MobclickAgent;
 
 import static com.danertu.dianping.activity.choosecoupon.ChooseCouponPresenter.REQUEST_CHOOSE_COUPON;
@@ -284,6 +299,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
 
     /**
      * 保留旧的
+     *
      * @param index
      * @param isOnlyHotel
      * @param isOnlyQuanYan
@@ -1340,7 +1356,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
      * @param taskUrl
      * @param taskArgs
      */
-    public void doTaskAsync(int taskId, String taskUrl, HashMap<String, String> taskArgs) {
+    public void doTaskAsync(int taskId, String taskUrl, Hashtable<String, String> taskArgs) {
         showLoadDialog();
         BaseTask baseTask = new BaseTask() {
             @Override
@@ -1361,7 +1377,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
         addTask(taskId, null, null, baseTask, delayTime);
     }
 
-    public void addTask(int taskId, String taskUrl, HashMap<String, String> taskArgs, BaseTask baseTask, int delayTime) {
+    public void addTask(int taskId, String taskUrl, Hashtable<String, String> taskArgs, BaseTask baseTask, int delayTime) {
         if (taskPool == null) {
             // init task pool
             this.taskPool = new BaseTaskPool(this);
@@ -1801,5 +1817,131 @@ public abstract class BaseActivity extends SwipeBackActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
 
+    }
+
+    /**
+     * 创建一张包含二维码的图片并分享
+     *
+     * @param imgSrc         指定的图片链接
+     * @param qrCodeContent  二维码内容
+     * @param startX         起始点x坐标，传递指定的图片长的百分比
+     * @param startY         起始点y坐标，传递指定的图片高的百分比
+     * @param widthAndHeight 二维码边长，单位为像素
+     * @param platformList   只显示出来的分享平台, Wechat&WechatMoments 表示只显示微信和微信朋友圈，空则表示全部
+     */
+    @JavascriptInterface
+    public void shareImgWithQRCode(String imgSrc, final String qrCodeContent, final float startX, final float startY, final int widthAndHeight, final String platformList) {
+        if (TextUtils.isEmpty(imgSrc)) {
+            jsShowMsg("图片地址不能为空");
+            return;
+        }
+        //拼接时间戳
+        imgSrc+="&timestamp="+System.currentTimeMillis();
+        showLoadDialog();
+        ImageLoader.getInstance().loadImage(imgSrc, new ImageLoadingListener() {
+            @Override
+            public void onLoadingStarted(String s, View view) {
+
+            }
+
+            @Override
+            public void onLoadingFailed(String s, View view, FailReason failReason) {
+                jsShowMsg("创建失败");
+            }
+
+            @Override
+            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
+                //拿到了图片
+                try {
+                    Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.icon);
+                    Bitmap qrCode = QRCodeUtils.createQRImage(qrCodeContent, widthAndHeight, logo);
+                    if (qrCode == null) {
+                        jsShowMsg("创建失败");
+                        return;
+                    }
+
+                    int width = bitmap.getWidth();
+                    int height = bitmap.getHeight();
+                    float locationX = width * startX;//二维码具体的起始点x坐标
+                    float locationY = height * startY;//二维码具体的起始点y坐标
+                    Bitmap shareBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(shareBitmap);
+                    canvas.drawBitmap(bitmap, 0, 0, null);
+                    canvas.drawBitmap(qrCode, locationX, locationY, null);
+                    canvas.save(Canvas.ALL_SAVE_FLAG);
+                    canvas.restore();
+                    // 系统时间
+                    long currentTimeMillis = System.currentTimeMillis();
+                    long dateSeconds = currentTimeMillis / 1000;
+                    String saveDirName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + File.separator + "Danertu";
+                    String saveImgName = "Danertu_" + currentTimeMillis + ".png";
+                    File saveFile = new File(saveDirName);
+                    if (!saveFile.exists()) {
+                        saveFile.mkdir();
+                    }
+                    final File file = new File(saveDirName + File.separator + saveImgName);
+
+                    // 保存图片到系统MediaStore
+                    ContentValues values = new ContentValues();
+                    ContentResolver resolver = getContext().getContentResolver();
+                    values.put(MediaStore.Images.ImageColumns.DATA, saveDirName + File.separator + saveImgName);
+                    values.put(MediaStore.Images.ImageColumns.TITLE, saveImgName);
+                    values.put(MediaStore.Images.ImageColumns.DISPLAY_NAME, saveImgName);
+                    values.put(MediaStore.Images.ImageColumns.DATE_TAKEN, currentTimeMillis);
+                    values.put(MediaStore.Images.ImageColumns.DATE_ADDED, dateSeconds);
+                    values.put(MediaStore.Images.ImageColumns.DATE_MODIFIED, dateSeconds);
+                    values.put(MediaStore.Images.ImageColumns.MIME_TYPE, "image/png");
+                    values.put(MediaStore.Images.ImageColumns.WIDTH, shareBitmap.getWidth());
+                    values.put(MediaStore.Images.ImageColumns.HEIGHT, shareBitmap.getHeight());
+                    Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                    OutputStream out = resolver.openOutputStream(uri);
+                    shareBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);// bitmap转换成输出流，写入文件
+                    out.flush();
+                    out.close();
+                    // update file size in the database
+                    values.clear();
+                    values.put(MediaStore.Images.ImageColumns.SIZE, file.length());
+                    resolver.update(uri, values, null, null);
+                    //绘制完成，保存，分享
+                    if (shareUtil==null){
+                        initShareUtil();
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hideLoadDialog();
+                            shareUtil.shareImg(null, null, file.getAbsolutePath(), platformList, new PlatformActionListener() {
+                                @Override
+                                public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
+                                    jsShowMsg("分享成功");
+                                }
+
+                                @Override
+                                public void onError(Platform platform, int i, Throwable throwable) {
+                                    jsShowMsg("分享失败");
+
+                                }
+
+                                @Override
+                                public void onCancel(Platform platform, int i) {
+                                    jsShowMsg("您已取消分享");
+                                }
+                            });
+                        }
+                    });
+                } catch (Exception e) {
+                    jsShowMsg("创建失败");
+                    getStoragePermission();
+                    if (Constants.isDebug)
+                        e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onLoadingCancelled(String s, View view) {
+                jsShowMsg("创建取消");
+            }
+        });
     }
 }

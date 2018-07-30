@@ -455,9 +455,8 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
                     jsStartActivity("HtmlActivityNew", "url|" + Constants.appWebPageUrl + "seller_learn.html");
                     break;
 //                case R.id.test:
-//                    startActivity(new Intent(context,OrderCenterActivity.class));
+//                    shareImgWithQRCode("http://img.danertu.com/member/announcement/20180529163710102.jpg","1234565768666",0.2f,0.2f,200,null);
 //                    break;
-
 
                 default:
                     break;

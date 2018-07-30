@@ -12,7 +12,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.danertu.adapter.MyOrderAdapter.REQUEST_QRCODE;
-
+/**
+ * 作者:  Viz
+ * 日期:  2018/7/30 12:02
+ *
+ * 描述： 待付款列表页面 已弃用
+*/
 public class MyOrderNoPayActivity extends MyOrderParent {
 
     protected void onCreate(Bundle savedInstanceState) {

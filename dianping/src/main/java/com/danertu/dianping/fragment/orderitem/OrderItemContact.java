@@ -6,7 +6,6 @@ import android.os.Bundle;
 import com.danertu.base.BaseView;
 import com.danertu.base.IPresenter;
 import com.danertu.entity.NewOrderBean;
-import com.danertu.entity.OrderHead;
 
 import java.util.List;
 
@@ -36,7 +35,10 @@ public interface OrderItemContact {
         void sureTakeGoodsFailure(String orderNumber, int position);
 
         void changeOrderStatue(int position, String orderNumber, String orderStatue, String payStatue, String shipStatue);
+
         void initBroadcastReceiver();
+
+        void sendDataChangeBroadcast(String orderNumber, int position, NewOrderBean bean);
     }
 
     interface IOrderItemPresenter extends IPresenter {

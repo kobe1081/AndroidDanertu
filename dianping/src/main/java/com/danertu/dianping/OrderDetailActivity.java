@@ -50,11 +50,11 @@ import butterknife.OnClick;
 import static com.danertu.dianping.activity.orderdetail.OrderDetailPresenter.REQUEST_SHOW_QRCODE;
 
 /**
- * 新的订单详情
- * <p>
  * 作者:  Viz
- * 日期:  2018/7/25 15:59
- */
+ * 日期:  2018/7/30 14:12
+ *
+ * 描述： 新的订单详情
+*/
 public class OrderDetailActivity extends NewBaseActivity<OrderDetailContact.OrderDetailView, OrderDetailPresenter> implements OrderDetailContact.OrderDetailView, SwipeRefreshLayout.OnRefreshListener {
 
 
@@ -211,7 +211,12 @@ public class OrderDetailActivity extends NewBaseActivity<OrderDetailContact.Orde
         setSystemBarWhite();
         swipeRefresh.setEnabled(false);
         Intent intent = getIntent();
-        orderNumber = intent.getExtras().getString("orderNumber", "");
+        Bundle extras = intent.getExtras();
+        if (extras == null) {
+            jsShowMsg("发生了错误");
+            return;
+        }
+        orderNumber = extras.getString("orderNumber", "");
         presenter.onCreate(intent);
     }
 
@@ -272,6 +277,9 @@ public class OrderDetailActivity extends NewBaseActivity<OrderDetailContact.Orde
                     Intent intent = new Intent(context, QRCodeDetailActivity.class);
                     intent.putExtra("orderNumber", orderNumber);
                     startActivityForResult(intent, REQUEST_SHOW_QRCODE);
+                    break;
+                case BTN_LEFT_DRAWBACK:
+                    presenter.toPayBackForResult(getUid());
                     break;
             }
         }

@@ -11,7 +11,12 @@ import com.danertu.tools.Logger;
 import com.danertu.widget.CommonTools;
 
 import java.util.ArrayList;
-
+/**
+ * 作者:  Viz
+ * 日期:  2018/7/30 12:03
+ *
+ * 描述： 待收货列表 已弃用
+*/
 public class MyOrderNoReceiveActivity extends MyOrderParent {
 
     protected void onCreate(Bundle savedInstanceState) {

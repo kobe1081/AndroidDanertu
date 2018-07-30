@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +30,7 @@ import cn.sharesdk.wechat.friends.Wechat;
 import com.config.Constants;
 import com.danertu.db.DBHelper;
 import com.danertu.tools.AppManager;
+import com.danertu.tools.AsyncTask;
 import com.danertu.tools.Logger;
 
 public class LoginActivity extends BaseWebActivity implements PlatformActionListener {
@@ -106,7 +108,6 @@ public class LoginActivity extends BaseWebActivity implements PlatformActionList
 
     @Override
     public void onCancel(Platform arg0, int arg1) {
-        Logger.e(TAG + "_onCancel", arg0.toString() + ", " + arg1);
         hideLoadDialog();
     }
 
@@ -126,25 +127,56 @@ public class LoginActivity extends BaseWebActivity implements PlatformActionList
 
     @Override
     public void onError(Platform arg0, int arg1, Throwable arg2) {
-        Logger.e(TAG + "_onError", arg0.toString() + ", " + arg1 + ", " + arg2.toString());
         hideLoadDialog();
     }
 
     @JavascriptInterface
     public void login(final String account, final String passwd) {
-        Logger.e(TAG, account + "/" + passwd);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 LoginActivity.this.account = account;
                 LoginActivity.this.passwd = passwd;
-                HashMap<String, String> Params = new HashMap<>();
-                Params.put("apiid", "0009");
-                Params.put("uid", account);
-                Params.put("pwd", passwd);
-                doTaskAsync(Constants.api.POST_LOGIN_INFO, "", Params);
+//                HashMap<String, String> Params = new HashMap<>();
+//                Hashtable<String, String> Params = new Hashtable<>();
+//                Params.put("apiid", "0009");
+//                Params.put("dateline", String.valueOf(System.currentTimeMillis()));
+//                Params.put("uid", account);
+//                Params.put("pwd", passwd);
+//                doTaskAsync(Constants.api.POST_LOGIN_INFO, "", Params);
+                new LoginClz().execute(account,passwd);
             }
         });
+    }
+
+    class LoginClz extends AsyncTask<String,Integer,String>{
+
+        @Override
+        protected String doInBackground(String... param) {
+            String uid = param[0];
+            String pwd = param[1];
+            return appManager.postLoginInfo("0009",uid,pwd);
+        }
+
+        @Override
+        protected void onPostExecute(final String result) {
+            super.onPostExecute(result);
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    try {
+                        JSONObject obj = new JSONObject(result).getJSONArray("val").getJSONObject(0);
+                        score = obj.getString("Score");
+                        String email = obj.getString("Email");
+                        String token = obj.getString("Token");
+                        setLoginInfo(account, passwd, email, nickname, headimgurl);
+                    } catch (JSONException e) {
+                        jsShowMsg("登录失败，请确认账号与密码的正确性");
+                        nickname = null;
+                        headimgurl = null;
+                    }
+                }
+            });
+        }
     }
 
     @JavascriptInterface
@@ -210,7 +242,7 @@ public class LoginActivity extends BaseWebActivity implements PlatformActionList
     };
 
     private void getUserAddress(String uId) {
-        HashMap<String, String> Params = new HashMap<>();
+        Hashtable<String, String> Params = new Hashtable<>();
         Params.put("apiid", "0030");
         Params.put("uId", uId);
         doTaskAsync(Constants.api.GET_USER_ADRESS, "", Params);

@@ -30,8 +30,7 @@ public class QRCodeUtils {
      * @return
      * @throws WriterException
      */
-    public static Bitmap createQRCode(String str, int widthAndHeight)
-            throws WriterException {
+    public static Bitmap createQRCode(String str, int widthAndHeight) throws WriterException {
         Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();
         hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
         BitMatrix matrix = new MultiFormatWriter().encode(str, BarcodeFormat.QR_CODE, widthAndHeight, widthAndHeight);

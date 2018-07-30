@@ -2,6 +2,7 @@ package com.danertu.tools;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -69,7 +70,7 @@ public class NoticeManager {
      * @param memberId
      */
     public void updateMsg(String memberId) {
-        HashMap<String, String> msgParams = new HashMap<>();
+        Hashtable<String, String> msgParams = new Hashtable<>();
         msgParams.put("apiid", "0007");
         msgParams.put("memberId", memberId);
         this.doTaskAsync(GETMSG_COMPLETE, "", msgParams);
@@ -136,7 +137,7 @@ public class NoticeManager {
         });
     }
 
-    public void doTaskAsync(final int taskId, final String taskUrl, final HashMap<String, String> taskArgs) {
+    public void doTaskAsync(final int taskId, final String taskUrl, final Hashtable<String, String> taskArgs) {
         ExecutorService es = Executors.newSingleThreadExecutor();
         es.execute(new Runnable() {
             @Override

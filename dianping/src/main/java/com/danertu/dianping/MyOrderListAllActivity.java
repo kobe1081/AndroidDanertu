@@ -13,7 +13,12 @@ import java.util.HashMap;
 
 import static com.danertu.adapter.MyOrderAdapter.REQUEST_ORDER_DETAIL;
 import static com.danertu.adapter.MyOrderAdapter.REQUEST_QRCODE;
-
+/**
+ * 作者:  Viz
+ * 日期:  2018/7/30 12:00
+ *
+ * 描述： 全部订单列表，已弃用
+*/
 public class MyOrderListAllActivity extends MyOrderParent {
 
     protected void onCreate(Bundle savedInstanceState) {

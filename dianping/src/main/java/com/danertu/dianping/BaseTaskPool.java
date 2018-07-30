@@ -1,6 +1,7 @@
 package com.danertu.dianping;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -23,7 +24,7 @@ public class BaseTaskPool {
 	}
 	
 	// http post task with params
-	public void addTask (int taskId, String taskUrl, HashMap<String, String> taskArgs, BaseTask baseTask, int delayTime) {
+	public void addTask (int taskId, String taskUrl, Hashtable<String, String> taskArgs, BaseTask baseTask, int delayTime) {
 		baseTask.setId(taskId);
 		try {
 			taskPool.execute(new TaskThread(context, taskUrl, taskArgs, baseTask, delayTime));
@@ -56,10 +57,10 @@ public class BaseTaskPool {
 	private class TaskThread implements Runnable {
 		private Context context;
 		private String taskUrl;
-		private HashMap<String, String> taskArgs;
+		private Hashtable<String, String> taskArgs;
 		private BaseTask baseTask;
 		private int delayTime = 0;
-		public TaskThread(Context context, String taskUrl, HashMap<String, String> taskArgs, BaseTask baseTask, int delayTime) {
+		public TaskThread(Context context, String taskUrl, Hashtable<String, String> taskArgs, BaseTask baseTask, int delayTime) {
 			this.context = context;
 			this.taskUrl = taskUrl;
 			this.taskArgs = taskArgs;

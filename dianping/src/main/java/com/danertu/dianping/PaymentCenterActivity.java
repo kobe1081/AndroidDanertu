@@ -1422,10 +1422,12 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                         arrayItemJSONObject.put("productGuids", goodsArray);
                         paramJSONArray.put(arrayItemJSONObject);
                     }
-                    Logger.e(TAG, "拼接的字符串" + paramJSONArray.toString());
-                    jsStartActivityForResult("ChooseCouponActivity", "couponRecordGuid|" + (tv_fav_ticket.getTag() == null ? "" : tv_fav_ticket.getTag().toString()) + ",;shopid|" + getShopId() + ",;multiParam|" + paramJSONArray.toString() + ",;totalPrice|" + price.getTotalPrice(), REQUEST_CHOOSE_COUPON);
+                    jsStartActivityForResult("ChooseCouponActivity", "couponRecordGuid|" + (tv_fav_ticket.getTag() == null ? "" : tv_fav_ticket.getTag().toString()) + ",;shopid|" + getShopId() + ",;multiParam|" + paramJSONArray.toString() + ",;totalPrice|" + price.getTotalPriceDouble(), REQUEST_CHOOSE_COUPON);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    jsShowMsg("出现错误，请重试");
+                    if (Constants.isDebug) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             case R.id.tv_stock_protocol:
@@ -1770,7 +1772,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                 }
                 if (!supid.equals("") && !supid.equals("shopnum1")) {
                     yunfei = AppManager.getInstance().getYunFei("0088", supid, area, productID, tempcount);
-//                    Logger.e("test","运费="+yunfei);
+
                     try {
                         double tYunFei = Double.parseDouble(yunfei);
                         if (tYunFei < 0) {
@@ -1784,6 +1786,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                 }
                 if (productID.equalsIgnoreCase("632095CB-A15E-44A1-9B27-F59709F525A0") && carCount == 1) {//特殊商品
                     yunfei = "10";
+                    allYunFei += Double.parseDouble(yunfei);
                 }
 
                 int song = 0;
@@ -2013,6 +2016,10 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                         //此优惠券是否可用同其他优惠同时使用
                         selectedTicket.setWithOthers(bean.getLimitType());
                         price.setFavTicket(discount);
+                        ckProductMoney= Double.parseDouble(price.getTotalPrice());
+
+                        setUseScoreListener();
+//                        setCbText();
                         switch (bean.getLimitType()) {
                             case "0"://可与金萝卜一起使用
 //                                cb_useJLB.setEnabled(true);

@@ -41,6 +41,12 @@ import com.danertu.widget.YsnowScrollViewPageOne.ScrollChangeListener;
 /**
  * 客房详细
  */
+/**
+ * 作者:  Viz
+ * 日期:  2018/7/30 12:05
+ *
+ * 描述： 客房订单详细页面 已弃用
+*/
 public class MyOrderDetailFragment extends Fragment {
     private MyOrderDetail base = null;
     private View top_bg;

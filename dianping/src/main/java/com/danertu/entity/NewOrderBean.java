@@ -14,7 +14,7 @@ import java.util.List;
  * 文件名：NewOrderBean
  * 描述：新的订单实体类
  */
-public class NewOrderBean extends ArrayList<Parcelable> implements Parcelable {
+public class NewOrderBean  implements Parcelable {
     private String Name;
     private String Mobile;
     private String Address;
@@ -216,5 +216,32 @@ public class NewOrderBean extends ArrayList<Parcelable> implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
 
+    }
+
+    @Override
+    public String toString() {
+        return "NewOrderBean{" +
+                "Name='" + Name + '\'' +
+                ", Mobile='" + Mobile + '\'' +
+                ", Address='" + Address + '\'' +
+                ", AgentID='" + AgentID + '\'' +
+                ", ClientToSellerMsg='" + ClientToSellerMsg + '\'' +
+                ", InvoiceTitle='" + InvoiceTitle + '\'' +
+                ", CreateTime='" + CreateTime + '\'' +
+                ", PaymentName='" + PaymentName + '\'' +
+                ", PaymentStatus='" + PaymentStatus + '\'' +
+                ", DispatchModeName='" + DispatchModeName + '\'' +
+                ", ShipmentNumber='" + ShipmentNumber + '\'' +
+                ", ShouldPayPrice='" + ShouldPayPrice + '\'' +
+                ", MemLoginId='" + MemLoginId + '\'' +
+                ", OrderNumber='" + OrderNumber + '\'' +
+                ", OderStatus='" + OderStatus + '\'' +
+                ", orderType='" + orderType + '\'' +
+                ", ShipmentStatus='" + ShipmentStatus + '\'' +
+                ", DispatchPrice='" + DispatchPrice + '\'' +
+                ", DispatchTime='" + DispatchTime + '\'' +
+                ", LogisticsCompanyCode='" + LogisticsCompanyCode + '\'' +
+                ", productItems=" + productItems +
+                '}';
     }
 }

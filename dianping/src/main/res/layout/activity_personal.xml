@@ -344,6 +344,33 @@
                         android:visibility="gone" />
                 </FrameLayout>
             </LinearLayout>
+            <!--<LinearLayout-->
+                <!--android:id="@+id/test"-->
+                <!--style="@style/personal_item_root"-->
+                <!--android:layout_marginTop="1dp"-->
+                <!--android:gravity="center_vertical">-->
+
+                <!--<TextView-->
+                    <!--style="@style/personal_item_text"-->
+                    <!--android:text="我的订单" />-->
+
+                <!--<FrameLayout-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content">-->
+
+                    <!--<ImageView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginRight="10dp"-->
+                        <!--android:layout_marginTop="5dp"-->
+                        <!--android:src="@mipmap/order" />-->
+
+                    <!--<ImageView-->
+                        <!--android:id="@+id/iv_my_order_point"-->
+                        <!--style="@style/personal_shop_manager_item_point"-->
+                        <!--android:visibility="gone" />-->
+                <!--</FrameLayout>-->
+            <!--</LinearLayout>-->
             <!--消费码-->
             <LinearLayout
                 android:id="@+id/ll_qr_code"

@@ -232,4 +232,6 @@ public interface BaseView {
     void getPhoneStatePermission();
 
     void getStoragePermission();
+
+    void shareImgWithQRCode(String imgSrc, final String qrCodeContent, final float startX, final float startY, final int widthAndHeight, final String platformList);
 }

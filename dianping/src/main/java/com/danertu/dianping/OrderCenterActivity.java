@@ -25,7 +25,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
+/**
+ * 作者:  Viz
+ * 日期:  2018/7/30 14:11
+ *
+ * 描述： 新的订单中心
+*/
 public class OrderCenterActivity extends NewBaseActivity<OrderCenterContact.OrderCenterView, OrderCenterPresenter> implements OrderCenterContact.OrderCenterView {
 
     @BindView(R.id.b_title_back)

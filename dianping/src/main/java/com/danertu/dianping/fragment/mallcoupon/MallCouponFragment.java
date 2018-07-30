@@ -99,6 +99,8 @@ public class MallCouponFragment extends NewBaseFragment<MallCouponContact.MallCo
         unbinder.unbind();
     }
 
+
+
     @Override
     public void initList(List<CouponBean.CouponListBean> list) {
         adapter = new CouponAdapter(list);

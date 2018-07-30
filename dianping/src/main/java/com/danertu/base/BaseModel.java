@@ -94,7 +94,7 @@ public abstract class BaseModel {
 
         builder.addInterceptor(loggingInterceptor)
                 .addInterceptor(myInterceptor)
-                .connectTimeout(30, TimeUnit.SECONDS);//设置超时时间为10s
+                .connectTimeout(30, TimeUnit.SECONDS);//设置超时时间为30s
 
         retrofit = new Retrofit.Builder()
                 .client(builder.build())

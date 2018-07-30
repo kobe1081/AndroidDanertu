@@ -1,6 +1,7 @@
 package com.danertu.dianping;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 
 import android.os.Bundle;
 import android.view.View;
@@ -68,7 +69,7 @@ public class FindPasswordActivity extends BaseWebActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    HashMap<String, String> Params = new HashMap<>();
+                    Hashtable<String, String> Params = new Hashtable<>();
                     Params.put("apiid", "0077");
                     Params.put("mobile", moblie);
                     doTaskAsync(Constants.api.POST_SEND_VERITY_CODE, "", Params);
@@ -81,7 +82,7 @@ public class FindPasswordActivity extends BaseWebActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    HashMap<String, String> Params = new HashMap<>();
+                    Hashtable<String, String> Params = new Hashtable<>();
                     Params.put("apiid", "0078");
                     Params.put("mobile", mobile);
                     Params.put("vcode", vCode);

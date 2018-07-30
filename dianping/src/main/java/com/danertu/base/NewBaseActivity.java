@@ -755,4 +755,9 @@ public abstract class NewBaseActivity<V, T extends NewBasePresenter> extends Bas
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PHONE_STATE);
         }
     }
+
+    @Override
+    public void shareImgWithQRCode(String imgSrc, String qrCodeContent, float startX, float startY, int widthAndHeight, String platformList) {
+        super.shareImgWithQRCode(imgSrc, qrCodeContent, startX, startY, widthAndHeight, platformList);
+    }
 }

@@ -5,6 +5,7 @@ import android.nfc.Tag;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -99,7 +100,7 @@ public class AppClient {
         return null;
     }
 
-    public String post(HashMap urlParams) throws Exception {
+    public String post(Hashtable urlParams) throws Exception {
         int stateCode = 0;
         String result = null;
         HttpPost httpPost = headerFilter(new HttpPost(this.apiUrl));

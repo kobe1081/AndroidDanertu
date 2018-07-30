@@ -192,13 +192,14 @@ public class ChooseCouponActivity extends NewBaseActivity<ChooseCouponContact.Ch
             }
 
             final ChooseCouponBean.ValBean bean = list.get(position);
-            /** 0-优惠金额，1-优惠折扣
-             */
+            /** 0-优惠金额，1-优惠折扣*/
             holder.tvMyCouponName.setText(bean.getCouponName());
-            if ("0".equals(bean.getDiscountType())) {
-                holder.tvMyCouponMoney.setText(setStyleForUnSignNumLeft("￥" + bean.getDiscountPrice()));
+            final String discountType = bean.getDiscountType();
+            final String discountPrice = bean.getDiscountPrice();
+            String discountPercent = bean.getDiscountPercent();
+            if ("0".equals(discountType)) {
+                holder.tvMyCouponMoney.setText(setStyleForUnSignNumLeft("￥" + discountPrice));
             } else {
-                String discountPercent = bean.getDiscountPercent();
                 if (discountPercent.endsWith("0")) {
                     discountPercent = discountPercent.substring(0, discountPercent.length() - 1);
                 }
@@ -279,24 +280,30 @@ public class ChooseCouponActivity extends NewBaseActivity<ChooseCouponContact.Ch
 
             switch (bean.getUseCondition()) {
                 case "0"://无限制
-                    holder.tvMyCouponMoney.setEnabled(true);
-                    holder.tvMyCouponName.setEnabled(true);
-                    holder.ivCouponUse.setEnabled(true);
+                    /** 0-优惠金额，1-优惠折扣*/
+                    boolean enable = false;
+                    if ("0".equals(discountType)) {
+                        enable = doubleTotalPrice > Double.parseDouble(discountPrice);
+                    } else {
+                        enable = (doubleTotalPrice - Double.parseDouble(discountPrice)) > 0;
+                    }
+                    holder.tvMyCouponMoney.setEnabled(enable);
+                    holder.tvMyCouponName.setEnabled(enable);
+                    holder.ivCouponUse.setEnabled(enable);
                     break;
                 case "1"://总价达到一定金额
-                    if (doubleTotalPrice >= limitPrice) {
-                        holder.ivCouponUse.setEnabled(true);
-                        holder.tvMyCouponMoney.setEnabled(true);
-                        holder.tvMyCouponName.setEnabled(true);
+                    if ("0".equals(discountType)) {
+                        enable = doubleTotalPrice > Double.parseDouble(discountPrice) && doubleTotalPrice >= limitPrice;
                     } else {
-                        holder.tvMyCouponMoney.setEnabled(false);
-                        holder.ivCouponUse.setEnabled(false);
-                        holder.tvMyCouponName.setEnabled(false);
+                        enable = (doubleTotalPrice - Double.parseDouble(discountPrice)) > 0 && doubleTotalPrice >= limitPrice;
                     }
+                    holder.tvMyCouponMoney.setEnabled(enable);
+                    holder.ivCouponUse.setEnabled(enable);
+                    holder.tvMyCouponName.setEnabled(enable);
                     break;
             }
 
-            if (!TextUtils.isEmpty(couponRecordGuid) && couponRecordGuid.equals(bean.getCouponRecordGuid())&&holder.ivCouponUse.isEnabled()) {
+            if (!TextUtils.isEmpty(couponRecordGuid) && couponRecordGuid.equals(bean.getCouponRecordGuid()) && holder.ivCouponUse.isEnabled()) {
                 holder.ivCouponUse.setSelected(true);
                 tvUseCoupon.setSelected(false);
             } else {
@@ -310,11 +317,26 @@ public class ChooseCouponActivity extends NewBaseActivity<ChooseCouponContact.Ch
                 public void onClick(View v) {
                     switch (bean.getUseCondition()) {
                         case "0"://无限制
-                            presenter.chooseCoupon(1, callBackMethod, bean);
-                            tvUseCoupon.setSelected(false);
+                            boolean enable = false;
+                            if ("0".equals(discountType)) {
+                                enable = doubleTotalPrice > Double.parseDouble(discountPrice);
+                            } else {
+                                enable = (doubleTotalPrice - Double.parseDouble(discountPrice)) > 0;
+                            }
+                            if (enable) {
+                                presenter.chooseCoupon(1, callBackMethod, bean);
+                                tvUseCoupon.setSelected(false);
+                            } else {
+                                jsShowMsg("未满足使用条件,无法使用此优惠券");
+                            }
                             break;
                         case "1"://总价达到一定金额
-                            if (doubleTotalPrice >= limitPrice) {
+                            if ("0".equals(discountType)) {
+                                enable = doubleTotalPrice > Double.parseDouble(discountPrice) && doubleTotalPrice >= limitPrice;
+                            } else {
+                                enable = (doubleTotalPrice - Double.parseDouble(discountPrice)) > 0 && doubleTotalPrice >= limitPrice;
+                            }
+                            if (enable) {
                                 presenter.chooseCoupon(1, callBackMethod, bean);
                                 tvUseCoupon.setSelected(false);
                             } else {

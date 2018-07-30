@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -226,13 +227,13 @@ public class ScoreCenterActivity extends BaseWebActivity {
     }
 
     private void getFirstCategory() {
-        HashMap<String, String> Params = new HashMap<>();
+        Hashtable<String, String> Params = new Hashtable<>();
         Params.put("apiid", "0073");
         doTaskAsync(Constants.api.GET_FIRST_CATEGORY, "", Params);
     }
 
     private void getDiscountProducts() {
-        HashMap<String, String> Params = new HashMap<>();
+        Hashtable<String, String> Params = new Hashtable<>();
         Params.put("apiid", "0040");
         Params.put("type", "1");
         Params.put("kword", "");

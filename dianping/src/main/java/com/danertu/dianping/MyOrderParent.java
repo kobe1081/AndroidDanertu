@@ -24,6 +24,12 @@ import static com.danertu.adapter.MyOrderAdapter.REQUEST_ORDER_DETAIL;
 import static com.danertu.adapter.MyOrderAdapter.REQUEST_QRCODE;
 import static com.danertu.dianping.MyOrderDetail.KEY_ORDER_ITEM;
 
+/**
+ * 作者:  Viz
+ * 日期:  2018/7/30 14:10
+ *
+ * 描述： 旧的订单中心子项父类，已弃用
+*/
 
 public abstract class MyOrderParent extends BaseActivity implements XListView.IXListViewListener {
     protected XListView lv_order;

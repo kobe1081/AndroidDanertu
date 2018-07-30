@@ -62,6 +62,7 @@ public class OrderItemFragment extends NewBaseFragment<OrderItemContact.OrderIte
     private boolean isPayLoading;
     private LocalBroadcastManager broadcastManager;
     private DataChangerReceiver dataChangerReceiver;
+
     @Override
     public OrderItemPresenter initPresenter() {
         return new OrderItemPresenter(context);
@@ -84,7 +85,7 @@ public class OrderItemFragment extends NewBaseFragment<OrderItemContact.OrderIte
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
-        if (broadcastManager!=null&&dataChangerReceiver!=null) {
+        if (broadcastManager != null && dataChangerReceiver != null) {
             broadcastManager.unregisterReceiver(dataChangerReceiver);
         }
         presenter.onDestroy();
@@ -171,14 +172,28 @@ public class OrderItemFragment extends NewBaseFragment<OrderItemContact.OrderIte
 
     @Override
     public void initBroadcastReceiver() {
-        if (broadcastManager==null){
-            broadcastManager=LocalBroadcastManager.getInstance(context);
+        if (broadcastManager == null) {
+            broadcastManager = LocalBroadcastManager.getInstance(context);
         }
         if (dataChangerReceiver == null) {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(Constants.ORDER_DATA_CHANGE);
             dataChangerReceiver = new DataChangerReceiver();
             broadcastManager.registerReceiver(dataChangerReceiver, intentFilter);
+        }
+    }
+
+    @Override
+    public void sendDataChangeBroadcast(String orderNumber, int position, NewOrderBean bean) {
+        Logger.e(TAG, bean.toString());
+        if (broadcastManager != null) {
+            Intent intent = new Intent(Constants.ORDER_DATA_CHANGE);
+            Bundle extras = new Bundle();
+            extras.putString("orderNumber", orderNumber);
+            extras.putInt("position", position);
+            extras.putParcelable("orderBean", bean);
+            intent.putExtras(extras);
+            broadcastManager.sendBroadcast(intent);
         }
     }
 

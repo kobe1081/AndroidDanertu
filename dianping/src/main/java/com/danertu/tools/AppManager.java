@@ -6,9 +6,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -94,8 +97,10 @@ public class AppManager {
         // 设置HTTP POST请求参数必须用NameValuePair对象
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("apiid", ApiId));
-        params.add(new BasicNameValuePair("uid", uId));
+        params.add(new BasicNameValuePair("dateline", String.valueOf(System.currentTimeMillis())));
         params.add(new BasicNameValuePair("pwd", pwd));
+        params.add(new BasicNameValuePair("tid", ""));
+        params.add(new BasicNameValuePair("uid", uId));
         return getHttpPostResult(params);
     }
 
@@ -621,7 +626,7 @@ public class AppManager {
         return getHttpPostResult(params);
     }
 
-    // 更新积分
+    // 更新积分 apiid=0061
     public String updateUserScore(String ApiId, String uid, String score) {
         HashMap<String, String> param = new HashMap<>();
         param.put("apiid", ApiId);
@@ -630,7 +635,7 @@ public class AppManager {
         return doPost(param);
     }
 
-    // 获取该设备是否第一次安装
+    // 获取该设备是否第一次安装  apiid-0062
     public String isFirstSetUp(String ApiId, String mcode) {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("apiid", ApiId));
@@ -646,7 +651,7 @@ public class AppManager {
         return getHttpPostResult(params);
     }
 
-    // 收集异常信息
+    // 收集异常信息 0065
     public String sendErrInfo(String ApiId, String ErrorInfo) {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("apiid", ApiId));
@@ -661,7 +666,7 @@ public class AppManager {
         return getHttpPostResult(params);
     }
 
-    // 获取商品评论
+    // 获取商品评论 0066
     public String getProductComment(String ApiId, String productGuid, int pagesize, int pageIndex) {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("apiid", ApiId));
@@ -671,7 +676,7 @@ public class AppManager {
         return getHttpPostResult(params);
     }
 
-    // 添加商品评论
+    // 添加商品评论 0067
     public String addComment(String ApiId, String productGuid, String loginID, String content, String agentID, String rank) {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("apiid", ApiId));
@@ -684,7 +689,7 @@ public class AppManager {
     }
 
 
-    // 商品评论条数
+    // 商品评论条数 0068
     public String getCommentCount(String ApiId, String productGuid) {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("apiid", ApiId));
@@ -692,7 +697,7 @@ public class AppManager {
         return getHttpPostResult(params);
     }
 
-    // 判断是否有商品评论权限
+    // 判断是否有商品评论权限 0069
     public String couldComment(String ApiId, String productGuid, String loginID) {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("apiid", ApiId));
@@ -701,7 +706,7 @@ public class AppManager {
         return getHttpPostResult(params);
     }
 
-    // 取当前定位地区优惠券
+    // 取当前定位地区优惠券 0070
     public String getTicket(String ApiId, String city) {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("apiid", ApiId));
@@ -709,7 +714,7 @@ public class AppManager {
         return getHttpPostResult(params);
     }
 
-    // 按关键字搜索店铺与入驻商品列表
+    // 按关键字搜索店铺与入驻商品列表  0071
     // xiaohanxiang 2014-10-17
     public String postGetSearchShopProduct(String ApiId, String shopId, String keyword, int pagesize, int pageindex) {
         // 设置HTTP POST请求参数必须用NameValuePair对象
@@ -1147,21 +1152,33 @@ public class AppManager {
     /**
      * 提交参数到服务器
      *
-     * @param param post参数（键值对）
+     * @param params post参数（键值对）
      * @return 服务器返回的字符串
      * @throws Exception
      * @author dengweilin
      * @since 2015.01.15
      */
-    public String doPost(Map<String, String> param) {
+    public String doPost(Hashtable<String, String> params) {
         HttpPost post = new HttpPost(apiSrcUrl);
         String result = "";
         int stateCode = 0;
         try {
+            StringBuilder stringBuilder = new StringBuilder();
+            Set<String> keySet = params.keySet();
+            for (String s : keySet) {
+                stringBuilder.append(s).append("=").append(params.get(s)).append("&");
+            }
+            stringBuilder.delete(stringBuilder.length()-1,stringBuilder.length());
+            String signs = Base64.encode(stringBuilder.toString().getBytes("utf-8"));
+            params.put("signs",signs);
+            if (Constants.isDebug) {
+                params.put("testFlag", "1");
+            }
             HttpClient client = new DefaultHttpClient();
+
             List<NameValuePair> list = new ArrayList<>();
-            if (param != null && !param.isEmpty()) {
-                for (Map.Entry<String, String> entry : param.entrySet()) {
+            if (params != null && !params.isEmpty()) {
+                for (Map.Entry<String, String> entry : params.entrySet()) {
                     list.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
                 }
             }
@@ -1192,7 +1209,18 @@ public class AppManager {
         HttpResponse httpResponse;
         int stateCode = 0;
         String result = "";
+
         try {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (NameValuePair param : params) {
+                stringBuilder.append(param.getName()).append("=").append(param.getValue()).append("&");
+            }
+            stringBuilder.delete(stringBuilder.length()-1,stringBuilder.length());
+            String signs = Base64.encode(stringBuilder.toString().getBytes("utf-8"));
+            params.add(new BasicNameValuePair("signs",signs));
+            if (Constants.isDebug) {
+                params.add(new BasicNameValuePair("testFlag", "1"));
+            }
             // 设置httpPost请求参数
             httpPost.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
             httpResponse = new DefaultHttpClient().execute(httpPost);

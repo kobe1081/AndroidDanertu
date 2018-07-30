@@ -687,4 +687,9 @@ public abstract class BaseFragment<V, T extends BasePresenter<V>> extends Fragme
 //            ActivityCompat.requestPermissions(context, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PHONE_STATE);
 //        }
     }
+
+    @Override
+    public void shareImgWithQRCode(String imgSrc, String qrCodeContent, float startX, float startY, int widthAndHeight, String platformList) {
+        ((BaseActivity) getActivity()).shareImgWithQRCode(imgSrc,qrCodeContent,startX,startY,widthAndHeight,platformList);
+    }
 }

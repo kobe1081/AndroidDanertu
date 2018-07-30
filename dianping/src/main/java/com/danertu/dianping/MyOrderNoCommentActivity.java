@@ -16,6 +16,12 @@ import java.util.ArrayList;
  * 2018年4月13日
  * 修改为显示 退款订单
  */
+/**
+ * 作者:  Viz
+ * 日期:  2018/7/30 12:01
+ *
+ * 描述： 退款订单列表页面，已弃用
+*/
 public class MyOrderNoCommentActivity extends MyOrderParent {
 
     protected void onCreate(Bundle savedInstanceState) {

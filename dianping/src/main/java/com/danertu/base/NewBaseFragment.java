@@ -34,6 +34,7 @@ import android.widget.ProgressBar;
 import com.config.Constants;
 import com.danertu.db.DBManager;
 import com.danertu.dianping.ActivityUtils;
+import com.danertu.dianping.BaseActivity;
 import com.danertu.dianping.R;
 import com.danertu.tools.Logger;
 import com.danertu.tools.MIUIUtils;
@@ -622,5 +623,9 @@ public abstract class NewBaseFragment<V, T extends NewBasePresenter> extends Fra
 //            jsShowMsg("请授予单耳兔权限");
 //            ActivityCompat.requestPermissions(context, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PHONE_STATE);
 //        }
+    }
+    @Override
+    public void shareImgWithQRCode(String imgSrc, String qrCodeContent, float startX, float startY, int widthAndHeight, String platformList) {
+        ((NewBaseActivity) getActivity()).shareImgWithQRCode(imgSrc,qrCodeContent,startX,startY,widthAndHeight,platformList);
     }
 }
