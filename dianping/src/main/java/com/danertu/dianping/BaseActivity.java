@@ -158,7 +158,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
             }
         }
         appManager.setUid(getUid());
-        //
+
     }
 
     /**
