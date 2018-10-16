@@ -60,8 +60,8 @@ public class AddCommentActivity extends BaseActivity implements OnClickListener 
                 rankNum = String.valueOf(rating);
                 /*
                  * Toast.makeText(AddCommentActivity.this, "rating:" +
-				 * String.valueOf(rating), Toast.LENGTH_LONG) .show();
-				 */
+                 * String.valueOf(rating), Toast.LENGTH_LONG) .show();
+                 */
             }
         });
 
@@ -83,6 +83,7 @@ public class AddCommentActivity extends BaseActivity implements OnClickListener 
                 agentID = "danertu";
             }
             isInserted = AppManager.getInstance().addComment("0067", productGuid, loginID, content, agentID, rankNum);
+
         }
     };
 
@@ -111,7 +112,26 @@ public class AddCommentActivity extends BaseActivity implements OnClickListener 
                             MyOrderData.commentOrder(context);
                             finish();
                         } else {
-                            Toast.makeText(AddCommentActivity.this, "提交评论失败，请检查网络是否正常！", Toast.LENGTH_LONG).show();
+                            judgeIsTokenException(isInserted, new TokenExceptionCallBack() {
+                                @Override
+                                public void tokenException(String code, final String info) {
+                                    sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                                    runOnUiThread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            jsShowMsg(info);
+//                                            quitAccount();
+//                                            finish();
+//                                            jsStartActivity("LoginActivity", "");
+//                                        }
+//                                    });
+                                }
+
+                                @Override
+                                public void ok() {
+                                    Toast.makeText(AddCommentActivity.this, "提交评论失败，请检查网络是否正常！", Toast.LENGTH_LONG).show();
+                                }
+                            });
                         }
                     } catch (InterruptedException e) {
                         e.printStackTrace();

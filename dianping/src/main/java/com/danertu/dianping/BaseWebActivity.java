@@ -2,19 +2,15 @@ package com.danertu.dianping;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.AppOpsManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,9 +23,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Looper;
-import android.os.Process;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
@@ -73,6 +66,7 @@ import com.danertu.widget.MWebViewClient;
 import com.danertu.widget.XListView;
 import com.google.gson.Gson;
 
+
 /**
  * 2017年7月27日
  * huangyeliang
@@ -93,6 +87,7 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
         initWebView();
+
     }
 
     /**
@@ -227,7 +222,7 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
             }
 
         });
-
+        initWebSettings();
         webView.setWebViewClient(new MWebViewClient(this, "app"));
         webView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -246,7 +241,7 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
                 return false;
             }
         });
-        initWebSettings();
+
     }
 
     /**
@@ -254,14 +249,17 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
      */
     @SuppressLint("SetJavaScriptEnabled")
     protected void initWebSettings() {
-
-        WebSettings mWebSettings;
-        mWebSettings = webView.getSettings();
+        WebSettings mWebSettings = webView.getSettings();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mWebSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         mWebSettings.setDefaultTextEncodingName("utf-8");
         mWebSettings.setBuiltInZoomControls(true);
         mWebSettings.setJavaScriptEnabled(true);
         mWebSettings.setTextZoom(100);
         mWebSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+
+
 //        //不允许缩放
 //        mWebSettings.setSupportZoom(false);
 //        mWebSettings.setBuiltInZoomControls(false);
@@ -324,6 +322,7 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
             gson = new Gson();
         return gson.toJson(list);
     }
+
 
     /**
      * 非通用方法
@@ -674,7 +673,7 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
     }
 
     @JavascriptInterface
-    public  boolean isMIUI() {
+    public boolean isMIUI() {
         return MIUIUtils.isMIUI();
     }
 
@@ -789,7 +788,6 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
     }
 
 
-
     /**
      * 搜索联系人列表
      *
@@ -870,7 +868,6 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
 
     }
 
-
     /**
      * 联系人适配器
      */
@@ -950,4 +947,6 @@ public class BaseWebActivity extends BaseActivity implements OnClickListener {
 
 
     }
+
+
 }

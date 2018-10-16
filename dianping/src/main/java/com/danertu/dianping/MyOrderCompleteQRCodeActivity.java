@@ -18,7 +18,7 @@ public class MyOrderCompleteQRCodeActivity extends MyOrderQRCodeParentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         data2 = MyOrderDataQRCode.order_list_complete;
-        adapter = new MyOrderQRCodeAdapter(context, data2,TAB_COMPLETE);
+        adapter = new MyOrderQRCodeAdapter(context, data2,TAB_COMPLETE,getUid());
         lv_order.setAdapter(adapter);
     }
 

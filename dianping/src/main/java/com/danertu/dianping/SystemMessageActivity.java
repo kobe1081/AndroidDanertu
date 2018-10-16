@@ -20,9 +20,6 @@ import android.widget.TextView;
 import com.config.Constants;
 import com.danertu.entity.Messagebean;
 import com.danertu.tools.DateTimeUtils;
-import com.danertu.tools.Logger;
-import com.danertu.tools.NoticeManager;
-import com.danertu.tools.SPTool;
 import com.danertu.widget.XListView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -33,9 +30,6 @@ import java.util.List;
 
 import static com.danertu.entity.Messagebean.NOTICE_TYPE_ORDER;
 import static com.danertu.entity.Messagebean.NOTICE_TYPE_SYSTEM;
-import static com.danertu.tools.SPTool.SP_MESSAGE;
-import static com.danertu.tools.SPTool.SP_MESSAGE_CLEAR;
-import static com.danertu.tools.SPTool.SP_MESSAGE_CLEAR_TIME;
 
 /**
  * 消息中心清空逻辑

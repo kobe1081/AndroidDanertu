@@ -127,7 +127,7 @@ public class PayHtmlActivity extends HtmlActivity {
     private void accPay() {
         String uid = db.GetLoginUid(getContext());
         String param[] = {uid, outOrderNumber, totalprice, pricedata};
-        new AccToPay(getContext()) {
+        new AccToPay(this) {
 
             @Override
             public void paySuccess() {

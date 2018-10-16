@@ -2,10 +2,12 @@ package com.danertu.tools;
 
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -39,26 +41,25 @@ public class WXPayUtil {
      * 生成签名
      */
     @SuppressLint("DefaultLocale")
-    private String genPackageSign(List<NameValuePair> params) {
+    private String genPackageSign(LinkedHashMap<String,String> params) {
         String param = genSignParam(params);
 
         return MD5.getMessageDigest(param.getBytes()).toUpperCase();
     }
 
     @SuppressLint("DefaultLocale")
-    private String genAppSign(List<NameValuePair> params) {
+    private String genAppSign(LinkedHashMap<String,String> params) {
         String param = genSignParam(params);
-
         return MD5.getMessageDigest(param.getBytes()).toUpperCase();
     }
 
-    private String genSignParam(List<NameValuePair> params) {
+    private String genSignParam(LinkedHashMap<String,String> params) {
         StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < params.size(); i++) {
-            sb.append(params.get(i).getName());
+        Set<String> strings = params.keySet();
+        for (String key : strings) {
+            sb.append(key);
             sb.append('=');
-            sb.append(params.get(i).getValue());
+            sb.append(params.get(key));
             sb.append('&');
         }
         sb.append("key=");
@@ -66,14 +67,14 @@ public class WXPayUtil {
         return sb.toString();
     }
 
-    private String toXml(List<NameValuePair> params) {
+    private String toXml(LinkedHashMap<String,String> params) {
         StringBuilder sb = new StringBuilder();
         sb.append("<xml>");
-        for (int i = 0; i < params.size(); i++) {
-            sb.append("<").append(params.get(i).getName()).append(">");
-
-            sb.append(params.get(i).getValue());
-            sb.append("</").append(params.get(i).getName()).append(">");
+        Set<String> keySet = params.keySet();
+        for (String key : keySet) {
+            sb.append("<").append(key).append(">");
+            sb.append(params.get(key));
+            sb.append("</").append(key).append(">");
         }
         sb.append("</xml>");
         return sb.toString();
@@ -134,28 +135,23 @@ public class WXPayUtil {
      * @return 提交到微信的商品参数
      */
     public String genProductArgs(String proBody, String orderNumber, String payMoney) {
-        StringBuilder xml = new StringBuilder();
-
         try {
             int money = CommonTools.mul(payMoney, "100");//币种：rmb，单位：分
             String nonceStr = genNonceStr();
-            xml.append("</xml>");
-            List<NameValuePair> packageParams = new LinkedList<>();
-            packageParams.add(new BasicNameValuePair("appid", Constants.APP_ID));
-            packageParams.add(new BasicNameValuePair("body", proBody));
-            packageParams.add(new BasicNameValuePair("mch_id", Constants.MCH_ID));
-            packageParams.add(new BasicNameValuePair("nonce_str", nonceStr));//随机数
-//			packageParams.add(new BasicNameValuePair("notify_url", "http://121.40.35.3/test"));//微信支付后通知的商户后台地址
-            packageParams.add(new BasicNameValuePair("notify_url", "http://www.danertu.com/PayReturn/WeiPay/App_Notify.aspx"));//微信支付后通知的商户后台地址
-            packageParams.add(new BasicNameValuePair("out_trade_no", orderNumber));//订单号
-            packageParams.add(new BasicNameValuePair("spbill_create_ip", NetInfoUtil.getInstance().getLocalIPAddress()));//订单生成的机器IP，指用户浏览器端IP
-            packageParams.add(new BasicNameValuePair("total_fee", String.valueOf(money)));//支付价
-            packageParams.add(new BasicNameValuePair("trade_type", "APP"));//固定格式
-
+            LinkedHashMap<String,String> packageParams = new LinkedHashMap<>();
+            packageParams.put("appid", Constants.APP_ID);
+            packageParams.put("body", proBody);
+            packageParams.put("mch_id", Constants.MCH_ID);
+            packageParams.put("nonce_str", nonceStr);//随机数
+//			packageParams.put("notify_url", "http://121.40.35.3/test");//微信支付后通知的商户后台地址
+//            packageParams.put("notify_url", "http://www.danertu.com/PayReturn/WeiPay/App_Notify.aspx");//微信支付后通知的商户后台地址
+            packageParams.put("notify_url", Constants.APP_URL.WECHAT_PAY_CALLBACK_URL_SIMPLE);//微信支付后通知的商户后台地址
+            packageParams.put("out_trade_no", orderNumber);//订单号
+            packageParams.put("spbill_create_ip", NetInfoUtil.getInstance().getLocalIPAddress());//订单生成的机器IP，指用户浏览器端IP
+            packageParams.put("total_fee", String.valueOf(money));//支付价
+            packageParams.put("trade_type", "APP");//固定格式
             String sign = genPackageSign(packageParams);
-            packageParams.add(new BasicNameValuePair("sign", sign));
-
-
+            packageParams.put("sign", sign);
             return toXml(packageParams);
             //不转码，转码反而导致乱码
 //			return new String(xmlstring.getBytes(), "ISO8859-1");
@@ -172,6 +168,7 @@ public class WXPayUtil {
      * 2017年12月28日添加
      * 为囤货功能添加订单类型参数，
      * 同时修改通知的商户后台地址
+     *
      * @param proBody
      * @param orderNumber
      * @param payMoney
@@ -179,28 +176,26 @@ public class WXPayUtil {
      * @return
      */
     public String genProductArgs(String proBody, String orderNumber, String payMoney, String orderType) {
-        StringBuilder xml = new StringBuilder();
-
         try {
             int money = CommonTools.mul(payMoney, "100");//币种：rmb，单位：分
             String nonceStr = genNonceStr();
-            xml.append("</xml>");
-            List<NameValuePair> packageParams = new LinkedList<>();
-            packageParams.add(new BasicNameValuePair("appid", Constants.APP_ID));
+            LinkedHashMap<String,String> packageParams = new LinkedHashMap<>();
+            packageParams.put("appid", Constants.APP_ID);
             //为囤货功能添加的自定义参数
-            packageParams.add(new BasicNameValuePair("attach", orderType));//定义参数
-            packageParams.add(new BasicNameValuePair("body", proBody));
-            packageParams.add(new BasicNameValuePair("mch_id", Constants.MCH_ID));
-            packageParams.add(new BasicNameValuePair("nonce_str", nonceStr));//随机数
-//			packageParams.add(new BasicNameValuePair("notify_url", "http://121.40.35.3/test"));//微信支付后通知的商户后台地址
-            packageParams.add(new BasicNameValuePair("notify_url", "http://www.danertu.com/PayReturn/WeiPay/App_Notify_WareHouse.aspx"));//微信支付后通知的商户后台地址
-            packageParams.add(new BasicNameValuePair("out_trade_no", orderNumber));//订单号
-            packageParams.add(new BasicNameValuePair("spbill_create_ip", NetInfoUtil.getInstance().getLocalIPAddress()));//订单生成的机器IP，指用户浏览器端IP
-            packageParams.add(new BasicNameValuePair("total_fee", String.valueOf(money)));//支付价
-            packageParams.add(new BasicNameValuePair("trade_type", "APP"));//固定格式
+            packageParams.put("attach", orderType);//定义参数
+            packageParams.put("body", proBody);
+            packageParams.put("mch_id", Constants.MCH_ID);
+            packageParams.put("nonce_str", nonceStr);//随机数
+//			packageParams.add("notify_url", "http://121.40.35.3/test");//微信支付后通知的商户后台地址
+//            packageParams.add("notify_url", "http://www.danertu.com/PayReturn/WeiPay/App_Notify_WareHouse.aspx");//微信支付后通知的商户后台地址
+            packageParams.put("notify_url", Constants.APP_URL.WECHAT_PAY_CALLBACK_URL_STOCK);//微信支付后通知的商户后台地址
+            packageParams.put("out_trade_no", orderNumber);//订单号
+            packageParams.put("spbill_create_ip", NetInfoUtil.getInstance().getLocalIPAddress());//订单生成的机器IP，指用户浏览器端IP
+            packageParams.put("total_fee", String.valueOf(money));//支付价
+            packageParams.put("trade_type", "APP");//固定格式
 
             String sign = genPackageSign(packageParams);
-            packageParams.add(new BasicNameValuePair("sign", sign));
+            packageParams.put("sign", sign);
 
 
             return toXml(packageParams);
@@ -216,7 +211,6 @@ public class WXPayUtil {
     }
 
     public PayReq genPayReq(String prepayId) {
-
         PayReq req = new PayReq();
         req.appId = Constants.APP_ID;
         req.partnerId = Constants.MCH_ID;
@@ -224,14 +218,13 @@ public class WXPayUtil {
         req.packageValue = "Sign=WXPay";
         req.nonceStr = genNonceStr();
         req.timeStamp = String.valueOf(genTimeStamp());
-
-        List<NameValuePair> signParams = new LinkedList<>();
-        signParams.add(new BasicNameValuePair("appid", req.appId));
-        signParams.add(new BasicNameValuePair("noncestr", req.nonceStr));
-        signParams.add(new BasicNameValuePair("package", req.packageValue));
-        signParams.add(new BasicNameValuePair("partnerid", req.partnerId));
-        signParams.add(new BasicNameValuePair("prepayid", req.prepayId));
-        signParams.add(new BasicNameValuePair("timestamp", req.timeStamp));
+        LinkedHashMap signParams = new LinkedHashMap();
+        signParams.put("appid", req.appId);
+        signParams.put("noncestr", req.nonceStr);
+        signParams.put("package", req.packageValue);
+        signParams.put("partnerid", req.partnerId);
+        signParams.put("prepayid", req.prepayId);
+        signParams.put("timestamp", req.timeStamp);
 
         req.sign = genAppSign(signParams);
 

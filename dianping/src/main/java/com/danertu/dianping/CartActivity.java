@@ -70,7 +70,7 @@ public class CartActivity extends HomeActivity {
     public static final String KEY_SHOPCAR_LIST = "ShoppingCarList";
     public static final int REQ_PAYCENTER = 1;
     private final int REQ_LOGIN = 102;
-
+    private String uid;
     public static final String TAG_ITEM = "item";
     public static final String TAG_SHOP_CHECKBOX = "item_shop";
     public static final String TAG_ITEM_CHECKBOX = "item_check";
@@ -96,6 +96,7 @@ public class CartActivity extends HomeActivity {
         setSystemBarColor("#F7F7F7");
         setTabVisibility(View.GONE);
         findViewById();
+        uid=getUid();
         tvNoData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1017,7 +1018,7 @@ public class CartActivity extends HomeActivity {
             String createUser = cursor.getString(cursor.getColumnIndex(DBHelper.SHOPCAR_CREATEUSER));
             String shopName = cursor.getString(cursor.getColumnIndex(DBHelper.SHOPCAR_SHOPNAME));
 //( isSelect,  productID,  buycount,  imgName,  supplierID, shopID,  agentID,  proName,  price,  marketPrice,  createUser,  attrJson,  arriveTime,  leaveTime,  shopName,  discountNum,  discountPrice)
-            HashMap<String, Object> dataMap = ActivityUtils.getShopCarItem(false, productID, count, imgName, supplierID, shopID, agentID, proName, price, "", createUser, attrJson, "", "", shopName, "", "");
+            HashMap<String, Object> dataMap = ActivityUtils.getShopCarItem(false, productID, count, imgName, supplierID, shopID, agentID, proName, price, "", createUser, attrJson, "", "", shopName, "", "",uid);
             list.add(dataMap);
         }
         Collections.sort(list, new CarComparator());

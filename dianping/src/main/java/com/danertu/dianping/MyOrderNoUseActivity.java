@@ -15,7 +15,7 @@ public class MyOrderNoUseActivity extends MyOrderQRCodeParentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         data2 = MyOrderDataQRCode.order_list_no_use;
-        adapter = new MyOrderQRCodeAdapter(context, data2,TAB_NO_USE);
+        adapter = new MyOrderQRCodeAdapter(context, data2,TAB_NO_USE,getUid());
         lv_order.setAdapter(adapter);
     }
 

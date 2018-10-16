@@ -12,9 +12,12 @@ import org.json.JSONObject;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 import android.widget.Button;
 
 import com.config.Constants;
@@ -36,6 +39,7 @@ public class ScoreCenterActivity extends BaseWebActivity {
 //		setContentView(R.layout.activity_score_center);
         initTitle("金萝卜");
         initData();
+
         this.startWebView(Constants.appWebPageUrl + "gold_radish1.html");
 //		this.startWebView("file:///android_asset/gold_radish.html");
 //		findViewById();
@@ -68,6 +72,9 @@ public class ScoreCenterActivity extends BaseWebActivity {
     @Override
     protected void initWebSettings() {
         super.initWebSettings();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         webView.addJavascriptInterface(new JsCallback(), "app");
     }
 
@@ -209,7 +216,6 @@ public class ScoreCenterActivity extends BaseWebActivity {
                     HashMap<String, Object> item = data1.get(index);
                     String categoryID = (String) item.get("id");
                     String categoryName = (String) item.get("name");
-
                     Bundle bundle = new Bundle();
                     bundle.putString("id", categoryID);
                     bundle.putString("name", categoryName);
@@ -227,18 +233,109 @@ public class ScoreCenterActivity extends BaseWebActivity {
     }
 
     private void getFirstCategory() {
-        Hashtable<String, String> Params = new Hashtable<>();
-        Params.put("apiid", "0073");
-        doTaskAsync(Constants.api.GET_FIRST_CATEGORY, "", Params);
+//        Hashtable<String, String> Params = new Hashtable<>();
+//        Params.put("apiid", "0073");
+//        doTaskAsync(Constants.api.GET_FIRST_CATEGORY, "", Params);
+        new GetFirstCategory().execute();
+    }
+
+    class GetFirstCategory extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            return appManager.getFirstCategory("0073");
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            data1 = new ArrayList<>();
+            try {
+                JSONObject jsonObject = new JSONObject(result).getJSONObject("firstCategoryList");
+                JSONArray jsonArray = jsonObject.getJSONArray("firstCategorybean");
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject oj = jsonArray.getJSONObject(i);
+                    HashMap<String, Object> item = new HashMap<>();
+                    item.put("id", oj.get("ID"));
+                    item.put("name", oj.get("Name"));
+                    item.put("key", oj.get("Keywords"));
+                    item.put("family", oj.get("Family"));
+                    item.put("img", oj.getString("PhoneImage"));
+                    data1.add(item);
+                }
+            } catch (Exception e) {
+                judgeIsTokenException(result, "您的登录信息已过期，请重新登录", -1);
+                if (Constants.isDebug) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     private void getDiscountProducts() {
-        Hashtable<String, String> Params = new Hashtable<>();
-        Params.put("apiid", "0040");
-        Params.put("type", "1");
-        Params.put("kword", "");
-        doTaskAsync(Constants.api.POST_GET_PRODUCTLIST, "", Params);
+//        Hashtable<String, String> Params = new Hashtable<>();
+//        Params.put("apiid", "0040");
+//        Params.put("type", "1");
+//        Params.put("kword", "");
+//        doTaskAsync(Constants.api.POST_GET_PRODUCTLIST, "", Params);
+        new GetDiscountProduct().execute();
     }
+
+    class GetDiscountProduct extends AsyncTask<Void, Integer, String> {
+
+        @Override
+        protected String doInBackground(Void... strings) {
+            return appManager.postGetProductList("0040", "", "1", "");
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            productLists = new ArrayList<>();
+            JSONObject jsonObject;
+            try {
+                // Name, Guid, SmallImage, mobileProductDetail, AgentID,
+                // SupplierLoginID, ShopPrice, VirtualBuyCount
+//                    JSONObject json = new JSONObject();
+                jsonObject = new JSONObject(result).getJSONObject("danProductlist");
+                JSONArray jsonArray = jsonObject.getJSONArray("danProductbean");
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject oj = jsonArray.getJSONObject(i);
+                    HashMap<String, Object> item = new HashMap<>();
+                    String guid = oj.getString("Guid");
+                    if (guid.equals("edb05b72-10fd-4902-843d-ba11be607adb") || guid.equals("507817c9-5155-481a-9df4-7db4e8683937")) {
+                        continue; // 手机端处理 不显示一元礼包
+                    } else {
+                        item.put("guid", guid);
+                    }
+                    String name = oj.getString("Name");
+                    String proRealName = "";
+                    String guige = "";
+                    if (name.contains("|")) {
+                        proRealName = name.substring(0, name.indexOf("|"));
+                        guige = name.substring(name.indexOf("|") + 1);
+                    } else {
+                        proRealName = name;
+                    }
+                    item.put("proName", proRealName);
+                    item.put("img", oj.getString("SmallImage"));
+                    item.put("detail", guige);
+                    item.put("agentID", oj.getString("AgentID"));
+                    item.put("supplierID", oj.getString("SupplierLoginID"));
+                    item.put("price", oj.getString("ShopPrice"));
+                    item.put("marketPrice", oj.getString("MarketPrice"));
+                    item.put("mobile", "400-995-2220");
+                    item.put("VirtualBuyCount", oj.getString("VirtualBuyCount"));// 商品购买数量
+                    productLists.add(item);
+                }
+                Gson gson = new Gson();
+                webView.loadUrl("javascript:javaLoadProductList('" + gson.toJson(productLists) + "')");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     @Override
     protected void findViewById() {
@@ -248,88 +345,6 @@ public class ScoreCenterActivity extends BaseWebActivity {
     @Override
     protected void initView() {
 
-    }
-
-//	private boolean isLogin() {
-//		String uid = mgr.GetLoginUid(ScoreCenterActivity.this);
-//		if (uid == null || uid.equals(""))
-//			return false;
-//		else
-//			return true;
-//	}
-
-    @Override
-    public void onTaskComplete(int taskId, String result) {
-        switch (taskId) {
-            case Constants.api.POST_GET_PRODUCTLIST:
-                productLists = new ArrayList<>();
-                JSONObject jsonObject;
-                try {
-                    // Name, Guid, SmallImage, mobileProductDetail, AgentID,
-                    // SupplierLoginID, ShopPrice, VirtualBuyCount
-//                    JSONObject json = new JSONObject();
-                    jsonObject = new JSONObject(result).getJSONObject("danProductlist");
-                    JSONArray jsonArray = jsonObject.getJSONArray("danProductbean");
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject oj = jsonArray.getJSONObject(i);
-                        HashMap<String, Object> item = new HashMap<>();
-                        String guid = oj.getString("Guid");
-                        if (guid.equals("edb05b72-10fd-4902-843d-ba11be607adb") || guid.equals("507817c9-5155-481a-9df4-7db4e8683937")) {
-                            continue; // 手机端处理 不显示一元礼包
-                        } else {
-                            item.put("guid", guid);
-                        }
-                        String name = oj.getString("Name");
-                        String proRealName = "";
-                        String guige = "";
-                        if (name.contains("|")) {
-                            proRealName = name.substring(0, name.indexOf("|"));
-                            guige = name.substring(name.indexOf("|") + 1);
-                        } else {
-                            proRealName = name;
-                        }
-                        item.put("proName", proRealName);
-                        item.put("img", oj.getString("SmallImage"));
-                        item.put("detail", guige);
-                        item.put("agentID", oj.getString("AgentID"));
-                        item.put("supplierID", oj.getString("SupplierLoginID"));
-                        item.put("price", oj.getString("ShopPrice"));
-                        item.put("marketPrice", oj.getString("MarketPrice"));
-                        item.put("mobile", "400-995-2220");
-                        item.put("VirtualBuyCount", oj.getString("VirtualBuyCount"));// 商品购买数量
-                        productLists.add(item);
-                    }
-                    Gson gson = new Gson();
-                    webView.loadUrl("javascript:javaLoadProductList('" + gson.toJson(productLists) + "')");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                break;
-            case Constants.api.GET_FIRST_CATEGORY:
-                data1 = new ArrayList<>();
-                try {
-                    jsonObject = new JSONObject(result).getJSONObject("firstCategoryList");
-                    JSONArray jsonArray = jsonObject.getJSONArray("firstCategorybean");
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject oj = jsonArray.getJSONObject(i);
-                        HashMap<String, Object> item = new HashMap<>();
-                        item.put("id", oj.get("ID"));
-                        item.put("name", oj.get("Name"));
-                        item.put("key", oj.get("Keywords"));
-                        item.put("family", oj.get("Family"));
-                        item.put("img", oj.getString("PhoneImage"));
-
-                        data1.add(item);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                break;
-
-            default:
-                break;
-        }
     }
 
 

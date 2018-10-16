@@ -19,6 +19,7 @@ public class CouponUseHistoryPresenter extends NewBasePresenter<CouponUseHistory
     static final int WHAT_LOAD_MORE_FAIL = 7;
     static final int WHAT_LOAD_MORE_ERROR = 28;
     static final int WHAT_NO_MORE_DATA = 29;
+    static final int WHAT_NEED_LOGIN = 30;
     private int currentPage = 1;
 
     public CouponUseHistoryPresenter(Context context) {
@@ -114,6 +115,14 @@ public class CouponUseHistoryPresenter extends NewBasePresenter<CouponUseHistory
                             view.noMoreData();
                         }
                         break;
+                    case WHAT_NEED_LOGIN:
+                        if (isViewAttached()) {
+                            view.jsShowMsg("您的登录信息已过期，请重新登录");
+                            view.quitAccount();
+                            view.jsFinish();
+                            view.jsStartActivity("LoginActivity");
+                        }
+                        break;
 
                 }
                 super.handleMessage(msg);
@@ -123,7 +132,7 @@ public class CouponUseHistoryPresenter extends NewBasePresenter<CouponUseHistory
 
     @Override
     public CouponUseHistoryModel initModel() {
-        return new CouponUseHistoryModel();
+        return new CouponUseHistoryModel(context);
     }
 
     @Override

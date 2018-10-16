@@ -106,11 +106,14 @@ public class MessageDetailActivity extends BaseActivity {
             Intent intent = getIntent();
             String guid = intent.getStringExtra("guid");
             db.updateMsgState(MessageDetailActivity.this, guid);
-            String s = AppManager.getInstance().postUpdateMsgState("0035", guid);
+            String s = appManager.postUpdateMsgState("0035", guid,getUid());
             isInserted = s.equals("true");
-            SystemClock.sleep(1000);
-            Message msg = new Message();
-            MessageDetailActivity.this.HandlerDetails.sendMessage(msg);
+            if (isInserted){
+                Message msg = new Message();
+                MessageDetailActivity.this.HandlerDetails.sendMessage(msg);
+            }else {
+                judgeIsTokenException(s,"您的登录信息已过期，请重新登录",-1);
+            }
 
         }
 

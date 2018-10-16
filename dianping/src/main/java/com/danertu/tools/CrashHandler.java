@@ -182,7 +182,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         public void run() {
             // 耗时操作
             try {
-                String result = AppManager.getInstance().sendErrInfo("0065", sb.toString().substring(0, 2000));
+                String result = AppManager.getInstance().sendErrInfo( sb.toString().substring(0, 2000));
                 Log.i(TAG, result);
             } catch (Exception e) {
                 e.printStackTrace();

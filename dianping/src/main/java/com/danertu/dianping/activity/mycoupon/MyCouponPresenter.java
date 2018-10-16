@@ -29,6 +29,7 @@ public class MyCouponPresenter extends NewBasePresenter<MyCouponContact.MyCoupon
     static final int WHAT_SHOP_DETAIL_SUCCESS = 20;
     static final int WHAT_SHOP_DETAIL_FAIL = 21;
     static final int WHAT_SHOP_DETAIL_ERROR = 22;
+    static final int WHAT_NEED_LOGIN = 23;
 
     public static final int REQUEST_GET_COUPON = 99;
     public static final int RESULT_GET_COUPON = 909;
@@ -64,10 +65,20 @@ public class MyCouponPresenter extends NewBasePresenter<MyCouponContact.MyCoupon
                                 if ("chunkang".equals(memberid)) {
                                     memberid = Constants.CK_SHOPID;
                                 }
-                                if (isViewAttached()){
+                                if (isViewAttached()) {
                                     view.setShopId(memberid);
                                     loadData(currentPage);
                                 }
+                            }
+                        }
+
+                        @Override
+                        public void tokenException(String code, String info) {
+                            if (isViewAttached()) {
+                                view.jsShowMsg(info);
+                                view.quitAccount();
+                                view.jsFinish();
+                                view.jsStartActivity("LoginActivity");
                             }
                         }
 
@@ -89,10 +100,20 @@ public class MyCouponPresenter extends NewBasePresenter<MyCouponContact.MyCoupon
                     });
                 } else {
                     //已开店，店铺id为自己的
-                    if (isViewAttached()){
+                    if (isViewAttached()) {
                         view.setShopId(val.get(0).getMemberID());
                         loadData(currentPage);
                     }
+                }
+            }
+
+            @Override
+            public void tokenException(String code, String info) {
+                if (isViewAttached()) {
+                    view.jsShowMsg(info);
+                    view.quitAccount();
+                    view.jsFinish();
+                    view.jsStartActivity("LoginActivity");
                 }
             }
 
@@ -113,6 +134,7 @@ public class MyCouponPresenter extends NewBasePresenter<MyCouponContact.MyCoupon
             }
         });
 
+
     }
 
     @Override
@@ -123,41 +145,41 @@ public class MyCouponPresenter extends NewBasePresenter<MyCouponContact.MyCoupon
                 view.jsHideLoading();
                 switch (msg.what) {
                     case WHAT_COUPON_LIST_SUCCESS:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.stopRefresh();
                             view.notifyChange(model.getCouponList().size());
                         }
                         break;
                     case WHAT_COUPON_LIST_FAIL:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.jsShowMsg("数据获取失败");
                             view.stopRefresh();
                             view.getDataFail();
                         }
                         break;
                     case WHAT_COUPON_LIST_ERROR:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.jsShowMsg("数据获取失败");
                             view.stopRefresh();
                             view.getDataFail();
                         }
                         break;
                     case WHAT_LOAD_MORE_SUCCESS:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.notifyChange(model.getCouponList().size());
                             view.stopLoadMore();
                         }
                         break;
                     case WHAT_LOAD_MORE_FAIL:
                         --currentPage;
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.jsShowMsg("加载更多数据失败");
                             view.stopLoadMore();
                         }
                         break;
                     case WHAT_LOAD_MORE_ERROR:
                         --currentPage;
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.jsShowMsg("加载更多数据失败");
                             view.stopLoadMore();
                         }
@@ -169,36 +191,44 @@ public class MyCouponPresenter extends NewBasePresenter<MyCouponContact.MyCoupon
                         }
                         break;
                     case WHAT_REFRESH_FAIL:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.jsShowMsg("刷新失败");
                             view.stopRefresh();
                         }
                         break;
                     case WHAT_REFRESH_ERROR:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.jsShowMsg("刷新失败");
                             view.stopRefresh();
                         }
                         break;
                     case WHAT_NO_MORE_DATA:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.jsShowMsg("已无更多优惠券");
                             view.stopLoadMore();
                         }
                         break;
                     case WHAT_SHOP_DETAIL_SUCCESS:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.toAgentShop(msg.arg1, msg.obj.toString());
                         }
                         break;
                     case WHAT_SHOP_DETAIL_FAIL:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.jsShowMsg("获取经销商信息失败");
                         }
                         break;
                     case WHAT_SHOP_DETAIL_ERROR:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.jsShowMsg("获取经销商信息失败");
+                        }
+                        break;
+                    case WHAT_NEED_LOGIN:
+                        if (isViewAttached()) {
+                            view.jsShowMsg(msg.obj == null ? "" : msg.obj.toString());
+                            view.quitAccount();
+                            view.jsFinish();
+                            view.jsStartActivity("LoginActivity");
                         }
                         break;
                 }
@@ -211,14 +241,14 @@ public class MyCouponPresenter extends NewBasePresenter<MyCouponContact.MyCoupon
     public void onDestroy() {
         if (handler != null) {
             handler.removeCallbacksAndMessages("");
-            handler=null;
+            handler = null;
         }
     }
 
 
     @Override
     public MyCouponModel initModel() {
-        return new MyCouponModel();
+        return new MyCouponModel(context);
     }
 
     @Override
@@ -227,7 +257,7 @@ public class MyCouponPresenter extends NewBasePresenter<MyCouponContact.MyCoupon
     }
 
     @Override
-    public void loadData(int page) {
+    public void loadData(final int page) {
         model.getMyCouponList(handler, model.getUid(context), "0", page, Constants.pageSize);
     }
 
@@ -247,6 +277,7 @@ public class MyCouponPresenter extends NewBasePresenter<MyCouponContact.MyCoupon
         model.getCouponList().clear();
         currentPage = 1;
         loadData(currentPage);
+
     }
 
     @Override
@@ -255,17 +286,18 @@ public class MyCouponPresenter extends NewBasePresenter<MyCouponContact.MyCoupon
     }
 
     @Override
-    public void toAgentShopIndex(String useAgentAppoint) {
+    public void toAgentShopIndex(final String useAgentAppoint) {
         if (isViewAttached()) {
             view.jsShowLoading();
         }
-        if (useAgentAppoint.equals(Constants.CK_SHOPID)||useAgentAppoint.equals("chunkang")){
-            if (isViewAttached()){
+        if (useAgentAppoint.equals(Constants.CK_SHOPID) || useAgentAppoint.equals("chunkang")) {
+            if (isViewAttached()) {
                 view.jsHideLoading();
-                view.toAgentShop(1,Constants.CK_SHOPID);
+                view.toAgentShop(1, Constants.CK_SHOPID);
             }
             return;
         }
         model.getShopDetail(handler, useAgentAppoint);
+
     }
 }

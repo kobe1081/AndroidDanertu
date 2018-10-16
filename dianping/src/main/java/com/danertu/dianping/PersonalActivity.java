@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +25,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.provider.MediaStore.Images.Media;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +48,7 @@ import com.danertu.tools.DateTimeUtils;
 import com.danertu.tools.FWorkUtil;
 import com.danertu.tools.Logger;
 import com.danertu.widget.CommonTools;
+import com.google.gson.JsonSyntaxException;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 
@@ -101,7 +105,6 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
 
     private String headImgUrl = null;
     private String nickname = null;
-    private String psw = null;
 
     private String loginId;
 
@@ -131,6 +134,14 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
 
     public void onResume() {
         super.onResume();
+        if (TextUtils.isEmpty(db.getUserToken(context))) {
+            Constants.USER_TOKEN = "";
+            Intent intent = new Intent(context, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivityForResult(intent, REQ_LOGIN);
+            return;
+        }
+//        jsStartActivityForResult("LoginActivity", "", REQ_LOGIN);
         if (isLogin()) {
             new Thread(rInitMsg).start();
             new GetSignInToday().execute();
@@ -156,7 +167,7 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
      */
     private Runnable rInitFav = new Runnable() {
         public void run() {
-            HashMap<String, String> param = new HashMap<>();
+            LinkedHashMap<String, String> param = new LinkedHashMap<>();
             param.put("apiid", "0291");
             param.put("memberid", getUid());
             int count = 0;
@@ -184,17 +195,18 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
         @Override
         protected Integer doInBackground(Void... params) {
             int type = 0;
-            HashMap<String, String> param = new HashMap<>();
+            LinkedHashMap<String, String> param = new LinkedHashMap<>();
             param.put("apiid", "0141");
-            param.put("shopid", getUid());
+            param.put("shopid", loginId);
             String result = appManager.doPost(param);
             if (!TextUtils.isEmpty(result)) {
                 try {
                     String id = new JSONObject(result).getJSONArray("val").getJSONObject(0).getString("ID");
                     if (!TextUtils.isEmpty(id)) {
                         type = 1;
+                        param.clear();
                         param.put("apiid", "0252");
-                        param.put("memberid", getUid());
+                        param.put("memberid", loginId);
                         result = appManager.doPost(param);
                         String isCrown = new JSONObject(result).getString("result");
                         if (isCrown != null && isCrown.equalsIgnoreCase("true")) {
@@ -202,7 +214,8 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
                         }
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    if (Constants.isDebug)
+                        e.printStackTrace();
                 }
             }
             return type;
@@ -247,7 +260,6 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
     public void setMessage() {
         Cursor cursor = db.GetLoginInfo(context);
         if (!cursor.isClosed() && cursor.moveToFirst()) {
-            psw = cursor.getString(cursor.getColumnIndex("pwd"));
             nickname = cursor.getString(cursor.getColumnIndex("nickname"));
             if (TextUtils.isEmpty(headImgUrl)) {
                 headImgUrl = cursor.getString(cursor.getColumnIndex("headimgurl"));
@@ -313,7 +325,6 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
         findViewById(R.id.ll_qr_code).setOnClickListener(this);
         findViewById(R.id.ll_my_order).setOnClickListener(this);
         findViewById(R.id.ll_open_shop).setOnClickListener(this);
-
 
 
         /**
@@ -402,7 +413,7 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
                      */
 //                    jsToOrderActivity(0, false, true);
 
-                    Intent intent = new Intent(getContext(), MyOrderQRCodeActivity.class);
+                    final Intent intent = new Intent(getContext(), MyOrderQRCodeActivity.class);
                     intent.putExtra("TabIndex", 0);
                     intent.putExtra("isOnlyHotel", false);
                     intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -421,6 +432,15 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
 //                    } else {
 //                        hideLoadDialog();
 //                    }
+                        }
+
+                        @Override
+                        public void needLogin() {
+                            jsShowMsg("您的登录信息已过期，请重新登录");
+                            quitAccount();
+                            Intent intent1 = new Intent(context, LoginActivity.class);
+                            intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivityForResult(intent, REQ_LOGIN);
                         }
                     };
 
@@ -455,7 +475,7 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
                     jsStartActivity("HtmlActivityNew", "url|" + Constants.appWebPageUrl + "seller_learn.html");
                     break;
 //                case R.id.test:
-//                    shareImgWithQRCode("http://img.danertu.com/member/announcement/20180529163710102.jpg","1234565768666",0.2f,0.2f,200,null);
+//                    shareImgWithQRCode("http://img.danertu.com/SupplierProduct/shopnum1/20180709150457426.jpg","1234565768666",0.7f,0.2f,200,null);
 //                    break;
 
                 default:
@@ -479,13 +499,26 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            if (tv_wallet_count == null) {
+                return;
+            }
             //通过try-catch方式判断获取回来的结果是不是数字
             //如果是就显示
             try {
                 double money = Double.parseDouble(s);
                 tv_wallet_count.setText(CommonTools.formatZero2Str(money));
             } catch (Exception e) {
-                e.printStackTrace();
+                judgeIsTokenException(s, new TokenExceptionCallBack() {
+                    @Override
+                    public void tokenException(String code, String info) {
+                        sendMessageNew(WHAT_TO_LOGIN, REQ_LOGIN, info);
+                    }
+
+                    @Override
+                    public void ok() {
+
+                    }
+                });
             }
         }
     }
@@ -507,14 +540,21 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            if (llSignIn == null || tv_sign_in_tip == null) {
+                return;
+            }
             if (s.equals("true")) {
                 //已经签到
                 tv_sign_in_tip.setVisibility(View.VISIBLE);
                 llSignIn.setVisibility(View.GONE);
             } else {
-                //未签到
-                tv_sign_in_tip.setVisibility(View.GONE);
-                llSignIn.setVisibility(View.VISIBLE);
+                if (judgeIsTokenException(s)) {
+                    judgeIsTokenException(s, "您的登录信息已过期，请重新登录", REQ_LOGIN);
+                } else {
+                    //未签到
+                    tv_sign_in_tip.setVisibility(View.GONE);
+                    llSignIn.setVisibility(View.VISIBLE);
+                }
             }
         }
     }
@@ -534,6 +574,9 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            if (llSignIn == null || tv_sign_in_tip == null) {
+                return;
+            }
             if (s.equals("true")) {
                 jsShowMsg("签到成功");
                 new Thread(rInitMsg).start();
@@ -549,9 +592,13 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
                 dateStr = sDateFormat.format(date);
                 seference.savePreferenceData(seference.signFileName, dateStr, true + "");
             } else {
-                llSignIn.setVisibility(View.VISIBLE);
-                tv_sign_in_tip.setVisibility(View.GONE);
-                jsShowMsg("签到失败，请重试");
+                if (judgeIsTokenException(s)) {
+                    judgeIsTokenException(s, "您的登录信息已过期，请重新登录", REQ_LOGIN);
+                } else {
+                    llSignIn.setVisibility(View.VISIBLE);
+                    tv_sign_in_tip.setVisibility(View.GONE);
+                    jsShowMsg("签到失败，请重试");
+                }
             }
         }
     }
@@ -573,6 +620,7 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
             return true;
         }
     }
+
 
     /**
      * 跳转到特定名称的activity
@@ -745,7 +793,7 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
         public void run() {
             // 耗时操作
             ArrayList<HashMap<String, Object>> list = new ArrayList<>();
-            String result = AppManager.getInstance().postGetMessage("0034", db.GetLoginUid(PersonalActivity.this));
+            String result = appManager.postGetMessage("0034", db.GetLoginUid(PersonalActivity.this));
             JSONObject jsonObject;
             try {
                 jsonObject = new JSONObject(result).getJSONObject("msglist");
@@ -763,9 +811,11 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
                 }
                 db.TogetherPcMessage(PersonalActivity.this, list);
             } catch (Exception e) {
+                if (judgeIsTokenException(result)) {
+                    judgeIsTokenException(result, "您的登录信息已过期，请重新登录", REQ_LOGIN);
+                }
                 e.printStackTrace();
             }
-            SystemClock.sleep(1000);
         }
     });
 
@@ -776,14 +826,18 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
         public void run() {
             String serverScore = "0";
             try {
-                String loginResult = AppManager.getInstance().postLoginInfo("0009", getUid(), psw);
-                JSONObject obj = new JSONObject(loginResult).getJSONArray("val").getJSONObject(0);
-                serverScore = obj.getString("Score");
+                serverScore = AppManager.getInstance().postGetMemberScore("0085", loginId);
+                int parseInt = Integer.parseInt(serverScore);//此处转换的原因时为了出现exception
+                serverScore = TextUtils.isEmpty(serverScore) ? "0" : serverScore;
                 db.updateScore(getApplicationContext(), getUid(), serverScore);
+                handlerOrderData.sendMessage(getMessage(10, serverScore));
             } catch (Exception e) {
+                if (judgeIsTokenException(serverScore)) {
+                    judgeIsTokenException(serverScore, "您的登录信息已过期，请重新登录", REQ_LOGIN);
+                }
                 e.printStackTrace();
             }
-            handlerOrderData.sendMessage(getMessage(10, serverScore));
+
         }
     };
 
@@ -795,6 +849,10 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (handlerOrderData != null) {
+            handlerOrderData.removeCallbacksAndMessages("");
+            handlerOrderData = null;
+        }
     }
 
     /**
@@ -812,17 +870,34 @@ public class PersonalActivity extends HomeActivity implements OnClickListener {
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            if (TextUtils.isEmpty(s)) {
-                tv_coupon.setText("0");
-                return;
-            }
-            CouponCountBean countBean = gson.fromJson(s, CouponCountBean.class);
-            if (countBean == null || countBean.getVal() == null || countBean.getVal().size() == 0) {
-                tv_coupon.setText("0");
-                return;
-            }
-            tv_coupon.setText(countBean.getTotal() == null ? "0" : countBean.getTotal());
+        protected void onPostExecute(final String s) {
+            Logger.e(TAG, "onPostExecute");
+            judgeIsTokenException(s, new TokenExceptionCallBack() {
+                @Override
+                public void tokenException(String code, String info) {
+                    sendMessageNew(WHAT_TO_LOGIN, REQ_LOGIN, info);
+                }
+
+                @Override
+                public void ok() {
+                    Logger.e(TAG, "ok");
+                    try {
+                        if (TextUtils.isEmpty(s)) {
+                            tv_coupon.setText("0");
+                            return;
+                        }
+                        CouponCountBean countBean = com.alibaba.fastjson.JSONObject.parseObject(s, CouponCountBean.class);
+                        if (countBean == null || countBean.getVal() == null || countBean.getVal().size() == 0) {
+                            tv_coupon.setText("0");
+                            return;
+                        }
+                        tv_coupon.setText(countBean.getTotal() == null ? "0" : countBean.getTotal());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
             super.onPostExecute(s);
         }
     }

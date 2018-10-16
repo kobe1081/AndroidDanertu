@@ -276,6 +276,7 @@
 
     <string name="order_detail_receive_people">收货人&#8194;&#8194;</string>
     <string name="order_detail_pay_info">支付信息</string>
+    <string name="order_detail_pay_money">金额&#8194;&#8194;&#8194;&#8194;</string>
     <string name="order_detail_hotel_date">时间&#8194;&#8194;&#8194;&#8194;</string>
     <string name="order_detail_more">更多&#8194;&#8194;&#8194;&#8194;</string>
     <string name="qrcode_detail_save">保存至手机</string>
@@ -292,4 +293,9 @@
     <string name="order_center_no_send">待发货</string>
     <string name="order_center_no_receive">待收货</string>
     <string name="order_center_pay_back">退款</string>
+    <string name="my_coupon_share">分享</string>
+    <string name="coupon_detail_title_share">分享</string>
+    <string name="coupon_detail_title">优惠券</string>
+    <string name="rmb">¥</string>
+    <string name="qrcode_detail_tips">预订成功\n请凭此码到店办理</string>
 </resources>

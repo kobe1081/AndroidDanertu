@@ -6,6 +6,7 @@ import android.app.LocalActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -321,6 +322,9 @@ public class MyOrderQRCodeActivity extends BaseActivity implements MyOrderDataQR
     private void initWebContent() {
         webView.setVisibility(View.VISIBLE);
         WebSettings setting = webView.getSettings();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setting.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         setting.setJavaScriptCanOpenWindowsAutomatically(true);
         setting.setJavaScriptEnabled(true);
         webView.addJavascriptInterface(this, WEB_INTERFACE);
@@ -445,12 +449,34 @@ public class MyOrderQRCodeActivity extends BaseActivity implements MyOrderDataQR
         }
 
         public void run() {
-            if (appManager.postCancelReserveOrder(guid)) {
+            String json = appManager.postCancelReserveOrder(guid, getUid());
+            if ("true".equals(json)) {
                 Message msg = new Message();
                 msg.obj = guid;
                 msg.what = WHAT_CANCEL_RESERVE;
                 if (myHandler != null)
                     myHandler.sendMessage(msg);
+            } else {
+                judgeIsTokenException(json, new TokenExceptionCallBack() {
+                    @Override
+                    public void tokenException(String code, final String info) {
+                        sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                jsShowMsg(info);
+//                                quitAccount();
+//                                finish();
+//                                jsStartActivity("LoginActivity", "");
+//                            }
+//                        });
+                    }
+
+                    @Override
+                    public void ok() {
+                        jsShowMsg("取消失败");
+                    }
+                });
             }
         }
     }
@@ -471,7 +497,7 @@ public class MyOrderQRCodeActivity extends BaseActivity implements MyOrderDataQR
     public MyHandler myHandler = new MyHandler(this);
     public final int WHAT_LOAD_OFFLINE = 10;
 
-    public static class MyHandler extends Handler {
+    public class MyHandler extends Handler {
         WeakReference<MyOrderQRCodeActivity> wAct = null;
         MyOrderQRCodeActivity moa = null;
 
@@ -485,8 +511,28 @@ public class MyOrderQRCodeActivity extends BaseActivity implements MyOrderDataQR
 
                 moa.hideLoadDialog();
                 if (msg.obj != null) {
-                    String reserveMsg = msg.obj.toString().replaceAll("\n", "");
-                    moa.webView.loadUrl("javascript:javaLoadOrderCenterOffLine('" + reserveMsg + "','" + (Math.abs(moa.tabIndex) - 1) + "')");
+                    final String reserveMsg = msg.obj.toString().replaceAll("\n", "");
+                    judgeIsTokenException(reserveMsg, new TokenExceptionCallBack() {
+                        @Override
+                        public void tokenException(String code, final String info) {
+                            sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    jsShowMsg(info);
+//                                    quitAccount();
+//                                    finish();
+//                                    jsStartActivity("LoginActivity", "");
+//                                }
+//                            });
+                        }
+
+                        @Override
+                        public void ok() {
+                            moa.webView.loadUrl("javascript:javaLoadOrderCenterOffLine('" + reserveMsg + "','" + (Math.abs(moa.tabIndex) - 1) + "')");
+                        }
+                    });
+
                     Logger.i("预订单数据", reserveMsg + "");
                 } else
                     moa.webView.loadUrl("javascript:javaLoadOrderCenterOffLine('','0')");
@@ -551,6 +597,7 @@ public class MyOrderQRCodeActivity extends BaseActivity implements MyOrderDataQR
     protected void initView() {
 
     }
+
     private void sendActivityResultBroadcast(int requestCode, int resultCode, String orderNumber) {
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(context);
         Intent intent = new Intent(Constants.ORDER_DATA_ON_ACTIVITY_FOR_RESULT_QRCODE);

@@ -8,6 +8,35 @@ public class LeaderBean {
      * LeaderInfo : {"LeaderBean":[{"ShopName":"ck醇康","memberid":"chunkang","Mobile":"4009952220","RealName":"醇康贸易"}]}
      */
 
+    private String result;
+    private String info;
+    private String code;
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+
     private LeaderInfoBean LeaderInfo;
 
     public LeaderInfoBean getLeaderInfo() {

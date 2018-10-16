@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -42,6 +44,7 @@ public class ShopProductActivity extends BaseActivity {
     String phoneNum = "";
     String shopJson = null;
     String proListJson = null;
+    private String uid;
 //	MyImageLoader imageLoader = new MyImageLoader(this); 
 
 
@@ -49,7 +52,7 @@ public class ShopProductActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop_product);
-
+        uid=getUid();
 //		Bundle bundle = getIntent().getExtras();
 //		if (bundle != null) {
 //			shopid = getIntent().getExtras().getString("shopid"); // 获取传过来的店铺id
@@ -193,7 +196,7 @@ public class ShopProductActivity extends BaseActivity {
             String supplierID = data1.get(position).get("supplierID").toString();
             String marketPrice = data1.get(position).get("marketPrice").toString();
 
-            ss = ActivityUtils.getImgUrl(imgName, agentID, supplierID);
+            ss = ActivityUtils.getImgUrl(imgName, agentID, supplierID,uid);
 
             if (data1.get(position).get("proName").toString().indexOf(" | ") > 0) {
                 String[] strPro = data1.get(position).get("proName").toString().split(" | ");
@@ -298,6 +301,9 @@ public class ShopProductActivity extends BaseActivity {
 //		initTitle(shopname);
 
         webView.getSettings().setJavaScriptEnabled(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         webView.addJavascriptInterface(this, WV_INTERFACE);
 
 //		webView.loadUrl("file:///android_asset/" + WEB_PAGE_NAME);

@@ -16,7 +16,33 @@ import java.util.List;
  * AgentID :
  */
 public class CouponProductsBean {
+    private String result;
+    private String info;
+    private String code;
 
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
     private List<ProductListBean> ProductList;
 
     public List<ProductListBean> getProductList() {

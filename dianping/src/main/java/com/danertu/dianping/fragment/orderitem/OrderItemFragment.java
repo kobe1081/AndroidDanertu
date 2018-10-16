@@ -47,6 +47,7 @@ import butterknife.Unbinder;
 
 public class OrderItemFragment extends NewBaseFragment<OrderItemContact.OrderItemView, OrderItemPresenter> implements OrderItemContact.OrderItemView, SwipeRefreshLayout.OnRefreshListener, XListView.IXListViewListener {
 
+
     @BindView(R.id.tv_order_null_text)
     TextView tvOrderNullText;
     @BindView(R.id.xlv_order)
@@ -103,6 +104,13 @@ public class OrderItemFragment extends NewBaseFragment<OrderItemContact.OrderIte
     }
 
     @Override
+    public void notifyChange() {
+        if (adapter == null) {
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
     public void notifyChange(int listSize) {
         if (adapter != null) {
             adapter.notifyDataSetChanged();
@@ -117,6 +125,7 @@ public class OrderItemFragment extends NewBaseFragment<OrderItemContact.OrderIte
             tvOrderNullText.setVisibility(View.VISIBLE);
         }
     }
+
 
     @Override
     public void stopLoadMore() {
@@ -168,6 +177,7 @@ public class OrderItemFragment extends NewBaseFragment<OrderItemContact.OrderIte
         if (adapter != null) {
             adapter.changeOrderStatue(orderNumber, position, orderStatue, payStatue, shipStatue);
         }
+
     }
 
     @Override
@@ -195,6 +205,11 @@ public class OrderItemFragment extends NewBaseFragment<OrderItemContact.OrderIte
             intent.putExtras(extras);
             broadcastManager.sendBroadcast(intent);
         }
+    }
+
+    @Override
+    public void toLogin() {
+        jsStartActivity("LoginActivity", "");
     }
 
     @Override
@@ -275,7 +290,9 @@ public class OrderItemFragment extends NewBaseFragment<OrderItemContact.OrderIte
         private LayoutInflater inflater;
         private ImageLoader loader;
         private boolean isQuanyan = false;
-        Dialog askDialog = null;
+
+        private boolean isShowQRCode = false;
+        private Dialog askDialog = null;
 
         public static final String STATUS_NO_PAY = "等待支付";
         public static final String STATUS_NO_SEND = "待发货";
@@ -333,13 +350,15 @@ public class OrderItemFragment extends NewBaseFragment<OrderItemContact.OrderIte
             }
             final NewOrderBean bean = list.get(position);
             int yorderCount = 0;
+            boolean isCooperateSupplier = false;
             final String orderNumber = bean.getOrderNumber();
             holder.tvOrderNum.setText("订单号：" + orderNumber);
             holder.llParentOfprodeceItem.removeAllViews();
             for (OrderBody.OrderproductlistBean.OrderproductbeanBean orderproductbeanBean : bean.getProductItems()) {
                 View productItemView = inflater.inflate(R.layout.activity_my_order_produce_item_new, holder.llParentOfprodeceItem, false);
                 ProductItemHolder itemHolder = new ProductItemHolder(productItemView);
-                loader.displayImage(getSmallImgPath(orderproductbeanBean.getSmallImage(), orderproductbeanBean.getAgentID(), orderproductbeanBean.getSupplierLoginID()), itemHolder.ivOrderProduceLogo);
+                String supplierLoginID = orderproductbeanBean.getSupplierLoginID();
+                loader.displayImage(getSmallImgPath(orderproductbeanBean.getSmallImage(), orderproductbeanBean.getAgentID(), supplierLoginID), itemHolder.ivOrderProduceLogo);
                 String attrStr = getHandleAttrs(orderproductbeanBean.getAttribute());
                 itemHolder.tvOrderProduceTitle.setText(orderproductbeanBean.getName());
                 if (!TextUtils.isEmpty(attrStr)) {
@@ -380,50 +399,70 @@ public class OrderItemFragment extends NewBaseFragment<OrderItemContact.OrderIte
                 holder.tvOrderProducePriceSum.setText("共" + yorderCount + "件商品(含运费)：" + "￥" + bean.getShouldPayPrice());
                 holder.llParentOfprodeceItem.addView(productItemView);
                 //如果供应商ID等于shopnum1说明是泉眼商品
-                isQuanyan = orderproductbeanBean.getSupplierLoginID().equals(Constants.QY_SUPPLIERID);
+                isQuanyan = supplierLoginID.equals(Constants.QY_SUPPLIERID);
+                isCooperateSupplier = Constants.COOPERATE_SUPPLIER_ID.contains(supplierLoginID);
+                isShowQRCode = "1".equals(orderproductbeanBean.getIsQRCodeShow());
             }
 
             String paymentStatus = bean.getPaymentStatus();
             String shipmentStatus = bean.getShipmentStatus();
             String oderStatus = bean.getOderStatus();
-            if ("0".equals(paymentStatus)) {
-                // 付款状态为 未付款
+            View btnParent = (View) holder.bOrderLeft.getParent();
+
+            if (isShowQRCode) {
                 if (isQuanyan) {
-                    holder.bOrderCenter.setText(BTN_PAY);
-                    holder.bOrderRight.setText(BTN_QRCODE);
-                    holder.bOrderCenter.setVisibility(View.VISIBLE);
-                    holder.bOrderRight.setVisibility(View.VISIBLE);
-                    holder.tvMyOrderTradeState.setText(STATUS_TICKET_NO_USE);
-                } else {
-                    holder.bOrderRight.setText(BTN_PAY);
-                    holder.bOrderCenter.setVisibility(View.GONE);
-                    holder.bOrderRight.setVisibility(View.VISIBLE);
-                    holder.tvMyOrderTradeState.setText(STATUS_NO_PAY);
+                    if ("0".equals(paymentStatus)) {
+                        holder.bOrderCenter.setText(BTN_PAY);
+                        holder.bOrderCenter.setVisibility(View.VISIBLE);
+                        holder.bOrderRight.setText(BTN_QRCODE);
+                        holder.bOrderRight.setVisibility(View.VISIBLE);
+                        holder.tvMyOrderTradeState.setText(STATUS_TICKET_NO_USE);
+                    } else if ("0".equals(shipmentStatus) && "2".equals(paymentStatus)) {
+                        holder.tvMyOrderTradeState.setText(STATUS_TICKET_NO_USE);
+                        holder.bOrderRight.setText(BTN_QRCODE);
+                        holder.bOrderCenter.setText(BTN_PAYBACK);
+                        holder.bOrderLeft.setVisibility(View.GONE);
+                        holder.bOrderCenter.setVisibility(View.VISIBLE);
+                        holder.bOrderRight.setVisibility(View.VISIBLE);
+                    }
                 }
-            } else if ("0".equals(shipmentStatus) && "2".equals(paymentStatus)) {
-                // 已付款 ，未发货
-                if (isQuanyan) {
+                if (isCooperateSupplier) {
                     holder.tvMyOrderTradeState.setText(STATUS_TICKET_NO_USE);
+                    btnParent.setVisibility(View.VISIBLE);
                     holder.bOrderRight.setText(BTN_QRCODE);
                     holder.bOrderCenter.setText(BTN_PAYBACK);
                     holder.bOrderLeft.setVisibility(View.GONE);
                     holder.bOrderCenter.setVisibility(View.VISIBLE);
                     holder.bOrderRight.setVisibility(View.VISIBLE);
-                } else {
+                }
+                /**
+                 * 已核销的状态下显示已完成
+                 */
+                if ("1".equals(shipmentStatus) && "2".equals(paymentStatus)) {
+                    holder.tvMyOrderTradeState.setText(STATUS_TICKET_USED);
+                    btnParent.setVisibility(View.GONE);
+                }
+            } else {
+                if ("0".equals(paymentStatus)) {
+                    btnParent.setVisibility(View.VISIBLE);
+                    // 付款状态为 未付款
+                    holder.bOrderRight.setText(BTN_PAY);
+                    holder.bOrderCenter.setVisibility(View.GONE);
+                    holder.bOrderRight.setVisibility(View.VISIBLE);
+                    holder.tvMyOrderTradeState.setText(STATUS_NO_PAY);
+                } else if ("0".equals(shipmentStatus) && "2".equals(paymentStatus)) {
+                    btnParent.setVisibility(View.VISIBLE);
+                    // 已付款 ，未发货
                     holder.bOrderRight.setText(BTN_CANCEL_ORDER);
                     holder.bOrderRight.setVisibility(View.VISIBLE);
                     holder.bOrderCenter.setVisibility(View.GONE);
                     holder.bOrderLeft.setVisibility(View.GONE);
                     holder.tvMyOrderTradeState.setText(STATUS_NO_SEND);
-                }
-            } else if ("1".equals(shipmentStatus) && "2".equals(paymentStatus)) {
-                // 已发货,买家待收货
-                if (isQuanyan) {
-                    //泉眼
-                    holder.tvMyOrderTradeState.setText(STATUS_TICKET_USED);
-                    parent.setVisibility(View.GONE);
-                } else {
+                } else if ("1".equals(shipmentStatus) && "2".equals(paymentStatus)) {
+                    btnParent.setVisibility(View.VISIBLE);
+                    // 已发货,买家待收货
                     //普通商品
+                    btnParent.setVisibility(View.VISIBLE);
                     holder.tvMyOrderTradeState.setText(STATUS_NO_RECEIVE);
                     holder.bOrderLeft.setVisibility(View.GONE);
                     holder.bOrderCenter.setVisibility(View.VISIBLE);
@@ -435,40 +474,39 @@ public class OrderItemFragment extends NewBaseFragment<OrderItemContact.OrderIte
 //            holder.bOrderRight.setTextColor(ContextCompat.getColor(context, R.color.red_text1));
                 }
             }
-            View btnParent = (View) holder.bOrderLeft.getParent();
-            btnParent.setVisibility(View.VISIBLE);
+
+
             switch (oderStatus) {
                 case "2": //订单已取消
                     holder.tvMyOrderTradeState.setText(STATUS_CANCELED);
                     btnParent.setVisibility(View.GONE);
-
                     break;
                 case "3":
                     holder.tvMyOrderTradeState.setText(STATUS_INVALID);
                     btnParent.setVisibility(View.GONE);
-
                     break;
                 case "4":
+                    btnParent.setVisibility(View.VISIBLE);
                     holder.tvMyOrderTradeState.setText(STATUS_RETURNNING);
-//                parent.setVisibility(View.GONE);
                     holder.bOrderCenter.setVisibility(View.GONE);
                     holder.bOrderRight.setVisibility(View.VISIBLE);
                     holder.bOrderLeft.setVisibility(View.GONE);
                     holder.bOrderRight.setText(BTN_CHECK);
                     break;
                 case "5": // 已完成订单
-                    if (isQuanyan) {
+                    if (isQuanyan || isCooperateSupplier) {
                         holder.tvMyOrderTradeState.setText(STATUS_TICKET_USED);
                         btnParent.setVisibility(View.GONE);
 //                holder.bOrderRight.setBackgroundResource(R.drawable.b_corner_gray1);
 //                holder.bOrderRight.setTextColor(ContextCompat.getColor(context, R.color.gray_text_aaa));
                     } else {
+                        btnParent.setVisibility(View.VISIBLE);
                         holder.tvMyOrderTradeState.setText(STATUS_SUCCESS);
                         holder.bOrderLeft.setVisibility(View.GONE);
-                        holder.bOrderCenter.setVisibility(View.VISIBLE);
+                        holder.bOrderCenter.setVisibility(View.GONE);
                         holder.bOrderRight.setVisibility(View.VISIBLE);
 //			holder.bOrderLeft.setText("申请退款");
-                        holder.bOrderCenter.setText(BTN_CHECK_SHIPMENT);
+                        holder.bOrderRight.setText(BTN_CHECK_SHIPMENT);
 //                holder.bOrderRight.setBackgroundResource(R.drawable.b_corner_gray1);
 //                holder.bOrderRight.setTextColor(ContextCompat.getColor(context, R.color.gray_text_aaa));
                     }
@@ -476,8 +514,8 @@ public class OrderItemFragment extends NewBaseFragment<OrderItemContact.OrderIte
                 default:
                     break;
             }
-
             if ("4".equals(shipmentStatus)) {
+                btnParent.setVisibility(View.VISIBLE);
                 holder.tvMyOrderTradeState.setText(STATUS_PAY_BACK_ING);
                 holder.bOrderLeft.setVisibility(View.GONE);
                 holder.bOrderCenter.setVisibility(View.GONE);
@@ -486,9 +524,8 @@ public class OrderItemFragment extends NewBaseFragment<OrderItemContact.OrderIte
             }
             if ("3".equals(paymentStatus)) {// 表示已退款
                 holder.tvMyOrderTradeState.setText(STATUS_PAY_REFUND);
-                parent.setVisibility(View.GONE);
+                btnParent.setVisibility(View.GONE);
             }
-
             /**
              * 设置点击事件
              */
@@ -503,16 +540,15 @@ public class OrderItemFragment extends NewBaseFragment<OrderItemContact.OrderIte
                     }
                 }
             });
-
+            final String shipCode = bean.getLogisticsCompanyCode();//快递公司编码
+            final String shipName = bean.getDispatchModeName();
+            final String shipNumber = bean.getShipmentNumber();//快递单号
             holder.bOrderCenter.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (isClickOften()) {
                         return;
                     }
-                    String shipCode = bean.getLogisticsCompanyCode();//快递公司编码
-                    String shipName = bean.getDispatchModeName();
-                    String shipNumber = bean.getShipmentNumber();//快递单号
                     String centerStr = holder.bOrderCenter.getText().toString();
                     switch (centerStr) {
                         case BTN_CHECK_SHIPMENT: {
@@ -612,6 +648,14 @@ public class OrderItemFragment extends NewBaseFragment<OrderItemContact.OrderIte
                     }
                     String rightStr = holder.bOrderRight.getText().toString();
                     switch (rightStr) {
+                        case BTN_CHECK_SHIPMENT: {
+                            Intent intent = new Intent(context, MyOrderShipmentActivity.class);
+                            intent.putExtra(MyOrderShipmentActivity.KEY_SHIPMENT_CODE, shipCode);
+                            intent.putExtra(MyOrderShipmentActivity.KEY_SHIPMENT_NUMBER, shipNumber);
+                            intent.putExtra(MyOrderShipmentActivity.KEY_SHIPMENT_NAME, shipName);
+                            context.startActivity(intent);
+                            break;
+                        }
                         case BTN_PAYBACK:
                             applyDrawBack(bean.getShouldPayPrice(), orderNumber);
                             break;
@@ -763,6 +807,7 @@ public class OrderItemFragment extends NewBaseFragment<OrderItemContact.OrderIte
             if (!TextUtils.isEmpty(shipStatue)) {
                 bean.setShipmentStatus(shipStatue);
             }
+            dismissDialog();
             notifyDataSetChanged();
         }
 

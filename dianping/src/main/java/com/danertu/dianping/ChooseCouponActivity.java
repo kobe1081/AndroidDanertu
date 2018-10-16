@@ -198,7 +198,9 @@ public class ChooseCouponActivity extends NewBaseActivity<ChooseCouponContact.Ch
             final String discountPrice = bean.getDiscountPrice();
             String discountPercent = bean.getDiscountPercent();
             if ("0".equals(discountType)) {
-                holder.tvMyCouponMoney.setText(setStyleForUnSignNumLeft("￥" + discountPrice));
+                String discountPriceDisplay = bean.getDiscountPrice();
+                discountPriceDisplay = discountPriceDisplay.substring(0, discountPriceDisplay.indexOf("."));
+                holder.tvMyCouponMoney.setText(setStyleForUnSignNumLeft(getResources().getString(R.string.rmb) + discountPriceDisplay));
             } else {
                 if (discountPercent.endsWith("0")) {
                     discountPercent = discountPercent.substring(0, discountPercent.length() - 1);

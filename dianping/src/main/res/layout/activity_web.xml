@@ -7,17 +7,18 @@
         android:id="@+id/baseWeb_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/white"
         android:orientation="vertical">
 
         <include
             android:id="@+id/title2"
-            layout="@layout/app_title2"/>
+            layout="@layout/app_title2" />
 
         <com.danertu.widget.MWebView
             android:id="@+id/wv_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="none"/>
+            android:scrollbars="none" />
     </LinearLayout>
 
 </merge>

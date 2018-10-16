@@ -5,17 +5,17 @@ import org.json.JSONObject;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.StrikethroughSpan;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 
 import com.config.Constants;
-import com.danertu.tools.Logger;
 import com.danertu.tools.ProductDetailUtil;
-import com.danertu.tools.XNUtil;
 import com.danertu.widget.MWebView;
 //import android.view.GestureDetector;
 
@@ -58,19 +58,6 @@ public class ProductDetailsActivity2 extends BaseWebActivity {
     private final String PAGE_NAME = "android/proDetail.html";
     private final String PAGE_NAME_TICKET = "android/order_tickets.html";
 
-    /**
-     * 联系客服
-     *
-     * @param shopid
-     * @param guid
-     * @param proName
-     * @param price
-     * @param imgPath
-     */
-    @JavascriptInterface
-    public void contactService(String shopid, String guid, String proName, String price, String imgPath) {
-        util.contactService(shopid, guid, proName, price, imgPath);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +66,9 @@ public class ProductDetailsActivity2 extends BaseWebActivity {
         findViewById();
         getPhoneStatePermission();
         initIntentMsg();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
     }
 
     public SpannableString formatStr(String marketPrice) {
@@ -111,7 +101,7 @@ public class ProductDetailsActivity2 extends BaseWebActivity {
      */
     @JavascriptInterface
     public boolean toPayCenter(String guid, String sCount, String imgName, String supId, String shopid, String agentId, String proName, String sPrice, String createUser, String attrParam, String arriveTime, String shopName) {
-        return util.toPayCenter(guid, sCount, imgName, supId, shopid, agentId, proName, sPrice, "", createUser, false, attrParam, arriveTime, "", shopName, "", "");
+        return util.toPayCenter(guid, sCount, imgName, supId, shopid, agentId, proName, sPrice, "", createUser, false, attrParam, arriveTime, "", shopName, "", "", getUid());
     }
 
     /**
@@ -119,8 +109,9 @@ public class ProductDetailsActivity2 extends BaseWebActivity {
      */
     @JavascriptInterface
     public boolean toPayCenter(String guid, String sCount, String imgName, String supId, String shopid, String agentId, String proName, String sPrice, String marketPrice, String createUser, String attrParam, String arriveTime, String shopName) {
-        return util.toPayCenter(guid, sCount, imgName, supId, shopid, agentId, proName, sPrice, marketPrice, createUser, false, attrParam, arriveTime, "", shopName, "", "");
+        return util.toPayCenter(guid, sCount, imgName, supId, shopid, agentId, proName, sPrice, marketPrice, createUser, false, attrParam, arriveTime, "", shopName, "", "", getUid());
     }
+
 
     private GetProInfo getInfo = null;
 
@@ -136,8 +127,7 @@ public class ProductDetailsActivity2 extends BaseWebActivity {
             canBuyCount = 2;
         }
 
-        XNUtil xnUtil = new XNUtil(this);
-        util = new ProductDetailUtil(this, canBuyCount, db, xnUtil);
+        util = new ProductDetailUtil(this, canBuyCount, db);
         String guid = bundle.getString("guid");
         getInfo = new GetProInfo();
         getInfo.execute(guid);
@@ -237,13 +227,6 @@ public class ProductDetailsActivity2 extends BaseWebActivity {
             super.onPreExecute();
             showLoadDialog();
         }
-    }
-
-    //小能信息记录
-    @JavascriptInterface
-    public void postCustomerTrack(String proName, String price) {
-        util.setContactService(proName, price, getUid(), getUid());
-        util.postCustomerTrack();
     }
 
     @JavascriptInterface

@@ -88,7 +88,7 @@ public class AddressManageActivity extends BaseActivity implements OnClickListen
     private Thread tDeleteUserAddress = new Thread(new Runnable() {
         public void run() {
             // 耗时操作
-            AppManager.getInstance().postDeleteUserAddress("0014", sguid);
+            AppManager.getInstance().postDeleteUserAddress("0014", sguid,getUid());
         }
     });
 
@@ -163,7 +163,8 @@ public class AddressManageActivity extends BaseActivity implements OnClickListen
     private Runnable tSetUserDefaultAddress = new Runnable() {
         public void run() {
             // 设置默认收货地址
-            AppManager.getInstance().postSetAddressIsDefault("0031", sguid, db.GetLoginUid(context));
+            String json = AppManager.getInstance().postSetAddressIsDefault("0031", sguid, db.GetLoginUid(context));
+            judgeIsTokenException(json,"您的登录信息已过期，请重新登录",-1);
         }
 
     };

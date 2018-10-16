@@ -1,11 +1,15 @@
 package com.danertu.dianping;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -37,7 +41,9 @@ public class MyWalletFirstSet extends BaseWebActivity {
         }
         uid = db.GetLoginUid(getContext());
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         webView.addJavascriptInterface(this, "app");
         startWebView(Constants.appWebPageUrl + pageName);
     }
@@ -69,6 +75,26 @@ public class MyWalletFirstSet extends BaseWebActivity {
         protected Boolean doInBackground(String... arg0) {
             try {
                 String payPswMD5 = appManager.getPayPswMD5(uid);
+                judgeIsTokenException(payPswMD5, new TokenExceptionCallBack() {
+                    @Override
+                    public void tokenException(String code, final String info) {
+                        sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                jsShowMsg(info);
+//                                quitAccount();
+//                                finish();
+//                                jsStartActivity("LoginActivity", "");
+//                            }
+//                        });
+                    }
+
+                    @Override
+                    public void ok() {
+
+                    }
+                });
                 return pswMD5.equals(payPswMD5);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -96,7 +122,7 @@ public class MyWalletFirstSet extends BaseWebActivity {
                 pNum = mobile;
                 new Thread() {
                     public void run() {
-                        HashMap<String, String> param = new HashMap<>();
+                        LinkedHashMap<String,String> param=new LinkedHashMap<>();
                         param.put("apiid", "0077");
                         param.put("mobile", pNum);
                         try {
@@ -221,7 +247,21 @@ public class MyWalletFirstSet extends BaseWebActivity {
             if (result == null) {
                 CommonTools.showShortToast(getContext(), "请先获取验证码");
             } else if (isFirstSet) {
-                new SetPayPsw().execute(uid);
+                judgeIsTokenException(result, new TokenExceptionCallBack() {
+                    @Override
+                    public void tokenException(String code, String info) {
+                        sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                        jsShowMsg(info);
+//                        quitAccount();
+//                        finish();
+//                        jsStartActivity("LoginActivity", "");
+                    }
+
+                    @Override
+                    public void ok() {
+                        new SetPayPsw().execute(uid);
+                    }
+                });
             }
         }
 
@@ -244,14 +284,28 @@ public class MyWalletFirstSet extends BaseWebActivity {
         }
 
         @Override
-        protected void onPostExecute(String pNum) {
+        protected void onPostExecute(final String pNum) {
             super.onPostExecute(pNum);
             if (pNum != null) {
-                if (putPNum.equals(pNum)) {
-                    jsGetSMSCode(pNum);
-                } else {
-                    CommonTools.showShortToast(getContext(), "输入手机号不正确！");
-                }
+                judgeIsTokenException(pNum, new TokenExceptionCallBack() {
+                    @Override
+                    public void tokenException(String code, String info) {
+                        sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                        jsShowMsg(info);
+//                        quitAccount();
+//                        finish();
+//                        jsStartActivity("LoginActivity", "");
+                    }
+
+                    @Override
+                    public void ok() {
+                        if (putPNum.equals(pNum)) {
+                            jsGetSMSCode(pNum);
+                        } else {
+                            CommonTools.showShortToast(getContext(), "输入手机号不正确！");
+                        }
+                    }
+                });
             }
             hideLoadDialog();
         }
@@ -278,25 +332,39 @@ public class MyWalletFirstSet extends BaseWebActivity {
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(final String result) {
             super.onPostExecute(result);
             if (result == null) {
                 CommonTools.showShortToast(getContext(), "支付密码修改失败，请重试");
                 return;
             }
-            try {
-                JSONObject obj = new JSONObject(result);
-                String tag = obj.getString("result");
-                String info = obj.getString("info");
-                if (tag.equals("true")) {
-                    isFirstSet = false;
-                    setResult(1);//通知钱包首页刷新数据
-                    finish();
+            judgeIsTokenException(result, new TokenExceptionCallBack() {
+                @Override
+                public void tokenException(String code, String info) {
+                    sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                    jsShowMsg(info);
+//                    quitAccount();
+//                    finish();
+//                    jsStartActivity("LoginActivity", "");
                 }
-                CommonTools.showShortToast(getContext(), info);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+
+                @Override
+                public void ok() {
+                    try {
+                        JSONObject obj = new JSONObject(result);
+                        String tag = obj.getString("result");
+                        String info = obj.getString("info");
+                        if (tag.equals("true")) {
+                            isFirstSet = false;
+                            setResult(1);//通知钱包首页刷新数据
+                            finish();
+                        }
+                        CommonTools.showShortToast(getContext(), info);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
             hideLoadDialog();
         }
 

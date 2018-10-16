@@ -18,7 +18,7 @@ public class IndexPresenter extends NewBasePresenter<IndexContact.IndexView, Ind
 
     @Override
     public IndexModel initModel() {
-        return new IndexModel();
+        return new IndexModel(context);
     }
 
 

@@ -130,9 +130,9 @@ public class PayPrepareActivity extends BaseActivity implements OnClickListener 
     }
 
     public void accPay() {
-        String uid = db.GetLoginUid(getContext());
+        String uid = db.GetLoginUid(this);
         String param[] = {uid, outOrderNumber, totalprice, pricedata};
-        new AccToPay(getContext()) {
+        new AccToPay(this) {
 
             @Override
             public void paySuccess() {
@@ -321,6 +321,12 @@ public class PayPrepareActivity extends BaseActivity implements OnClickListener 
                 lDialog.dismiss();
                 setResult(MyOrderParent.REQ_PAY);
                 finish();
+            }
+
+            @Override
+            public void needLogin() {
+                finish();
+                jsStartActivity("LoginActivity", "");
             }
         };
     }

@@ -8,8 +8,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.alibaba.fastjson.JSONObject;
 import com.danertu.db.DBManager;
+import com.danertu.dianping.BaseActivity;
 import com.danertu.dianping.R;
+import com.danertu.entity.TokenExceptionBean;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.AsyncTask;
 import com.danertu.tools.LoadingDialog;
@@ -96,7 +99,25 @@ public abstract class PayPswDialog extends Dialog {
         protected Boolean doInBackground(String... arg0) {
             try {
                 String pswMD5 = MD5Util.MD5(arg0[0]);
-                String payPswMD5 = AppManager.getInstance().getPayPswMD5(uid);
+                final String payPswMD5 = AppManager.getInstance().getPayPswMD5(uid);
+                final BaseActivity activity = (BaseActivity) PayPswDialog.act;
+                if (activity.judgeIsTokenException(payPswMD5)) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                TokenExceptionBean tokenExceptionBean = JSONObject.parseObject(payPswMD5, TokenExceptionBean.class);
+                                activity.jsShowMsg(tokenExceptionBean.getInfo());
+                                activity.quitAccount();
+                                activity.finish();
+                                activity.jsStartActivity("LoginActivity", "");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    return false;
+                }
                 return pswMD5.equals(payPswMD5);
             } catch (Exception e) {
                 e.printStackTrace();

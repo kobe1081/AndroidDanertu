@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.config.Constants;
 import com.danertu.db.DBManager;
 import com.danertu.dianping.ActivityUtils;
@@ -31,11 +32,13 @@ import com.danertu.dianping.PayPrepareActivity;
 import com.danertu.dianping.QRCodeDetailActivity;
 import com.danertu.dianping.R;
 import com.danertu.entity.MyOrderDataQRCode;
+import com.danertu.entity.TokenExceptionBean;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.Logger;
 import com.danertu.tools.MyDialog;
 import com.danertu.tools.PayUtils;
 import com.danertu.widget.CommonTools;
+import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.HashMap;
@@ -51,7 +54,7 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
     private boolean isQuanyan = false;
     public static final int REQUEST_ORDER_DETAIL = 121;
     private int tabIndex;
-
+    private String uid;
     public static final String STATUS_NO_PAY = "等待支付";
     public static final String STATUS_NO_SEND = "待发货";
     public static final String STATUS_NO_RECEIVE = "待收货";
@@ -73,13 +76,16 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
     private static final String BTN_CHECK = "查看";
     private static final String BTN_QRCODE = "查看券码";
     private boolean isPayLoading;
+    private BaseActivity activity;
 
-    public MyOrderQRCodeAdapter(Context context, List<HashMap<String, Object>> data, int tabIndex) {
+    public MyOrderQRCodeAdapter(Context context, List<HashMap<String, Object>> data, int tabIndex, String uid) {
         this.context = context;
+        activity = (BaseActivity) context;
         this.dataList = data;
         db = DBManager.getInstance();
         imgLoader = ImageLoader.getInstance();
         this.tabIndex = tabIndex;
+        this.uid = uid;
         firstClick = System.currentTimeMillis();
     }
 
@@ -329,7 +335,7 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
      * @return
      */
     public String getSmallImgPath(String imgName, String agentID, String supplierID) {
-        return ActivityUtils.getImgUrl(imgName, agentID, supplierID);
+        return ActivityUtils.getImgUrl(imgName, agentID, supplierID, uid);
     }
 
     /**
@@ -522,10 +528,29 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
                                         /**
                                          * 取消订单
                                          */
-                                        if (AppManager.getInstance().postCancelOrder(orderNum)) {
+                                        String json = AppManager.getInstance().postCancelOrder(orderNum, db.GetLoginUid(context));
+                                        if ("true".equals(json)) {
                                             mHandler.sendEmptyMessage(WHAT_CANCLEORDER_SUCCESS);
                                         } else {
-                                            mHandler.sendEmptyMessage(WHAT_CANCLEORDER_FAIL);
+                                            judgeIsTokenException(json, new BaseActivity.TokenExceptionCallBack() {
+                                                @Override
+                                                public void tokenException(String code, final String info) {
+                                                    activity.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            activity.jsShowMsg(info);
+                                                            activity.quitAccount();
+                                                            activity.jsStartActivity("LoginActivity", "");
+                                                            activity.finish();
+                                                        }
+                                                    });
+                                                }
+
+                                                @Override
+                                                public void ok() {
+                                                    mHandler.sendEmptyMessage(WHAT_CANCLEORDER_FAIL);
+                                                }
+                                            });
                                         }
                                     }
                                 }).start();
@@ -600,10 +625,29 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
                                                 /**
                                                  * 确认收货
                                                  */
-                                                if (AppManager.getInstance().postFinishOrder(orderNum)) {
+                                                String json = AppManager.getInstance().postFinishOrder(orderNum, db.GetLoginUid(context));
+                                                if ("true".equals(json)) {
                                                     sendMessage(WHAT_TAKEGOODS_SUCCESS, orderNum);// 表示确定收货成功
                                                 } else {
-                                                    sendMessage(WHAT_TAKEGOODS_FAIL, orderNum);// 表示确定收货失败
+                                                    judgeIsTokenException(json, new BaseActivity.TokenExceptionCallBack() {
+                                                        @Override
+                                                        public void tokenException(String code, final String info) {
+                                                            activity.runOnUiThread(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    activity.jsShowMsg(info);
+                                                                    activity.quitAccount();
+                                                                    activity.jsStartActivity("LoginActivity", "");
+                                                                    activity.finish();
+                                                                }
+                                                            });
+                                                        }
+
+                                                        @Override
+                                                        public void ok() {
+                                                            sendMessage(WHAT_TAKEGOODS_FAIL, orderNum);// 表示确定收货失败
+                                                        }
+                                                    });
                                                 }
                                             }
                                         }
@@ -635,12 +679,30 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if (AppManager.getInstance().postCancelOrder(orderNum)) {
+                                        String result = AppManager.getInstance().postCancelOrder(orderNum, db.GetLoginUid(context));
+                                        if ("true".equals(result)) {
 //                                            mHandler.sendEmptyMessage(WHAT_CANCLEORDER_SUCCESS);
                                             sendMessage(WHAT_CANCLEORDER_SUCCESS, orderNum);
                                         } else {
-//                                            mHandler.sendEmptyMessage(WHAT_CANCLEORDER_FAIL);
-                                            sendMessage(WHAT_CANCLEORDER_FAIL, orderNum);
+                                            judgeIsTokenException(result, new BaseActivity.TokenExceptionCallBack() {
+                                                @Override
+                                                public void tokenException(String code, final String info) {
+                                                    activity.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            activity.jsShowMsg(info);
+                                                            activity.quitAccount();
+                                                            activity.jsStartActivity("LoginActivity", "");
+                                                            activity.finish();
+                                                        }
+                                                    });
+                                                }
+
+                                                @Override
+                                                public void ok() {
+                                                    sendMessage(WHAT_CANCLEORDER_FAIL, orderNum);
+                                                }
+                                            });
                                         }
                                     }
                                 }).start();
@@ -954,4 +1016,54 @@ public class MyOrderQRCodeAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public boolean judgeIsTokenException(String json) {
+        Gson gson = new Gson();
+        TokenExceptionBean bean = gson.fromJson(json, TokenExceptionBean.class);
+        return bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode());
+    }
+
+    public void judgeIsTokenException(String json, final String errorMsg, final int requestCode) {
+        Gson gson = new Gson();
+        TokenExceptionBean bean = gson.fromJson(json, TokenExceptionBean.class);
+        if (bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
+            final BaseActivity activity = (BaseActivity) this.context;
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (!TextUtils.isEmpty(errorMsg)) {
+                        jsShowMsg(errorMsg);
+                    }
+                    activity.quitAccount();
+                    if (requestCode == -1) {
+                        activity.jsStartActivity("LoginActivity", "");
+                        activity.jsFinish();
+                    } else {
+                        activity.jsStartActivityForResult("LoginActivity", "", requestCode);
+                    }
+                }
+            });
+        }
+        bean = null;
+    }
+
+    public void judgeIsTokenException(String json, BaseActivity.TokenExceptionCallBack callBack) {
+        if (TextUtils.isEmpty(json)) {
+            callBack.ok();
+        }
+        try {
+            TokenExceptionBean bean = JSONObject.parseObject(json, TokenExceptionBean.class);
+            if (bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
+                callBack.tokenException(bean.getCode(), bean.getInfo());
+            }else {
+                callBack.ok();
+            }
+            bean = null;
+            return;
+        } catch (Exception e) {
+            if (Constants.isDebug)
+                e.printStackTrace();
+            callBack.ok();
+        }
+        callBack.ok();
+    }
 }

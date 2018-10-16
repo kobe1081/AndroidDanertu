@@ -336,7 +336,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="10dp"
-                            android:text="@string/order_detail_pay_info"
+                            android:text="@string/order_detail_pay_money"
                             android:textColor="#333333"
                             android:textSize="22sp" />
 
@@ -353,16 +353,7 @@
                                 android:id="@+id/tv_order_count_price"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="5dp"
                                 android:gravity="bottom"
-                                android:textColor="@color/gray_text"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/tv_order_payway"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="5dp"
                                 android:textColor="@color/gray_text"
                                 android:textSize="12sp" />
                         </LinearLayout>
@@ -416,12 +407,20 @@
                                 android:layout_weight="1"
                                 android:textColor="@color/gray_text"
                                 android:textSize="13sp" />
+                            <TextView
+                                android:id="@+id/tv_order_payway"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:layout_weight="1"
+                                android:textColor="@color/gray_text"
+                                android:textSize="13sp" />
 
                             <TextView
                                 android:id="@+id/tv_copy_order_num"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="15dp"
+                                android:layout_marginTop="5dp"
                                 android:background="@drawable/b_corner_gray4"
                                 android:padding="3dp"
                                 android:text="复制订单号"

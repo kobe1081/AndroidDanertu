@@ -53,15 +53,15 @@ public class OrderDetailPresenter extends NewBasePresenter<OrderDetailContact.Or
 
     @Override
     public OrderDetailModel initModel() {
-        return new OrderDetailModel();
+        return new OrderDetailModel(context);
     }
 
     @Override
     public void onCreate(Intent intent) {
         Bundle bundle = intent.getExtras();
         orderNumber = bundle.getString("orderNumber", "");
-        tabIndex = bundle.getInt("tab_index",-1);
-        position = bundle.getInt("position",-1);
+        tabIndex = bundle.getInt("tab_index", -1);
+        position = bundle.getInt("position", -1);
         isQRCode = bundle.getBoolean("isQRCode", false);
         if (TextUtils.isEmpty(orderNumber)) {
             if (isViewAttached()) {
@@ -106,6 +106,15 @@ public class OrderDetailPresenter extends NewBasePresenter<OrderDetailContact.Or
             }
 
             @Override
+            public void tokenException(String code, String info) {
+                if (isViewAttached()) {
+                    view.jsShowMsg(info);
+                    view.jsFinish();
+                    view.jsStartActivity("LoginActivity");
+                }
+            }
+
+            @Override
             public void requestError() {
                 if (isViewAttached()) {
                     view.jsHideLoading();
@@ -144,12 +153,16 @@ public class OrderDetailPresenter extends NewBasePresenter<OrderDetailContact.Or
     }
 
     @Override
-    public void startToProDetail(String guid, String proName, String img, String detail, String agentID, String supplierID, String price, String mobile) {
+    public void startToProDetail(final String guid, String proName, String img, String detail, final String agentID, String supplierID, String price, String mobile) {
         view.startToProDetail(guid, proName, img, detail, agentID, supplierID, price, mobile);
     }
 
+    /**
+     * @param guid
+     * @param shopId
+     */
     @Override
-    public void toQuanYan(String guid, final String shopId) {
+    public void toQuanYan(final String guid, final String shopId) {
         if (isViewAttached()) {
             view.jsShowLoading();
         }
@@ -158,7 +171,22 @@ public class OrderDetailPresenter extends NewBasePresenter<OrderDetailContact.Or
             public void requestSuccess(QuanYanProductCategory.ValBean type) {
                 if (isViewAttached()) {
                     view.jsHideLoading();
-                    view.toQuanYanPage(type, shopId);
+                    String productCategory = type.getProductCategory();
+                    if ("2".equals(productCategory) && Constants.QY_SUPPLIERID.equals(type.getSupplierLoginId())) {
+                        //泉眼客房跳转不变
+                        view.jsStartActivity("ProductDetailsActivity2", "guid|" + guid + ",;shopid|" + view.getShopId());
+                    } else {
+                        view.toQuanYanPage(type, shopId);
+                    }
+                }
+            }
+
+            @Override
+            public void tokenException(String code, String info) {
+                if (isViewAttached()) {
+                    view.jsShowMsg(info);
+                    view.jsFinish();
+                    view.jsStartActivity("LoginActivity");
                 }
             }
 
@@ -213,6 +241,15 @@ public class OrderDetailPresenter extends NewBasePresenter<OrderDetailContact.Or
             }
 
             @Override
+            public void tokenException(String code, String info) {
+                if (isViewAttached()) {
+                    view.jsShowMsg(info);
+                    view.jsFinish();
+                    view.jsStartActivity("LoginActivity");
+                }
+            }
+
+            @Override
             public void requestError() {
                 if (isViewAttached()) {
                     view.jsShowMsg("取消订单失败");
@@ -237,6 +274,15 @@ public class OrderDetailPresenter extends NewBasePresenter<OrderDetailContact.Or
                 if (isViewAttached()) {
                     view.jsShowMsg("确认收货成功");
                     getOrderInfo(true);
+                }
+            }
+
+            @Override
+            public void tokenException(String code, String info) {
+                if (isViewAttached()) {
+                    view.jsShowMsg(info);
+                    view.jsFinish();
+                    view.jsStartActivity("LoginActivity");
                 }
             }
 

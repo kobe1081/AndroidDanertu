@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    private static final int VERSION = 12;
+    private static final int VERSION = 13;
     public static final String DB_NAME = "danertu_db";
     private static DBHelper dbHelper = null;
     public static final String TABLE_USER_INFO = "userLoginInfo";
@@ -37,6 +37,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "loginTime DATETIME,"
                 + "isLogin int,"
                 + "nickname char(20),"
+                + "token text,"
                 + "headimgurl text)";
         db.execSQL(sql);
     }
@@ -234,14 +235,13 @@ public class DBHelper extends SQLiteOpenHelper {
         }
 
         /**
-         * 2018年4月18日
-         * 添加市场价字段
+         * 2018年7月31日
+         * 给用户表添加token字段
          */
-//        curVersion = 12;
-//        if (oldVersion < curVersion || newVersion == curVersion) {
-//            //给购物车表添加市场价字段
-//            addColumns(db, "ShopCar", new String[]{"marketPrice"});
-//        }
+        curVersion = 13;
+        if (oldVersion < curVersion || newVersion == curVersion) {
+            addColumns(db, "userLoginInfo", new String[]{"token text"});
+        }
 
         Logger.e("onUpgrade", "old:" + oldVersion + ", new:" + newVersion);
     }

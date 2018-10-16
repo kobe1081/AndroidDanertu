@@ -8,9 +8,11 @@ import java.util.regex.Pattern;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 import android.widget.Button;
 
 import com.config.Constants;
@@ -26,6 +28,9 @@ public class RegisterActivity extends BaseWebActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initTitle("注册");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         this.startWebView(Constants.appWebPageUrl + "register.html");
     }
 
@@ -91,23 +96,22 @@ public class RegisterActivity extends BaseWebActivity {
 
         @Override
         protected Boolean doInBackground(String... arg0) {
+            String result = "";
             try {
 //				判断用户是否已经被使用
-                String result = appManager.postUserIsExist("0029", account);
+                result = appManager.postUserIsExist("0029", account);
                 if (result.equals("True")) {
                     CommonTools.showShortToast(getContext(), "该用户名已被使用");
                     return true;// 注册失败
                 } else {
-                    HashMap<String, String> Params = new HashMap<>();
-                    // Post方式提交注册信息
-                    Params.put("apiid", "0011");
-                    Params.put("uid", account);
-                    Params.put("pwd", passwd);
-                    Params.put("email", "");
-                    String reg = appManager.doPost(Params);
-                    reg = reg.replaceAll("\n|\r| ", "");
-                    reg = reg.toLowerCase();
-                    return Boolean.parseBoolean(reg);
+//                    HashMap<String, String> Params = new HashMap<>();
+//                    // Post方式提交注册信息
+//                    Params.put("apiid", "0011");
+//                    Params.put("uid", account);
+//                    Params.put("pwd", passwd);
+//                    Params.put("email", "");
+                    result = appManager.postRegister(account, passwd, "").replaceAll("\n|\r| ", "").toLowerCase();
+                    return Boolean.parseBoolean(result);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

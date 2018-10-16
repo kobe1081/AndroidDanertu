@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.config.Constants;
+import com.danertu.db.DBManager;
 import com.danertu.widget.XListView;
 import com.danertu.widget.XListView.IXListViewListener;
 import com.danertu.tools.AppManager;
@@ -36,7 +37,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
  *
  * @link ViewHolder
  */
-public class NearByShopActivity extends Activity implements IXListViewListener {
+public class NearByShopActivity extends BaseActivity implements IXListViewListener {
     private XListView mListView;
     private NearShopAdapter shopAdapter;
     private Handler mHandler;
@@ -44,6 +45,8 @@ public class NearByShopActivity extends Activity implements IXListViewListener {
     private TextView goBack;
 
     private int pageIndex; // 当前页数
+    private String uid;
+    private DBManager dbManager;
 
     private void initTitle(String string) {
         Button b_title = (Button) findViewById(R.id.b_order_title_back);
@@ -59,6 +62,8 @@ public class NearByShopActivity extends Activity implements IXListViewListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_near_by_shop);
+        dbManager=DBManager.getInstance();
+        uid=dbManager.GetLoginUid(this);
         /**
          * 下拉刷新，上拉加载
          */
@@ -124,6 +129,16 @@ public class NearByShopActivity extends Activity implements IXListViewListener {
 // add end
     }
 
+    @Override
+    protected void findViewById() {
+
+    }
+
+    @Override
+    protected void initView() {
+
+    }
+
     /**
      * 初始化本地数据
      */
@@ -137,7 +152,7 @@ public class NearByShopActivity extends Activity implements IXListViewListener {
     Runnable sendAble = new Runnable() {
         @Override
         public void run() {
-            String result = AppManager.getInstance().postGetNearByShopList("0037", Constants.getCityName(), Constants.pageSize, 1, "", "");
+            String result = AppManager.getInstance().postGetNearByShopList("0037", Constants.getCityName(), Constants.pageSize, 1, "", "",uid);
             JSONObject jsonObject;
             try {
                 jsonObject = new JSONObject(result).getJSONObject("shoplist");
@@ -162,10 +177,10 @@ public class NearByShopActivity extends Activity implements IXListViewListener {
                     data.add(item);
                 }
             } catch (Exception e) {
+                judgeIsTokenException(result,"您的登录信息已过期，请重新登录",-1);
                 e.printStackTrace();
             }
 
-            SystemClock.sleep(1000);
         }
     };
 
@@ -204,7 +219,7 @@ public class NearByShopActivity extends Activity implements IXListViewListener {
             }
             String imgName = data.get(position).get("img").toString();
             String shopid = data.get(position).get("shopid").toString();
-            String imgUrl = ActivityUtils.getImgUrl(imgName, shopid, null);
+            String imgUrl = ActivityUtils.getImgUrl(imgName, shopid, null,uid);
             viewHolder.shopName.setText(data.get(position).get("shopname").toString());
             viewHolder.address.setText(data.get(position).get("adress").toString());
             viewHolder.jy.setText(data.get(position).get("jyfw").toString());
@@ -270,7 +285,7 @@ public class NearByShopActivity extends Activity implements IXListViewListener {
     Runnable moresendable = new Runnable() {
         @Override
         public void run() {
-            String result = AppManager.getInstance().postGetNearByShopList("0037", Constants.getCityName(), Constants.pageSize, pageIndex, "", "");
+            String result = AppManager.getInstance().postGetNearByShopList("0037", Constants.getCityName(), Constants.pageSize, pageIndex, "", "",uid);
             JSONObject jsonObject;
             try {
                 jsonObject = new JSONObject(result).getJSONObject("shoplist");

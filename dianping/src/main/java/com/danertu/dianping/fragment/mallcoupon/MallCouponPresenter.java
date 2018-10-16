@@ -33,6 +33,7 @@ public class MallCouponPresenter extends NewBasePresenter<MallCouponContact.Mall
     static final int WHAT_SHOP_DETAIL_SUCCESS = 33;
     static final int WHAT_SHOP_DETAIL_FAIL = 34;
     static final int WHAT_SHOP_DETAIL_ERROR = 35;
+    static final int WHAT_NEED_LOGIN = 36;
     private int currentPage = 1;
 
     public MallCouponPresenter(Context context) {
@@ -58,84 +59,85 @@ public class MallCouponPresenter extends NewBasePresenter<MallCouponContact.Mall
         handler = new Handler(context.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                if (isViewAttached()){
+                if (isViewAttached()) {
                     view.jsHideLoading();
                 }
                 switch (msg.what) {
                     case WHAT_LIST_SUCCESS:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.notifyChange(model.getCouponList().size(), model.getTotalCount());
                             view.stopRefresh();
                         }
                         break;
                     case WHAT_LIST_FAIL:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.jsShowMsg("获取商城优惠券失败");
                             view.notifyChange(model.getCouponList().size(), model.getTotalCount());
                             view.stopRefresh();
                         }
                         break;
                     case WHAT_LIST_ERROR:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.jsShowMsg("获取商城优惠券失败");
                             view.notifyChange(model.getCouponList().size(), model.getTotalCount());
                             view.stopRefresh();
                         }
                         break;
                     case WHAT_REFRESH_SUCCESS:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.notifyChange(model.getCouponList().size(), model.getTotalCount());
                             view.stopRefresh();
                         }
                         break;
                     case WHAT_REFRESH_FAIL:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.stopRefresh();
                         }
                         break;
                     case WHAT_REFRESH_ERROR:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.stopRefresh();
                         }
                         break;
                     case WHAT_LOAD_MORE_SUCCESS:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.notifyChange(model.getCouponList().size(), model.getTotalCount());
                             view.stopLoadMore();
                         }
                         break;
                     case WHAT_LOAD_MORE_FAIL:
                         --currentPage;
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.stopLoadMore();
                         }
                         break;
                     case WHAT_LOAD_MORE_ERROR:
                         --currentPage;
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.stopLoadMore();
                         }
                         break;
                     case WHAT_NO_MORE_DATA:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.jsShowMsg("已无更多优惠券");
                             view.noMoreData();
                         }
                         break;
                     case WHAT_GET_COUPON_SUCCESS:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             int position = msg.arg1;
                             List<CouponBean.CouponListBean> list = model.getCouponList();
                             CouponBean.CouponListBean bean = list.get(position);
                             bean.setIsUsed("0");
                             bean.setShopId(view.getShopId());
                             bean.setGetTime(DateTimeUtils.getDateToyyyyMMddHHmmss());
-                            switch (bean.getUseValidityType()){
+                            bean.setCouponRecordGuid(msg.obj.toString());
+                            switch (bean.getUseValidityType()) {
                                 case "1":
-                                    bean.setEndTime(DateTimeUtils.getSpecifiedDayAfterN(bean.getGetTime(),Integer.parseInt(bean.getUseFromTomorrow())));
+                                    bean.setEndTime(DateTimeUtils.getSpecifiedDayAfterN(bean.getGetTime(), Integer.parseInt(bean.getUseFromTomorrow())));
                                     break;
                                 case "2":
-                                    bean.setEndTime(DateTimeUtils.getSpecifiedDayAfterN(bean.getGetTime(),Integer.parseInt(bean.getUseFromToday())));
+                                    bean.setEndTime(DateTimeUtils.getSpecifiedDayAfterN(bean.getGetTime(), Integer.parseInt(bean.getUseFromToday())));
                                     break;
                             }
                             bean.setRemainCount("" + (Integer.parseInt(bean.getRemainCount()) - 1));
@@ -145,28 +147,36 @@ public class MallCouponPresenter extends NewBasePresenter<MallCouponContact.Mall
                         }
                         break;
                     case WHAT_GET_COUPON_FAIL:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.jsShowMsg(msg.obj.toString());
                         }
                         break;
                     case WHAT_GET_COUPON_ERROR:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.jsShowMsg("领取失败");
                         }
                         break;
                     case WHAT_SHOP_DETAIL_SUCCESS:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.toAgentShop(msg.arg1, msg.obj.toString());
                         }
                         break;
                     case WHAT_SHOP_DETAIL_FAIL:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.jsShowMsg("跳转失败");
                         }
                         break;
                     case WHAT_SHOP_DETAIL_ERROR:
-                        if (isViewAttached()){
+                        if (isViewAttached()) {
                             view.jsShowMsg("跳转失败");
+                        }
+                        break;
+                    case WHAT_NEED_LOGIN:
+                        if (isViewAttached()) {
+                            view.jsShowMsg("您的登录信息已过期，请重新登录");
+                            view.jsFinish();
+                            view.quitAccount();
+                            view.jsStartActivity("LoginActivity");
                         }
                         break;
                 }
@@ -177,7 +187,7 @@ public class MallCouponPresenter extends NewBasePresenter<MallCouponContact.Mall
 
     @Override
     public MallCouponModel initModel() {
-        return new MallCouponModel();
+        return new MallCouponModel(context);
     }
 
     @Override
@@ -197,7 +207,7 @@ public class MallCouponPresenter extends NewBasePresenter<MallCouponContact.Mall
 
     @Override
     public void refresh() {
-        if (isViewAttached()){
+        if (isViewAttached()) {
             view.jsShowMsg("正在刷新...");
         }
         model.getCouponList().clear();
@@ -214,13 +224,13 @@ public class MallCouponPresenter extends NewBasePresenter<MallCouponContact.Mall
 
     @Override
     public void toAgentShopIndex(String shopId) {
-        if (isViewAttached()){
+        if (isViewAttached()) {
             view.jsShowLoading();
         }
-        if (shopId.equals(Constants.CK_SHOPID)||shopId.equals("chunkang")){
-            if (isViewAttached()){
+        if (shopId.equals(Constants.CK_SHOPID) || shopId.equals("chunkang")) {
+            if (isViewAttached()) {
                 view.jsHideLoading();
-                view.toAgentShop(1,Constants.CK_SHOPID);
+                view.toAgentShop(1, Constants.CK_SHOPID);
             }
             return;
         }

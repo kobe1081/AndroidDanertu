@@ -1,14 +1,17 @@
 package com.danertu.dianping;
 
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.config.Constants;
 import com.danertu.entity.Messagebean;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.Logger;
@@ -63,7 +66,9 @@ public class MessageDetail extends BaseActivity {
                 String type = "android";
                 String shopid = "";
                 String imgPath = "";
-                String targetPath = String.format("http://www.danertu.com/mobile/announcement/AnnouncementDetail.htm?guid=%s&platform=android", id);
+//                String targetPath = String.format("http://www.danertu.com/mobile/announcement/AnnouncementDetail.htm?guid=%s&platform=android", id);
+                String targetPath = Constants.APP_URL.ANNOUNCEMENT_DETAIL_URL + "?platform=" + Constants.APP_PLATFORM + "&guid=" + id;
+                Logger.d(TAG, "targetPath=" + targetPath);
                 String description = title;
                 String title = "单耳兔资讯";
                 share(type, shopid, title, imgPath, targetPath, description);
@@ -81,6 +86,9 @@ public class MessageDetail extends BaseActivity {
 
     protected void initWebSettings() {
         webView.addJavascriptInterface(new DemoJs(), "app");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         this.webView.setWebViewClient(new MWebViewClient(this, "app") {
 
             @Override
@@ -100,14 +108,28 @@ public class MessageDetail extends BaseActivity {
 
         @Override
         protected String doInBackground(Void... params) {
-            String msgJson = AppManager.getInstance().postGetNotice(id);
+            String msgJson = AppManager.getInstance().postGetNotice(id, getUid());
             return msgJson.replaceAll("\n|\r", "");
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(final String result) {
             super.onPostExecute(result);
-            webView.loadUrl("javascript:javaLoadAnnouncementDetail('" + title + "','" + time + "','" + result + "')");
+            judgeIsTokenException(result, new TokenExceptionCallBack() {
+                @Override
+                public void tokenException(String code, String info) {
+                    sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                    jsShowMsg(info);
+//                    quitAccount();
+//                    finish();
+//                    jsStartActivity("LoginActivity", "");
+                }
+
+                @Override
+                public void ok() {
+                    webView.loadUrl("javascript:javaLoadAnnouncementDetail('" + title + "','" + time + "','" + result + "')");
+                }
+            });
         }
     }
 

@@ -84,19 +84,19 @@ public class ShareUtil {
             title = "单耳兔商城";
         }
         if (TextUtils.isEmpty(imgPath)) {
-            imgPath = Constants.imgServer + "/pptImage/icon.png";
+            imgPath = Constants.APP_URL.imgServer + "/pptImage/icon.png";
         }
 
         if (type.equals("android")) {
             if (TextUtils.isEmpty(description))
                 description = context.getString(R.string.share_text);
             if (TextUtils.isEmpty(targetPath))
-                targetPath = Constants.shareUmlDo + shopid;
+                targetPath = Constants.APP_URL.SHOP_SHARE_URL + shopid;
         } else if (type.equals("ios")) {
             if (TextUtils.isEmpty(description))
                 description = context.getString(R.string.share_text);
             if (TextUtils.isEmpty(targetPath))
-                targetPath = Constants.IOSshareUmlDo + shopid;
+                targetPath = Constants.APP_URL.SHOP_SHARE_URL + shopid;
         }
         this.description = description;
         this.imgPath = imgPath;
@@ -165,7 +165,7 @@ public class ShareUtil {
                     out.close();
                     in.close();
                 } else {
-                    imgPath = Constants.imgServer + "/pptImage/icon.png";
+                    imgPath = Constants.APP_URL.imgServer + "/pptImage/icon.png";
                 }
             } catch (Exception e) {
                 e.printStackTrace();

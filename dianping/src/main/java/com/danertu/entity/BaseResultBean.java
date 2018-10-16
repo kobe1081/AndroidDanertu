@@ -9,6 +9,15 @@ public class BaseResultBean {
 
     private String result;
     private String info;
+    private String code;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public String getResult() {
         return result;

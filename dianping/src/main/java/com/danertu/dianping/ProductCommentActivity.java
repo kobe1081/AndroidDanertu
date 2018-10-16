@@ -36,8 +36,7 @@ import com.danertu.widget.XListView.IXListViewListener;
  * MyAdapter添加ViewHolder类实现item复用
  * shang
  */
-public class ProductCommentActivity extends Activity implements
-        IXListViewListener {
+public class ProductCommentActivity extends Activity implements IXListViewListener {
     private XListView mListView;
     private TextView noComment;
     private Handler mHandler;

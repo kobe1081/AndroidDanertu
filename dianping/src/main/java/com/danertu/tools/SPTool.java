@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 public class SPTool {
     public static final String SP_MESSAGE = "message";
+    public static final String SP_APP_CONFIG = "appConfig";
     public static final String SP_MESSAGE_CLEAR = "isCleared";
     public static final String SP_MESSAGE_CLEAR_TIME = "clearTime";
 

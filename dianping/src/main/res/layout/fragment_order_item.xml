@@ -26,8 +26,8 @@
         <com.danertu.widget.XListView
             android:id="@+id/xlv_order"
             android:layout_width="match_parent"
-            android:layout_marginBottom="50dp"
             android:layout_height="match_parent"
+            android:layout_marginBottom="50dp"
             android:divider="@drawable/divider_order_item"
             android:padding="5dp" />
     </FrameLayout>

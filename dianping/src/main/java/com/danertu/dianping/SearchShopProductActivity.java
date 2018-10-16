@@ -58,6 +58,7 @@ public class SearchShopProductActivity extends BaseActivity implements OnItemCli
     ArrayList<HashMap<String, Object>> dataTemp;
     private int pageindex = 1; // 当前页数
     private searchProductTasks mTask;
+    private String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,7 @@ public class SearchShopProductActivity extends BaseActivity implements OnItemCli
         shopId = getIntent().getExtras().getString("shopid").trim();
         agentID = getIntent().getExtras().getString("agentID").trim();
         keyword = getIntent().getExtras().getString("keyword").trim();
+        uid = getUid();
         findViewById();
         initView();
         updateProductList();
@@ -131,7 +133,7 @@ public class SearchShopProductActivity extends BaseActivity implements OnItemCli
             }
             String imgName = data.get(position).get("img").toString();
             String supplierID = data.get(position).get("supplierID").toString();
-            String ss = ActivityUtils.getImgUrl(imgName, agentID, supplierID);
+            String ss = ActivityUtils.getImgUrl(imgName, agentID, supplierID, uid);
             if (data.get(position).get("proName").toString().indexOf(" | ") > 0) {
                 String[] strPro = data.get(position).get("proName").toString().split(" | ");
                 String proRealName = "";

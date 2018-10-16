@@ -1,9 +1,9 @@
 package com.danertu.dianping;
 
-import cn.xiaoneng.coreapi.ChatParamsBody;
 import wl.codelibrary.widget.IOSDialog;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
@@ -14,14 +14,9 @@ import android.webkit.WebSettings;
 import com.config.Constants;
 import com.danertu.tools.AsyncTask;
 import com.danertu.tools.LocationUtil;
-import com.danertu.tools.Logger;
-import com.danertu.tools.XNUtil;
 import com.danertu.widget.CommonTools;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.HashMap;
 
 
 public class HtmlActivityNew extends BaseWebActivity {
@@ -35,6 +30,9 @@ public class HtmlActivityNew extends BaseWebActivity {
         title.setVisibility(View.GONE);
         webView.addJavascriptInterface(this, "app");
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         Intent i = getIntent();
         String url = "";
         if (i.getBooleanExtra("push", false)) {
@@ -120,17 +118,14 @@ public class HtmlActivityNew extends BaseWebActivity {
                     jsShowMsg("注销登录");
                     sendLogoutBroadcast();
                     String uid = getUid();
-
                     db.DeleteLoginInfo(getContext(), uid);
-
                     //防止登录删除不成功
                     if (db.GetLoginUid(getContext()).equals(uid)) {
                         if (Constants.isDebug) {
-                            CommonTools.showShortToast(getContext(), "登录后登录信息更新不成功");
+                            CommonTools.showShortToast(getContext(), "退出登录后登录信息更新不成功");
                         }
                         db.DeleteLoginInfo(getContext(), uid);
                     }
-                    Logger.e("test", "HtmlActivityNew quitAccount getUid=" + uid);
                     dialog.dismiss();
                     application.backToActivity("IndexActivity");
                 }
@@ -168,23 +163,5 @@ public class HtmlActivityNew extends BaseWebActivity {
         super.onResume();
     }
 
-    /**
-     * 2017年11月8日
-     * 添加在线客服入口
-     */
-    @JavascriptInterface
-    public void jsContact(String proId, String proName, String price, String imgUrl, String goodsUrl, String showUrl) {
-        XNUtil xnUtil = new XNUtil(this);
 
-        xnUtil.setTitle(proName);
-        xnUtil.setUsername(getUid());
-        xnUtil.setUserid(getUid());
-        xnUtil.setOrderprice(price);
-        xnUtil.postCustomerTrack();
-
-        ChatParamsBody itemparam = xnUtil.genProParam(proId, proName, Double.parseDouble(price), imgUrl, goodsUrl, showUrl);
-        xnUtil.setItemparam(itemparam);
-        xnUtil.communicte();
-
-    }
 }

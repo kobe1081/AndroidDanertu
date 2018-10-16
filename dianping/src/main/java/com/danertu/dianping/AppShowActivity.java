@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 
+import com.danertu.adapter.GuidePagerAdapter;
 import com.danertu.widget.CommonTools;
 
 /**

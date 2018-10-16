@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.config.Constants;
 import com.danertu.base.ModelCallBack;
 import com.danertu.base.NewBasePresenter;
+import com.danertu.dianping.LoginActivity;
 import com.danertu.entity.ChooseCouponBean;
 import com.danertu.entity.MyCouponBean;
 import com.danertu.tools.Logger;
@@ -56,10 +57,9 @@ public class ChooseCouponPresenter extends NewBasePresenter<ChooseCouponContact.
                 arrayItemJSONObject.put("productGuids", goodsArray);
                 paramJSONArray.put(arrayItemJSONObject);
                 multiParam = paramJSONArray.toString();
-                Logger.e(TAG, "拼接的字符串:" + multiParam);
             } catch (JSONException e) {
 //                e.printStackTrace();
-                if (isViewAttached()){
+                if (isViewAttached()) {
                     view.jsShowMsg("数据出错");
                     view.jsFinish();
                 }
@@ -89,7 +89,7 @@ public class ChooseCouponPresenter extends NewBasePresenter<ChooseCouponContact.
 
     @Override
     public ChooseCouponModel initModel() {
-        return new ChooseCouponModel();
+        return new ChooseCouponModel(context);
     }
 
     @Override
@@ -101,6 +101,18 @@ public class ChooseCouponPresenter extends NewBasePresenter<ChooseCouponContact.
                     view.jsHideLoading();
                     view.stopRefresh();
                     view.notifyChange(model.getCouponList().size());
+                }
+            }
+
+            @Override
+            public void tokenException(String code, String info) {
+                if (isViewAttached()) {
+                    view.jsShowMsg("您的登录信息已过期，请重新登录");
+                    view.quitAccount();
+                    Intent intent = new Intent(context, LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    context.startActivity(intent);
+                    view.jsFinish();
                 }
             }
 

@@ -12,8 +12,8 @@ import java.net.URLEncoder;
  * 2018年1月4日
  *
  * @author huangyeliang
- *         关于囤货功能（仓库）的支付宝支付都调用这个类
- *         更换了服务器异步通知地址
+ * 关于囤货功能（仓库）的支付宝支付都调用这个类
+ * 更换了服务器异步通知地址
  */
 public class StockAlipayUtil {
 
@@ -60,8 +60,13 @@ public class StockAlipayUtil {
         // 服务器异步通知页面路径
         orderInfo += "&notify_url="
                 + "\""
-                + "http://115.28.55.222:8085/AppPayReturnWareHouse.aspx"
+//                + "https://api.danertu.com:446/AppPayReturn.aspx"
+                + Constants.APP_URL.ALI_PAY_CALLBACK_URL_SIMPLE
                 + "\"";
+//        orderInfo += "&notify_url="
+//                + "\""
+//                + "http://115.28.55.222:8085/AppPayReturn.aspx"
+//                + "\"";
 
         // 服务接口名称， 固定值
         orderInfo += "&service=\"mobile.securitypay.pay\"";
@@ -123,8 +128,13 @@ public class StockAlipayUtil {
         // 服务器异步通知页面路径
         orderInfo += "&notify_url="
                 + "\""
-                + "http://115.28.55.222:8085/AppPayReturnWareHouse.aspx"
+//                + "https://api.danertu.com:446/AppPayReturnWareHouse.aspx"
+                + Constants.APP_URL.ALI_PAY_CALLBACK_URL_STOCK
                 + "\"";
+//        orderInfo += "&notify_url="
+//                + "\""
+//                + "http://115.28.55.222:8085/AppPayReturnWareHouse.aspx"
+//                + "\"";
 
         // 服务接口名称， 固定值
         orderInfo += "&service=\"mobile.securitypay.pay\"";

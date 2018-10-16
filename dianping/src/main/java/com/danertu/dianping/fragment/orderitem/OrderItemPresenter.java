@@ -13,11 +13,11 @@ import com.config.Constants;
 import com.danertu.base.ModelCallBack;
 import com.danertu.base.ModelParamCallBack;
 import com.danertu.base.NewBasePresenter;
+import com.danertu.dianping.LoginActivity;
 import com.danertu.entity.NewOrderBean;
 import com.danertu.entity.OrderBody;
 import com.danertu.entity.OrderHead;
 import com.danertu.tools.Logger;
-import com.testin.agent.c.d;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +32,15 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
     static final int WHAT_ORDER_FAIL = 601;
     static final int WHAT_ORDER_ERROR = 602;
     static final int WHAT_MORE_SUCCESS = 603;
+    static final int WHAT_ORDER_ONE_SUCCESS = 612;
     static final int WHAT_MORE_FAIL = 604;
     static final int WHAT_MORE_ERROR = 605;
     static final int WHAT_NO_MORE_DATA = 606;
+    static final int WHAT_NEED_LOGIN = 607;
+    static final int WHAT_CANCEL_SUCCESS = 608;
+    static final int WHAT_CANCEL_FAIL = 609;
+    static final int WHAT_SURE_TAKE_GOODS_SUCCESS = 610;
+    static final int WHAT_SURE_TAKE_GOODS_FAIL = 611;
 
     public static final int REQUEST_QRCODE = 122;
     private String orderType = "";
@@ -82,12 +88,17 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
                     case WHAT_ORDER_SUCCESS:
                         if (isViewAttached()) {
                             view.stopRefresh();
-                            view.notifyChange(model.getList().size());
+                            List<NewOrderBean> list = model.getList();
+                            List<NewOrderBean> tempList = model.getTempList();
+                            list.addAll(tempList);
+                            view.notifyChange(list.size());
+                            tempList.clear();
                         }
                         break;
                     case WHAT_ORDER_FAIL:
                         if (isViewAttached()) {
                             view.jsShowMsg("获取数据失败");
+                            view.jsHideLoading();
                             view.stopRefresh();
                             view.loadError();
                         }
@@ -95,6 +106,7 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
                     case WHAT_ORDER_ERROR:
                         if (isViewAttached()) {
                             view.jsShowMsg("获取数据失败");
+                            view.jsHideLoading();
                             view.stopRefresh();
                             view.loadError();
                         }
@@ -102,11 +114,16 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
                     case WHAT_MORE_SUCCESS:
                         if (isViewAttached()) {
                             view.stopLoadMore();
-                            view.notifyChange(model.getList().size());
+                            List<NewOrderBean> list = model.getList();
+                            List<NewOrderBean> tempList = model.getTempList();
+                            list.addAll(tempList);
+                            view.notifyChange(list.size());
+                            tempList.clear();
                         }
                         break;
                     case WHAT_MORE_ERROR:
                         if (isViewAttached()) {
+                            view.jsHideLoading();
                             view.jsShowMsg("获取数据失败");
                             view.stopLoadMore();
                             view.loadError();
@@ -115,6 +132,7 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
                         break;
                     case WHAT_MORE_FAIL:
                         if (isViewAttached()) {
+                            view.jsHideLoading();
                             view.jsShowMsg("获取数据失败");
                             view.stopLoadMore();
                             view.loadError();
@@ -124,7 +142,80 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
                     case WHAT_NO_MORE_DATA:
                         if (isViewAttached()) {
                             view.noMoreData();
+                            view.jsHideLoading();
                             view.jsShowMsg("已无更多数据");
+                        }
+                        break;
+                    case WHAT_NEED_LOGIN:
+                        if (isViewAttached()) {
+                            view.jsShowMsg(msg.obj == null ? "" : msg.obj.toString());
+                            view.quitAccount();
+                            view.toLogin();
+                            view.jsFinish();
+                            handler.removeCallbacksAndMessages("");
+                        }
+                        break;
+                    case WHAT_CANCEL_SUCCESS:
+                        if (isViewAttached()) {
+                            int position = msg.arg1;
+                            String orderNumber = (String) msg.obj;
+                            view.jsShowMsg("取消成功");
+                            switch (orderType) {
+                                case "0":
+                                    view.changeOrderStatue(position, orderNumber, "2", null, null);
+                                    break;
+                                case "1":
+                                case "2":
+                                case "3":
+                                case "4":
+                                    List<NewOrderBean> list = model.getList();
+                                    list.remove(position);
+                                    view.notifyChange(list.size());
+                                    break;
+                            }
+
+                        }
+                        break;
+                    case WHAT_CANCEL_FAIL:
+                        if (isViewAttached()) {
+                            int position = msg.arg1;
+                            String orderNumber = (String) msg.obj;
+                            view.jsShowMsg("取消订单失败");
+                            view.cancelOrderError(orderNumber, position);
+                        }
+                        break;
+                    case WHAT_SURE_TAKE_GOODS_SUCCESS:
+                        if (isViewAttached()) {
+                            int position = msg.arg1;
+                            String orderNumber = (String) msg.obj;
+                            view.jsShowMsg("确认收货成功");
+                            switch (orderType) {
+                                case "0":
+                                    view.changeOrderStatue(position, orderNumber, "5", "2", "2");
+                                    break;
+                                case "1":
+                                case "2":
+                                case "3":
+                                case "4":
+                                    List<NewOrderBean> list = model.getList();
+                                    list.remove(position);
+                                    view.notifyChange(list.size());
+                                    break;
+                            }
+
+                        }
+                        break;
+                    case WHAT_SURE_TAKE_GOODS_FAIL:
+                        if (isViewAttached()) {
+                            int position = msg.arg1;
+                            String orderNumber = (String) msg.obj;
+                            view.jsShowMsg("确认收货失败");
+                            view.cancelOrderError(orderNumber, position);
+                        }
+                        break;
+                    case WHAT_ORDER_ONE_SUCCESS:
+                        if (isViewAttached()) {
+                            view.notifyChange();
                         }
                         break;
                 }
@@ -135,26 +226,25 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
 
     @Override
     public OrderItemModel initModel() {
-        return new OrderItemModel();
+        return new OrderItemModel(context);
     }
 
 
     @Override
     public void loadData(final int page) {
-        new Thread(new Runnable() {
+        runThread(new Runnable() {
             @Override
             public void run() {
                 if (isViewAttached()) {
                     model.getOrders(handler, orderType, view.getUid(), page, Constants.pageSize);
                 }
             }
-        }).start();
+        });
 
     }
 
     @Override
     public void loadMore() {
-
         if (isViewAttached()) {
             view.jsShowLoading();
         }
@@ -174,7 +264,7 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
 
     @Override
     public void cancelOrder(final String orderNumber, final int position) {
-        model.cancelOrder(orderNumber, new ModelCallBack() {
+        model.cancelOrder(handler, orderNumber, position, getUid(), new ModelCallBack() {
             @Override
             public void requestSuccess() {
                 if (isViewAttached()) {
@@ -197,6 +287,18 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
             }
 
             @Override
+            public void tokenException(String code, String info) {
+                sendMessage(handler, WHAT_NEED_LOGIN, info);
+//                if (isViewAttached()) {
+//                    view.jsShowMsg(info);
+//                    Intent intent = new Intent(context, LoginActivity.class);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                    context.startActivity(intent);
+//                    view.jsFinish();
+//                }
+            }
+
+            @Override
             public void requestError() {
                 if (isViewAttached()) {
                     view.jsShowMsg("取消订单失败");
@@ -216,7 +318,7 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
 
     @Override
     public void sureTakeGoods(final String orderNumber, final int position) {
-        model.sureTakeGoods(orderNumber, new ModelCallBack() {
+        model.sureTakeGoods(handler, orderNumber, position, getUid(), new ModelCallBack() {
             @Override
             public void requestSuccess() {
                 if (isViewAttached()) {
@@ -236,6 +338,19 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
                     }
 
                 }
+            }
+
+            @Override
+            public void tokenException(String code, String info) {
+                sendMessage(handler, WHAT_NEED_LOGIN, info);
+//                if (isViewAttached()) {
+//                    view.jsShowMsg(info);
+//                    view.quitAccount();
+//                    Intent intent = new Intent(context, LoginActivity.class);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                    context.startActivity(intent);
+//                    view.jsFinish();
+//                }
             }
 
             @Override
@@ -267,9 +382,14 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
 
     @Override
     public void changeOrderStatue(int position, String orderNumber, String orderStatue, String payStatue, String shipStatue) {
-        if (isViewAttached()){
-            view.changeOrderStatue(position, orderNumber, orderStatue, payStatue, shipStatue);
-            view.sendDataChangeBroadcast(orderNumber,position,model.getList().get(position));
+        if (isViewAttached()) {
+            if ("2".equals(payStatue) && "1".equals(orderType)) {
+                model.getList().remove(position);
+                view.notifyChange(model.getList().size());
+            } else {
+                view.changeOrderStatue(position, orderNumber, orderStatue, payStatue, shipStatue);
+            }
+            view.sendDataChangeBroadcast(orderNumber, position, model.getList().get(position));
         }
     }
 
@@ -342,6 +462,7 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
                 }
                 break;
             case "1":
+                Logger.e(TAG, "intent=" + intent.getExtras().toString());
                 if (removeData(orderNumber, position, orderBean, newOrderBeanList))
                     return;
 
@@ -394,7 +515,7 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
         }
         NewOrderBean bean = newOrderBeanList.get(position);
         if (bean.getOrderNumber().equals(orderNumber)) {
-            if (!bean.getOderStatus().equals(orderBean.getOderStatus())) {
+            if (!bean.getOderStatus().equals(orderBean.getOderStatus()) || !bean.getPaymentStatus().equals(orderBean.getPaymentStatus()) || !bean.getShipmentStatus().equals(orderBean.getShipmentStatus())) {
                 newOrderBeanList.remove(position);
                 if (isViewAttached()) {
                     view.notifyChange(model.getList().size());
@@ -404,7 +525,7 @@ public class OrderItemPresenter extends NewBasePresenter<OrderItemContact.OrderI
         }
         for (NewOrderBean newOrderBean : newOrderBeanList) {
             if (newOrderBean.getOrderNumber().equals(orderNumber)) {
-                if (!newOrderBean.getOderStatus().equals(orderBean.getOderStatus())) {
+                if (!newOrderBean.getOderStatus().equals(orderBean.getOderStatus()) || !newOrderBean.getPaymentStatus().equals(orderBean.getPaymentStatus()) || !newOrderBean.getShipmentStatus().equals(orderBean.getShipmentStatus())) {
                     newOrderBeanList.remove(newOrderBean);
                     if (isViewAttached()) {
                         view.notifyChange(model.getList().size());

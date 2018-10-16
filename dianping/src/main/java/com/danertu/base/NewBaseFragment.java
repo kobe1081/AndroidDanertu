@@ -413,7 +413,7 @@ public abstract class NewBaseFragment<V, T extends NewBasePresenter> extends Fra
      */
     @JavascriptInterface
     public String getImgUrl(String imgName, String agentID, String supplierID) {
-        return ActivityUtils.getImgUrl(imgName, agentID, supplierID);
+        return ActivityUtils.getImgUrl(imgName, agentID, supplierID, getUid());
     }
 
     @Override
@@ -455,7 +455,7 @@ public abstract class NewBaseFragment<V, T extends NewBasePresenter> extends Fra
     }
 
     public String getStockSmallImgPath(String imgName) {
-        return Constants.imgServer + "sysProduct/" + imgName;
+        return Constants.APP_URL.imgServer + "sysProduct/" + imgName;
     }
 
     /**
@@ -467,7 +467,7 @@ public abstract class NewBaseFragment<V, T extends NewBasePresenter> extends Fra
      * @return
      */
     public String getSmallImgPath(String imgName, String agentID, String supplierID) {
-        return ActivityUtils.getImgUrl(imgName, agentID, supplierID);
+        return ActivityUtils.getImgUrl(imgName, agentID, supplierID, getUid());
     }
 
     public void setTopPadding(View view, int top) {
@@ -506,7 +506,7 @@ public abstract class NewBaseFragment<V, T extends NewBasePresenter> extends Fra
 
     @JavascriptInterface
     public void payOrder(final String orderNumber, boolean isShowAliPay, boolean isShowWechatPay, boolean isShowAccountPay, boolean isShowArrivePay) {
-        ((NewBaseActivity) getActivity()).payOrder(orderNumber,isShowAliPay,isShowWechatPay,isShowAccountPay,isShowArrivePay);
+        ((NewBaseActivity) getActivity()).payOrder(orderNumber, isShowAliPay, isShowWechatPay, isShowAccountPay, isShowArrivePay);
     }
 
     @JavascriptInterface
@@ -535,7 +535,7 @@ public abstract class NewBaseFragment<V, T extends NewBasePresenter> extends Fra
 
     @JavascriptInterface
     public void payOrder(String orderNumber, boolean isShowAliPay, boolean isShowWechatPay, boolean isShowAccountPay, boolean isShowArrivePay, final String callBackMethod) {
-        ((NewBaseActivity) getActivity()).payOrder(orderNumber,isShowAliPay,isShowWechatPay,isShowAccountPay,isShowAccountPay,callBackMethod);
+        ((NewBaseActivity) getActivity()).payOrder(orderNumber, isShowAliPay, isShowWechatPay, isShowAccountPay, isShowAccountPay, callBackMethod);
     }
 
 
@@ -624,8 +624,16 @@ public abstract class NewBaseFragment<V, T extends NewBasePresenter> extends Fra
 //            ActivityCompat.requestPermissions(context, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PHONE_STATE);
 //        }
     }
+
+    @JavascriptInterface
     @Override
     public void shareImgWithQRCode(String imgSrc, String qrCodeContent, float startX, float startY, int widthAndHeight, String platformList) {
-        ((NewBaseActivity) getActivity()).shareImgWithQRCode(imgSrc,qrCodeContent,startX,startY,widthAndHeight,platformList);
+        ((NewBaseActivity) getActivity()).shareImgWithQRCode(imgSrc, qrCodeContent, startX, startY, widthAndHeight, platformList);
+    }
+
+    @JavascriptInterface
+    @Override
+    public void quitAccount() {
+        ((NewBaseActivity) getActivity()).quitAccount();
     }
 }

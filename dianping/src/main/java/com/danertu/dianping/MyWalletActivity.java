@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -40,6 +41,9 @@ public class MyWalletActivity extends BaseWebActivity {
         gson = new Gson();
         uid = db.GetLoginUid(this);
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         setAutoHideDialog(false);
         webView.addJavascriptInterface(this, "app");
     }
@@ -117,18 +121,24 @@ public class MyWalletActivity extends BaseWebActivity {
         @Override
         protected String doInBackground(String... arg0) {
             isLoading = true;
-            HashMap<String, Object> result = new HashMap<>();
+            final HashMap<String, Object> result = new HashMap<>();
             String money = "0.00";
             String bindCard = "";
+            String json = appManager.getWalletMoney("0108", uid);
             try {
-                money = appManager.getWalletMoney("0108", uid);
+                money = String.format("%.2f", Double.parseDouble(json));
             } catch (Exception e) {
-                e.printStackTrace();
+                checkToken(json);
+                if (Constants.isDebug)
+                    e.printStackTrace();
             }
             try {
                 bindCard = appManager.getBindBankCardInfo(uid);
+                checkToken(bindCard);
                 String payPswMD5 = appManager.getPayPswMD5(uid);
+                checkToken(payPswMD5);
                 String phone = appManager.getBindPNum(uid);
+                checkToken(phone);
                 String specialNum = "123456";//支付密码不能为123456
                 specialNum = MD5Util.MD5(specialNum);
                 if (payPswMD5.equals("") || phone.equals("") || payPswMD5.equals(specialNum))
@@ -154,6 +164,30 @@ public class MyWalletActivity extends BaseWebActivity {
             javaLoadWalletInfo(result);
         }
 
+    }
+
+
+    public void checkToken(String json) {
+        judgeIsTokenException(json, new TokenExceptionCallBack() {
+            @Override
+            public void tokenException(String code, final String info) {
+                sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        jsShowMsg(info);
+//                        quitAccount();
+//                        finish();
+//                        jsStartActivity("LoginActivity", "");
+//                    }
+//                });
+            }
+
+            @Override
+            public void ok() {
+
+            }
+        });
     }
 
     @Override

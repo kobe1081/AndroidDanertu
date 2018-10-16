@@ -98,9 +98,9 @@ public class ActivityUtils {
     }
 
     public static ArrayList<HashMap<String, Object>> getShopCarList(String guid, String buycount, String proImg, String supID,
-                                                                    String shopid, String agentID, String proName, String price, String marketPrice, String createUser, String attrJson, String arriveTime, String leaveTime, String shopName, String discountNum, String discountPrice) {
+                                                                    String shopid, String agentID, String proName, String price, String marketPrice, String createUser, String attrJson, String arriveTime, String leaveTime, String shopName, String discountNum, String discountPrice,String uid) {
         ArrayList<HashMap<String, Object>> list = new ArrayList<>();
-        list.add(getShopCarItem(true, guid, buycount, proImg, supID, shopid, agentID, proName, price, marketPrice, createUser, attrJson, arriveTime, leaveTime, shopName, discountNum, discountPrice));
+        list.add(getShopCarItem(true, guid, buycount, proImg, supID, shopid, agentID, proName, price, marketPrice, createUser, attrJson, arriveTime, leaveTime, shopName, discountNum, discountPrice,uid));
         return list;
     }
 
@@ -122,7 +122,7 @@ public class ActivityUtils {
      * @return
      */
     public static HashMap<String, Object> getShopCarItem(boolean isSelect, String productID, String buycount, String imgName, String supplierID,
-                                                         String shopID, String agentID, String proName, String price, String marketPrice, String createUser, String attrJson, String arriveTime, String leaveTime, String shopName, String discountNum, String discountPrice) {
+                                                         String shopID, String agentID, String proName, String price, String marketPrice, String createUser, String attrJson, String arriveTime, String leaveTime, String shopName, String discountNum, String discountPrice,String uid) {
         HashMap<String, Object> dataMap = new HashMap<>();
         if (supplierID != null && supplierID.equals("shopnum1")) {
             dataMap.put("isQuanYanProduct", true);
@@ -137,7 +137,7 @@ public class ActivityUtils {
         }
         createUser = createUser == null ? "" : createUser;
         attrJson = attrJson == null ? "" : attrJson;
-        String imgURL = getImgUrl(imgName, agentID, supplierID);
+        String imgURL = getImgUrl(imgName, agentID, supplierID,uid);
         shopName = TextUtils.isEmpty(shopName) ? "醇康" : shopName;
 
         dataMap.put("productID", productID);
@@ -160,16 +160,14 @@ public class ActivityUtils {
         return dataMap;
     }
 
-    private static String imgServer = "";
+    private static String imgServer = Constants.APP_URL.imgServer;
 
-    public static String getImgUrl(String imgName, String agentID, String supplierID) {
+    public static String getImgUrl(String imgName, String agentID, String supplierID, final String uid) {
         String imgURL = "";
         if (TextUtils.isEmpty(imgServer)) {//since version 5.4
             Thread t = new Thread() {
                 public void run() {
-                    HashMap<String, String> param = new HashMap<>();
-                    param.put("apiid", "0154");
-                    imgServer = AppManager.getInstance().doPost(param);
+                    imgServer = AppManager.getInstance().getImageServer(uid);
                     if (!TextUtils.isEmpty(imgServer) && !imgServer.contains("http")) {
                         imgServer = "http://" + imgServer + "/";
                     }
@@ -182,7 +180,7 @@ public class ActivityUtils {
                 e.printStackTrace();
             }
             if (TextUtils.isEmpty(imgServer)) {
-                imgServer = com.config.Constants.imgServer;
+                imgServer = com.config.Constants.APP_URL.imgServer;
             }
         }
         if (imgName != null && imgName.contains("/")) {

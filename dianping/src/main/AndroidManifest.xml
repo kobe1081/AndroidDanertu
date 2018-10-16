@@ -84,6 +84,19 @@
         android:label="@string/app_name"
         android:theme="@style/ThemeActivity"
         tools:replace="android:theme,android:icon">
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.danertu.dianping.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <!--元数据-->
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+
         <activity
             android:name=".SplashActivity"
             android:configChanges="orientation"
@@ -241,7 +254,7 @@
             android:name=".LoginActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_login"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".RegisterActivity"
@@ -733,43 +746,6 @@
                 <data android:scheme="tencent1102297706" />
             </intent-filter>
         </activity>
-        <!-- ***************************小能SDK所需要Activity和Service ********************* -->
-        <activity
-            android:name="cn.xiaoneng.activity.ChatActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
-        <activity
-            android:name="cn.xiaoneng.activity.LeaveMsgActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
-        <activity
-            android:name="cn.xiaoneng.activity.ShowCameraActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/MyDialogTopRight" />
-        <activity
-            android:name="cn.xiaoneng.activity.ShowAlbumActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
-        <activity
-            android:name="cn.xiaoneng.activity.ValuationActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/valuationdialog" />
-        <activity
-            android:name="cn.xiaoneng.activity.ShowPictureActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
-        <activity
-            android:name="cn.xiaoneng.activity.XNExplorerActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
-        <!-- ***************************小能SDK所需要Activity和Service ********************* -->
 
         <activity
             android:name=".ProductDetailWebPage"
@@ -808,7 +784,8 @@
         <activity android:name=".CouponHistoryActivity" />
         <activity android:name=".ChooseCouponActivity" />
         <activity android:name=".CouponProductsActivity" />
-        <activity android:name=".OrderDetailActivity"></activity>
+        <activity android:name=".OrderDetailActivity" />
+        <activity android:name=".CouponDetailActivity"></activity>
     </application>
 
 </manifest>

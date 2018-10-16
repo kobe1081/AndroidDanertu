@@ -1,5 +1,6 @@
 package com.danertu.dianping.fragment.couponexpired;
 
+import android.content.Context;
 import android.os.Handler;
 
 import com.config.ApiService;
@@ -19,14 +20,15 @@ import static com.danertu.dianping.fragment.couponexpired.CouponExpiredPresenter
 import static com.danertu.dianping.fragment.couponexpired.CouponExpiredPresenter.WHAT_LOAD_MORE_ERROR;
 import static com.danertu.dianping.fragment.couponexpired.CouponExpiredPresenter.WHAT_LOAD_MORE_FAIL;
 import static com.danertu.dianping.fragment.couponexpired.CouponExpiredPresenter.WHAT_LOAD_MORE_SUCCESS;
+import static com.danertu.dianping.fragment.couponexpired.CouponExpiredPresenter.WHAT_NEED_LOGIN;
 import static com.danertu.dianping.fragment.couponexpired.CouponExpiredPresenter.WHAT_NO_MORE_DATA;
 
 public class CouponExpiredModel extends BaseModel {
     private List<MyCouponBean.CouponRecordListBean> couponList;
     private String totalCount="0";
 
-    public CouponExpiredModel() {
-        super();
+    public CouponExpiredModel(Context context) {
+        super(context);
         couponList = new ArrayList<>();
     }
 
@@ -39,7 +41,7 @@ public class CouponExpiredModel extends BaseModel {
     }
 
     public void getMyCouponList(final Handler handler, String uid, String isUsedOrIsDelete, final int pageIndex, int pageSize) {
-        Call<MyCouponBean> call = retrofit.create(ApiService.class).getMyCouponList("0343", uid, isUsedOrIsDelete, pageIndex, pageSize);
+        Call<MyCouponBean> call = retrofit.create(ApiService.class).getMyCouponList("0343",isUsedOrIsDelete, uid, pageIndex, pageSize);
         call.enqueue(new Callback<MyCouponBean>() {
             @Override
             public void onResponse(Call<MyCouponBean> call, Response<MyCouponBean> response) {
@@ -50,6 +52,10 @@ public class CouponExpiredModel extends BaseModel {
                     } else {
                         handler.sendEmptyMessage(WHAT_LIST_FAIL);
                     }
+                    return;
+                }
+                if ("false".equals(response.body().getResult()) && "-1".equals(response.body().getCode())) {
+                    handler.sendEmptyMessage(WHAT_NEED_LOGIN);
                     return;
                 }
                 List<MyCouponBean.CouponRecordListBean> list = body.getCouponRecordList();

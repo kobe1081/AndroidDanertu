@@ -144,8 +144,8 @@
                     android:id="@+id/ll_coupon"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_white_click_gray"
                     android:layout_weight="1"
+                    android:background="@drawable/bg_white_click_gray"
                     android:gravity="center"
                     android:orientation="vertical">
 
@@ -158,8 +158,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:paddingTop="10dp"
-                            android:textColor="@color/gray_text"
                             android:text="0"
+                            android:textColor="@color/gray_text"
                             android:textSize="18sp" />
 
                         <ImageView
@@ -171,9 +171,9 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/solid_while"
                         android:gravity="center"
-                        android:text="优惠券" />
+                        android:text="优惠券"
+                        android:textColor="@color/solid_while" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -195,8 +195,8 @@
                             android:layout_height="wrap_content"
                             android:maxLines="1"
                             android:paddingTop="10dp"
-                            android:textColor="@color/gray_text"
                             android:text="0"
+                            android:textColor="@color/gray_text"
                             android:textSize="18sp" />
 
                         <ImageView
@@ -208,17 +208,17 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/solid_while"
                         android:gravity="center"
-                        android:text="金萝卜" />
+                        android:text="金萝卜"
+                        android:textColor="@color/solid_while" />
                 </LinearLayout>
                 <!--钱包-->
                 <LinearLayout
                     android:id="@+id/ll_wallet"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_white_click_gray"
                     android:layout_weight="1"
+                    android:background="@drawable/bg_white_click_gray"
                     android:gravity="center"
                     android:orientation="vertical">
 
@@ -232,8 +232,8 @@
                             android:layout_height="wrap_content"
                             android:maxLines="1"
                             android:paddingTop="10dp"
-                            android:textColor="@color/gray_text"
                             android:text="0.0"
+                            android:textColor="@color/gray_text"
                             android:textSize="18sp" />
 
                         <ImageView
@@ -245,9 +245,9 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/solid_while"
                         android:gravity="center"
-                        android:text="钱包" />
+                        android:text="钱包"
+                        android:textColor="@color/solid_while" />
                 </LinearLayout>
                 <!--收藏-->
                 <LinearLayout
@@ -268,8 +268,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:paddingTop="10dp"
-                            android:textColor="@color/gray_text"
                             android:text="0"
+                            android:textColor="@color/gray_text"
                             android:textSize="18sp" />
 
                         <ImageView
@@ -281,9 +281,9 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/solid_while"
                         android:gravity="center"
-                        android:text="收藏" />
+                        android:text="收藏"
+                        android:textColor="@color/solid_while" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -345,31 +345,31 @@
                 </FrameLayout>
             </LinearLayout>
             <!--<LinearLayout-->
-                <!--android:id="@+id/test"-->
-                <!--style="@style/personal_item_root"-->
-                <!--android:layout_marginTop="1dp"-->
-                <!--android:gravity="center_vertical">-->
+            <!--android:id="@+id/test"-->
+            <!--style="@style/personal_item_root"-->
+            <!--android:layout_marginTop="1dp"-->
+            <!--android:gravity="center_vertical">-->
 
-                <!--<TextView-->
-                    <!--style="@style/personal_item_text"-->
-                    <!--android:text="我的订单" />-->
+            <!--<TextView-->
+            <!--style="@style/personal_item_text"-->
+            <!--android:text="我的订单" />-->
 
-                <!--<FrameLayout-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content">-->
+            <!--<FrameLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content">-->
 
-                    <!--<ImageView-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_marginRight="10dp"-->
-                        <!--android:layout_marginTop="5dp"-->
-                        <!--android:src="@mipmap/order" />-->
+            <!--<ImageView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginRight="10dp"-->
+            <!--android:layout_marginTop="5dp"-->
+            <!--android:src="@mipmap/order" />-->
 
-                    <!--<ImageView-->
-                        <!--android:id="@+id/iv_my_order_point"-->
-                        <!--style="@style/personal_shop_manager_item_point"-->
-                        <!--android:visibility="gone" />-->
-                <!--</FrameLayout>-->
+            <!--<ImageView-->
+            <!--android:id="@+id/iv_my_order_point"-->
+            <!--style="@style/personal_shop_manager_item_point"-->
+            <!--android:visibility="gone" />-->
+            <!--</FrameLayout>-->
             <!--</LinearLayout>-->
             <!--消费码-->
             <LinearLayout
@@ -476,7 +476,7 @@
 
                         <TextView
                             style="@style/personal_shop_manager_item_text"
-                            android:text="进入店铺" />
+                            android:text="销售数据" />
                     </LinearLayout>
 
                     <LinearLayout

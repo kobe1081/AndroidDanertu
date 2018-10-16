@@ -14,6 +14,33 @@ public class WarehouseBean {
      * TotalPageCount_o : 1
      * ProductCategory : [{"ProductCategoryId":"1","Total":"11","BrandName":"晓镇香"},{"ProductCategoryId":"62","Total":"11","BrandName":"其它"}]
      */
+    private String result;
+    private String info;
+    private String code;
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     private String TotalCount_o;
     private String TotalPageCount_o;

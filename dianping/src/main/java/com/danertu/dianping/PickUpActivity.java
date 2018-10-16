@@ -22,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.config.Constants;
+import com.danertu.entity.TokenExceptionBean;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.Logger;
 import com.danertu.tools.MD5Util;
@@ -31,7 +32,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import wl.codelibrary.widget.CircleImageView;
@@ -66,6 +70,7 @@ public class PickUpActivity extends BaseActivity implements View.OnClickListener
     private EditText et_pick_up_count;//提货数量
     private EditText et_remark;//留言
 
+    private String uid;
     private String guid;
     private String img;
     private String shopPrice;
@@ -85,6 +90,7 @@ public class PickUpActivity extends BaseActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
+        uid = getUid();
         setContentView(R.layout.activity_pick_up);
         setSystemBarWhite();
         findViewById();
@@ -271,9 +277,11 @@ public class PickUpActivity extends BaseActivity implements View.OnClickListener
         @Override
         protected String doInBackground(String... strings) {
             String info = "";
-            Map<String, String> param = new HashMap<>();
+            LinkedHashMap<String, String> param = new LinkedHashMap<>();
             param.put("apiid", "0173");
-            param.put("memberid", getUid());
+            param.put("dateline", String.valueOf(System.currentTimeMillis()));
+            param.put("memberid", uid);
+            param.put("tid", uid);
             String json = appManager.doPost(param);
             Logger.e(TAG, json);
             try {
@@ -352,24 +360,45 @@ public class PickUpActivity extends BaseActivity implements View.OnClickListener
             if (equals) {
                 //验证通过
                 //提交订单
-                Map<String, String> param = new HashMap<>();
-                param.put("apiid", "0327");
-                param.put("memLoginId", getUid());
-                param.put("wareHouseGuid", guid);
-                param.put("buyNumber", et_pick_up_count.getText().toString());
-                param.put("name", tv_receiver_name.getText().toString());
+                LinkedHashMap<String, String> param = new LinkedHashMap<>();
                 param.put("address", tv_receiver_address.getText().toString());
+                param.put("apiid", "0327");
+                param.put("buyNumber", et_pick_up_count.getText().toString());
+                param.put("dateline", String.valueOf(System.currentTimeMillis()));
+                param.put("memLoginId", uid);
                 param.put("mobile", tv_receiver_phone.getText().toString());
+                param.put("name", tv_receiver_name.getText().toString());
                 param.put("remark", et_remark.getText().toString());
-                String json = appManager.doPost(param);
+                param.put("tid", uid);
+                param.put("wareHouseGuid", guid);
+                final String json = appManager.doPost(param);
                 Logger.e(TAG, "提货结果：" + json);
-                //{"result":"true","info":"提货成功"}
-                try {
-                    JSONObject jsonObject = new JSONObject(json);
-                    result = jsonObject.getString("result").equals("true") ? 1 : 0;
-                } catch (JSONException e) {
+
+                if (judgeIsTokenException(json)) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                TokenExceptionBean tokenExceptionBean = com.alibaba.fastjson.JSONObject.parseObject(json, TokenExceptionBean.class);
+                                jsShowMsg(tokenExceptionBean.getInfo());
+                                quitAccount();
+                                finish();
+                                jsStartActivity("LoginActivity", "");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
                     result = 0;
-                    e.printStackTrace();
+                } else {
+                    //{"result":"true","info":"提货成功"}
+                    try {
+                        JSONObject jsonObject = new JSONObject(json);
+                        result = jsonObject.getString("result").equals("true") ? 1 : 0;
+                    } catch (JSONException e) {
+                        result = 0;
+                        e.printStackTrace();
+                    }
                 }
 
             } else {

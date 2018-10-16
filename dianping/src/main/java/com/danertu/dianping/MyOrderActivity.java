@@ -11,6 +11,7 @@ import android.app.LocalActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -40,11 +41,10 @@ import com.danertu.widget.MWebViewClient;
 import static com.danertu.dianping.MyOrderParent.REQ_PAY;
 
 /**
- *
  * 旧订单中心，新的订单中心为  OrderCenterActivity
  * 作者:  Viz
  * 日期:  2018/7/30 11:54
-*/
+ */
 public class MyOrderActivity extends BaseActivity implements MyOrderData.LoadDataListener {
     /**
      * tab页标题
@@ -336,6 +336,9 @@ public class MyOrderActivity extends BaseActivity implements MyOrderData.LoadDat
     private void initWebContent() {
         webView.setVisibility(View.VISIBLE);
         WebSettings setting = webView.getSettings();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setting.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         setting.setJavaScriptCanOpenWindowsAutomatically(true);
         setting.setJavaScriptEnabled(true);
         webView.addJavascriptInterface(this, WEB_INTERFACE);
@@ -460,12 +463,35 @@ public class MyOrderActivity extends BaseActivity implements MyOrderData.LoadDat
         }
 
         public void run() {
-            if (appManager.postCancelReserveOrder(guid)) {
+            String json = appManager.postCancelReserveOrder(guid, getUid());
+            if ("true".equals(json)) {
                 Message msg = new Message();
                 msg.obj = guid;
                 msg.what = WHAT_CANCEL_RESERVE;
                 if (myHandler != null)
                     myHandler.sendMessage(msg);
+            } else {
+                judgeIsTokenException(json, new TokenExceptionCallBack() {
+                    @Override
+                    public void tokenException(String code, final String info) {
+                        sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                jsShowMsg(info);
+//                                quitAccount();
+//                                finish();
+//                                jsStartActivity("LoginActivity", "");
+//                            }
+//                        });
+                    }
+
+                    @Override
+                    public void ok() {
+                        jsShowMsg("取消失败");
+                    }
+                });
+
             }
         }
     }
@@ -486,7 +512,7 @@ public class MyOrderActivity extends BaseActivity implements MyOrderData.LoadDat
     public MyHandler myHandler = new MyHandler(this);
     public final int WHAT_LOAD_OFFLINE = 10;
 
-    public static class MyHandler extends Handler {
+    public class MyHandler extends Handler {
         WeakReference<MyOrderActivity> wAct = null;
         MyOrderActivity moa = null;
 
@@ -500,8 +526,27 @@ public class MyOrderActivity extends BaseActivity implements MyOrderData.LoadDat
 
                 moa.hideLoadDialog();
                 if (msg.obj != null) {
-                    String reserveMsg = msg.obj.toString().replaceAll("\n", "");
-                    moa.webView.loadUrl("javascript:javaLoadOrderCenterOffLine('" + reserveMsg + "','" + (Math.abs(moa.tabIndex) - 1) + "')");
+                    final String reserveMsg = msg.obj.toString().replaceAll("\n", "");
+                    judgeIsTokenException(reserveMsg, new TokenExceptionCallBack() {
+                        @Override
+                        public void tokenException(String code, final String info) {
+                            sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    jsShowMsg(info);
+//                                    quitAccount();
+//                                    finish();
+//                                    jsStartActivity("LoginActivity", "");
+//                                }
+//                            });
+                        }
+
+                        @Override
+                        public void ok() {
+                            moa.webView.loadUrl("javascript:javaLoadOrderCenterOffLine('" + reserveMsg + "','" + (Math.abs(moa.tabIndex) - 1) + "')");
+                        }
+                    });
                     Logger.i("预订单数据", reserveMsg + "");
                 } else
                     moa.webView.loadUrl("javascript:javaLoadOrderCenterOffLine('','0')");

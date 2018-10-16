@@ -17,7 +17,7 @@ public class IndexFragmentPresenter extends NewBasePresenter<IndexFragmentContac
 
     @Override
     public IndexFragmentModel initModel() {
-        return new IndexFragmentModel();
+        return new IndexFragmentModel(context);
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,7 +24,7 @@ import com.danertu.tools.AppManager;
 import com.danertu.widget.MWebChromeClient;
 import com.danertu.widget.MWebViewClient;
 
-public class CategoryActivity extends HomeActivity {
+public class CategoryActivity extends BaseActivity {
 
     private ArrayList<HashMap<String, Object>> data1;
     List<String> categoryData;
@@ -67,8 +68,10 @@ public class CategoryActivity extends HomeActivity {
         WebSettings setting = webView.getSettings();
         setting.setJavaScriptEnabled(true);
         setting.setCacheMode(WebSettings.LOAD_NO_CACHE);
-
         webView.loadUrl(Constants.appWebPageUrl + "Android/Androidclassify.html");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setting.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
 //		webView.addJavascriptInterface(this, INTERFACE);
         webView.addJavascriptInterface(this, "app");
         webView.setWebViewClient(new MWebViewClient(this, INTERFACE) {
@@ -80,7 +83,7 @@ public class CategoryActivity extends HomeActivity {
 //				}
             }
         });
-        webView.setWebChromeClient(new MWebChromeClient(context));
+        webView.setWebChromeClient(new MWebChromeClient(this));
     }
 
     Runnable firstCategory = new Runnable() {

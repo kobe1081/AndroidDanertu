@@ -191,7 +191,9 @@ public class CouponUseHistoryFragment extends NewBaseFragment<CouponUseHistoryCo
              */
             holder.tvMyCouponName.setText(bean.getCouponName());
             if ("0".equals(bean.getDiscountType())) {
-                holder.tvMyCouponMoney.setText(setStyleForUnSignNumLeft("￥" + bean.getDiscountPrice()));
+                String discountPrice = bean.getDiscountPrice();
+                discountPrice = discountPrice.substring(0, discountPrice.indexOf("."));
+                holder.tvMyCouponMoney.setText(setStyleForUnSignNumLeft(getResources().getString(R.string.rmb) + discountPrice));
             } else {
                 String discountPercent = bean.getDiscountPercent();
                 if (discountPercent.endsWith("0")) {
@@ -228,7 +230,6 @@ public class CouponUseHistoryFragment extends NewBaseFragment<CouponUseHistoryCo
             holder.tvMyCouponDate.setText(useDate);
             holder.llMyCouponLimit.removeAllViews();
             String[] descriptionList = bean.getDescription().split("@@");
-            Logger.e(TAG,"描述："+descriptionList.toString());
             int length = descriptionList.length;
             for (int i = 0; i < length; i++) {
                 TextView textView = (TextView) inflater.inflate(R.layout.item_coupon_limit, holder.llMyCouponLimit, false);
@@ -246,12 +247,12 @@ public class CouponUseHistoryFragment extends NewBaseFragment<CouponUseHistoryCo
                         isShowDescriptionMap.put(position, true);
                         holder.llMyCouponLimit.setTag(0);
                         showLimit(holder.llMyCouponLimit,true);
-                        holder.ivMyCouponMore.setImageBitmap(bitmapDown);
+                        holder.ivMyCouponMore.setImageBitmap(bitmapUp);
                     } else {
                         holder.llMyCouponLimit.setTag(1);
                         isShowDescriptionMap.put(position, false);
                         showLimit(holder.llMyCouponLimit,false);
-                        holder.ivMyCouponMore.setImageBitmap(bitmapUp);
+                        holder.ivMyCouponMore.setImageBitmap(bitmapDown);
                     }
                 }
             });

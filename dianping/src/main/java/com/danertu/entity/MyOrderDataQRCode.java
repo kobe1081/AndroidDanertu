@@ -28,6 +28,7 @@ import com.danertu.tools.AESEncrypt;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.Logger;
 import com.danertu.widget.CommonTools;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +37,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import static com.danertu.dianping.BaseActivity.WHAT_TO_LOGIN;
 
 /**
  * 提供订单数据及部分订单操作的类
@@ -127,6 +130,7 @@ public abstract class MyOrderDataQRCode {
 
     public MyOrderDataQRCode(BaseActivity context) {
         this(context, null);
+        this.base = context;
         this.context = context;
     }
 
@@ -135,6 +139,7 @@ public abstract class MyOrderDataQRCode {
     private final int ADD_DATA_COMPLETE = 671;
     private final int LOAD_DATA = 672;
     private final int LOAD_DATA_FINISH = 673;
+    private final int NEED_LOGIN = 674;
     private Handler.Callback callback = new Handler.Callback() {
         public boolean handleMessage(Message msg) {
             HashMap<String, Object> item = (HashMap<String, Object>) msg.obj;
@@ -142,7 +147,9 @@ public abstract class MyOrderDataQRCode {
                 case GET_DATA_SUCCESS:
                     getDataSuccess();
                     break;
-
+                case NEED_LOGIN:
+                    needLogin();
+                    break;
                 case ADD_DATA_NO_USE:
                     if (TAB_INDEX == 0 && order_list_no_use.size() < LIST_INIT_SIZE) {
                         MyOrderNoUseActivity.adapter.addDateItem(item);
@@ -279,13 +286,33 @@ public abstract class MyOrderDataQRCode {
         }
 
         public void run() {
-            String result = appManager.postGetOrderHead(orderNum);
+            String result = appManager.postGetOrderHead(orderNum, uid);
             try {
                 JSONObject oj = null;
                 if (!TextUtils.isEmpty(result))
                     oj = new JSONObject(result).getJSONObject("orderinfolist").getJSONArray("orderinfobean").getJSONObject(0);
                 initOrderBean(oj);
             } catch (JSONException e) {
+                base.judgeIsTokenException(result, new BaseActivity.TokenExceptionCallBack() {
+                    @Override
+                    public void tokenException(String code, final String info) {
+                        base.sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                        base.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                base.jsShowMsg(info);
+//                                base.quitAccount();
+//                                base.finish();
+//                                base.jsStartActivity("LoginActivity", "");
+//                            }
+//                        });
+                    }
+
+                    @Override
+                    public void ok() {
+
+                    }
+                });
                 e.printStackTrace();
             }
             handler.sendEmptyMessage(GET_DATA_SUCCESS);
@@ -357,7 +384,13 @@ public abstract class MyOrderDataQRCode {
                 //开始解析数据
                 analyzeJsonString(result);
             } catch (Exception e) {
-                sendMSG(LOAD_DATA_FINISH, null);
+                Gson gson = new Gson();
+                TokenExceptionBean bean = gson.fromJson(result, TokenExceptionBean.class);
+                if (bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
+                    handler.sendEmptyMessage(NEED_LOGIN);
+                } else {
+                    sendMSG(LOAD_DATA_FINISH, null);
+                }
                 e.printStackTrace();
             }
 //            handler.sendEmptyMessage(GET_DATA_SUCCESS);
@@ -369,6 +402,8 @@ public abstract class MyOrderDataQRCode {
      * 数据加载完成后调用的方法
      */
     public abstract void getDataSuccess();
+
+    public abstract void needLogin();
 
     /**
      * 打开商品评论界面
@@ -609,7 +644,7 @@ public abstract class MyOrderDataQRCode {
 //        if (isEmpty) {
 //            jsonOrderInfo = AppManager.getInstance().postGetOrderInfoShow("0072", orderNumber);
 //        }
-        String jsonOrderInfo = AppManager.getInstance().postGetOrderInfoShow("0072", orderNumber);
+        String jsonOrderInfo = AppManager.getInstance().postGetOrderInfoShow("0072", orderNumber, uid);
         ArrayList<HashMap<String, String>> data = new ArrayList<>();
         try {
             JSONObject jsonObj = new JSONObject(jsonOrderInfo).getJSONObject("orderproductlist");
@@ -697,7 +732,13 @@ public abstract class MyOrderDataQRCode {
             Logger.e("test", "MyOrderData analyzeOrderInfo 错误信息》" + e.toString());
 //            jsonOrderInfo = AppManager.getInstance().postGetOrderInfoShow("0072", orderNumber);
 //            commitMsg(editor, orderNumber, jsonOrderInfo);
-            analyzeOrderInfo(orderNumber);
+            Gson gson = new Gson();
+            TokenExceptionBean bean = gson.fromJson(jsonOrderInfo, TokenExceptionBean.class);
+            if (bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
+                handler.sendEmptyMessage(NEED_LOGIN);
+            } else {
+                analyzeOrderInfo(orderNumber);
+            }
         }
         return data;
     }

@@ -2,7 +2,6 @@ package com.danertu.dianping.activity.couponcenter;
 
 import android.content.Context;
 
-import com.danertu.base.ModelParamCallBack;
 import com.danertu.base.NewBasePresenter;
 import com.danertu.entity.CouponCountBean;
 
@@ -46,6 +45,6 @@ public class CouponCenterPresenter extends NewBasePresenter<CouponCenterContact.
 
     @Override
     public CouponCenterModel initModel() {
-        return new CouponCenterModel();
+        return new CouponCenterModel(context);
     }
 }

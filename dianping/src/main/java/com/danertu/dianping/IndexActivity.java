@@ -1,19 +1,19 @@
 package com.danertu.dianping;
 
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import wl.codelibrary.widget.v4.SwipeRefreshLayout;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Bundle;
@@ -23,33 +23,31 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.MeasureSpec;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.config.Constants;
 import com.danertu.dianping.R.color;
+import com.danertu.entity.CheckAppBean;
 import com.danertu.entity.LeaderBean;
 import com.danertu.entity.ShopDetailBean;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.AsyncTask;
 import com.danertu.tools.LocationUtil;
 import com.danertu.tools.Logger;
+import com.danertu.tools.StatusBarUtil;
 import com.danertu.widget.CommonTools;
 import com.danertu.widget.MWebChromeClient;
 import com.danertu.widget.MWebView;
 import com.danertu.widget.MWebViewClient;
 import com.joker.annotation.PermissionsGranted;
 import com.joker.api.Permissions4M;
-
-import static com.config.Constants.WRITE_STORAGE_CODE;
 
 public class IndexActivity extends HomeActivity implements OnClickListener {
     public int pageindex = 1; // 当前页数
@@ -85,13 +83,105 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
         locationUtil.startLocate();
         setSystemBarWhite();
         setSwipeBackEnable(false);
-        new GetShop().execute(getUid());
         findViewById();
         showLoadDialog();
         initUI();
         new Thread(getParamsRunnable).start();
-        initPage();
+        new GetShop().execute(getLoginId());
         initBroadcastReceiver();
+
+
+        StatusBarUtil.StatusBarLightMode(this,true);
+    }
+
+    class CheckApp extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... param) {
+            String uid = param[0];
+            String shopId = param[1];
+            return appManager.checkAppState(uid, shopId);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            //isForced：  0--可关闭，
+            //{"val":[{"Url":"http://115.28.55.222:8018/articlescrap/qy_rule.html","Title":"测试强制弹窗","IsForced":"0"}]}
+            initPage();
+            try {
+                CheckAppBean bean = gson.fromJson(result, CheckAppBean.class);
+                if (bean != null && bean.getVal() != null && bean.getVal().size() > 0 && bean.getVal().get(0) != null) {
+                    final CheckAppBean.ValBean valBean = bean.getVal().get(0);
+
+                    final Dialog dialog = new Dialog(context);
+                    View view = View.inflate(context, R.layout.dialog_index, null);
+                    dialog.setContentView(view);
+                    WebView wvDialog = (WebView) view.findViewById(R.id.webView_dialog);
+                    ImageView ivClose = (ImageView) view.findViewById(R.id.iv_close);
+                    //设置支持js
+                    WebSettings settings = wvDialog.getSettings();
+                    settings.setDefaultTextEncodingName("utf-8");
+                    settings.setJavaScriptEnabled(true);
+                    settings.setTextZoom(100);
+                    settings.setSupportZoom(false);
+                    settings.setBuiltInZoomControls(false);
+                    settings.setDisplayZoomControls(false);
+                    settings.setJavaScriptCanOpenWindowsAutomatically(true);
+                    // webView.getSettings().setAppCacheEnabled(false);
+                    settings.setCacheMode(WebSettings.LOAD_NO_CACHE);// 不使用缓存
+                    //js调用本地方法
+                    wvDialog.addJavascriptInterface(IndexActivity.this, "app");
+                    wvDialog.setWebViewClient(new MWebViewClient(IndexActivity.this, "app") {
+
+                    });
+                    wvDialog.setWebChromeClient(new MWebChromeClient(IndexActivity.this));
+                    ViewGroup.MarginLayoutParams layoutParams = ((ViewGroup.MarginLayoutParams) wvDialog.getLayoutParams());
+                    ViewGroup.MarginLayoutParams ivCloseLayoutParams = (ViewGroup.MarginLayoutParams) ivClose.getLayoutParams();
+                    ViewGroup.MarginLayoutParams viewLayoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+                    layoutParams.width = getScreenWidth();
+                    layoutParams.height = getScreenHeight() - ivCloseLayoutParams.height - ivCloseLayoutParams.topMargin * 2;
+                    viewLayoutParams.setMargins(5, 0, 5, 0);
+                    wvDialog.setLayoutParams(layoutParams);
+                    wvDialog.loadUrl(valBean.getUrl());
+                    dialog.setTitle(valBean.getTitle());
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    final String isForced = valBean.getIsForced();
+                    dialog.setCanceledOnTouchOutside("0".equals(isForced));
+                    dialog.setCancelable("0".equals(isForced));
+                    dialog.show();
+                    if ("0".equals(isForced)) {
+                        ivClose.setVisibility(View.VISIBLE);
+                    } else {
+                        ivClose.setVisibility(View.GONE);
+                    }
+                    ivClose.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (!"0".equals(isForced)) {
+                                jsShowMsg("此窗口不可关闭");
+                                return;
+                            }
+                            dialog.dismiss();
+                        }
+                    });
+                    if (wvDialog.getLayoutParams() == null) {
+                        wvDialog.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    }
+                    if (ivClose.getLayoutParams() == null) {
+                        ivClose.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    }
+                    if (view.getLayoutParams() == null) {
+                        view.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    }
+
+
+                }
+            } catch (Exception e) {
+                if (Constants.isDebug)
+                    e.printStackTrace();
+            }
+
+        }
     }
 
     class GetShop extends AsyncTask<String, Integer, String> {
@@ -125,8 +215,8 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
 
         @Override
         protected void onPostExecute(String result) {
-
             super.onPostExecute(result);
+            new CheckApp().execute(getLoginId(), getShopId());
         }
     }
 
@@ -197,6 +287,11 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
         return uid;
     }
 
+    @JavascriptInterface
+    public String getLoginId() {
+        return super.getUid();
+    }
+
 
     @JavascriptInterface
     public boolean backToHome() {
@@ -253,6 +348,8 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
         String pageName = index_wap_name;
         pageName = pageName.equals(WEBPAGE_NAME) ? WEBPAGE_NAME : WEBPAGE_NAME_RESERVE;
         webView.loadUrl(Constants.appWebPageUrl + pageName);
+//        webView.loadUrl("https://kyfw.12306.cn/");
+//        webView.loadUrl("https://appweb.danertu.com:8444/activity/0817share.html");
     }
 
     @JavascriptInterface
@@ -275,6 +372,9 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
         // webView.getSettings().setAppCacheEnabled(false);
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);// 不使用缓存
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         //js调用本地方法
         //加入两个接口名
         webView.addJavascriptInterface(this, WV_INTERFACE);
@@ -353,12 +453,13 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
     @JavascriptInterface
     public void refresh() {
 //        shopId = getUid();
-        new GetShop().execute(getUid());
-        if (webView != null) {
-            pageindex = 1;
-            loadPage();
-            Logger.i(TAG, "刷新页面");
-        }
+
+        new GetShop().execute(getLoginId());
+        pageindex = 1;
+//        if (webView != null) {
+//            loadPage();
+//            Logger.i(TAG, "刷新页面");
+//        }
     }
 
     public void openNetWork() {
@@ -582,13 +683,13 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
     protected void findViewById() {
 //        top_bg = findViewById(R.id.top_bg);
 //        fl_title = (LinearLayout) findViewById(R.id.index_top_layout);
-        final int statusBarHeight = getStatusBarHeight();
-        if (VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+//        final int statusBarHeight = getStatusBarHeight();
+//        if (VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
 //            setMargins(fl_title, 0, statusBarHeight, 0, 0);
 //        View parent = ((View) fl_title.getParent());
 //        parent.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
 //        top_bg.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, parent.getMeasuredHeight()));
-            setTitleBgAlpha(0);
+//            setTitleBgAlpha(0);
 
 //        tv_store_name = (TextView) findViewById(R.id.tv_store_name);
 
@@ -686,7 +787,7 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
             // 耗时操作
             String result = "";
             try {
-                result = AppManager.getInstance().getFoodList(10, pageindex, "", 0, 0, "", getLa(), getLt());
+                result = appManager.getFoodList(10, pageindex, "", 0, 0, "", getLa(), getLt());
                 // result = getShopList(type, isCanOrder, isCanSell);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -704,7 +805,7 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
     Runnable getParamsRunnable = new Runnable() {
         public void run() {
             // 耗时操作
-            String result = AppManager.getInstance().getParams("0053");
+            String result = appManager.getParams("0053");
             JSONObject jsonObject;
             try {
                 jsonObject = new JSONObject(result).getJSONObject("infoList");

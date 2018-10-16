@@ -13,6 +13,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -85,11 +86,13 @@ public class IndexTypeActivity extends BaseActivity {
     public static final String KEY_SHOPLA = "shopLa";
     public static final String KEY_SHOPLT = "shopLt";
     private String la, lt;
+    private String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         int tempType = 1;
+        uid=getUid();
         Bundle bundle = getIntent().getExtras();
         try {
             type = bundle.getString("type");
@@ -300,6 +303,9 @@ public class IndexTypeActivity extends BaseActivity {
 
         webView = (WebView) findViewById(R.id.wv_container);
         WebSettings setting = webView.getSettings();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setting.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         setting.setJavaScriptEnabled(true);
         setting.setJavaScriptCanOpenWindowsAutomatically(true);
         setting.setCacheMode(WebSettings.LOAD_NO_CACHE);//不使用缓存
@@ -556,7 +562,7 @@ public class IndexTypeActivity extends BaseActivity {
             }
             String imgName = data1.get(position).get("img").toString();
             String shopid = data1.get(position).get("shopid").toString();
-            String imgUrl = ActivityUtils.getImgUrl(imgName, shopid, null);
+            String imgUrl = ActivityUtils.getImgUrl(imgName, shopid, null,uid);
             vh.shopName.setText(data1.get(position).get("shopname").toString().trim());
             vh.address.setText(data1.get(position).get("adress").toString().trim());
             vh.jy.setText(data1.get(position).get("jyfw").toString().trim());
@@ -579,8 +585,9 @@ public class IndexTypeActivity extends BaseActivity {
     private Runnable sendAble = new Runnable() {
         @Override
         public void run() {
+            String result="";
             try {
-                String result = AppManager.getInstance().postGetIndexShopList("0037", Constants.getCityName(), Constants.pageSize, pageindex, "", type);
+                 result = appManager.postGetIndexShopList("0037", Constants.getCityName(), Constants.pageSize, pageindex, "", type,uid);
                 JSONObject jsonObject;
                 jsonObject = new JSONObject(result).getJSONObject("shoplist");
                 JSONArray jsonArray = jsonObject.getJSONArray("shopbean");
@@ -601,6 +608,7 @@ public class IndexTypeActivity extends BaseActivity {
                 pageindex++;
                 sendMessage(WHAT_GETTYPE, null, null);
             } catch (Exception e) {
+                judgeIsTokenException(result,"您的登录信息已过期，请重新登录",-1);
                 if (pullList != null) {
                     pullList.setLoading(false);
                 }

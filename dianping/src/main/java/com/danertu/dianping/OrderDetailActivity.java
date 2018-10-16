@@ -12,7 +12,6 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,7 +28,6 @@ import com.config.Constants;
 import com.danertu.base.NewBaseActivity;
 import com.danertu.dianping.activity.orderdetail.OrderDetailContact;
 import com.danertu.dianping.activity.orderdetail.OrderDetailPresenter;
-import com.danertu.entity.MyOrderData;
 import com.danertu.entity.OrderBody;
 import com.danertu.entity.OrderHead;
 import com.danertu.entity.QuanYanProductCategory;
@@ -40,7 +38,6 @@ import com.danertu.widget.CommonTools;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -52,9 +49,9 @@ import static com.danertu.dianping.activity.orderdetail.OrderDetailPresenter.REQ
 /**
  * 作者:  Viz
  * 日期:  2018/7/30 14:12
- *
+ * <p>
  * 描述： 新的订单详情
-*/
+ */
 public class OrderDetailActivity extends NewBaseActivity<OrderDetailContact.OrderDetailView, OrderDetailPresenter> implements OrderDetailContact.OrderDetailView, SwipeRefreshLayout.OnRefreshListener {
 
 
@@ -119,6 +116,8 @@ public class OrderDetailActivity extends NewBaseActivity<OrderDetailContact.Orde
 
 
     private boolean isQuanyan = false;
+    private boolean isCooperateSupplier = false;
+    private boolean isShowQRCode = false;
     /**
      * 2018年5月22日
      * 温泉产品新页面地址
@@ -131,6 +130,7 @@ public class OrderDetailActivity extends NewBaseActivity<OrderDetailContact.Orde
     private final String ORDER_STATUS_NO_PAY = "订单还没付款";
     //门票未付款提示
     private final String ORDER_STATUS_NO_PAY_TIPS_TICKET = "订单还未完成支付";
+    private final String ORDER_STATUS_NO_PAY_TIPS_TICKET_OTHER = "未付款，付款后即可使用";
 
     //门票已付款并未使用
     private final String ORDER_STATUS_NO_USE = "未使用";
@@ -150,7 +150,6 @@ public class OrderDetailActivity extends NewBaseActivity<OrderDetailContact.Orde
     //已完成
     private final String ORDER_STATUS_FINISH_HOTEL = "已完成";
     private final String ORDER_STATUS_FINISH_HOTEL_TIPS = "订单已成功消费";
-
     //酒水未付款
     private final String ORDER_STATUS_NO_PAY_GOODS = "订单还没付款";
     private final String ORDER_STATUS_NO_PAY_TIPS_GOODS = "付款后我们将会为您安排发货";
@@ -176,11 +175,15 @@ public class OrderDetailActivity extends NewBaseActivity<OrderDetailContact.Orde
 
     //支付信息
     private final String PAY_INFO_NO_PAY = "未付款";
-    private final String PAY_INFO_NO_PAY_QUANYAN = "您选择到店支付";
+    private final String PAY_INFO_NO_PAY_QUANYAN = "您选择使用%s支付";
+    private final String PAY_INFO_NO_PAY_ARRIVE = "您选择到店支付";
+
+
     private final String PAY_INFO_ARRIVE_PAY = "您已完成支付";
-    private final String PAY_INFO_ALI_PAY = "您已通过支付宝完成支付";
-    private final String PAY_INFO_WECHAT_PAY = "您已通过微信完成支付";
-    private final String PAY_INFO_ACCOUNT_PAY = "您已通过单耳兔钱包完成支付";
+    private final String PAY_INFO_ALI_PAY = "支付方式：支付宝";
+    private final String PAY_INFO_WECHAT_PAY = "支付方式：微信支付";
+    private final String PAY_INFO_ACCOUNT_PAY = "支付方式：单耳兔钱包";
+    private final String PAY_INFO_ARRIVED_PAY = "支付方式：到付";
     private final String PAY_WAY_ALI = "支付宝";
     private final String PAY_WAY_WECHAT = "微信";
     private final String PAY_WAY_ACCOUNT = "账号支付";
@@ -374,6 +377,8 @@ public class OrderDetailActivity extends NewBaseActivity<OrderDetailContact.Orde
             ViewHolder holder = new ViewHolder(productItemView);
             final String supplierLoginID = bodyBean.getSupplierLoginID();
             isQuanyan = Constants.QY_SUPPLIERID.equals(supplierLoginID);
+            isCooperateSupplier = Constants.COOPERATE_SUPPLIER_ID.contains(supplierLoginID);
+            isShowQRCode = "1".equals(bodyBean.getIsQRCodeShow());
             final String agentID = bodyBean.getAgentID();
             List<OrderBody.OrderproductlistBean.OrderproductbeanBean.ProductRankBean> productRank = bodyBean.getProductRank();
             String discountBuyNum = "";
@@ -385,6 +390,7 @@ public class OrderDetailActivity extends NewBaseActivity<OrderDetailContact.Orde
             final String agentMobile = TextUtils.isEmpty(bodyBean.getTel()) ? Constants.CK_PHONE : bodyBean.getTel();
             if (!phoneCalls.contains(agentMobile)) phoneCalls.add(agentMobile);
             String shopName = TextUtils.isEmpty(bodyBean.getShopName()) ? "醇康" : bodyBean.getShopName();
+            holder.tvShopName.setText(shopName);
             final String shopPrice = bodyBean.getShopPrice();
             final String buyNumberStr = bodyBean.getBuyNumber();
             int buyNumberInt = 0;
@@ -395,7 +401,9 @@ public class OrderDetailActivity extends NewBaseActivity<OrderDetailContact.Orde
                 double tPrice = Double.parseDouble(shopPrice);
                 double singleSum = MathUtils.multiply(sumCount, tPrice).doubleValue();
                 ttPrice = MathUtils.add(ttPrice, MathUtils.multiply(buyNumberInt, tPrice).doubleValue());
-                joinCount = Integer.parseInt(bodyBean.getISGive());
+                if (!TextUtils.isEmpty(bodyBean.getISGive())) {
+                    joinCount = Integer.parseInt(bodyBean.getISGive());
+                }
             } catch (Exception e) {
                 if (Constants.isDebug) {
                     e.printStackTrace();
@@ -404,28 +412,22 @@ public class OrderDetailActivity extends NewBaseActivity<OrderDetailContact.Orde
                 tvOrderFailText.setVisibility(View.VISIBLE);
                 break;
             }
-
-//            if (!TextUtils.isEmpty(agentID)){
-//
-//            }
             //泉眼商品
             if (isQuanyan) {
                 qyCount++;
             }
-
-
             imageLoader.displayImage(getImgUrl(bodyBean.getSmallImage(), agentID, supplierLoginID), holder.ivOrderProduceLogo);
             holder.flProMsg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (isQuanyan) {
+//                    presenter.startToProDetail(bodyBean.getGuid(), bodyBean.getName(), bodyBean.getSmallImage(), "", agentID, supplierLoginID, shopPrice, agentMobile);
+                    if (isQuanyan || isCooperateSupplier) {
                         presenter.toQuanYan(bodyBean.getGuid(), agentID);
                     } else {
                         presenter.startToProDetail(bodyBean.getGuid(), bodyBean.getName(), bodyBean.getSmallImage(), "", agentID, supplierLoginID, shopPrice, agentMobile);
                     }
                 }
             });
-
             if (joinCount > 0) {
                 holder.itemJoinCount.setVisibility(View.VISIBLE);
                 holder.itemJoinCount.setText("买" + joinCount + "赠1");
@@ -470,7 +472,18 @@ public class OrderDetailActivity extends NewBaseActivity<OrderDetailContact.Orde
             holder.tvOrderProMarketPrice.getPaint().setAntiAlias(true);
             llOrderDetailProParent.addView(productItemView);
         }
-        String unSignFomat = "共%s件商品，共￥%.2f元（含运费%.2f）";
+        String ticketMoney = TextUtils.isEmpty(bean.getTicketMoney()) ? "0" : bean.getTicketMoney();
+        String payFavourable = "";
+        try {
+            double num = Double.parseDouble(ticketMoney);
+            if (num != 0) {
+                ticketMoney = CommonTools.formatZero2Str(num);
+                payFavourable = " \n优惠券减免" + getResources().getString(R.string.rmb) + ticketMoney;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String unSignFomat = "共%s件商品，共￥%.2f元（含运费%.2f" + payFavourable + "）";
         double parseDouble = Double.parseDouble(shouldPayPrice);
         String format = String.format(unSignFomat, totalCount, parseDouble, Double.parseDouble(bean.getDispatchPrice()));
         SpannableStringBuilder stringBuilder = setStyleForUnSignNum(format, parseDouble);
@@ -501,84 +514,103 @@ public class OrderDetailActivity extends NewBaseActivity<OrderDetailContact.Orde
             }
         });
 
-        if (isQuanyan) {
-            if (isHotel) {
-                /**
-                 * 酒店客房
-                 */
-                if (payStatue.equals("0")) {// 付款状态为 未付款
-                    setViewValue(R.drawable.ic_state_nopay, ORDER_STATUS_NO_PAY, ORDER_STATUS_NO_PAY_TIPS_HOTEL, BTN_LEFT_CANCEL, BTN_RIGHT_PAY + shouldPayPrice);
-
-                } else if (shipStatue.equals("0") && payStatue.equals("2")) {// 已付款 ，未发货
-                    setViewValue(R.drawable.ic_state_paied, ORDER_STATUS_PAYED_HOTEL, ORDER_STATUS_PAYED_HOTEL_TIPS, BTN_LEFT_DRAWBACK, BTN_RIGHT_QRCODE);
-
-
-                } else if (shipStatue.equals("1") && payStatue.equals("2")) {// 已发货,买家待收货
-                    setViewValue(R.drawable.ic_state_sended, ORDER_STATUS_FINISH_HOTEL, ORDER_STATUS_FINISH_HOTEL_TIPS, BTN_LEFT_DRAWBACK, BTN_RIGHT_QRCODE);
-
-                }
-                //订单已完成
-                if (orderStatue.equals("5")) {
-                    setViewValue(R.drawable.ic_state_success, ORDER_STATUS_FINISH_HOTEL, ORDER_STATUS_FINISH_HOTEL_TIPS, BTN_LEFT_DRAWBACK, BTN_RIGHT_QRCODE);
-                }
-            } else {
-                /**
-                 * 门票等泉眼商品
-                 */
-                if (payStatue.equals("0")) {// 付款状态为 未付款
-                    if (paymentName.contains("到付")) {
-                        setViewValue(R.drawable.ic_state_nopay, ORDER_STATUS_ARRAY_PAY_TICKET, ORDER_STATUS_ARRAY_PAYTIPS_TICKET, BTN_LEFT_PAY, BTN_RIGHT_QRCODE);
-                    } else {
-                        setViewValue(R.drawable.ic_state_nopay, ORDER_STATUS_NO_PAY, ORDER_STATUS_NO_PAY_TIPS_TICKET, BTN_LEFT_CANCEL, BTN_RIGHT_PAY + shouldPayPrice);
+        if (isShowQRCode){
+             if (isQuanyan){
+                if (isHotel){
+                    /**
+                     * 泉眼酒店客房
+                     */
+                    if (payStatue.equals("0")) {// 付款状态为 未付款
+                        setViewValue(0, ORDER_STATUS_NO_PAY, ORDER_STATUS_NO_PAY_TIPS_HOTEL, BTN_LEFT_CANCEL, BTN_RIGHT_PAY + shouldPayPrice);
+                    } else if (shipStatue.equals("0") && payStatue.equals("2")) {// 已付款 ，未发货
+                        setViewValue(0, ORDER_STATUS_PAYED_HOTEL, ORDER_STATUS_PAYED_HOTEL_TIPS, BTN_LEFT_DRAWBACK, BTN_RIGHT_QRCODE);
+                    } else if (shipStatue.equals("1") && payStatue.equals("2")) {// 已发货,买家待收货
+                        setViewValue(0, ORDER_STATUS_FINISH_HOTEL, ORDER_STATUS_FINISH_HOTEL_TIPS, BTN_LEFT_DRAWBACK, BTN_RIGHT_QRCODE);
                     }
-
-                } else if (shipStatue.equals("0") && payStatue.equals("2")) {// 已付款 ，未发货
-                    setViewValue(R.drawable.ic_state_paied, ORDER_STATUS_NO_USE, ORDER_STATUS_NO_USE_TIPS, BTN_LEFT_DRAWBACK, BTN_RIGHT_QRCODE);
-
-
-                } else if (shipStatue.equals("1") && payStatue.equals("2")) {// 已发货,买家待收货
-                    setViewValue(R.drawable.ic_state_sended, ORDER_STATUS_USED_TICKET, ORDER_STATUS_USED_TIPS_TICKET + shouldPayPrice, null, BTN_RIGHT_QRCODE);
-
+                    //订单已完成
+                    if (orderStatue.equals("5")) {
+                        setViewValue(0, ORDER_STATUS_FINISH_HOTEL, ORDER_STATUS_FINISH_HOTEL_TIPS, BTN_LEFT_DRAWBACK, BTN_RIGHT_QRCODE);
+                    }
+                }else {
+                    /**
+                     * 门票等泉眼商品
+                     */
+                    if (payStatue.equals("0")) {// 付款状态为 未付款
+                        if (paymentName.contains("到付")) {
+                            setViewValue(0, ORDER_STATUS_ARRAY_PAY_TICKET, ORDER_STATUS_ARRAY_PAYTIPS_TICKET, BTN_LEFT_PAY, BTN_RIGHT_QRCODE);
+                        } else {
+                            setViewValue(0, ORDER_STATUS_NO_PAY, ORDER_STATUS_NO_PAY_TIPS_TICKET, BTN_LEFT_CANCEL, BTN_RIGHT_PAY + shouldPayPrice);
+                        }
+                    } else if (shipStatue.equals("0") && payStatue.equals("2")) {// 已付款 ，未发货
+                        setViewValue(0, ORDER_STATUS_NO_USE, ORDER_STATUS_NO_USE_TIPS, BTN_LEFT_DRAWBACK, BTN_RIGHT_QRCODE);
+                    } else if (shipStatue.equals("1") && payStatue.equals("2")) {// 已发货,买家待收货
+                        setViewValue(0, ORDER_STATUS_USED_TICKET, ORDER_STATUS_USED_TIPS_TICKET + shouldPayPrice, null, BTN_RIGHT_QRCODE);
+                    }
+                    //订单已完成
+                    if (orderStatue.equals("5")) {
+                        setViewValue(0, ORDER_STATUS_USED_TICKET, ORDER_STATUS_USED_TIPS_TICKET + dispatchTime, null, BTN_RIGHT_QRCODE);
+                    }
                 }
-
+             }else{
+                 /**
+                  * 泉林等商品
+                  */
+                 if (payStatue.equals("0")) {// 付款状态为 未付款
+                     setViewValue(0, ORDER_STATUS_NO_PAY_GOODS, ORDER_STATUS_NO_PAY_TIPS_TICKET_OTHER, BTN_LEFT_CANCEL, BTN_RIGHT_PAY + shouldPayPrice);
+                 } else if (shipStatue.equals("0") && payStatue.equals("2")) {// 已付款 ，未发货
+                     setViewValue(0, ORDER_STATUS_NO_USE, ORDER_STATUS_NO_USE_TIPS, BTN_LEFT_DRAWBACK, BTN_RIGHT_QRCODE);
+                 } else if (shipStatue.equals("1") && payStatue.equals("2")) {// 已发货,买家待收货
+                     setViewValue(0, ORDER_STATUS_USED_TICKET, ORDER_STATUS_USED_TIPS_TICKET + shouldPayPrice, null, BTN_RIGHT_QRCODE);
+                 }
+                 //订单已完成
+                 if (orderStatue.equals("5")) {
+                     setViewValue(0, ORDER_STATUS_USED_TICKET, ORDER_STATUS_USED_TIPS_TICKET + dispatchTime, null, BTN_RIGHT_QRCODE);
+                 }
+             }
+        }else {
+            if (isCooperateSupplier){
+                /**
+                 * 合作商家的不可到付商品
+                 */
+                if (payStatue.equals("0")) {// 付款状态为 未付款
+                    setViewValue(0, ORDER_STATUS_NO_PAY_GOODS, ORDER_STATUS_NO_PAY_TIPS_TICKET_OTHER, BTN_LEFT_CANCEL, BTN_RIGHT_PAY + shouldPayPrice);
+                } else if (shipStatue.equals("0") && payStatue.equals("2")) {// 已付款 ，未发货
+                    setViewValue(0, ORDER_STATUS_NO_USE, ORDER_STATUS_NO_USE_TIPS, BTN_LEFT_DRAWBACK, BTN_RIGHT_QRCODE);
+                } else if (shipStatue.equals("1") && payStatue.equals("2")) {// 已发货,买家待收货
+                    setViewValue(0, ORDER_STATUS_USED_TICKET, ORDER_STATUS_USED_TIPS_TICKET + shouldPayPrice, null, BTN_RIGHT_QRCODE);
+                }
                 //订单已完成
                 if (orderStatue.equals("5")) {
-                    setViewValue(R.drawable.ic_state_success, ORDER_STATUS_USED_TICKET, ORDER_STATUS_USED_TIPS_TICKET + dispatchTime, null, BTN_RIGHT_QRCODE);
+                    setViewValue(0, ORDER_STATUS_USED_TICKET, ORDER_STATUS_USED_TIPS_TICKET + dispatchTime, null, BTN_RIGHT_QRCODE);
+                }
+            }else {
+                /**
+                 * 普通商品
+                 */
+                if (payStatue.equals("0")) {// 付款状态为 未付款
+                    setViewValue(0, ORDER_STATUS_NO_PAY_GOODS, ORDER_STATUS_NO_PAY_TIPS_GOODS, BTN_LEFT_CANCEL, BTN_RIGHT_PAY + shouldPayPrice);
+                } else if (shipStatue.equals("0") && payStatue.equals("2")) {// 已付款 ，未发货
+                    setViewValue(0, ORDER_STATUS_PAYED_GOODS, ORDER_STATUS_PAYED_TIPS_GOODS, BTN_LEFT_CHECKLOGI, BTN_LEFT_DRAWBACK);
+                } else if (shipStatue.equals("1") && payStatue.equals("2")) {// 已发货,买家待收货
+                    setViewValue(0, ORDER_STATUS_SENDED_GOODS, ORDER_STATUS_SENDED_TIPS_GOODS, BTN_LEFT_CHECKLOGI, BTN_RIGHT_TAKEOVER);
+                }
+                //订单已完成
+                if (orderStatue.equals("5")) {
+                    setViewValue(0, ORDER_STATUS_FINISHED_GOODS, ORDER_STATUS_FINISHED_TIPS_GOODS, BTN_LEFT_CHECKLOGI, BTN_LEFT_DRAWBACK);
                 }
             }
-        } else {
-            /**
-             * 普通商品
-             */
-            if (payStatue.equals("0")) {// 付款状态为 未付款
-                setViewValue(R.drawable.ic_state_nopay, ORDER_STATUS_NO_PAY_GOODS, ORDER_STATUS_NO_PAY_TIPS_GOODS, BTN_LEFT_CANCEL, BTN_RIGHT_PAY + shouldPayPrice);
 
-            } else if (shipStatue.equals("0") && payStatue.equals("2")) {// 已付款 ，未发货
-                setViewValue(R.drawable.ic_state_paied, ORDER_STATUS_PAYED_GOODS, ORDER_STATUS_PAYED_TIPS_GOODS, BTN_LEFT_CHECKLOGI, BTN_LEFT_DRAWBACK);
-
-
-            } else if (shipStatue.equals("1") && payStatue.equals("2")) {// 已发货,买家待收货
-                setViewValue(R.drawable.ic_state_sended, ORDER_STATUS_SENDED_GOODS, ORDER_STATUS_SENDED_TIPS_GOODS, BTN_LEFT_CHECKLOGI, BTN_RIGHT_TAKEOVER);
-
-            }
-            //订单已完成
-            if (orderStatue.equals("5")) {
-                setViewValue(R.drawable.ic_state_success, ORDER_STATUS_FINISHED_GOODS, ORDER_STATUS_FINISHED_TIPS_GOODS, BTN_LEFT_CHECKLOGI, BTN_LEFT_DRAWBACK);
-            }
         }
 
         switch (orderStatue) {
             case "2": //订单已取消
                 setViewValue(0, ORDER_STATUS_CANCELED, ORDER_STATUS_OTHER_TIPS, null, null);
-
                 break;
             case "3":
                 setViewValue(0, ORDER_STATUS_INVALID, ORDER_STATUS_OTHER_TIPS, null, null);
-
                 break;
             case "4":
                 setViewValue(0, ORDER_STATUS_RETURNING_GOODS, ORDER_STATUS_OTHER_TIPS, null, null);
-
                 break;
 //            case "5": // 已完成订单
 //                setViewValue(R.drawable.ic_state_success, ORDER_STATUS_FINISH_HOTEL, ORDER_STATUS_FINISH_HOTEL_TIPS, BTN_LEFT_CHECKLOGI, BTN_RIGHT_COMMENT);
@@ -590,7 +622,6 @@ public class OrderDetailActivity extends NewBaseActivity<OrderDetailContact.Orde
         if (payStatue.equals("3")) {// 表示已退款
             setViewValue(0, ORDER_STATUS_RETURNED_GOODS, ORDER_STATUS_RETURN_TIPS_GOODS, null, null);
         }
-
         switch (payStatue) {
             case "2":
                 if (paymentName.contains(PAY_WAY_ALI)) {
@@ -599,16 +630,26 @@ public class OrderDetailActivity extends NewBaseActivity<OrderDetailContact.Orde
                     tvOrderPayway.setText(PAY_INFO_WECHAT_PAY);
                 } else if (paymentName.contains(PAY_WAY_ACCOUNT)) {
                     tvOrderPayway.setText(PAY_INFO_ACCOUNT_PAY);
-                } else if (paymentName.equals(PAY_WAY_ARRIVE)) {
-                    tvOrderPayway.setText(PAY_INFO_ARRIVE_PAY);
+                } else if (paymentName.contains(PAY_WAY_ARRIVE)) {
+                    tvOrderPayway.setText(PAY_INFO_ARRIVED_PAY);
                 }
                 break;
             case "0":
-                if (isQuanyan) {
-                    tvOrderPayway.setText(PAY_INFO_NO_PAY_QUANYAN);
-                } else {
-                    tvOrderPayway.setText(PAY_INFO_NO_PAY);
+                if (paymentName.contains(PAY_WAY_ALI)) {
+                    tvOrderPayway.setText(String.format(PAY_INFO_NO_PAY_QUANYAN, PAY_WAY_ALI));
+                } else if (paymentName.contains(PAY_WAY_WECHAT)) {
+                    tvOrderPayway.setText(String.format(PAY_INFO_NO_PAY_QUANYAN, PAY_WAY_WECHAT));
+                } else if (paymentName.contains(PAY_WAY_ACCOUNT)) {
+                    tvOrderPayway.setText(String.format(PAY_INFO_NO_PAY_QUANYAN, PAY_WAY_ACCOUNT));
+                } else if (paymentName.contains(PAY_WAY_ARRIVE)) {
+                    tvOrderPayway.setText(PAY_INFO_NO_PAY_ARRIVE);
                 }
+
+//                if (isQuanyan) {
+//                    tvOrderPayway.setText(PAY_INFO_NO_PAY_QUANYAN);
+//                } else {
+//                    tvOrderPayway.setText(PAY_INFO_NO_PAY);
+//                }
                 break;
             default:
                 tvOrderPayway.setVisibility(View.GONE);
@@ -750,7 +791,11 @@ public class OrderDetailActivity extends NewBaseActivity<OrderDetailContact.Orde
 
     @Override
     public void toQuanYanPage(QuanYanProductCategory.ValBean bean, String shopId) {
-        jsStartActivity("com.danertu.dianping.HtmlActivity", "pageName|" + QUANYAN_PRODUCT_URL + "?&platform=android&timestamp=" + System.currentTimeMillis() + ",;guid|" + bean.getProductGuid() + ",;shopid|" + shopId + ",;productCategory|" + bean.getProductCategory());
+//        jsStartActivity("com.danertu.dianping.HtmlActivity", "pageName|" + QUANYAN_PRODUCT_URL + "?&platform=android&timestamp=" + System.currentTimeMillis() + ",;guid|" + bean.getProductGuid() + ",;shopid|" + shopId + ",;productCategory|" + bean.getProductCategory());
+        String url = Constants.APP_URL.TICKET_DETAIL_URL + "?shopid=" + shopId + "&platform=" + Constants.APP_PLATFORM + "&guid=" + bean.getProductGuid() + "&timestamp=" + System.currentTimeMillis();
+        Intent intent = new Intent(context, HtmlActivityNew.class);
+        intent.putExtra("url", url);
+        startActivity(intent);
     }
 
     /**

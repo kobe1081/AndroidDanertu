@@ -6,7 +6,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.danertu.entity.TokenExceptionBean;
 import com.danertu.tools.AppManager;
+import com.google.gson.Gson;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -109,11 +111,11 @@ public class OrderDetailsActivity extends BaseActivity implements OnClickListene
         public void run() {
             // 耗时操作
             try {
-                result = AppManager.getInstance().postGetOrderInfoShow("0036", strNumber);
+                result = AppManager.getInstance().postGetOrderInfoShow("0036", strNumber,getUid());
+                judgeIsTokenException(result,"您的登录信息已过期，请重新登录",-1);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-//            SystemClock.sleep(1000);
             Message msg = new Message();
             OrderDetailsActivity.this.HandlerGetOrderInfoShow.sendMessage(msg);
 

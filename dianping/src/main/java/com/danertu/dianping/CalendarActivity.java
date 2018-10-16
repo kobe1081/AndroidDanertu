@@ -28,6 +28,7 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.config.Constants;
 import com.danertu.dianping.sign.CalendarAdapter;
 import com.danertu.dianping.sign.Seference;
 import com.danertu.tools.AppManager;
@@ -164,6 +165,7 @@ public class CalendarActivity extends BaseActivity implements OnGestureListener,
         public void run() {
             try {
                 result = AppManager.getInstance().judgeSignIn("0050", MID, DATE);
+                judgeIsTokenException(result, "您的登录信息已过期，请重新登录", -1);
             } catch (Exception e) {
                 e.printStackTrace();
                 Logger.e("test", "CalendarActivity Thread GetSignTodayThread 错误：" + e.toString());
@@ -239,7 +241,8 @@ public class CalendarActivity extends BaseActivity implements OnGestureListener,
         public void run() {
             try {
                 // false代表传入日期未签到
-                AppManager.getInstance().insertSignIn("0051", MID);
+                String json = AppManager.getInstance().insertSignIn("0051", MID);
+                judgeIsTokenException(json, "您的登录信息已过期，请重新登录", -1);
                 isSetResult = true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -267,7 +270,7 @@ public class CalendarActivity extends BaseActivity implements OnGestureListener,
                     seference.clearPreData(seference.signFileName);
                 }
                 while (c.moveToNext()) {
-                    String historyDate = c.getString(1).replace("/","-");
+                    String historyDate = c.getString(1).replace("/", "-");
                     seference.savePreferenceData(seference.signFileName, historyDate, true + "");
                 }
                 c.close();
@@ -290,11 +293,13 @@ public class CalendarActivity extends BaseActivity implements OnGestureListener,
             for (int i = jsonArray.length(); i > 0; i--) {
                 String signdate = "";
                 JSONObject oj = jsonArray.getJSONObject(i - 1);
-                signdate = oj.getString("singdate").split(" ")[0].replace("/","-");
+                signdate = oj.getString("singdate").split(" ")[0].replace("/", "-");
                 seference.savePreferenceData(seference.signFileName, signdate, true + "");
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            judgeIsTokenException(GetResult, "您的登录信息已过期，请重新登录", -1);
+            if (Constants.isDebug)
+                e.printStackTrace();
             Logger.e("test", "CalendarActivity Thread bindData 错误：" + e.toString());
         }
 

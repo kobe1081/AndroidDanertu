@@ -129,10 +129,12 @@ public class LiuyanActivity extends BaseActivity implements OnClickListener {
             String s = AppManager.getInstance().postInsertMessage("0032", db.GetLoginUid(LiuyanActivity.this), message, guid);
 
             isInserted = s.equals("true");
-            SystemClock.sleep(1000);
-
-            Message msg = new Message();
-            LiuyanActivity.this.HandlerLiuyan.sendMessage(msg);
+            if (isInserted){
+                Message msg = new Message();
+                LiuyanActivity.this.HandlerLiuyan.sendMessage(msg);
+            }else {
+                judgeIsTokenException(s,"您的登录信息已过期，请重新登录",-1);
+            }
 
         }
 

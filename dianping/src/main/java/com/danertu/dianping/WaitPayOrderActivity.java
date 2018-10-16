@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.config.Constants;
 import com.danertu.db.DBManager;
 import com.danertu.tools.AppManager;
 
@@ -158,11 +159,10 @@ public class WaitPayOrderActivity extends BaseActivity implements OnClickListene
                     data1.add(item);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                judgeIsTokenException(result, "您的登录信息已过期，请重新登录", -1);
+                if (Constants.isDebug)
+                    e.printStackTrace();
             }
-
-            SystemClock.sleep(1000);
-
             Message msg = new Message();
             WaitPayOrderActivity.this.HandlerListMonth.sendMessage(msg);
 
@@ -195,10 +195,9 @@ public class WaitPayOrderActivity extends BaseActivity implements OnClickListene
                     data2.add(item);
                 }
             } catch (Exception e) {
+                judgeIsTokenException(result, "您的登录信息已过期，请重新登录", -1);
                 e.printStackTrace();
             }
-            SystemClock.sleep(1000);
-
             Message msg = new Message();
             WaitPayOrderActivity.this.HandlerListAll.sendMessage(msg);
 
@@ -442,9 +441,9 @@ public class WaitPayOrderActivity extends BaseActivity implements OnClickListene
                 if (Build.VERSION.SDK_INT < 23) {
                     my_order_month.setTextAppearance(WaitPayOrderActivity.this, R.style.style_13_4B4B4B_BOLD);
                     my_order_all.setTextAppearance(WaitPayOrderActivity.this, R.style.style_13_FFFFFF_BOLD);
-                }else {
-                    my_order_month.setTextAppearance( R.style.style_13_4B4B4B_BOLD);
-                    my_order_all.setTextAppearance( R.style.style_13_FFFFFF_BOLD);
+                } else {
+                    my_order_month.setTextAppearance(R.style.style_13_4B4B4B_BOLD);
+                    my_order_all.setTextAppearance(R.style.style_13_FFFFFF_BOLD);
                 }
                 // tGetUserOrderHeadAll.start();
                 // try {
@@ -461,9 +460,9 @@ public class WaitPayOrderActivity extends BaseActivity implements OnClickListene
                 if (Build.VERSION.SDK_INT < 23) {
                     my_order_month.setTextAppearance(WaitPayOrderActivity.this, R.style.style_13_FFFFFF_BOLD);
                     my_order_all.setTextAppearance(WaitPayOrderActivity.this, R.style.style_13_4B4B4B_BOLD);
-                }else {
-                    my_order_month.setTextAppearance( R.style.style_13_FFFFFF_BOLD);
-                    my_order_all.setTextAppearance( R.style.style_13_4B4B4B_BOLD);
+                } else {
+                    my_order_month.setTextAppearance(R.style.style_13_FFFFFF_BOLD);
+                    my_order_all.setTextAppearance(R.style.style_13_4B4B4B_BOLD);
                 }
                 listview.setVisibility(TextView.VISIBLE);
                 my_order_listAll.setVisibility(TextView.GONE);

@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import com.config.Constants;
 import com.danertu.entity.Messagebean;
-import com.danertu.tools.NoticeManager;
 import com.danertu.widget.CommonTools;
 
 import java.util.ArrayList;
@@ -84,7 +83,7 @@ public class JPushMessageActivity extends BaseActivity implements OnItemClickLis
         btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (adapter.getCount()!=0) {
+                if (adapter.getCount() != 0) {
                     adapter.clearData();
                     noResult.setVisibility(View.VISIBLE);
                     CommonTools.showShortToast(JPushMessageActivity.this, "已清空全部消息");

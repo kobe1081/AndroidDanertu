@@ -230,14 +230,14 @@ public abstract class BaseFragment<V, T extends BasePresenter<V>> extends Fragme
     @Override
     public void jsShowLoading() {
         if (getUserVisibleHint()) {
-            ((NewBaseActivity) getActivity()).showLoadDialog();
+            ((BaseActivity) getActivity()).showLoadDialog();
         }
     }
 
     @Override
     public void jsHideLoading() {
         if (getUserVisibleHint()) {
-            ((NewBaseActivity) getActivity()).jsHideLoading();
+            ((BaseActivity) getActivity()).hideLoadDialog();
         }
     }
 
@@ -408,7 +408,7 @@ public abstract class BaseFragment<V, T extends BasePresenter<V>> extends Fragme
      */
     @JavascriptInterface
     public String getImgUrl(String imgName, String agentID, String supplierID) {
-        return ActivityUtils.getImgUrl(imgName, agentID, supplierID);
+        return ActivityUtils.getImgUrl(imgName, agentID, supplierID, getUid());
     }
 
     @Override
@@ -450,7 +450,7 @@ public abstract class BaseFragment<V, T extends BasePresenter<V>> extends Fragme
     }
 
     public String getStockSmallImgPath(String imgName) {
-        return Constants.imgServer + "sysProduct/" + imgName;
+        return Constants.APP_URL.imgServer + "sysProduct/" + imgName;
     }
 
     /**
@@ -462,7 +462,7 @@ public abstract class BaseFragment<V, T extends BasePresenter<V>> extends Fragme
      * @return
      */
     public String getSmallImgPath(String imgName, String agentID, String supplierID) {
-        return ActivityUtils.getImgUrl(imgName, agentID, supplierID);
+        return ActivityUtils.getImgUrl(imgName, agentID, supplierID, getUid());
     }
 
     public void setTopPadding(View view, int top) {
@@ -688,8 +688,15 @@ public abstract class BaseFragment<V, T extends BasePresenter<V>> extends Fragme
 //        }
     }
 
+    @JavascriptInterface
     @Override
     public void shareImgWithQRCode(String imgSrc, String qrCodeContent, float startX, float startY, int widthAndHeight, String platformList) {
-        ((BaseActivity) getActivity()).shareImgWithQRCode(imgSrc,qrCodeContent,startX,startY,widthAndHeight,platformList);
+        ((BaseActivity) getActivity()).shareImgWithQRCode(imgSrc, qrCodeContent, startX, startY, widthAndHeight, platformList);
+    }
+
+    @JavascriptInterface
+    @Override
+    public void quitAccount() {
+        ((NewBaseActivity) getActivity()).quitAccount();
     }
 }

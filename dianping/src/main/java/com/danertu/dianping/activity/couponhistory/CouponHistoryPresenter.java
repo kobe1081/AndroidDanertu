@@ -27,6 +27,6 @@ public class CouponHistoryPresenter extends NewBasePresenter<CouponHistoryContac
 
     @Override
     public CouponHistoryModel initModel() {
-        return new CouponHistoryModel();
+        return new CouponHistoryModel(context);
     }
 }

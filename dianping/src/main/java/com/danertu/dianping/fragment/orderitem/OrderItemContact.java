@@ -16,6 +16,8 @@ public interface OrderItemContact {
 
         void notifyChange(int listSize);
 
+        void notifyChange();
+
         void stopLoadMore();
 
         void stopRefresh();
@@ -24,11 +26,9 @@ public interface OrderItemContact {
 
         void noMoreData();
 
-
         void cancelOrderError(String orderNumber, int position);
 
         void cancelOrderFailure(String orderNumber, int position);
-
 
         void sureTakeGoodsError(String orderNumber, int position);
 
@@ -39,6 +39,8 @@ public interface OrderItemContact {
         void initBroadcastReceiver();
 
         void sendDataChangeBroadcast(String orderNumber, int position, NewOrderBean bean);
+
+        void toLogin();
     }
 
     interface IOrderItemPresenter extends IPresenter {

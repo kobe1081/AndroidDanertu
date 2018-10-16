@@ -29,6 +29,34 @@ import java.util.List;
  */
 public class ChooseCouponBean {
 
+    private String result;
+    private String info;
+    private String code;
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     private List<ValBean> val;
 
     public List<ValBean> getVal() {

@@ -61,9 +61,9 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Logger.e(TAG,"onCreate()");
+        Logger.e(TAG, "onCreate()");
         context = this;
-        isToIn=false;
+        isToIn = false;
         setContentView(R.layout.activity_stock_detail);
         initSystemBar();
         setSystemBarWhite();
@@ -76,7 +76,7 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Logger.e(TAG,"onNewIntent()");
+        Logger.e(TAG, "onNewIntent()");
     }
 
     private void loadData() {
@@ -114,11 +114,7 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
         @Override
         protected String doInBackground(String... strings) {
             String guid = strings[0];
-            Map<String, String> map = new HashMap<>();
-            map.put("apiid", "0326");
-            map.put("memLoginId", uid);
-            map.put("guid", guid);
-            return appManager.doPost(map);
+            return appManager.getStockProductInfo(uid, guid);
         }
 
         @Override
@@ -139,9 +135,24 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
                 tv_stock_count.setText(stockCount);
                 hideLoadDialog();
             } catch (Exception e) {
-                e.printStackTrace();
-                jsShowMsg("数据加载错误");
-                jsFinish();
+                judgeIsTokenException(s, new TokenExceptionCallBack() {
+                    @Override
+                    public void tokenException(String code, String info) {
+                        sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                        jsShowMsg(info);
+//                        quitAccount();
+//                        finish();
+//                        jsStartActivity("LoginActivity", "");
+                    }
+
+                    @Override
+                    public void ok() {
+                        jsShowMsg("数据加载错误");
+                        jsFinish();
+                    }
+                });
+                if (Constants.isDebug)
+                    e.printStackTrace();
             }
         }
     }
@@ -154,17 +165,12 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
         @Override
         protected String doInBackground(String... strings) {
             String wareHouseGuid = strings[0];
-            Map<String, String> map = new HashMap<>();
-            map.put("apiid", "0330");
-            map.put("memLoginId", uid);
-            map.put("wareHouseGuid", wareHouseGuid);
-            return appManager.doPost(map);
+            return appManager.getProductInRecord(uid, wareHouseGuid);
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            Logger.e(TAG, s);
             try {
                 ProductInRecordBean productInRecordBean = gson.fromJson(s, ProductInRecordBean.class);
                 Logger.e(TAG, productInRecordBean.toString());
@@ -184,10 +190,26 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
                 }
                 adapter.notifyDataSetChanged();
             } catch (Exception e) {
-                tv_no_data.setVisibility(View.VISIBLE);
-                tv_no_data.setText("加载错误");
-                lv_product_in.setVisibility(View.GONE);
-                e.printStackTrace();
+                judgeIsTokenException(s, new TokenExceptionCallBack() {
+                    @Override
+                    public void tokenException(String code, String info) {
+                        sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                        jsShowMsg(info);
+//                        quitAccount();
+//                        jsStartActivity("LoginActivity", "");
+//                        finish();
+                    }
+
+                    @Override
+                    public void ok() {
+                        tv_no_data.setVisibility(View.VISIBLE);
+                        tv_no_data.setText("加载错误");
+                        lv_product_in.setVisibility(View.GONE);
+                    }
+                });
+                if (Constants.isDebug) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -295,11 +317,7 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
         @Override
         protected String doInBackground(String... strings) {
             String info = "";
-            Map<String, String> param = new HashMap<>();
-            param.put("apiid", "0173");
-            param.put("memberid", getUid());
-            String json = appManager.doPost(param);
-            Logger.e(TAG, json);
+            String json = appManager.getBackcallProduct(uid);
             try {
                 JSONArray array = new JSONObject(json).getJSONArray("val");
                 for (int i = 0; i < array.length(); i++) {
@@ -310,7 +328,9 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
                     }
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                judgeIsTokenException(json, "您的登录信息已过期，请重新登录", -1);
+                if (Constants.isDebug)
+                    e.printStackTrace();
             }
             return info;
         }

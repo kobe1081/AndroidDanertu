@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.config.Constants;
 import com.danertu.db.DBManager;
 import com.danertu.dianping.ActivityUtils;
@@ -35,11 +36,13 @@ import com.danertu.dianping.PayPrepareActivity;
 import com.danertu.dianping.QRCodeDetailActivity;
 import com.danertu.dianping.R;
 import com.danertu.entity.MyOrderData;
+import com.danertu.entity.TokenExceptionBean;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.Logger;
 import com.danertu.tools.MyDialog;
 import com.danertu.tools.PayUtils;
 import com.danertu.widget.CommonTools;
+import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.testin.agent.TestinAgent;
 
@@ -76,6 +79,7 @@ public class MyOrderAdapter extends BaseAdapter {
     private static final String BTN_CHECK = "查看";
     private static final String BTN_QRCODE = "查看券码";
     private boolean isPayLoading;
+    private BaseActivity activity;
 
     public MyOrderAdapter(Context context, List<HashMap<String, Object>> data, int tabIndex) {
         this.context = context;
@@ -84,6 +88,7 @@ public class MyOrderAdapter extends BaseAdapter {
         db = DBManager.getInstance();
         imgLoader = ImageLoader.getInstance();
         this.tabIndex = tabIndex;
+        activity = (BaseActivity) context;
         firstClick = System.currentTimeMillis();
     }
 
@@ -228,7 +233,7 @@ public class MyOrderAdapter extends BaseAdapter {
             tv_favorablePrice = ((TextView) v_orderItem.findViewById(R.id.tv_order_discount_price));
             tv_item_quanyan_product_tip = ((TextView) v_orderItem.findViewById(R.id.tv_item_quanyan_product_tip));
 
-            imgPath = getSmallImgPath(smallImage, agentID, supplierLoginId);
+            imgPath = getSmallImgPath(smallImage, agentID, supplierLoginId, db.GetLoginUid(context));
 
 //            Logger.e("图片链接：",imgPath);
             imgLoader.displayImage(imgPath, iv_pro_logo);
@@ -332,8 +337,8 @@ public class MyOrderAdapter extends BaseAdapter {
      * @param supplierID
      * @return
      */
-    public String getSmallImgPath(String imgName, String agentID, String supplierID) {
-        return ActivityUtils.getImgUrl(imgName, agentID, supplierID);
+    public String getSmallImgPath(String imgName, String agentID, String supplierID, String uid) {
+        return ActivityUtils.getImgUrl(imgName, agentID, supplierID, uid);
     }
 
     /**
@@ -525,10 +530,35 @@ public class MyOrderAdapter extends BaseAdapter {
                                         /**
                                          * 取消订单
                                          */
-                                        if (AppManager.getInstance().postCancelOrder(number)) {
+                                        String json = AppManager.getInstance().postCancelOrder(number, db.GetLoginUid(context));
+
+                                        if (json.equals("true")) {
                                             mHandler.sendEmptyMessage(WHAT_CANCLEORDER_SUCCESS);
                                         } else {
-                                            mHandler.sendEmptyMessage(WHAT_CANCLEORDER_FAIL);
+                                            judgeIsTokenException(json, new BaseActivity.TokenExceptionCallBack() {
+                                                @Override
+                                                public void tokenException(String code, final String info) {
+                                                    activity.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            activity.runOnUiThread(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    activity.jsShowMsg(info);
+                                                                    activity.quitAccount();
+                                                                    activity.jsStartActivity("LoginActivity", "");
+                                                                    activity.finish();
+                                                                }
+                                                            });
+                                                        }
+                                                    });
+                                                }
+
+                                                @Override
+                                                public void ok() {
+                                                    mHandler.sendEmptyMessage(WHAT_CANCLEORDER_FAIL);
+                                                }
+                                            });
                                         }
                                     }
                                 }).start();
@@ -675,12 +705,31 @@ public class MyOrderAdapter extends BaseAdapter {
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if (AppManager.getInstance().postFinishOrder(number)) {
+                                        String json = AppManager.getInstance().postFinishOrder(number, db.GetLoginUid(context));
+                                        if ("true".equals(json)) {
 //                                            mHandler.sendEmptyMessage(WHAT_TAKEGOODS_SUCCESS);
                                             sendMessage(WHAT_TAKEGOODS_SUCCESS, number);// 表示确定收货成功
                                         } else {
-                                            sendMessage(WHAT_TAKEGOODS_FAIL, number);// 表示确定收货失败
+                                            judgeIsTokenException(json, new BaseActivity.TokenExceptionCallBack() {
+                                                @Override
+                                                public void tokenException(String code, final String info) {
+                                                    activity.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            activity.jsShowMsg(info);
+                                                            activity.quitAccount();
+                                                            activity.jsStartActivity("LoginActivity", "");
+                                                            activity.finish();
+                                                        }
+                                                    });
+                                                }
+
+                                                @Override
+                                                public void ok() {
+                                                    sendMessage(WHAT_TAKEGOODS_FAIL, number);// 表示确定收货失败
 //                                            mHandler.sendEmptyMessage(WHAT_TAKEGOODS_FAIL);
+                                                }
+                                            });
                                         }
                                     }
                                 }).start();
@@ -709,12 +758,31 @@ public class MyOrderAdapter extends BaseAdapter {
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if (AppManager.getInstance().postCancelOrder(number)) {
+                                        String json = AppManager.getInstance().postCancelOrder(number, db.GetLoginUid(context));
+                                        if ("true".equals(json)) {
 //                                            mHandler.sendEmptyMessage(WHAT_CANCLEORDER_SUCCESS);
                                             sendMessage(WHAT_CANCLEORDER_SUCCESS, number);
                                         } else {
-//                                            mHandler.sendEmptyMessage(WHAT_CANCLEORDER_FAIL);
-                                            sendMessage(WHAT_CANCLEORDER_FAIL, number);
+                                            judgeIsTokenException(json, new BaseActivity.TokenExceptionCallBack() {
+                                                @Override
+                                                public void tokenException(String code, final String info) {
+                                                    activity.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            activity.jsShowMsg(info);
+                                                            activity.quitAccount();
+                                                            activity.jsStartActivity("LoginActivity", "");
+                                                            activity.finish();
+                                                        }
+                                                    });
+
+                                                }
+
+                                                @Override
+                                                public void ok() {
+                                                    sendMessage(WHAT_CANCLEORDER_FAIL, number);
+                                                }
+                                            });
                                         }
                                     }
                                 }).start();
@@ -1065,4 +1133,54 @@ public class MyOrderAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public boolean judgeIsTokenException(String json) {
+        Gson gson = new Gson();
+        TokenExceptionBean bean = gson.fromJson(json, TokenExceptionBean.class);
+        return bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode());
+    }
+
+    public void judgeIsTokenException(String json, final String errorMsg, final int requestCode) {
+        Gson gson = new Gson();
+        TokenExceptionBean bean = gson.fromJson(json, TokenExceptionBean.class);
+        if (bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
+            final BaseActivity activity = (BaseActivity) this.context;
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (!TextUtils.isEmpty(errorMsg)) {
+                        jsShowMsg(errorMsg);
+                    }
+                    activity.quitAccount();
+                    if (requestCode == -1) {
+                        activity.jsStartActivity("LoginActivity", "");
+                        activity.jsFinish();
+                    } else {
+                        activity.jsStartActivityForResult("LoginActivity", "", requestCode);
+                    }
+                }
+            });
+        }
+        bean = null;
+    }
+
+    public void judgeIsTokenException(String json, BaseActivity.TokenExceptionCallBack callBack) {
+        if (TextUtils.isEmpty(json)) {
+            callBack.ok();
+        }
+        try {
+            TokenExceptionBean bean = JSONObject.parseObject(json, TokenExceptionBean.class);
+            if (bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
+                callBack.tokenException(bean.getCode(), bean.getInfo());
+            } else {
+                callBack.ok();
+            }
+            bean = null;
+            return;
+        } catch (Exception e) {
+            if (Constants.isDebug)
+                e.printStackTrace();
+            callBack.ok();
+        }
+        callBack.ok();
+    }
 }

@@ -32,6 +32,7 @@ public class DrinkCouponPresenter extends NewBasePresenter<DrinkCouponContact.Dr
     static final int WHAT_SHOP_DETAIL_SUCCESS = 313;
     static final int WHAT_SHOP_DETAIL_FAIL = 314;
     static final int WHAT_SHOP_DETAIL_ERROR = 315;
+    static final int WHAT_NEED_LOGIN=316;
     private int currentPage = 1;
 
     public DrinkCouponPresenter(Context context) {
@@ -115,12 +116,13 @@ public class DrinkCouponPresenter extends NewBasePresenter<DrinkCouponContact.Dr
                             bean.setIsUsed("0");
                             bean.setShopId(view.getShopId());
                             bean.setGetTime(DateTimeUtils.getDateToyyyyMMddHHmmss());
-                            switch (bean.getUseValidityType()){
+                            bean.setCouponRecordGuid(msg.obj.toString());
+                            switch (bean.getUseValidityType()) {
                                 case "1":
-                                    bean.setEndTime(DateTimeUtils.getSpecifiedDayAfterN(bean.getGetTime(),Integer.parseInt(bean.getUseFromTomorrow())));
+                                    bean.setEndTime(DateTimeUtils.getSpecifiedDayAfterN(bean.getGetTime(), Integer.parseInt(bean.getUseFromTomorrow())));
                                     break;
                                 case "2":
-                                    bean.setEndTime(DateTimeUtils.getSpecifiedDayAfterN(bean.getGetTime(),Integer.parseInt(bean.getUseFromToday())));
+                                    bean.setEndTime(DateTimeUtils.getSpecifiedDayAfterN(bean.getGetTime(), Integer.parseInt(bean.getUseFromToday())));
                                     break;
                             }
                             bean.setRemainCount("" + (Integer.parseInt(bean.getRemainCount()) - 1));
@@ -156,6 +158,14 @@ public class DrinkCouponPresenter extends NewBasePresenter<DrinkCouponContact.Dr
                             view.jsShowMsg("获取经销商信息失败");
                         }
                         break;
+                    case WHAT_NEED_LOGIN:
+                        if (isViewAttached()){
+                            view.jsShowMsg("您的登录信息已过期，请重新登录");
+                            view.quitAccount();
+                            view.jsFinish();
+                            view.jsStartActivity("LoginActivity");
+                        }
+                        break;
 
                 }
                 super.handleMessage(msg);
@@ -165,7 +175,7 @@ public class DrinkCouponPresenter extends NewBasePresenter<DrinkCouponContact.Dr
 
     @Override
     public DrinkCouponModel initModel() {
-        return new DrinkCouponModel();
+        return new DrinkCouponModel(context);
     }
 
     @Override
@@ -196,7 +206,7 @@ public class DrinkCouponPresenter extends NewBasePresenter<DrinkCouponContact.Dr
 
     @Override
     public void loadMore() {
-        if (isViewAttached()){
+        if (isViewAttached()) {
             view.jsShowLoading();
         }
         loadData(++currentPage);
@@ -204,7 +214,7 @@ public class DrinkCouponPresenter extends NewBasePresenter<DrinkCouponContact.Dr
 
     @Override
     public void refresh() {
-        if (isViewAttached()){
+        if (isViewAttached()) {
             view.jsShowMsg("正在刷新...");
         }
         model.getCouponList().clear();
@@ -221,13 +231,13 @@ public class DrinkCouponPresenter extends NewBasePresenter<DrinkCouponContact.Dr
 
     @Override
     public void toAgentShopIndex(String shopId) {
-        if (isViewAttached()){
+        if (isViewAttached()) {
             view.jsShowLoading();
         }
-        if (shopId.equals(Constants.CK_SHOPID)||shopId.equals("chunkang")){
-            if (isViewAttached()){
+        if (shopId.equals(Constants.CK_SHOPID) || shopId.equals("chunkang")) {
+            if (isViewAttached()) {
                 view.jsHideLoading();
-                view.toAgentShop(1,Constants.CK_SHOPID);
+                view.toAgentShop(1, Constants.CK_SHOPID);
             }
             return;
         }

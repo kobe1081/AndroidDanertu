@@ -272,7 +272,7 @@ public class JPushReceiver extends BroadcastReceiver {
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         String packageName = context.getPackageName();
         if (CommonTools.isAppRunning(am, packageName)) {
-            //app正在运行
+            //TODO 将app切换至前台
 
             return;
         } else {

@@ -2,7 +2,9 @@ package com.danertu.tools;
 
 import android.content.Context;
 
+import com.danertu.dianping.BaseActivity;
 import com.danertu.dianping.PaymentCenterActivity;
+import com.danertu.entity.TokenExceptionBean;
 import com.danertu.widget.CommonTools;
 
 import org.json.JSONException;
@@ -29,9 +31,10 @@ public abstract class StockAccountPay extends AsyncTask<String, Integer, String>
     private AccountUtil accUtil;
     private Context context;
     private LoadingDialog loadDialog = null;
-
+    private BaseActivity activity;
     public StockAccountPay(Context context) {
         this.context = context;
+        this.activity= (BaseActivity) context;
         appManager = AppManager.getInstance();
         try {
             accUtil = new AccountUtil();
@@ -50,7 +53,7 @@ public abstract class StockAccountPay extends AsyncTask<String, Integer, String>
         Logger.e("StockAccountPay","囤货账号支付参数：uid="+uid+",outOrderNumber="+outOrderNumber+",totalprice="+totalprice+",pricedata="+pricedata);
         String result = null;
         try {
-            result = appManager.stockAccountPay(accUtil.getPayInfo(uid, outOrderNumber, totalprice,"android"));
+            result = appManager.stockAccountPay(accUtil.getPayInfo(uid, outOrderNumber, totalprice,"android"),uid);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -58,7 +61,7 @@ public abstract class StockAccountPay extends AsyncTask<String, Integer, String>
     }
 
     @Override
-    protected void onPostExecute(String result) {
+    protected void onPostExecute(final String result) {
         super.onPostExecute(result);
 		Logger.e("账户支付结果", result+"");
         if (result == null || result.equals("")) {
@@ -66,19 +69,38 @@ public abstract class StockAccountPay extends AsyncTask<String, Integer, String>
             payError();
             return;
         }
-        JSONObject obj;
-        try {
-            obj = new JSONObject(result);
-            String key_result = obj.getString(PaymentCenterActivity.KEY_RESULT);
-            String info = obj.getString(PaymentCenterActivity.KEY_RESULT_INFO);
-            if (key_result.equals(PaymentCenterActivity.TAG_RESULT_SUCCESS)) {
-                paySuccess();
-            } else {
-                payFail();
+        if (activity.judgeIsTokenException(result)) {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        TokenExceptionBean tokenExceptionBean = com.alibaba.fastjson.JSONObject.parseObject(result, TokenExceptionBean.class);
+                        activity.jsShowMsg(tokenExceptionBean.getInfo());
+                        activity.quitAccount();
+                        activity.finish();
+                        activity.jsStartActivity("LoginActivity", "");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            loadDialog.dismiss();
+            loadDialog = null;
+        }else {
+            JSONObject obj;
+            try {
+                obj = new JSONObject(result);
+                String key_result = obj.getString(PaymentCenterActivity.KEY_RESULT);
+                String info = obj.getString(PaymentCenterActivity.KEY_RESULT_INFO);
+                if (key_result.equals(PaymentCenterActivity.TAG_RESULT_SUCCESS)) {
+                    paySuccess();
+                } else {
+                    payFail();
+                }
+                CommonTools.showShortToast(context, info);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            CommonTools.showShortToast(context, info);
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
         loadDialog.dismiss();
         loadDialog = null;

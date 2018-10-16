@@ -133,7 +133,7 @@ public class StockWXPayUtil {
         return System.currentTimeMillis() / 1000;
     }
 
-    /**
+    /** 普通订单调用
      * @param proBody     商品描述
      * @param orderNumber 订单号
      * @param payMoney    支付金额（单位：元）
@@ -152,7 +152,7 @@ public class StockWXPayUtil {
             packageParams.add(new BasicNameValuePair("mch_id", Constants.MCH_ID));
             packageParams.add(new BasicNameValuePair("nonce_str", nonceStr));//随机数
 //			packageParams.add(new BasicNameValuePair("notify_url", "http://121.40.35.3/test"));//微信支付后通知的商户后台地址
-            packageParams.add(new BasicNameValuePair("notify_url", "http://www.danertu.com/PayReturn/WeiPay/App_Notify.aspx"));//微信支付后通知的商户后台地址
+            packageParams.add(new BasicNameValuePair("notify_url", Constants.APP_URL.WECHAT_PAY_CALLBACK_URL_SIMPLE));//微信支付后通知的商户后台地址
             packageParams.add(new BasicNameValuePair("out_trade_no", orderNumber));//订单号
             packageParams.add(new BasicNameValuePair("spbill_create_ip", NetInfoUtil.getInstance().getLocalIPAddress()));//订单生成的机器IP，指用户浏览器端IP
             packageParams.add(new BasicNameValuePair("total_fee", String.valueOf(money)));//支付价
@@ -197,7 +197,7 @@ public class StockWXPayUtil {
             packageParams.add(new BasicNameValuePair("mch_id", Constants.MCH_ID));
             packageParams.add(new BasicNameValuePair("nonce_str", nonceStr));//随机数
 //			packageParams.add(new BasicNameValuePair("notify_url", "http://121.40.35.3/test"));//微信支付后通知的商户后台地址
-            packageParams.add(new BasicNameValuePair("notify_url", "http://www.danertu.com/PayReturn/WeiPay/App_Notify_WareHouse.aspx"));//微信支付后通知的商户后台地址
+            packageParams.add(new BasicNameValuePair("notify_url", Constants.APP_URL.WECHAT_PAY_CALLBACK_URL_STOCK));//微信支付后通知的商户后台地址
             packageParams.add(new BasicNameValuePair("out_trade_no", orderNumber));//订单号
             packageParams.add(new BasicNameValuePair("spbill_create_ip", NetInfoUtil.getInstance().getLocalIPAddress()));//订单生成的机器IP，指用户浏览器端IP
             packageParams.add(new BasicNameValuePair("total_fee", String.valueOf(money)));//支付价

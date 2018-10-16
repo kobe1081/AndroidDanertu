@@ -9,8 +9,10 @@ import android.os.Message;
 import com.config.Constants;
 import com.danertu.base.BasePresenter;
 import com.danertu.base.IPresenter;
+import com.danertu.entity.WareHouseOrderBean;
 
 import static com.danertu.dianping.StockOrderDetailActivity.RESULT_RETURN;
+import static com.danertu.dianping.StockOrderDetailActivity.RESULT_SURE_TAKE_GOODS;
 import static com.danertu.dianping.fragment.stockorder.StockOrderFragment.REQUEST_TO_ORDER_DETAIL;
 
 /**
@@ -23,13 +25,14 @@ public class StockOrderPresenter extends BasePresenter<StockOrderView> implement
     public static final int MSG_LOAD_MORE_SUCCESS = 213;
     public static final int MSG_LOAD_MORE_FAIL = 214;
     public static final int MSG_NO_MORE_DATA = 215;
+    static final int MSG_NEED_LOGIN = 216;
     private StockOrderModel model;
     private int currentPage = 1;
     private boolean isLoading = false;
 
     public StockOrderPresenter(Context context) {
         super(context);
-        model = new StockOrderModel();
+        model = new StockOrderModel(context);
         initHandler();
     }
 
@@ -40,33 +43,51 @@ public class StockOrderPresenter extends BasePresenter<StockOrderView> implement
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case MSG_GET_DATA_SUCCESS:
-                        view.updateView(model.getOrderLists().size());
-                        view.hideLoading();
-                        view.stopRefresh();
+                        if (isViewAttached()) {
+                            view.updateView(model.getOrderLists().size());
+                            view.hideLoading();
+                            view.stopRefresh();
+                        }
                         isLoading = false;
                         break;
                     case MSG_GET_DATA_FAIL:
-                        view.jsShowToast("加载数据时发生错误");
-                        view.hideLoading();
+                        if (isViewAttached()) {
+                            view.jsShowToast("加载数据时发生错误");
+                            view.hideLoading();
+                        }
                         isLoading = false;
                         break;
                     case MSG_LOAD_MORE_SUCCESS:
-                        view.updateView();
-                        view.stopLoadMore();
+                        if (isViewAttached()) {
+                            view.updateView();
+                            view.stopLoadMore();
+                        }
                         isLoading = false;
                         break;
                     case MSG_LOAD_MORE_FAIL:
                         --currentPage;
-                        view.jsShowToast("加载更多数据时发生错误");
-                        view.stopLoadMore();
                         isLoading = false;
+                        if (isViewAttached()) {
+                            view.jsShowToast("加载更多数据时发生错误");
+                            view.stopLoadMore();
+                        }
                         break;
                     case MSG_NO_MORE_DATA:
                         --currentPage;
                         isLoading = false;
-                        view.jsShowToast("已无更多数据");
-                        view.stopLoadMore();
-                        view.noMoreData();
+                        if (isViewAttached()) {
+                            view.jsShowToast("已无更多数据");
+                            view.stopLoadMore();
+                            view.noMoreData();
+                        }
+                        break;
+                    case MSG_NEED_LOGIN:
+                        if (isViewAttached()) {
+                            view.jsShowMsg("您的登录信息已过期，请重新登录");
+                            view.quitAccount();
+                            view.jsFinish();
+                            view.jsStartActivity("LoginActivity");
+                        }
                         break;
                 }
             }
@@ -122,9 +143,23 @@ public class StockOrderPresenter extends BasePresenter<StockOrderView> implement
                                 view.updateView();
                             }
                             break;
+                        case RESULT_SURE_TAKE_GOODS:
+                            //确认收货成功
+                            position = data.getIntExtra("position", -1);
+                            if (position == -1) {
+                                return;
+                            }
+                            WareHouseOrderBean.WareHouseOrderListBean bean = model.getOrderLists().get(position);
+                            bean.setOrderStatus("5");
+                            bean.setShipmentStatus("2");
+                            if (isViewAttached()) {
+                                view.updateView();
+                            }
+                            break;
                     }
                     refresh();
                     break;
+
             }
         }
     }

@@ -3,8 +3,13 @@ package com.danertu.dianping;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import cn.sharesdk.framework.Platform;
@@ -59,15 +64,16 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSONObject;
 import com.config.Constants;
 import com.danertu.db.DBManager;
 import com.danertu.entity.MyOrderData;
 import com.danertu.entity.MyOrderDataQRCode;
+import com.danertu.entity.TokenExceptionBean;
 import com.danertu.tools.AESEncrypt;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.AppUtil;
 import com.danertu.tools.AsyncTask;
-import com.danertu.tools.DateTimeUtils;
 import com.danertu.tools.DemoApplication;
 import com.danertu.tools.DeviceTag;
 import com.danertu.tools.ImageLoaderConfig;
@@ -82,11 +88,11 @@ import com.danertu.tools.StatusBarUtil;
 import com.danertu.tools.SystemBarTintManager;
 import com.danertu.widget.CommonTools;
 import com.google.gson.Gson;
-import com.google.zxing.WriterException;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.umeng.analytics.MobclickAgent;
+
 
 import static com.danertu.dianping.activity.choosecoupon.ChooseCouponPresenter.REQUEST_CHOOSE_COUPON;
 import static com.danertu.tools.MIUIUtils.isMIUI;
@@ -114,6 +120,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
     public PayUtils payUtils;
     public static final int REQUEST_PHONE_STATE = 291;
     public static final int REQUEST_WRITE_STORAGE = 292;
+    public static final int WHAT_TO_LOGIN = 293;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,25 +129,35 @@ public abstract class BaseActivity extends SwipeBackActivity {
         firstClick = System.currentTimeMillis();
         application = (DemoApplication) getApplication();
         application.addActivity(this);
+        db = DBManager.getInstance();
         //init AppManager
         appManager = AppManager.getInstance();
+        appManager.setVersionName(String.valueOf(CommonTools.getVersionCode(this)));
         //init ImageLoader
         if (!ImageLoader.getInstance().isInited()) {
             ImageLoaderConfig.initImageLoader(this, Constants.BASE_IMAGE_CACHE);
         }
         //init async task myHandler
         this.handler = new BaseHandler(this);
-        db = DBManager.getInstance();
         gson = new Gson();
         Bundle bundle = getIntent().getExtras();
         setParam(bundleToJson(bundle));
-        Logger.i("param", TAG + "\n" + jsGetParam());
         //get device information
         dTag = new DeviceTag(this, gson);
-
-        if (CommonTools.isNavigationBarShow(this)) {
-            getWindow().setNavigationBarColor(ContextCompat.getColor(this, R.color.red));
+        if (TextUtils.isEmpty(Constants.USER_TOKEN) && isLogined() && !"SplashActivity".equals(TAG) && !"AppShowActivity".equals(TAG)) {
+            String userToken = db.getUserToken(this);
+            if (TextUtils.isEmpty(userToken)) {
+                jsShowMsg("您的登录信息已过期，请重新登录");
+                quitAccount();
+                jsStartActivity("LoginActivity", "");
+                if (!"IndexActivity".equals(TAG)) {
+                    jsFinish();
+                }
+            } else {
+                Constants.USER_TOKEN = userToken;
+            }
         }
+        appManager.setUid(getUid());
     }
 
     /**
@@ -197,11 +214,19 @@ public abstract class BaseActivity extends SwipeBackActivity {
 //			webIsLoading = true;
             String paramStr = arg0[0];
             try {
-                HashMap<String, String> param = handleParamStr(paramStr);
+                LinkedHashMap<String, String> param = handleParamStr(paramStr);
                 if (param == null) {
                     CommonTools.showShortToast(getContext(), "参数不能为空");
                     return null;
                 }
+                if (!param.containsKey("dateline")) {
+                    param.put("dateline", String.valueOf(System.currentTimeMillis()));
+                }
+                if (!param.containsKey("tid")) {
+                    param.put("tid", getUid());
+                }
+                param = sortLinkedHashMap(param);
+
                 String result = appManager.doPost(param);
                 return result.replaceAll("\n|\r", "");
             } catch (Exception e) {
@@ -338,6 +363,13 @@ public abstract class BaseActivity extends SwipeBackActivity {
 //                    } else {
 //                        hideLoadDialog();
 //                    }
+                        }
+
+                        @Override
+                        public void needLogin() {
+                            jsShowMsg("您的登录信息已过期，请重新登录");
+                            jsStartActivity("LoginActivity", "");
+                            finish();
                         }
                     };
 
@@ -564,12 +596,14 @@ public abstract class BaseActivity extends SwipeBackActivity {
 
         if (Constants.ACT_FILL_STATUSBAR.contains(TAG)) {
             final int naviBarHeight = getNavigationBarHeight();
-            if (navigationBarExist2())
+            if (navigationBarExist2()) {
                 setMargins(fl, 0, 0, 0, naviBarHeight);
+            }
         } else {
             fl.setFitsSystemWindows(true);
         }
         initSystemBar();
+
     }
 
     /**
@@ -651,24 +685,19 @@ public abstract class BaseActivity extends SwipeBackActivity {
      */
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public void initSystemBar() {
-        Logger.e(TAG, "initSystemBar");
         if (VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             return;
         }
-
         Window window = getWindow();
         // Translucent status bar
         window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         // Translucent navigation bar
         window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-
         if (manager == null) {
             manager = new SystemBarTintManager(this);
         }
-
         manager.setStatusBarTintEnabled(true);
         manager.setNavigationBarTintEnabled(true);
-
         manager.setNavigationBarTintResource(R.color.black);
 //        setSystemBar(R.color.white);
         setSystemBar(R.color.tab_black);
@@ -733,7 +762,6 @@ public abstract class BaseActivity extends SwipeBackActivity {
     public void onResume() {
         isPause = false;
         super.onResume();
-        appManager = AppManager.getInstance();
         //友盟推送服务
         MobclickAgent.onPageStart(TAG);
         MobclickAgent.onResume(this);
@@ -842,7 +870,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
      * @param paramStr 参数字符串
      * @return 参数map
      */
-    protected HashMap<String, String> handleParamStr(String paramStr) {
+    protected LinkedHashMap<String, String> handleParamStr(String paramStr) {
         return CommonTools.handleParamStr(paramStr);
     }
 
@@ -858,7 +886,14 @@ public abstract class BaseActivity extends SwipeBackActivity {
                         CommonTools.showShortToast(getContext(), json);
                         return;
                     }
-                    HashMap<String, String> param = handleParamStr(paramStr);
+                    LinkedHashMap<String, String> param = handleParamStr(paramStr);
+                    if (!param.containsKey("dateline")) {
+                        param.put("dateline", String.valueOf(System.currentTimeMillis()));
+                    }
+                    if (!param.containsKey("tid")) {
+                        param.put("tid", getUid());
+                    }
+                    param = sortLinkedHashMap(param);
                     String result = appManager.doPost(param);
                     json = result.replaceAll("\n|\r", "");
                 } catch (Exception e) {
@@ -876,6 +911,23 @@ public abstract class BaseActivity extends SwipeBackActivity {
             e.printStackTrace();
         }
         return json;
+    }
+
+    public LinkedHashMap<String, String> sortLinkedHashMap(LinkedHashMap<String, String> map) {
+        LinkedHashMap<String, String> hashMap = new LinkedHashMap<>();
+        //先转成ArrayList集合
+        ArrayList<Map.Entry<String, String>> list = new ArrayList<Map.Entry<String, String>>(map.entrySet());
+        Collections.sort(list, new Comparator<Map.Entry<String, String>>() {
+            @Override
+            public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
+                return o1.getKey().compareTo(o2.getKey());
+            }
+        });
+
+        for (Map.Entry<String, String> entry : list) {
+            hashMap.put(entry.getKey(), entry.getValue());
+        }
+        return hashMap;
     }
 
     /**
@@ -1281,6 +1333,17 @@ public abstract class BaseActivity extends SwipeBackActivity {
         sendMessage(what, null, b);
     }
 
+    public void sendMessageNew(int what, int arg1, Object obj) {
+        if (handler == null) {
+            return;
+        }
+        Message message = handler.obtainMessage();
+        message.what = what;
+        message.arg1 = arg1;
+        message.obj = obj;
+        handler.sendMessage(message);
+    }
+
     public void sendMessage(int what, int taskId, String data) {
         Bundle b = new Bundle();
         b.putInt("task", taskId);
@@ -1308,81 +1371,6 @@ public abstract class BaseActivity extends SwipeBackActivity {
         }
 
         handler.sendMessage(msg);
-    }
-
-    /**
-     * 开始异步任务
-     *
-     * @param taskId    任务id
-     * @param delayTime 延迟时间
-     */
-    public void doTaskAsync(int taskId, int delayTime) {
-        BaseTask baseTask = new BaseTask() {
-            @Override
-            public void onComplete() {
-                sendMessage(BaseTask.TASK_COMPLETE, this.getId(), null);
-            }
-
-            @Override
-            public void onError(String error) {
-                hideLoadDialog();
-                sendMessage(BaseTask.NETWORK_ERROR, this.getId(), null);
-            }
-        };
-        doTaskAsync(taskId, baseTask, delayTime);
-    }
-
-    public void doTaskAsync(int taskId, String taskUrl) {
-        showLoadDialog();
-        BaseTask baseTask = new BaseTask() {
-            @Override
-            public void onComplete(String httpResult) {
-                sendMessage(BaseTask.TASK_COMPLETE, this.getId(), httpResult);
-            }
-
-            @Override
-            public void onError(String error) {
-                hideLoadDialog();
-                sendMessage(BaseTask.NETWORK_ERROR, this.getId(), null);
-            }
-        };
-        addTask(taskId, taskUrl, null, baseTask, 0);
-    }
-
-    /**
-     * 登录
-     *
-     * @param taskId
-     * @param taskUrl
-     * @param taskArgs
-     */
-    public void doTaskAsync(int taskId, String taskUrl, Hashtable<String, String> taskArgs) {
-        showLoadDialog();
-        BaseTask baseTask = new BaseTask() {
-            @Override
-            public void onComplete(String httpResult) {
-                sendMessage(BaseTask.TASK_COMPLETE, this.getId(), httpResult);
-            }
-
-            @Override
-            public void onError(String error) {
-                hideLoadDialog();
-                sendMessage(BaseTask.NETWORK_ERROR, this.getId(), null);
-            }
-        };
-        addTask(taskId, taskUrl, taskArgs, baseTask, 0);
-    }
-
-    public void doTaskAsync(int taskId, BaseTask baseTask, int delayTime) {
-        addTask(taskId, null, null, baseTask, delayTime);
-    }
-
-    public void addTask(int taskId, String taskUrl, Hashtable<String, String> taskArgs, BaseTask baseTask, int delayTime) {
-        if (taskPool == null) {
-            // init task pool
-            this.taskPool = new BaseTaskPool(this);
-        }
-        taskPool.addTask(taskId, taskUrl, taskArgs, baseTask, delayTime);
     }
 
     public void onTaskComplete(int taskId, String result) {
@@ -1501,7 +1489,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
      */
     @JavascriptInterface
     public String getImgUrl(String imgName, String agentID, String supplierID) {
-        return ActivityUtils.getImgUrl(imgName, agentID, supplierID);
+        return ActivityUtils.getImgUrl(imgName, agentID, supplierID, getUid());
     }
 
     /**
@@ -1572,7 +1560,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
      * @return
      */
     public String getStockSmallImgPath(String imgName) {
-        return Constants.imgServer + "sysProduct/" + imgName;
+        return Constants.APP_URL.imgServer + "sysProduct/" + imgName;
     }
 
     public void setTopPadding(View view, int top) {
@@ -1804,6 +1792,9 @@ public abstract class BaseActivity extends SwipeBackActivity {
             case REQUEST_CHOOSE_COUPON:
                 if (resultCode != RESULT_CANCELED) {
                     //从领取优惠券页面返回
+                    if (data.getExtras() == null) {
+                        return;
+                    }
                     Bundle bundle = data.getExtras();
                     String callBackMethod = bundle.getString("callbackMethod"); //页面回调方法
                     String isUseCoupon = bundle.getString("isUseCoupon");       //0-不使用优惠券,1-使用优惠券
@@ -1835,8 +1826,6 @@ public abstract class BaseActivity extends SwipeBackActivity {
             jsShowMsg("图片地址不能为空");
             return;
         }
-        //拼接时间戳
-        imgSrc+="&timestamp="+System.currentTimeMillis();
         showLoadDialog();
         ImageLoader.getInstance().loadImage(imgSrc, new ImageLoadingListener() {
             @Override
@@ -1854,9 +1843,10 @@ public abstract class BaseActivity extends SwipeBackActivity {
                 //拿到了图片
                 try {
                     Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.icon);
-                    Bitmap qrCode = QRCodeUtils.createQRImage(qrCodeContent, widthAndHeight, logo);
+                    Bitmap qrCode = QRCodeUtils.createQRImage(qrCodeContent, widthAndHeight, logo, false);
                     if (qrCode == null) {
                         jsShowMsg("创建失败");
+                        hideLoadDialog();
                         return;
                     }
 
@@ -1903,7 +1893,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
                     values.put(MediaStore.Images.ImageColumns.SIZE, file.length());
                     resolver.update(uri, values, null, null);
                     //绘制完成，保存，分享
-                    if (shareUtil==null){
+                    if (shareUtil == null) {
                         initShareUtil();
                     }
                     runOnUiThread(new Runnable() {
@@ -1931,6 +1921,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
                     });
                 } catch (Exception e) {
                     jsShowMsg("创建失败");
+                    hideLoadDialog();
                     getStoragePermission();
                     if (Constants.isDebug)
                         e.printStackTrace();
@@ -1941,7 +1932,151 @@ public abstract class BaseActivity extends SwipeBackActivity {
             @Override
             public void onLoadingCancelled(String s, View view) {
                 jsShowMsg("创建取消");
+                hideLoadDialog();
             }
         });
     }
+
+    @JavascriptInterface
+    public void quitAccount() {
+        Logger.e(TAG, "quitAccount");
+        String uid = getUid();
+        db.DeleteLoginInfo(getContext(), uid);
+        Constants.USER_TOKEN = "";
+        //防止登录删除不成功
+        if (db.GetLoginUid(getContext()).equals(uid)) {
+            if (Constants.isDebug) {
+                CommonTools.showShortToast(getContext(), "退出登录后登录信息更新不成功");
+            }
+            db.DeleteLoginInfo(getContext(), uid);
+        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                jsSendRefreshBroadcast();
+
+            }
+        });
+
+    }
+
+    public boolean judgeIsTokenException(String json) {
+        if (TextUtils.isEmpty(json)) {
+            return false;
+        }
+        try {
+            TokenExceptionBean bean = JSONObject.parseObject(json, TokenExceptionBean.class);
+            return bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode());
+        } catch (Exception e) {
+            if (Constants.isDebug)
+                e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public void judgeIsTokenException(String json, TokenExceptionCallBack callBack) {
+        if (TextUtils.isEmpty(json)) {
+            callBack.ok();
+        }
+        try {
+            TokenExceptionBean bean = JSONObject.parseObject(json, TokenExceptionBean.class);
+            if (bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
+                callBack.tokenException(bean.getCode(), bean.getInfo());
+            } else {
+                callBack.ok();
+            }
+            bean = null;
+            return;
+        } catch (Exception e) {
+            if (Constants.isDebug)
+                e.printStackTrace();
+            callBack.ok();
+        }
+        callBack.ok();
+    }
+
+    public interface TokenExceptionCallBack {
+        void tokenException(String code, String info);
+
+        void ok();
+    }
+
+    public void judgeIsTokenException(String json, final String errorMsg, final int requestCode) {
+        if (TextUtils.isEmpty(json)) {
+//            jsShowMsg("出错了");
+            return;
+        }
+        try {
+            TokenExceptionBean bean = JSONObject.parseObject(json, TokenExceptionBean.class);
+            if (bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
+                if (handler != null) {
+                    Message msg = handler.obtainMessage();
+                    msg.what = WHAT_TO_LOGIN;
+                    msg.arg1 = requestCode;
+                    msg.obj = bean.getInfo();
+                    handler.sendMessage(msg);
+                }
+            }
+//
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+////                        if (!TextUtils.isEmpty(errorMsg)) {
+////                            jsShowMsg(errorMsg);
+////                        }
+//                        jsShowMsg(finalBean.getInfo());
+//                        quitAccount();
+//
+//                        Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        if (requestCode == -1) {
+//                            startActivity(intent);
+//                            jsFinish();
+//                        } else {
+//                            startActivityForResult(intent, requestCode);
+//                        }
+//                    }
+//                });
+//            }
+            bean = null;
+        } catch (Exception e) {
+            if (Constants.isDebug)
+                e.printStackTrace();
+            jsShowMsg("出错了");
+        }
+    }
+
+    /**
+     * ----------------------------小能相关移除后保留下来的方法，防止页面js无法正常加载----------------------------------
+     */
+    @JavascriptInterface
+    public void postCustomerTrack() {
+        hideLoadDialog();
+    }
+
+    @JavascriptInterface
+    public void postCustomerTrack(String proName, String price) {
+        hideLoadDialog();
+    }
+
+    @JavascriptInterface
+    public void contactService(final String shopid, final String guid, final String proName, final String price, final String imgPath) {
+
+    }
+
+    @JavascriptInterface
+    public void setContactService(String proName, String orderPrice, String userName, String userId) {
+
+    }
+
+    @JavascriptInterface
+    public void setXNUtil() {
+
+    }
+
+    /**
+     * ----------------------------小能相关移除后保留下来的方法，防止页面js无法正常加载----------------------------------
+     */
 }

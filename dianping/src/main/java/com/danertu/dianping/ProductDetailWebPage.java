@@ -2,7 +2,6 @@ package com.danertu.dianping;
 
 import com.danertu.tools.Logger;
 import com.danertu.tools.ProductDetailUtil;
-import com.danertu.tools.XNUtil;
 
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -98,34 +97,11 @@ public class ProductDetailWebPage extends HtmlActivity {
     public void toPayCenter(final String guid, final String sCount, final String imgName, final String supId, final String shopid, final String agentId, final String proName, final String sPrice, final String marketPrice, final String createUser, final String attrJson, final String discountNum, final String discountPrice) {
         runOnUiThread(new Runnable() {
             public void run() {
-                util.toPayCenter(guid, sCount, imgName, supId, shopid, agentId, proName, sPrice, marketPrice, createUser, isIsbackcall(), attrJson, "", "", "", discountNum, discountPrice);
+                util.toPayCenter(guid, sCount, imgName, supId, shopid, agentId, proName, sPrice, marketPrice, createUser, isIsbackcall(), attrJson, "", "", "", discountNum, discountPrice,getUid());
             }
         });
     }
 
-    @JavascriptInterface
-    public void setXNUtil() {
-        util.setXNUtil(new XNUtil(this));
-    }
-
-    @JavascriptInterface
-    public void contactService(final String shopid, final String guid, final String proName, final String price, final String imgPath) {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                util.contactService(shopid, guid, proName, price, imgPath);
-            }
-        });
-    }
-
-    @JavascriptInterface
-    public void setContactService(String proName, String orderPrice, String userName, String userId) {
-        util.setContactService(proName, orderPrice, userName, userId);
-    }
-
-    @JavascriptInterface
-    public void postCustomerTrack() {
-        util.postCustomerTrack();
-    }
 
     @Override
     public void onPause() {

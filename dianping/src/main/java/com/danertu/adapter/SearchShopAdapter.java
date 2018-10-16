@@ -15,9 +15,11 @@ import com.danertu.dianping.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class SearchShopAdapter extends SearchAdapter {// 自己定义的构造函数
+    private String uid;
 
-    public SearchShopAdapter(Context context, List<Map<String, Object>> data) {
+    public SearchShopAdapter(Context context, List<Map<String, Object>> data, String uid) {
         super(context, data);
+        this.uid = uid;
     }
 
     @Override
@@ -32,7 +34,7 @@ public class SearchShopAdapter extends SearchAdapter {// 自己定义的构造�
         }
         String imgName = getItem(position).get("titleImg").toString();
         String shopid = getItem(position).get("shopid").toString();
-        String imgUrl = ActivityUtils.getImgUrl(imgName, shopid, null);
+        String imgUrl = ActivityUtils.getImgUrl(imgName, shopid, null, uid);
         Map<String, Object> item = getItem(position);
         viewHolder.shopName.setText(item.get("shopName").toString());
         viewHolder.address.setText(item.get("address").toString());

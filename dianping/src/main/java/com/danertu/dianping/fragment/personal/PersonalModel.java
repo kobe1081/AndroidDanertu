@@ -1,5 +1,7 @@
 package com.danertu.dianping.fragment.personal;
 
+import android.content.Context;
+
 import com.danertu.base.BaseModel;
 
 /**
@@ -11,4 +13,7 @@ import com.danertu.base.BaseModel;
  * 描述：个人中心
  */
 public class PersonalModel extends BaseModel {
+    public PersonalModel(Context context) {
+        super(context);
+    }
 }

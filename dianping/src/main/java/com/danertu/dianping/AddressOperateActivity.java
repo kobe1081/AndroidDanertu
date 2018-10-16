@@ -403,6 +403,7 @@ public class AddressOperateActivity extends BaseActivity implements OnClickListe
                 setResult(AddressActivity.REQUEST_ADDRESS_ADD);
                 finish();
             } else {
+                judgeIsTokenException(s,"您的登录信息已过期，请重新登录",-1);
                 jsShowMsg("添加失败，请检查信息是否存在特殊符号！");
             }
             hideLoadDialog();

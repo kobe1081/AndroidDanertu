@@ -1,12 +1,8 @@
 package com.danertu.dianping;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import android.content.Intent;
@@ -23,18 +19,17 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.config.Constants;
 import com.danertu.entity.Messagebean;
+import com.danertu.tools.AsyncTask;
 import com.danertu.tools.DateTimeUtils;
-import com.danertu.tools.Logger;
-import com.danertu.tools.NoticeManager;
 import com.danertu.tools.SPTool;
-import com.danertu.widget.CommonTools;
 import com.danertu.widget.XListView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import org.json.JSONArray;
 
 import static com.danertu.entity.Messagebean.NOTICE_TYPE_ORDER;
 import static com.danertu.entity.Messagebean.NOTICE_TYPE_SYSTEM;
@@ -63,10 +58,10 @@ public class MessageCenterActivity extends HomeActivity implements OnItemClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_center);
         setSystemBarWhite();
-        initData();
-        localNoticeList.addAll(getLocalNotice());
         findViewById();
         initView();
+        localNoticeList.addAll(getLocalNotice());
+        initData();
     }
 
     Handler mHandler;
@@ -81,43 +76,6 @@ public class MessageCenterActivity extends HomeActivity implements OnItemClickLi
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 switch (msg.what) {
-                    case NoticeManager.GETMSG_COMPLETE:
-                        hideLoadDialog();
-                        if (NoticeManager.getInstance().hasNewMsg()) {
-                            NoticeManager.getInstance().resetUnsetMsgCount();
-                            if (isCleared) {
-                                String clearTime = SPTool.getString(context, SP_MESSAGE, SP_MESSAGE_CLEAR_TIME);
-                                List<Messagebean> list = new ArrayList<>();
-                                ArrayList<Messagebean> msgLists = NoticeManager.getInstance().getMsgLists();
-                                for (Messagebean messagebean : msgLists) {
-                                    //比较两个日期,如果日期相等返回0；小于0，参数date1就是在date2之后,大于0，参数date1就是在date2之前
-                                    if (DateTimeUtils.compareDate(clearTime, messagebean.getModiflyTime()) > 0) {
-                                        list.add(messagebean);
-                                    } else {
-                                        break;
-                                    }
-                                }
-                                dataList.addAll(list);
-                            } else {
-                                dataList.addAll(NoticeManager.getInstance().getMsgLists());
-                            }
-
-                            Logger.e(TAG, localNoticeList.toString());
-                            if (localNoticeList.size() > 0) {
-                                dataList.add(0,localNoticeList.get(0));
-                            } else {
-                                //String id, String messageTitle, String modiflyTime, String subtitle, String image, int messageType
-                                dataList.add(0,new Messagebean("123", "系统消息", DateTimeUtils.getDateToyyyyMMddHHmmss(), "暂无系统消息", "", Messagebean.NOTICE_TYPE_SYSTEM));
-                            }
-                            adapter.notifyDataSetChanged();
-                            if (dataList.size() <= 0) {
-                                mList.setVisibility(View.GONE);
-                                tvNoResult.setVisibility(View.VISIBLE);
-                            }
-                        } else {
-                            tvNoResult.setVisibility(View.VISIBLE);
-                        }
-                        break;
 
                     default:
                         break;
@@ -127,17 +85,10 @@ public class MessageCenterActivity extends HomeActivity implements OnItemClickLi
         };
         showLoadDialog();
         isCleared = SPTool.getBoolean(context, SPTool.SP_MESSAGE, SP_MESSAGE_CLEAR);
-        //传入一个handler, 异步任务完成时通知主线程处理
-        NoticeManager.getInstance().setHandler(mHandler);
-//        String memberid = getIntent().getStringExtra("memberid");
-        String memberid = getUid();
-        if (TextUtils.isEmpty(memberid)) {
-            NoticeManager.getInstance().undateMsg();
-        } else {
-            NoticeManager.getInstance().updateMsg(memberid);
-        }
+        new GetMessageData().execute();
 
     }
+
 
     /**
      * 重新排序数据
@@ -349,4 +300,60 @@ public class MessageCenterActivity extends HomeActivity implements OnItemClickLi
             }
         }
     }
+
+    class GetMessageData extends AsyncTask<Void, Integer, String> {
+
+        @Override
+        protected String doInBackground(Void... param) {
+
+            return appManager.postGetMessage(getUid());
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            hideLoadDialog();
+            try {
+                ArrayList<Messagebean> results = new ArrayList<>();
+                org.json.JSONObject obj = new org.json.JSONObject(result).getJSONObject("messageList");
+                JSONArray arr = obj.getJSONArray("messagebean");
+                for (int i = 0; i < arr.length(); i++) {
+                    org.json.JSONObject oj = arr.getJSONObject(i);
+                    Messagebean json = gson.fromJson(oj.toString(), Messagebean.class);
+                    results.add(json);
+                }
+
+                if (isCleared) {
+                    String clearTime = SPTool.getString(context, SP_MESSAGE, SP_MESSAGE_CLEAR_TIME);
+                    List<Messagebean> list = new ArrayList<>();
+                    for (Messagebean messagebean : dataList) {
+                        //比较两个日期,如果日期相等返回0；小于0，参数date1就是在date2之后,大于0，参数date1就是在date2之前
+                        if (DateTimeUtils.compareDate(clearTime, messagebean.getModiflyTime()) > 0) {
+                            list.add(messagebean);
+                        } else {
+                            break;
+                        }
+                    }
+                    dataList.addAll(list);
+                } else {
+                    dataList.addAll(results);
+                }
+                if (localNoticeList.size() > 0) {
+                    dataList.add(localNoticeList.get(0));
+                } else {
+                    dataList.add(0, new Messagebean("123", "系统消息", DateTimeUtils.getDateToyyyyMMddHHmmss(), "暂无系统消息", "", Messagebean.NOTICE_TYPE_SYSTEM));
+                }
+                adapter.notifyDataSetChanged();
+                if (dataList.size() <= 0) {
+                    mList.setVisibility(View.GONE);
+                    tvNoResult.setVisibility(View.VISIBLE);
+                }
+            } catch (Exception e) {
+                if (Constants.isDebug)
+                    e.printStackTrace();
+                tvNoResult.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
 }

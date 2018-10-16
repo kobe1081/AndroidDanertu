@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.config.Constants;
 import com.danertu.base.NewBaseActivity;
 import com.danertu.base.NewBaseFragment;
+import com.danertu.dianping.CouponDetailActivity;
 import com.danertu.dianping.HtmlActivityNew;
 import com.danertu.dianping.R;
 import com.danertu.entity.CouponBean;
@@ -27,6 +28,7 @@ import com.danertu.tools.DateTimeUtils;
 import com.danertu.tools.Logger;
 import com.danertu.widget.CommonTools;
 import com.danertu.widget.XListView;
+import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +38,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import me.grantland.widget.AutofitTextView;
+
+import static com.danertu.dianping.activity.coupondetail.CouponDetailPresenter.RESULT_COUPON_GET;
+import static com.danertu.dianping.fragment.mallcoupon.MallCouponFragment.REQUEST_COUPON_DETAIL;
 
 /**
  * 酒水优惠券列表
@@ -158,6 +163,28 @@ public class DrinkCouponFragment extends NewBaseFragment<DrinkCouponContact.Drin
         jsStartActivity("com.danertu.dianping.IndexActivity", "shopid|" + shopId + ",;shoptype|" + levelType);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_COUPON_DETAIL:
+                if (resultCode == RESULT_COUPON_GET) {
+                    Bundle bundle = data.getExtras();
+                    int position = Integer.parseInt(bundle.getString("position", "-1"));
+                    if (position == -1) {
+                        return;
+                    }
+                    String isUsed = bundle.getString("isUsed");
+                    String couponRecordGuid = bundle.getString("couponRecordGuid");
+                    String shopId = bundle.getString("shopId");
+                    if (adapter != null) {
+                        adapter.updateUsed(position, isUsed, couponRecordGuid, shopId);
+                    }
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     class CouponAdapter extends BaseAdapter {
         List<CouponBean.CouponListBean> list;
         private Drawable drawableUp = null;
@@ -207,7 +234,9 @@ public class DrinkCouponFragment extends NewBaseFragment<DrinkCouponContact.Drin
              * 0-优惠金额，1-优惠折扣
              */
             if ("0".equals(bean.getDiscountType())) {
-                holder.tvCouponMoney.setText(setStyleForUnSignNumLeft("￥" + bean.getDiscountPrice()));
+                String discountPrice = bean.getDiscountPrice();
+                discountPrice = discountPrice.substring(0, discountPrice.indexOf("."));
+                holder.tvCouponMoney.setText(setStyleForUnSignNumLeft(getResources().getString(R.string.rmb) + discountPrice));
             } else {
                 String discountPercent = bean.getDiscountPercent();
                 if (discountPercent.endsWith("0")) {
@@ -283,12 +312,12 @@ public class DrinkCouponFragment extends NewBaseFragment<DrinkCouponContact.Drin
                         isShowDescriptionMap.put(position, true);
                         holder.llCouponDescription.setTag(0);
                         showLimit(holder.llCouponDescription, true);
-                        holder.tvCouponMore.setCompoundDrawables(null, null, drawableDown, null);
+                        holder.tvCouponMore.setCompoundDrawables(null, null, drawableUp, null);
                     } else {
                         holder.llCouponDescription.setTag(1);
                         isShowDescriptionMap.put(position, false);
                         showLimit(holder.llCouponDescription, false);
-                        holder.tvCouponMore.setCompoundDrawables(null, null, drawableUp, null);
+                        holder.tvCouponMore.setCompoundDrawables(null, null, drawableDown, null);
                     }
                 }
             });
@@ -372,8 +401,9 @@ public class DrinkCouponFragment extends NewBaseFragment<DrinkCouponContact.Drin
                                         } else {
                                             //门票/客房   AppointProductType  1-成人票、儿童票  2-团体票  3-客房
                                             switch (bean.getAppointProductType()) {
-                                                case "1":case "2":
-                                                    jsStartActivity("com.danertu.dianping.HtmlActivity", "pageName|"+"android/"+bean.getAppointProductUrl()+ "&platform=android&timestamp=" + System.currentTimeMillis()+",;guid|" + guids[0] + ",;shopid|" + bean.getShopId()+",;productCategory|"+bean.getAppointProductType());
+                                                case "1":
+                                                case "2":
+                                                    jsStartActivity("com.danertu.dianping.HtmlActivity", "pageName|" + "android/" + bean.getAppointProductUrl() + "&platform=android&timestamp=" + System.currentTimeMillis() + ",;guid|" + guids[0] + ",;shopid|" + bean.getShopId() + ",;productCategory|" + bean.getAppointProductType());
                                                     break;
                                                 case "3":
                                                     jsStartActivity("com.danertu.dianping.ProductDetailsActivity2", "guid|" + guids[0] + ",;shopid|" + bean.getShopId());
@@ -442,7 +472,6 @@ public class DrinkCouponFragment extends NewBaseFragment<DrinkCouponContact.Drin
                             break;
                         case "立即领取":
                             //立即领取
-
                             presenter.getCoupon(position, bean.getGuid());
                             break;
                     }
@@ -451,10 +480,54 @@ public class DrinkCouponFragment extends NewBaseFragment<DrinkCouponContact.Drin
             holder.root.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    if (!isClickMoreTimesShortTime()) {
+                        return;
+                    }
+                    Intent intent = new Intent(context, CouponDetailActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("shopid", getShopId());
+                    bundle.putInt("position", position);
+                    bundle.putString("couponGuid", bean.getGuid());
+                    bundle.putString("couponRecordGuid", bean.getCouponRecordGuid());
+                    bundle.putString("isUsed", bean.getIsUsed());
+                    intent.putExtras(bundle);
+                    startActivityForResult(intent, REQUEST_COUPON_DETAIL);
                 }
             });
+            holder.tvCouponShare.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!isClickMoreTimesShortTime()) {
+                        return;
+                    }
+                    try {
+                        if ("3".equals(bean.getUseScope())) {
+                            shareImgWithQRCode(bean.getImageUrl(), bean.getCouponShareUrl() + "&shopid=" + bean.getUseAgentAppoint(), Float.parseFloat(bean.getImageX()), Float.parseFloat(bean.getImageY()), Integer.parseInt(bean.getImageWidth()), "Wechat&WechatMoments");
+                        } else {
+                            shareImgWithQRCode(bean.getImageUrl(), bean.getCouponShareUrl() + bean.getGuid() + "&shopid=" + getShopId(), Float.parseFloat(bean.getImageX()), Float.parseFloat(bean.getImageY()), Integer.parseInt(bean.getImageWidth()), "Wechat&WechatMoments");
+                        }
+//                        shareImgWithQRCode(bean.getImageUrl(), Constants.COUPON_SHARE_URL+bean.getGuid()+"&shopid="+getShopId(), Float.parseFloat(bean.getImageX()), Float.parseFloat(bean.getImageY()), Integer.parseInt(bean.getImageWidth()), "Wechat&WechatMoments");
+                    } catch (Exception e) {
+                        jsShowMsg("分享失败");
+                        if (Constants.isDebug) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+            });
             return convertView;
+        }
+
+        public void updateUsed(int position, String isUsed, String couponRecordGuid, String shopId) {
+            if (position > list.size()) {
+                return;
+            }
+            CouponBean.CouponListBean bean = list.get(position);
+            bean.setIsUsed(isUsed);
+            bean.setShopId(shopId);
+            bean.setCouponRecordGuid(couponRecordGuid);
+            notifyDataSetChanged();
         }
 
         void showLimit(LinearLayout llLimit, boolean show) {
@@ -496,6 +569,8 @@ public class DrinkCouponFragment extends NewBaseFragment<DrinkCouponContact.Drin
             LinearLayout llCouponDescription;
             @BindView(R.id.root)
             LinearLayout root;
+            @BindView(R.id.tv_coupon_share)
+            TextView tvCouponShare;
 
             public ViewHolder(View view) {
 //                R.layout.item_coupon_center

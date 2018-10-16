@@ -92,7 +92,7 @@ public class SearchResultActivity extends BaseActivity {
             public void content(List<Map<String, Object>> result) {
                 hideLoadDialog();
                 if (result != null && result.size() > 0) {
-                    SearchShopAdapter adapter = new SearchShopAdapter(getContext(), result);
+                    SearchShopAdapter adapter = new SearchShopAdapter(getContext(), result,getUid());
                     lvResult.setAdapter(adapter);
                 } else {
                     if (lvResult != null && noResource != null) {

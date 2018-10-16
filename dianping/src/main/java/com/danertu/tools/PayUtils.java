@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alipay.sdk.app.PayTask;
 import com.config.Constants;
 import com.danertu.dianping.BaseActivity;
@@ -25,21 +26,30 @@ import com.danertu.dianping.OrderDetailActivity;
 import com.danertu.dianping.R;
 import com.danertu.entity.OrderBody;
 import com.danertu.entity.OrderHead;
+import com.danertu.entity.PayWayBean;
+import com.danertu.entity.TokenExceptionBean;
 import com.danertu.widget.CommonTools;
 import com.danertu.widget.PayPswDialog;
 import com.google.gson.Gson;
 
 import java.util.List;
 
+import static com.danertu.dianping.BaseActivity.WHAT_TO_LOGIN;
 import static com.danertu.dianping.PaymentCenterHandler.WHAT_WECHAT_PAY;
 
 /**
  * 2018年4月28日
  * 支付成功与否，都跳转至订单详情
+ * <p>
+ * 2018年9月3日
+ * 支付方式通过0351接口获取，不使用传递过来的数据
+ * 选择支付方式后通过0353接口更改支付方式之后再调起具体的支付操作
  */
 public abstract class PayUtils {
     private static final String TAG = "PayUtils";
-
+    public static final String ORDER_TYPE_STOCK = "warehouse";//囤货--下单后货物放到专属仓库
+    public static final String ORDER_TYPE_BACK_CALL = "backcall";//普通后台拿货
+    public static final String ORDER_TYPE_ORDER_RETURN = "warehouse_order_return";//退货邮费支付
     private ImageView ivClose;
 
     private static final int WHAT_PAY = 898;
@@ -49,11 +59,14 @@ public abstract class PayUtils {
     private String orderNumber;
     private String payPrice;
     private String productName = "";
+    private String productGuid = "";
     private String uid;
     private boolean isShowAliPay;
     private boolean isShowWechatPay;
     private boolean isShowAccountPay;
     private boolean isShowArrivePay;
+    private boolean isStock = false;      //是否是囤货
+    private String orderType = "";          //订单类型
 
     private boolean isPaying;//支付是否进行中，用于防止启动多个支付进程
 
@@ -63,10 +76,10 @@ public abstract class PayUtils {
     private OrderHead orderHead;
     private OrderBody orderBody;
 
-    public static final String PAY_ALI = "Ali";
-    public static final String PAY_WECHAT = "Wechat";
-    public static final String PAY_ACCOUNT = "Account";
-    public static final String PAY_ARRIVE = "Arrive";
+    public static final String PAY_ALI = "Alipay";
+    public static final String PAY_WECHAT = "WechatPay";
+    public static final String PAY_ACCOUNT = "AccountPay";
+    public static final String PAY_ARRIVE = "ArrivedPay";
 
     public static final String CHECK_TAG_PAY_BEFORE = "payBefore";
     public static final String CHECK_TAG_PAY_AFTER = "payAfter";
@@ -79,6 +92,8 @@ public abstract class PayUtils {
 
     public PayUtils(BaseActivity activity, String uid, String orderNumber, boolean isShowAliPay, boolean isShowWechatPay, boolean isShowAccountPay, boolean isShowArrivePay) {
         this.context = activity;
+        productGuid = "";
+        productName = "";
         baseActivity = activity;
         this.uid = uid;
         this.orderNumber = orderNumber;
@@ -89,6 +104,26 @@ public abstract class PayUtils {
         alipayUtil = new AlipayUtil(context);
         initHandler();
         new GetOrderInfo().execute(orderNumber);
+        isStock = false;
+        orderType = "";
+    }
+
+    public PayUtils(BaseActivity activity, String uid, String orderNumber, boolean isShowAliPay, boolean isShowWechatPay, boolean isShowAccountPay, boolean isShowArrivePay, boolean isStock, String orderType) {
+        this.context = activity;
+        productGuid = "";
+        productName = "";
+        baseActivity = activity;
+        this.uid = uid;
+        this.orderNumber = orderNumber;
+        this.isShowAliPay = isShowAliPay;
+        this.isShowWechatPay = isShowWechatPay;
+        this.isShowAccountPay = isShowAccountPay;
+        this.isShowArrivePay = isShowArrivePay;
+        alipayUtil = new AlipayUtil(context);
+        initHandler();
+        new GetOrderInfo().execute(orderNumber);
+        this.isStock = isStock;
+        this.orderType = orderType;
     }
 
 
@@ -231,8 +266,7 @@ public abstract class PayUtils {
                 }
                 isPaying = true;
                 dismiss();
-                baseActivity.jsShowMsg("您选择了到付");
-                toOrderDetail(orderNumber);
+                new UnionPayTask().execute(orderNumber, PAY_ARRIVE, CHECK_TAG_PAY_BEFORE);
             }
         });
 
@@ -324,17 +358,37 @@ public abstract class PayUtils {
      * @return
      */
     public boolean checkPayStatus(String orderNumber) {
-        String orderHead = AppManager.getInstance().postGetOrderHead(orderNumber);
-        Gson gson = new Gson();
-        OrderHead fromJson = gson.fromJson(orderHead, OrderHead.class);
-        return fromJson.getOrderinfolist().getOrderinfobean().get(0).getPaymentStatus().equals("2");
+        String orderHead = AppManager.getInstance().postGetOrderHead(orderNumber, uid);
+        try {
+            TokenExceptionBean bean = JSONObject.parseObject(orderHead, TokenExceptionBean.class);
+            if (bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
+                final TokenExceptionBean finalBean = bean;
+                baseActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        baseActivity.jsShowMsg(finalBean.getInfo());
+                        baseActivity.quitAccount();
+                        baseActivity.finish();
+                        baseActivity.jsStartActivity("LoginActivity", "");
+                    }
+                });
+                return false;
+            }
+            bean = null;
+        } catch (Exception e) {
+            if (Constants.isDebug)
+                e.printStackTrace();
+            OrderHead fromJson = JSONObject.parseObject(orderHead, OrderHead.class);
+            return fromJson.getOrderinfolist().getOrderinfobean().get(0).getPaymentStatus().equals("2");
+        }
+        return false;
     }
 
 
     public void initAccountPay() {
         dialog_psw = new PayPswDialog(context, R.style.Dialog) {
             public void cancelDialog() {
-                com.danertu.widget.AlertDialog dialog = new com.danertu.widget.AlertDialog(getContext(), R.style.Dialog) {
+                com.danertu.widget.AlertDialog dialog = new com.danertu.widget.AlertDialog(baseActivity, R.style.Dialog) {
                     public void sure() {
                         dismiss();
                     }
@@ -358,7 +412,7 @@ public abstract class PayUtils {
             public void passwordRight() {
                 String param[] = {uid, orderNumber, CommonTools.formatZero2Str(Double.parseDouble(payPrice)), ""};
 //                String param[] = {uid, outOrderNumber, "0.01", "0.01"};
-                AccToPay accToPay = new AccToPay(getContext()) {
+                AccToPay accToPay = new AccToPay(baseActivity,isStock) {
 
                     @Override
                     public void paySuccess() {
@@ -376,7 +430,7 @@ public abstract class PayUtils {
 
             @Override
             public void passwordWrong() {
-                CommonTools.showShortToast(getContext(), "支付密码不正确！");
+                CommonTools.showShortToast(baseActivity, "支付密码不正确！");
             }
         };
     }
@@ -393,6 +447,70 @@ public abstract class PayUtils {
         manager.sendBroadcast(intent);
     }
 
+
+    class GetProductPayWay extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... param) {
+            String productGuids = param[0];
+            if (TextUtils.isEmpty(productGuids)) {
+                return "";
+            }
+            return AppManager.getInstance().getProductPayway(productGuids);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (TextUtils.isEmpty(result)) {
+                baseActivity.jsShowMsg("支付失败");
+                return;
+            }
+            try {
+                PayWayBean payWayBean = JSONObject.parseObject(result, PayWayBean.class);
+                if ("false".equals(payWayBean.getResult()) && "-1".equals(payWayBean.getCode())) {
+                    baseActivity.sendMessageNew(WHAT_TO_LOGIN, -1, payWayBean.getInfo());
+                    isPaying = false;
+                    return;
+                }
+                if (payWayBean.getVal() == null || payWayBean.getVal().size() == 0 || TextUtils.isEmpty(payWayBean.getVal().get(0).getPayWay())) {
+                    baseActivity.jsShowMsg("无可用支付方式");
+                    isPaying = false;
+                    return;
+                }
+                List<PayWayBean.ValBean> val = payWayBean.getVal();
+                String[] payWays = val.get(0).getPayWay().split(",");
+                isShowAliPay = false;
+                isShowWechatPay = false;
+                isShowAccountPay = false;
+                isShowArrivePay = false;
+                for (String payWay : payWays) {
+                    switch (payWay) {
+                        case Constants.PAY_WAY.PAY_WAY_ALI:
+                            isShowAliPay = true;
+                            break;
+                        case Constants.PAY_WAY.PAY_WAY_WECHAT:
+                            isShowWechatPay = true;
+                            break;
+                        case Constants.PAY_WAY.PAY_WAY_ACCOUNT:
+                            isShowAccountPay = true;
+                            break;
+                        case Constants.PAY_WAY.PAY_WAY_ARRIVE:
+                            isShowArrivePay = true;
+                            break;
+                    }
+                }
+                initView(uid, orderNumber, productName, productName, payPrice, isShowAccountPay, isShowArrivePay);
+                initAccountPay();
+            } catch (Exception e) {
+                baseActivity.jsShowMsg("出错了");
+                isPaying = false;
+                if (Constants.isDebug)
+                    e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * 获取订单信息，用于传递给支付宝、微信支付
      * param[0]:订单号
@@ -407,13 +525,53 @@ public abstract class PayUtils {
             }
             Gson gson = new Gson();
             AppManager appManager = AppManager.getInstance();
-            String orderHeadStr = appManager.postGetOrderHead(orderNum);
+            final String orderHeadStr = appManager.postGetOrderHead(orderNum, uid);
             if (!TextUtils.isEmpty(orderHeadStr)) {
-                orderHead = gson.fromJson(orderHeadStr, OrderHead.class);
+                if (baseActivity.judgeIsTokenException(orderHeadStr)) {
+                    TokenExceptionBean tokenExceptionBean = JSONObject.parseObject(orderHeadStr, TokenExceptionBean.class);
+                    baseActivity.sendMessageNew(WHAT_TO_LOGIN, -1, tokenExceptionBean.getInfo());
+//                    baseActivity.runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            try {
+//                                TokenExceptionBean tokenExceptionBean = JSONObject.parseObject(orderHeadStr, TokenExceptionBean.class);
+//                                baseActivity.jsShowMsg(tokenExceptionBean.getInfo());
+//                                baseActivity.quitAccount();
+//                                baseActivity.finish();
+//                                baseActivity.jsStartActivity("LoginActivity", "");
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    });
+                    return "";
+                } else {
+                    orderHead = gson.fromJson(orderHeadStr, OrderHead.class);
+                }
             }
-            String orderBodyStr = appManager.postGetOrderBody(orderNum);
+            final String orderBodyStr = appManager.postGetOrderBody(orderNum, uid);
             if (!TextUtils.isEmpty(orderBodyStr)) {
-                orderBody = gson.fromJson(orderBodyStr, OrderBody.class);
+                if (baseActivity.judgeIsTokenException(orderBodyStr)) {
+                    TokenExceptionBean tokenExceptionBean = JSONObject.parseObject(orderHeadStr, TokenExceptionBean.class);
+                    baseActivity.sendMessageNew(WHAT_TO_LOGIN, -1, tokenExceptionBean.getInfo());
+//                    baseActivity.runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            try {
+//                                TokenExceptionBean tokenExceptionBean = JSONObject.parseObject(orderBodyStr, TokenExceptionBean.class);
+//                                baseActivity.jsShowMsg(tokenExceptionBean.getInfo());
+//                                baseActivity.quitAccount();
+//                                baseActivity.finish();
+//                                baseActivity.jsStartActivity("LoginActivity", "");
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    });
+                    return "";
+                } else {
+                    orderBody = gson.fromJson(orderBodyStr, OrderBody.class);
+                }
             }
             return "";
         }
@@ -422,6 +580,10 @@ public abstract class PayUtils {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             try {
+                if (orderHead == null || orderBody == null) {
+                    baseActivity.jsShowMsg("获取订单信息失败，请重试");
+                    return;
+                }
                 OrderHead.OrderinfolistBean.OrderinfobeanBean orderHeadBean = orderHead.getOrderinfolist().getOrderinfobean().get(0);
                 List<OrderBody.OrderproductlistBean.OrderproductbeanBean> orderproductbeanBeanList = orderBody.getOrderproductlist().getOrderproductbean();
                 OrderBody.OrderproductlistBean.OrderproductbeanBean orderBodyBean = orderproductbeanBeanList.get(0);
@@ -436,14 +598,13 @@ public abstract class PayUtils {
 
                 for (OrderBody.OrderproductlistBean.OrderproductbeanBean bean : orderproductbeanBeanList) {
                     productName += bean.getName() + "，";
+                    productGuid += bean.getGuid() + ",";
                 }
 
                 productName = productName.substring(0, productName.length() - 1);
-
+                productGuid = productGuid.substring(0, productGuid.length() - 1);
                 payPrice = orderHeadBean.getShouldPayPrice();
-
-                initView(uid, orderNumber, productName, productName, payPrice, isShowAccountPay, isShowArrivePay);
-                initAccountPay();
+                new GetProductPayWay().execute(productGuid);
             } catch (Exception e) {
                 isPaying = false;
                 payError("订单信息有误");
@@ -466,42 +627,116 @@ public abstract class PayUtils {
             String orderNumber = param[0];
             this.payWay = param[1];
             this.checkTag = param[2];
-            return AppManager.getInstance().postGetOrderHead(orderNumber);
+            return AppManager.getInstance().postGetOrderHead(orderNumber, uid);
+        }
+
+        @Override
+        protected void onPostExecute(final String result) {
+            super.onPostExecute(result);
+            baseActivity.judgeIsTokenException(result, new BaseActivity.TokenExceptionCallBack() {
+                @Override
+                public void tokenException(String code, final String info) {
+                    baseActivity.sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                    baseActivity.runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            baseActivity.jsShowMsg(info);
+//                            baseActivity.quitAccount();
+//                            baseActivity.finish();
+//                            baseActivity.jsStartActivity("LoginActivity", "");
+//                        }
+//                    });
+                }
+
+                @Override
+                public void ok() {
+                    try {
+                        OrderHead fromJson = JSONObject.parseObject(result, OrderHead.class);
+                        OrderHead.OrderinfolistBean.OrderinfobeanBean bean = fromJson.getOrderinfolist().getOrderinfobean().get(0);
+                        boolean checkResult = bean.getPaymentStatus().equals("0") && (bean.getOderStatus().equals("0") || bean.getOderStatus().equals("1")) && bean.getShipmentStatus().equals("0");
+                        switch (checkTag) {
+                            case CHECK_TAG_PAY_BEFORE:
+                                /**支付前的订单状态检查,确认是未支付状态下才能进行支付操作*/
+                                if (checkResult) {
+                                    new ChangePayWay().execute(orderNumber, uid, payWay);
+                                } else {
+                                    //已支付、已取消的订单
+                                    baseActivity.jsShowMsg("订单状态异常，请确认后再支付");
+                                }
+                                break;
+                            case CHECK_TAG_PAY_AFTER:
+                                payResult(!checkResult);
+                                break;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+        }
+    }
+
+    class ChangePayWay extends AsyncTask<String, Integer, String> {
+        String paymentName = "";
+
+        @Override
+        protected String doInBackground(String... param) {
+            String orderNumber = param[0];
+            String uid = param[1];
+            paymentName = param[2];
+            return AppManager.getInstance().getChangeOrderPayway(orderNumber, uid, Constants.deviceType, paymentName);
         }
 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            Gson gson = new Gson();
-            OrderHead fromJson = gson.fromJson(result, OrderHead.class);
-            OrderHead.OrderinfolistBean.OrderinfobeanBean bean = fromJson.getOrderinfolist().getOrderinfobean().get(0);
-            boolean checkResult = bean.getPaymentStatus().equals("0") && (bean.getOderStatus().equals("0") || bean.getOderStatus().equals("1")) && bean.getShipmentStatus().equals("0");
-
-            switch (checkTag) {
-                case CHECK_TAG_PAY_BEFORE:
-                    /**支付前的订单状态检查,确认是未支付状态下才能进行支付操作*/
-                    if (checkResult) {
-                        //未支付
-                        switch (payWay) {
-                            case PAY_ALI:
-                                new AliPay().execute(orderNumber, productName, productName, CommonTools.formatZero2Str(Double.parseDouble(payPrice)));
-                                break;
-                            case PAY_WECHAT:
-                                new WXPay(context).toPay(productName, orderNumber, CommonTools.formatZero2Str(Double.parseDouble(payPrice)));
-                                break;
-                            case PAY_ACCOUNT:
-                                dialog_psw.show();
-                                break;
-                        }
-                    } else {
-                        //已支付、已取消的订单
-                        baseActivity.jsShowMsg("订单状态异常，请确认后再支付");
+            if (TextUtils.isEmpty(result)) {
+                baseActivity.jsShowMsg("支付失败");
+                isPaying = false;
+                return;
+            }
+            try {
+                TokenExceptionBean bean = JSONObject.parseObject(result, TokenExceptionBean.class);
+                if ("true".equals(bean.getResult())) {
+                    switch (paymentName) {
+                        case PAY_ALI:
+                            new AliPay().execute(orderNumber, productName, productName, CommonTools.formatZero2Str(Double.parseDouble(payPrice)));
+                            break;
+                        case PAY_WECHAT:
+                            WXPay wxPay = new WXPay(context);
+                            if (isStock) {
+                                wxPay.toPay(productName, orderNumber, CommonTools.formatZero2Str(Double.parseDouble(payPrice)), orderType);
+                            } else {
+                                wxPay.toPay(productName, orderNumber, CommonTools.formatZero2Str(Double.parseDouble(payPrice)));
+                            }
+                            break;
+                        case PAY_ACCOUNT:
+                            dialog_psw.show();
+                            break;
+                        case PAY_ARRIVE:
+                            if (isStock) {
+                                baseActivity.jsShowMsg("囤货订单不可使用到付");
+                                return;
+                            }
+                            baseActivity.jsShowMsg("您选择了到付");
+                            toOrderDetail(orderNumber);
+                            isPaying = false;
+                            break;
                     }
 
-                    break;
-                case CHECK_TAG_PAY_AFTER:
-                    payResult(!checkResult);
-                    break;
+                } else if ("false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
+                    baseActivity.sendMessageNew(WHAT_TO_LOGIN, -1, bean.getInfo());
+                } else {
+                    baseActivity.jsShowMsg("支付失败");
+                    isPaying = false;
+                }
+
+            } catch (Exception e) {
+                baseActivity.jsShowMsg("支付失败");
+                isPaying = false;
+                if (Constants.isDebug)
+                    e.printStackTrace();
             }
         }
     }
@@ -521,7 +756,12 @@ public abstract class PayUtils {
             String payInfo = null;
             boolean payResult = false;
             try {
-                String orderInfo = alipayUtil.getSignPayOrderInfo(orderNumber, name, info, CommonTools.formatZero2Str(Double.parseDouble(payPrice)));
+                String orderInfo = "";
+                if (isStock) {
+                    orderInfo = alipayUtil.getSignPayOrderInfo(orderNumber, name, info, CommonTools.formatZero2Str(Double.parseDouble(payPrice)), orderType);
+                } else {
+                    orderInfo = alipayUtil.getSignPayOrderInfo(orderNumber, name, info, CommonTools.formatZero2Str(Double.parseDouble(payPrice)));
+                }
                 PayTask aliPay = new PayTask(baseActivity);
                 payInfo = aliPay.pay(orderInfo);
 

@@ -37,6 +37,7 @@ public class CategoryProductActivity extends BaseActivity {
     Handler dataHandler;
     Button category_product_btn_back;
     ImageLoader imageLoader;
+    String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,7 @@ public class CategoryProductActivity extends BaseActivity {
         setContentView(R.layout.activity_category_product);
         dataHandler = new Handler();
         imageLoader = ImageLoader.getInstance();
+        uid=getUid();
         showLoadDialog();
         try {
             findViewById();
@@ -189,7 +191,7 @@ public class CategoryProductActivity extends BaseActivity {
             String agentID = data1.get(position).get("agentID").toString();
             String supplierID = data1.get(position).get("supplierID").toString();
             String marketPrice = "市场价:￥ " + data1.get(position).get("marketPrice").toString();
-            String ss = ActivityUtils.getImgUrl(imgName, agentID, supplierID);
+            String ss = ActivityUtils.getImgUrl(imgName, agentID, supplierID,uid);
             String name = data1.get(position).get("proName").toString().trim();
             if (name.contains("|")) {
                 String proRealName = name.substring(0, name.indexOf("|"));

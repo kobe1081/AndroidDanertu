@@ -35,6 +35,12 @@ import java.util.List;
  * EndTime:                 --截止有效期
  * AppointProductUrl: 产品地址
  * AppointProductType  1-成人票、儿童票  2-团体票  3-客房
+ * ImageUrl:  要分享的图片地址（需经过添加二维码）
+ * ImageWidth  二维码宽度
+ * ImageX  二维码起始点x坐标
+ * ImageY 二维码起始点Y坐标
+ * CouponRecordGuid   已领取的优惠券guid  已领取才有，未领取为空
+ * CouponShareUrl:优惠券分享链接
  */
 public class CouponBean {
 
@@ -102,6 +108,10 @@ public class CouponBean {
          * JumpType : 5
          * Description :
          * AppointProductUrl
+         * ImageUrl:
+         * ImageWidth
+         * ImageX
+         * ImageY
          */
 
         private String Guid;
@@ -134,6 +144,60 @@ public class CouponBean {
         private String EndTime;
         private String AppointProductUrl;
         private String AppointProductType;
+        private String ImageUrl;
+        private String ImageWidth;
+        private String ImageX;
+        private String ImageY;
+        private String CouponRecordGuid;
+        private String CouponShareUrl;
+
+        public String getCouponShareUrl() {
+            return CouponShareUrl;
+        }
+
+        public void setCouponShareUrl(String couponShareUrl) {
+            CouponShareUrl = couponShareUrl;
+        }
+
+        public String getCouponRecordGuid() {
+            return CouponRecordGuid;
+        }
+
+        public void setCouponRecordGuid(String couponRecordGuid) {
+            CouponRecordGuid = couponRecordGuid;
+        }
+
+        public String getImageWidth() {
+            return ImageWidth;
+        }
+
+        public void setImageWidth(String imageWidth) {
+            ImageWidth = imageWidth;
+        }
+
+        public String getImageUrl() {
+            return ImageUrl;
+        }
+
+        public void setImageUrl(String imageUrl) {
+            ImageUrl = imageUrl;
+        }
+
+        public String getImageX() {
+            return ImageX;
+        }
+
+        public void setImageX(String imageX) {
+            ImageX = imageX;
+        }
+
+        public String getImageY() {
+            return ImageY;
+        }
+
+        public void setImageY(String imageY) {
+            ImageY = imageY;
+        }
 
         public String getAppointProductType() {
             return AppointProductType;

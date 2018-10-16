@@ -1,5 +1,7 @@
 package com.danertu.dianping.activity.choosecoupon;
 
+import android.content.Context;
+
 import com.config.ApiService;
 import com.danertu.base.BaseModel;
 import com.danertu.base.ModelCallBack;
@@ -17,19 +19,23 @@ public class ChooseCouponModel extends BaseModel {
     private List<ChooseCouponBean.ValBean> couponList;
     private String totalCount = "0";
 
-    public ChooseCouponModel() {
-        super();
-        couponList=new ArrayList<>();
+    public ChooseCouponModel(Context context) {
+        super(context);
+        couponList = new ArrayList<>();
     }
 
     public void getCouponList(String multiParam, String memLoginId, final int pageIndex, int pageSize, final ModelCallBack callBack) {
-        Call<ChooseCouponBean> call = retrofit.create(ApiService.class).chooseCoupon("0344", multiParam, memLoginId, pageIndex, pageSize);
+        Call<ChooseCouponBean> call = retrofit.create(ApiService.class).chooseCoupon("0344", memLoginId, multiParam);
         call.enqueue(new Callback<ChooseCouponBean>() {
             @Override
             public void onResponse(Call<ChooseCouponBean> call, Response<ChooseCouponBean> response) {
                 ChooseCouponBean body = response.body();
                 if (response.code() != RESULT_OK || body == null) {
                     callBack.requestError();
+                    return;
+                }
+                if ("false".equals(response.body().getResult()) && "-1".equals(response.body().getCode())) {
+                    callBack.tokenException(response.body().getCode(), response.body().getInfo());
                     return;
                 }
                 List<ChooseCouponBean.ValBean> list = body.getVal();

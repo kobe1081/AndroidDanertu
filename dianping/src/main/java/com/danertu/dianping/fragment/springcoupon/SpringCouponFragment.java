@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.config.Constants;
 import com.danertu.base.NewBaseActivity;
 import com.danertu.base.NewBaseFragment;
+import com.danertu.dianping.CouponDetailActivity;
 import com.danertu.dianping.HtmlActivityNew;
 import com.danertu.dianping.R;
 import com.danertu.entity.CouponBean;
@@ -27,6 +28,7 @@ import com.danertu.tools.DateTimeUtils;
 import com.danertu.tools.Logger;
 import com.danertu.widget.CommonTools;
 import com.danertu.widget.XListView;
+import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +38,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import me.grantland.widget.AutofitTextView;
+
+import static com.danertu.dianping.activity.coupondetail.CouponDetailPresenter.RESULT_COUPON_GET;
+import static com.danertu.dianping.fragment.mallcoupon.MallCouponFragment.REQUEST_COUPON_DETAIL;
 
 /**
  * 温泉优惠券页面
@@ -149,6 +154,28 @@ public class SpringCouponFragment extends NewBaseFragment<SpringCouponContact.Sp
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_COUPON_DETAIL:
+                if (resultCode == RESULT_COUPON_GET) {
+                    Bundle bundle = data.getExtras();
+                    int position = Integer.parseInt(bundle.getString("position", "-1"));
+                    if (position == -1) {
+                        return;
+                    }
+                    String isUsed = bundle.getString("isUsed");
+                    String couponRecordGuid = bundle.getString("couponRecordGuid");
+                    String shopId = bundle.getString("shopId");
+                    if (adapter != null) {
+                        adapter.updateUsed(position, isUsed, couponRecordGuid, shopId);
+                    }
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     public void onRefresh() {
         presenter.refresh();
     }
@@ -207,7 +234,9 @@ public class SpringCouponFragment extends NewBaseFragment<SpringCouponContact.Sp
              * 0-优惠金额，1-优惠折扣
              */
             if ("0".equals(bean.getDiscountType())) {
-                holder.tvCouponMoney.setText(setStyleForUnSignNumLeft("￥" + bean.getDiscountPrice()));
+                String discountPrice = bean.getDiscountPrice();
+                discountPrice = discountPrice.substring(0, discountPrice.indexOf("."));
+                holder.tvCouponMoney.setText(setStyleForUnSignNumLeft(getResources().getString(R.string.rmb) + discountPrice));
             } else {
                 String discountPercent = bean.getDiscountPercent();
                 if (discountPercent.endsWith("0")) {
@@ -225,7 +254,7 @@ public class SpringCouponFragment extends NewBaseFragment<SpringCouponContact.Sp
                 holder.tvCouponCondition.setText("消费满" + bean.getUseConditionLimitPrice() + "即可使用");
             }
             holder.tvCouponLast.setText("剩余：" + bean.getRemainCount());
-            String validityPeriod="";
+            String validityPeriod = "";
             switch (bean.getUseValidityType()) {
                 case "0":
                     String[] startTimes = bean.getUseStartTime().split(" ");
@@ -237,8 +266,8 @@ public class SpringCouponFragment extends NewBaseFragment<SpringCouponContact.Sp
                         //已领取未使用
                         String[] splitTomorrowStart = bean.getGetTime().replace("/", ".").replace("-", ".").split(" ");
                         String specifiedDayAfter = DateTimeUtils.getSpecifiedDayAfter(splitTomorrowStart[0]);
-                        if (TextUtils.isEmpty(bean.getEndTime())){
-                            bean.setEndTime(DateTimeUtils.getSpecifiedDayAfterN(specifiedDayAfter,Integer.parseInt(bean.getUseFromTomorrow())));
+                        if (TextUtils.isEmpty(bean.getEndTime())) {
+                            bean.setEndTime(DateTimeUtils.getSpecifiedDayAfterN(specifiedDayAfter, Integer.parseInt(bean.getUseFromTomorrow())));
                         }
                         String[] splitTomorrowEnd = bean.getEndTime().replace("/", ".").replace("-", ".").split(" ");
                         validityPeriod = specifiedDayAfter + "-" + splitTomorrowEnd[0];
@@ -250,8 +279,8 @@ public class SpringCouponFragment extends NewBaseFragment<SpringCouponContact.Sp
                 case "2":
                     if ("0".equals(bean.getIsUsed())) {
                         String[] splitTodayStart = bean.getGetTime().replace("/", ".").replace("-", ".").split(" ");
-                        if (TextUtils.isEmpty(bean.getEndTime())){
-                            bean.setEndTime(DateTimeUtils.getSpecifiedDayAfterN(bean.getGetTime(),Integer.parseInt(bean.getUseFromToday())));
+                        if (TextUtils.isEmpty(bean.getEndTime())) {
+                            bean.setEndTime(DateTimeUtils.getSpecifiedDayAfterN(bean.getGetTime(), Integer.parseInt(bean.getUseFromToday())));
                         }
                         String[] splitTodayEnd = bean.getEndTime().replace("/", ".").replace("-", ".").split(" ");
                         validityPeriod = splitTodayStart[0] + "-" + splitTodayEnd[0];
@@ -284,12 +313,12 @@ public class SpringCouponFragment extends NewBaseFragment<SpringCouponContact.Sp
                         isShowDescriptionMap.put(position, true);
                         holder.llCouponDescription.setTag(0);
                         showLimit(holder.llCouponDescription, true);
-                        holder.tvCouponMore.setCompoundDrawables(null, null, drawableDown, null);
+                        holder.tvCouponMore.setCompoundDrawables(null, null, drawableUp, null);
                     } else {
                         holder.llCouponDescription.setTag(1);
                         isShowDescriptionMap.put(position, false);
                         showLimit(holder.llCouponDescription, false);
-                        holder.tvCouponMore.setCompoundDrawables(null, null, drawableUp, null);
+                        holder.tvCouponMore.setCompoundDrawables(null, null, drawableDown, null);
                     }
                 }
             });
@@ -314,12 +343,12 @@ public class SpringCouponFragment extends NewBaseFragment<SpringCouponContact.Sp
                             switch (bean.getUseValidityType()) {
                                 case "0"://自定义日期
                                     try {
-                                        String useStartTime = bean.getUseStartTime().replace("/","-");
-                                        String useEndTime = bean.getUseEndTime().replace("/","-");
+                                        String useStartTime = bean.getUseStartTime().replace("/", "-");
+                                        String useEndTime = bean.getUseEndTime().replace("/", "-");
                                         //比较两个日期,如果日期相等返回0；小于0，参数date1就是在date2之后,大于0，参数date1就是在date2之前
-                                        isCanUse= DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(),useStartTime)<=0&&DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(),useEndTime)>0;
+                                        isCanUse = DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(), useStartTime) <= 0 && DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(), useEndTime) > 0;
                                     } catch (Exception e) {
-                                        isCanUse=false;
+                                        isCanUse = false;
 //                                        e.printStackTrace();
                                     }
                                     break;
@@ -327,10 +356,10 @@ public class SpringCouponFragment extends NewBaseFragment<SpringCouponContact.Sp
                                     try {
                                         String getTimeStr = bean.getGetTime();
                                         String[] split = getTimeStr.split(" ");
-                                        String nextDayStr= DateTimeUtils.getSpecifiedDayAfter(split[0]) + " "+split[1];
-                                        isCanUse=DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss().replace("/","-"),nextDayStr.replace("/","-"))<=0;
+                                        String nextDayStr = DateTimeUtils.getSpecifiedDayAfter(split[0]) + " " + split[1];
+                                        isCanUse = DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss().replace("/", "-"), nextDayStr.replace("/", "-")) <= 0;
                                     } catch (Exception e) {
-                                        isCanUse=false;
+                                        isCanUse = false;
 //                                        e.printStackTrace();
                                     }
                                     break;
@@ -338,10 +367,10 @@ public class SpringCouponFragment extends NewBaseFragment<SpringCouponContact.Sp
                                     try {
                                         String getTime = bean.getGetTime();
                                         String[] split = getTime.split(" ");
-                                        String deadLineDay = DateTimeUtils.getSpecifiedDayAfterN(split[0], Integer.parseInt(bean.getUseFromToday())) + " "+split[1];//截止日期
-                                        isCanUse=DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss().replace("/","-"),deadLineDay.replace("/","-"))>=0;
+                                        String deadLineDay = DateTimeUtils.getSpecifiedDayAfterN(split[0], Integer.parseInt(bean.getUseFromToday())) + " " + split[1];//截止日期
+                                        isCanUse = DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss().replace("/", "-"), deadLineDay.replace("/", "-")) >= 0;
                                     } catch (Exception e) {
-                                        isCanUse=false;
+                                        isCanUse = false;
 //                                        e.printStackTrace();
                                     }
                                     break;
@@ -354,14 +383,14 @@ public class SpringCouponFragment extends NewBaseFragment<SpringCouponContact.Sp
                                 case "0"://--独立页面 --温泉/酒店
                                     Intent intent = new Intent(context, HtmlActivityNew.class);
 //                            intent.putExtra("url", bean.getWenQuanUrl() +  "&platform=android&timestamp=" + System.currentTimeMillis());
-                                    intent.putExtra("url", bean.getWenQuanUrl().contains("agentid")?bean.getWenQuanUrl():(bean.getWenQuanUrl()+ "agentid=" + bean.getShopId()) + "&platform=android&timestamp=" + System.currentTimeMillis());
+                                    intent.putExtra("url", bean.getWenQuanUrl().contains("agentid") ? bean.getWenQuanUrl() : (bean.getWenQuanUrl() + "agentid=" + bean.getShopId()) + "&platform=android&timestamp=" + System.currentTimeMillis());
                                     startActivity(intent);
                                     break;
                                 case "1"://--原生产品列表
                                     String[] guids = bean.getUseProductAppointGuid().split(",");
                                     if (guids.length > 1) {
                                         //跳去新页面,请求新接口展示数据
-                                        jsStartActivity("com.danertu.dianping.CouponProductsActivity","shopid|" + bean.getShopId() + ",;couponGuid|" + bean.getGuid());
+                                        jsStartActivity("com.danertu.dianping.CouponProductsActivity", "shopid|" + bean.getShopId() + ",;couponGuid|" + bean.getGuid());
                                     } else {
                                         //只有一个的时候跳转至商品详情
                                         //app.jsStartActivity('ProductDetailsActivity2', 'guid|' + guid + ',;shopid|' + shopid);
@@ -370,8 +399,9 @@ public class SpringCouponFragment extends NewBaseFragment<SpringCouponContact.Sp
                                         } else {
                                             //门票/客房   AppointProductType  1-成人票、儿童票  2-团体票  3-客房
                                             switch (bean.getAppointProductType()) {
-                                                case "1":case "2":
-                                                    jsStartActivity("com.danertu.dianping.HtmlActivity", "pageName|"+"android/"+bean.getAppointProductUrl()+ "&platform=android&timestamp=" + System.currentTimeMillis()+",;guid|" + guids[0] + ",;shopid|" + bean.getShopId()+",;productCategory|"+bean.getAppointProductType());
+                                                case "1":
+                                                case "2":
+                                                    jsStartActivity("com.danertu.dianping.HtmlActivity", "pageName|" + "android/" + bean.getAppointProductUrl() + "&platform=android&timestamp=" + System.currentTimeMillis() + ",;guid|" + guids[0] + ",;shopid|" + bean.getShopId() + ",;productCategory|" + bean.getAppointProductType());
                                                     break;
                                                 case "3":
                                                     jsStartActivity("com.danertu.dianping.ProductDetailsActivity2", "guid|" + guids[0] + ",;shopid|" + bean.getShopId());
@@ -414,10 +444,54 @@ public class SpringCouponFragment extends NewBaseFragment<SpringCouponContact.Sp
             holder.root.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    if (!isClickMoreTimesShortTime()) {
+                        return;
+                    }
+                    Intent intent = new Intent(context, CouponDetailActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("shopid", getShopId());
+                    bundle.putInt("position", position);
+                    bundle.putString("couponGuid", bean.getGuid());
+                    bundle.putString("couponRecordGuid", bean.getCouponRecordGuid());
+                    bundle.putString("isUsed", bean.getIsUsed());
+                    intent.putExtras(bundle);
+                    startActivityForResult(intent, REQUEST_COUPON_DETAIL);
                 }
             });
+            holder.tvCouponShare.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!isClickMoreTimesShortTime()) {
+                        return;
+                    }
+                    try {
+                        if ("3".equals(bean.getUseScope())) {
+                            shareImgWithQRCode(bean.getImageUrl(), bean.getCouponShareUrl()+ "&shopid=" + bean.getUseAgentAppoint(), Float.parseFloat(bean.getImageX()), Float.parseFloat(bean.getImageY()), Integer.parseInt(bean.getImageWidth()), "Wechat&WechatMoments");
+                        } else {
+                            shareImgWithQRCode(bean.getImageUrl(), bean.getCouponShareUrl()+ "&shopid=" + getShopId(), Float.parseFloat(bean.getImageX()), Float.parseFloat(bean.getImageY()), Integer.parseInt(bean.getImageWidth()), "Wechat&WechatMoments");
+                        }
+//                        shareImgWithQRCode(bean.getImageUrl(), Constants.COUPON_SHARE_URL+bean.getGuid()+"&shopid="+getShopId(), Float.parseFloat(bean.getImageX()), Float.parseFloat(bean.getImageY()), Integer.parseInt(bean.getImageWidth()), "Wechat&WechatMoments");
+                    } catch (Exception e) {
+                        jsShowMsg("分享失败");
+                        if (Constants.isDebug) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+            });
             return convertView;
+        }
+
+        public void updateUsed(int position, String isUsed, String couponRecordGuid, String shopId) {
+            if (position > list.size()) {
+                return;
+            }
+            CouponBean.CouponListBean bean = list.get(position);
+            bean.setIsUsed(isUsed);
+            bean.setShopId(shopId);
+            bean.setCouponRecordGuid(couponRecordGuid);
+            notifyDataSetChanged();
         }
 
         void showLimit(LinearLayout llLimit, boolean show) {
@@ -459,6 +533,8 @@ public class SpringCouponFragment extends NewBaseFragment<SpringCouponContact.Sp
             LinearLayout llCouponDescription;
             @BindView(R.id.root)
             LinearLayout root;
+            @BindView(R.id.tv_coupon_share)
+            TextView tvCouponShare;
 
             public ViewHolder(View view) {
 //                R.layout.item_coupon_center

@@ -3,7 +3,7 @@ apply plugin: 'com.jakewharton.butterknife'
 //apply plugin:'findbugs'
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
     useLibrary 'org.apache.http.legacy'
 //    compileOptions.encoding="GBK"
     compileOptions.encoding = "UTF-8"
@@ -25,7 +25,7 @@ android {
             keyAlias RELEASE_KEY_ALIAS
             keyPassword RELEASE_KEY_PASSWORD
 //            v1SigningEnabled true
-//            v2SigningEnabled true
+//            v2SigningEnabled false
         }
 
     }
@@ -34,10 +34,11 @@ android {
         applicationId "com.danertu.dianping"
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 89
-        versionName "8.9"
+        versionCode 92
+        versionName "9.2"
         testApplicationId "com.danertu.dianpingtest"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
+        multiDexEnabled true
         signingConfig signingConfigs.release
     }
 
@@ -69,35 +70,32 @@ android {
 
 dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile project(':alipay_lib')
-    compile project(':code_library')
-    compile project(':libzxing')
-    compile project(':xiaonengChatUI')
-    implementation 'com.google.code.gson:gson:2.8.2'
-    compile files('libs/alipaysdk.jar')
-    compile files('libs/alipaysecsdk.jar')
-    compile files('libs/alipayutdid.jar')
-    compile files('libs/jpush-android-2.1.5.jar')
-    compile files('libs/libammsdk.jar')
-    compile files('libs/Msc.jar')
-    compile files('libs/need_lib.jar')
-    compile files('libs/testinagent.jar')
-    compile files('libs/umeng-analytics-v5.5.3.jar')
-    compile files('libs/universal-image-loader-1.8.6-with-sources.jar')
+    implementation project(':alipay_lib')
+    implementation project(':code_library')
+    implementation project(':libzxing')
+    implementation project(':onekeyshare')
+    implementation files('libs/alipaysdk.jar')
+    implementation files('libs/alipaysecsdk.jar')
+    implementation files('libs/alipayutdid.jar')
+    implementation files('libs/jpush-android-2.1.5.jar')
+    implementation files('libs/libammsdk.jar')
+    implementation files('libs/Msc.jar')
+    implementation files('libs/need_lib.jar')
+    implementation files('libs/testinagent.jar')
+    implementation files('libs/umeng-analytics-v5.5.3.jar')
+    implementation files('libs/universal-image-loader-1.8.6-with-sources.jar')
     compile files('libs/BaiduLBS_Android.jar')
     //    国产手机权限适配
     implementation 'com.github.jokermonn:permissions4m:2.0.0-lib'
     annotationProcessor 'com.github.jokermonn:permissions4m:2.0.0-processor'
-    compile project(':onekeyshare')
+    implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
     implementation 'com.squareup.okhttp3:okhttp:3.9.0'
-    compile 'me.grantland:autofittextview:0.2.+'
-    compile 'com.jakewharton:butterknife:8.4.0'
+    implementation 'me.grantland:autofittextview:0.2.+'
+    implementation 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    implementation 'com.alibaba:fastjson:1.2.49'
 }
 
-task hehe {
-    println 'hello word!!!!!!!!!!!'
-}

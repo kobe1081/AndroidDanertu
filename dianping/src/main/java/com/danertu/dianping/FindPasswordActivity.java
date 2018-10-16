@@ -1,8 +1,12 @@
 package com.danertu.dianping;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.List;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -15,6 +19,7 @@ import com.danertu.tools.AppManager;
 import com.danertu.tools.AsyncTask;
 import com.danertu.tools.Logger;
 import com.danertu.widget.CommonTools;
+
 
 public class FindPasswordActivity extends BaseWebActivity {
 
@@ -33,6 +38,9 @@ public class FindPasswordActivity extends BaseWebActivity {
         super.initWebSettings();
         webView.addJavascriptInterface(new JsCallback(), "app");
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
     }
 
     private void initTitle(String string) {
@@ -65,16 +73,30 @@ public class FindPasswordActivity extends BaseWebActivity {
         }
 
         @JavascriptInterface
-        public void jsSendCode(final String moblie) {
+        public void jsSendCode(final String mobile) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Hashtable<String, String> Params = new Hashtable<>();
-                    Params.put("apiid", "0077");
-                    Params.put("mobile", moblie);
-                    doTaskAsync(Constants.api.POST_SEND_VERITY_CODE, "", Params);
+//                    Hashtable<String, String> Params = new Hashtable<>();
+//                    Params.put("apiid", "0077");
+//                    Params.put("mobile", mobile);
+//                    doTaskAsync(Constants.api.POST_SEND_VERITY_CODE, "", Params);
+                    new GetVerityCode().execute(mobile);
                 }
             });
+        }
+
+        class GetVerityCode extends AsyncTask<String, Integer, String> {
+            @Override
+            protected String doInBackground(String... param) {
+                return appManager.postGetVerityCode(param[0]);
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                super.onPostExecute(result);
+                webView.loadUrl("javascript:javaSendVerifyCode(" + result + ")");
+            }
         }
 
         @JavascriptInterface
@@ -82,14 +104,30 @@ public class FindPasswordActivity extends BaseWebActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Hashtable<String, String> Params = new Hashtable<>();
-                    Params.put("apiid", "0078");
-                    Params.put("mobile", mobile);
-                    Params.put("vcode", vCode);
-                    doTaskAsync(Constants.api.POST_CHECK_VERITY_CODE, "", Params);
+//                    Hashtable<String, String> Params = new Hashtable<>();
+//                    Params.put("apiid", "0078");
+//                    Params.put("mobile", mobile);
+//                    Params.put("vcode", vCode);
+//                    doTaskAsync(Constants.api.POST_CHECK_VERITY_CODE, "", Params);
+                    new CheckVerityCode().execute(mobile, vCode);
                 }
             });
         }
+
+        class CheckVerityCode extends AsyncTask<String, Integer, String> {
+            @Override
+            protected String doInBackground(String... param) {
+                return appManager.postCheckCode(param[0], param[1]);
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                super.onPostExecute(result);
+                boolean status = result.equals("true");
+                webView.loadUrl("javascript:javaToResetPasswd(" + status + ")");
+            }
+        }
+
 
         @JavascriptInterface
         public void jsResetPasswd(final String passwd) {
@@ -97,12 +135,14 @@ public class FindPasswordActivity extends BaseWebActivity {
                 @SuppressWarnings("unchecked")
                 @Override
                 public void run() {
-                    HashMap<String, String> Params = new HashMap<>();
-                    Params.put("apiid", "0048");
-                    Params.put("mid", uId);
-                    Params.put("pwd", passwd);
+                    LinkedHashMap<String,String> params=new LinkedHashMap<>();
+                    params.put("apiid", "0048");
+                    params.put("dateline", String.valueOf(System.currentTimeMillis()));
+                    params.put("mid", uId);
+                    params.put("pwd", passwd);
+                    params.put("tid", uId);
 //					doTaskAsync(Constants.api.POST_RESET_PASSWORD, "", Params);
-                    new ChangePsw().execute(Params);
+                    new ChangePsw().execute(params);
                 }
             });
         }
@@ -118,11 +158,12 @@ public class FindPasswordActivity extends BaseWebActivity {
 
     }
 
-    public class ChangePsw extends AsyncTask<HashMap<String, String>, Integer, Boolean> {
+    public class ChangePsw extends AsyncTask<LinkedHashMap<String,String>, Integer, Boolean> {
 
-        protected Boolean doInBackground(HashMap<String, String>... arg0) {
+        protected Boolean doInBackground(LinkedHashMap<String,String>... arg0) {
             try {
-                String result = appManager.doPost(arg0[0]);
+                LinkedHashMap<String,String> params = arg0[0];
+                String result = appManager.doPost(params);
                 result += "";
                 if (!result.equals("false")) {
                     return true;
@@ -172,31 +213,5 @@ public class FindPasswordActivity extends BaseWebActivity {
             userIsExist = s.equalsIgnoreCase("true");
         }
     };
-
-    @Override
-    public void onTaskComplete(int taskId, String result) {
-        switch (taskId) {
-            case Constants.api.POST_SEND_VERITY_CODE:
-                webView.loadUrl("javascript:javaSendVerifyCode(" + result + ")");
-                break;
-            case Constants.api.POST_CHECK_VERITY_CODE:
-                boolean status = result.equals("true");
-                webView.loadUrl("javascript:javaToResetPasswd(" + status + ")");
-                break;
-            case Constants.api.POST_RESET_PASSWORD:
-                hideLoadDialog();
-                if (result.equals("true")) {
-                    CommonTools.showShortToast(getContext(), "修改成功");
-                    finish();
-                } else {
-                    CommonTools.showShortToast(getContext(), "修改失败");
-                }
-                break;
-
-            default:
-                break;
-        }
-    }
-
 
 }

@@ -39,7 +39,9 @@ import android.widget.RatingBar;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
 
+import com.config.Constants;
 import com.danertu.tools.AppManager;
+import com.danertu.tools.Logger;
 import com.danertu.widget.CommonTools;
 import com.danertu.widget.MyBaseAdapter;
 import com.danertu.widget.MyGridView;
@@ -532,27 +534,22 @@ public class ShopToComment extends BaseActivity implements OnClickListener {
         }
     };
 
-    public boolean submitComment(String uid, String score, String comment,
-                                 String imgStr) {
+    public boolean submitComment(String uid, String score, String comment, String imgStr) {
         // shopid = "15019909394";// 带我走店铺
         // uid = "15113347438";
         // score = "5";
         // comment = "非常好好好";
         String nim = isAnonymity ? "1" : "0";
-        HashMap<String, String> item = new HashMap<>();
-        item.put("apiid", "0101");
-        item.put("shopid", shopid);
-        item.put("memberid", uid);
-        item.put("xinglevel", score);
-        item.put("info", comment);
-        item.put("imgstr", imgStr);
-        item.put("isanonymity", nim);
+        String result = "";
         try {
-            String result = AppManager.getInstance().doPost(item);
+            result = appManager.postShopToComment(shopid, uid, score, comment, imgStr, nim);
             return Boolean.parseBoolean(result);
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.e("ShopCommentActivity_err", e.toString());
+            judgeIsTokenException(result, "您的登录信息已过期，请重新登录", -1);
+            if (Constants.isDebug) {
+                e.printStackTrace();
+            }
+            Logger.e("ShopCommentActivity_err", e.toString());
         }
         return false;
     }

@@ -5,6 +5,7 @@ import java.lang.ref.WeakReference;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -119,6 +120,9 @@ public class WapActivity extends BaseWebActivity {
         WebSettings setting = webView.getSettings();
         setting.setJavaScriptEnabled(true);
         setting.setCacheMode(WebSettings.LOAD_NO_CACHE);// 不使用缓存
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         webView.addJavascriptInterface(this, IndexActivity.WV_INTERFACE);
         loadWapContent();
 

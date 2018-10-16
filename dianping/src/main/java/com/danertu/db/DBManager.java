@@ -112,6 +112,34 @@ public class DBManager {
         return uId;
     }
 
+    /**
+     * 获取用户的token
+     *
+     * @param context
+     * @return
+     */
+    public String getUserToken(Context context) {
+        String token = "";
+        SQLiteDatabase database = null;
+        Cursor cursor = null;
+        try {
+            DBHelper dbHelper = DBHelper.getInstance(context);
+            database = dbHelper.getWritableDatabase();
+            cursor = database.query("userLoginInfo", new String[]{"token"}, " isLogin='1'", null, null, null, null);
+
+            if (!cursor.isClosed() && cursor.moveToFirst()) {
+                token = cursor.getString(0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return token;
+    }
+
     // 取到收货地址后，存入本地
     public void InsertAddress(Context context, Address address) {
         // String uuid =UUID.randomUUID().toString();
@@ -1154,11 +1182,11 @@ public class DBManager {
     }
 
     //插入推送记录表
-    public void insertNotice(Context context, String uid, String image,String title, String subtitle, String option, String pushTime) {
+    public void insertNotice(Context context, String uid, String image, String title, String subtitle, String option, String pushTime) {
         DBHelper dbHelper3 = DBHelper.getInstance(context);
         SQLiteDatabase dbr = dbHelper3.getReadableDatabase();
         String sql = "insert into tb_notice(uid,image,title,subtitle,option,pushTime) values(?,?,?,?,?,?)";
-        dbr.execSQL(sql, new Object[]{uid, image,title, subtitle, option, pushTime});
+        dbr.execSQL(sql, new Object[]{uid, image, title, subtitle, option, pushTime});
     }
 
     /**

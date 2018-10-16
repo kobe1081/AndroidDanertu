@@ -18,6 +18,7 @@ public class CouponExpiredPresenter extends NewBasePresenter<CouponExpiredContac
     static final int WHAT_LOAD_MORE_FAIL = 207;
     static final int WHAT_LOAD_MORE_ERROR = 208;
     static final int WHAT_NO_MORE_DATA = 209;
+    static final int WHAT_NEED_LOGIN = 210;
     private int currentPage = 1;
 
     public CouponExpiredPresenter(Context context) {
@@ -123,6 +124,14 @@ public class CouponExpiredPresenter extends NewBasePresenter<CouponExpiredContac
                             view.noMoreData();
                         }
                         break;
+                    case WHAT_NEED_LOGIN:
+                        if (isViewAttached()) {
+                            view.jsShowMsg("您的登录信息已过期，请重新登录");
+                            view.quitAccount();
+                            view.jsFinish();
+                            view.jsStartActivity("LoginActivity");
+                        }
+                        break;
 
                 }
                 super.handleMessage(msg);
@@ -132,7 +141,7 @@ public class CouponExpiredPresenter extends NewBasePresenter<CouponExpiredContac
 
     @Override
     public CouponExpiredModel initModel() {
-        return new CouponExpiredModel();
+        return new CouponExpiredModel(context);
     }
 
     @Override

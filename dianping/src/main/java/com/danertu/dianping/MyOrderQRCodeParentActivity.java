@@ -296,6 +296,14 @@ public abstract class MyOrderQRCodeParentActivity extends BaseActivity implement
 
                                 Logger.e(TAG, "数据更新完毕");
                             }
+
+                            @Override
+                            public void needLogin() {
+                                jsShowMsg("您的登录信息已过期，请重新登录");
+                                quitAccount();
+                                finish();
+                                jsStartActivity("LoginActivity", "");
+                            }
                         };
                         break;
                 }

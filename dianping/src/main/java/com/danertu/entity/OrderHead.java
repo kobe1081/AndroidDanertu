@@ -12,6 +12,35 @@ public class OrderHead {
      * orderinfolist : {"orderinfobean":[{"Name":"测试","Mobile":"18677757641","Address":"","ClientToSellerMsg":"","InvoiceTitle":"null","CreateTime":"2018/3/26 16:14:39","PaymentName":"泉眼核销-到付","PaymentStatus":"2","DispatchModeName":"EMS","ShipmentNumber":"000","ShouldPayPrice":"120.00","MemLoginId":"13557013342","OrderNumber":"201803261439066","OderStatus":"5","orderType":"0","ShipmentStatus":"2","DispatchPrice":"0.00","DispatchTime":"2018/3/26 16:16:04"}]}
      */
 
+
+    private String result;
+    private String info;
+    private String code;
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     private OrderinfolistBean orderinfolist;
 
     public OrderinfolistBean getOrderinfolist() {
@@ -74,6 +103,15 @@ public class OrderHead {
             private String DispatchPrice;
             private String DispatchTime;
             private String LogisticsCompanyCode;
+            private String TicketMoney;
+
+            public String getTicketMoney() {
+                return TicketMoney;
+            }
+
+            public void setTicketMoney(String ticketMoney) {
+                TicketMoney = ticketMoney;
+            }
 
             public String getLogisticsCompanyCode() {
                 return LogisticsCompanyCode;

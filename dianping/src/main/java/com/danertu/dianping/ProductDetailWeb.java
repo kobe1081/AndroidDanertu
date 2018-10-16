@@ -20,11 +20,9 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.config.Constants;
-import com.danertu.db.DBManager;
-import com.danertu.entity.MyOrderData;
+import com.danertu.entity.TokenExceptionBean;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.Logger;
-import com.danertu.tools.XNUtil;
 import com.danertu.widget.CommonTools;
 import com.danertu.widget.MWebViewClient;
 
@@ -88,12 +86,6 @@ public class ProductDetailWeb extends BaseActivity {
     private String proName = null;
     private String proPrice = null;
 
-    private XNUtil xnUtil;
-
-    @JavascriptInterface
-    public void contactService() {
-        xnUtil.communicte();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,30 +110,6 @@ public class ProductDetailWeb extends BaseActivity {
         proName = intent.getStringExtra(KEY_PRO_NAME);
         proPrice = intent.getStringExtra(KEY_PRO_PRICE);
 
-    }
-
-    private void initXNParam() {
-        xnUtil = new XNUtil(this);
-        JSONArray jsonArray;
-        try {
-            jsonArray = new JSONObject(proListJson).getJSONObject("shopprocuctList").getJSONArray("shopproductbean");
-            JSONObject item = jsonArray.getJSONObject(proIndex);
-            String price = item.getString("ShopPrice");
-            String name = item.getString("Name");
-            String guid = item.getString("Guid");
-            String agentID = item.getString("AgentId");
-            String imgName = item.getString("SmallImage");
-            imgName = imgName.equals("") ? item.getString("OriginalImge") : imgName;
-            String imgPath = getImgUrl(imgName, agentID, "");
-            xnUtil.setTitle(name);
-            xnUtil.setUsername(getUid());
-            xnUtil.setUserid(getUid());
-            xnUtil.setOrderprice(price);
-            String goodsUrl = "http://" + shopId + ".danertu.com/ProductDetail/" + guid + ".html";
-            xnUtil.setItemparam(xnUtil.genProParam(guid, name, Double.parseDouble(price), imgPath, goodsUrl, goodsUrl));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     @JavascriptInterface
@@ -193,8 +161,6 @@ public class ProductDetailWeb extends BaseActivity {
             }
             runOnUiThread(new Runnable() {
                 public void run() {
-                    initXNParam();
-                    xnUtil.postCustomerTrack();
                     webView.reload();
                     setOnContactClick();
                 }
@@ -206,7 +172,7 @@ public class ProductDetailWeb extends BaseActivity {
     private void setOnContactClick() {
         b_contact.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                contactService();
+                //TODO 联系客服
             }
         });
     }
@@ -268,8 +234,6 @@ public class ProductDetailWeb extends BaseActivity {
             showLoadDialog();
             new Thread(rInitData).start();
         } else {
-            initXNParam();
-            xnUtil.postCustomerTrack();
             setOnContactClick();
         }
         webView.loadUrl(url);
@@ -385,17 +349,36 @@ public class ProductDetailWeb extends BaseActivity {
             int count = Integer.parseInt(buyCount);
             shouldPay = real * count;
             String uid = db.GetLoginUid(context);
-            reserveNum = AppManager.getInstance().postReserve(uid, shopId, proGuid, recName, recAddress, recMobile, count, shouldPay, real, proName, shopName);
-            if (!"".equals(reserveNum)) {
-                isOrderComplete = true;
+            reserveNum = appManager.postReserve(uid, shopId, proGuid, recName, recAddress, recMobile, count, shouldPay, real, proName, shopName);
+            if (judgeIsTokenException(reserveNum)) {
                 runOnUiThread(new Runnable() {
+                    @Override
                     public void run() {
-                        webView.loadUrl(Constants.appWebPageUrl + WEBPAGE_RESERVE_SUCCESS);
+                        try {
+                            TokenExceptionBean tokenExceptionBean = com.alibaba.fastjson.JSONObject.parseObject(reserveNum, TokenExceptionBean.class);
+                            jsShowMsg(tokenExceptionBean.getInfo());
+                            quitAccount();
+                            finish();
+                            jsStartActivity("LoginActivity", "");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
+
             } else {
-                CommonTools.showShortToast(context, "预订失败，请重新开启程序预订");
+                if (!"".equals(reserveNum)) {
+                    isOrderComplete = true;
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            webView.loadUrl(Constants.appWebPageUrl + WEBPAGE_RESERVE_SUCCESS);
+                        }
+                    });
+                } else {
+                    CommonTools.showShortToast(context, "预订失败，请重新开启程序预订");
+                }
             }
+
         } catch (Exception e) {
             CommonTools.showShortToast(context, "页面出现异常，暂不提供预订功能");
             return;
@@ -432,7 +415,7 @@ public class ProductDetailWeb extends BaseActivity {
     @JavascriptInterface
     public void jsToOrderActivity(int index) {
         if (index < 0) {
-            MyOrderActivity.isNeedInitMyOrderData=false;
+            MyOrderActivity.isNeedInitMyOrderData = false;
             Intent intent = new Intent(context, MyOrderActivity.class);
             intent.putExtra("TabIndex", index);
             startActivity(intent);

@@ -26,7 +26,6 @@ public class Constants {
      * 是否开启日志输出，调试模式时异常捕捉交回给系统处理的
      */
     public final static boolean isDebug = true;//发版本请设置为 ---false---
-
     public final static boolean isLocal = true;
     /**
      * 是否为业务员版本
@@ -36,39 +35,40 @@ public class Constants {
     /**
      * -------------------------正式地址------------------------------------
      */
-//	public static final String appWebPageUrl = "http://115.28.55.222:8018/";
+//    public static final String appWebPageUrl = "https://appweb.danertu.com:8022/";
+//    public static final String apiSrcUrl = "https://api.danertu.com:8021/requestapi.aspx";
 
-//常用
+//  常用
+    public static final String appWebPageUrl = "https://appweb.danertu.com:8444/";
+    public static final String apiSrcUrl = "https://api.danertu.com:8446/requestapi.aspx";
+
+
+    //弃用,改为https
+//	public static final String appWebPageUrl = "http://115.28.55.222:8018/";
 //    public static final String apiSrcUrl = "http://115.28.55.222:8085/RequestApi.aspx";
+
 
 //	public static final String apiSrcUrl = "http://115.28.55.222:88/RequestApi.aspx";//山西API地址
 
     //温泉首页地址
-//    public static final String SPRING_URL ="http://www.danertu.com/mobile/qyyd/quanyan_index.htm";
-
+    public static final String SPRING_URL = "http://www.danertu.com/mobile/qyyd/quanyan_index.htm";
     //------------------------------------------------------------------------------------------
 
     /**
      * -------------------------测试地址------------------------------------
      */
 //    public static final String appWebPageUrl = "http://115.28.55.222:8019/";//外网测试地址
-//常用
-    public static final String appWebPageUrl = "http://192.168.1.137:778/";
 
-//	public static final String appWebPageUrl = "http://192.168.1.253:8018/";
-    /**
-     * @see 2017/7/7
-     */
-    public static final String apiSrcUrl = "http://192.168.1.137:511/RequestApi.aspx";
-    /**
-     * https测试
-     */
-//    public static final String apiSrcUrl = "https://api.danertu.com/requestapi.aspx";
+//常用
+//    public static final String appWebPageUrl = "http://192.168.1.137:778/";
+//    public static final String apiSrcUrl = "http://192.168.1.137:511/RequestApi.aspx";
 
 //	public static final String apiSrcUrl = "http://192.168.1.253:8085/RequestApi.aspx";
 
     //温泉首页地址
-    public static final String SPRING_URL = "http://192.168.1.137:411/qyyd/quanyan_index.htm";
+//    public static final String SPRING_URL = "http://192.168.1.137:411/qyyd/quanyan_index.htm";
+    //优惠券分享测试链接
+//    public static final String COUPON_SHARE_URL = "http://192.168.1.137:411/coupon_detail_share.aspx?couponGuid=";
     //------------------------------------------------------------
 
     /**
@@ -79,28 +79,45 @@ public class Constants {
     /**
      * -------------------------正式地址------------------------------------
      */
-//    public static final String BASE_API_URL="http://115.28.55.222:8085"+apiSrcUrl.substring(0,apiSrcUrl.lastIndexOf("/"));
     public static final String BASE_API_URL = apiSrcUrl.substring(0, apiSrcUrl.lastIndexOf("/"));
-
-    /**
-     * -------------------------测试地址------------------------------------
-     */
-//    public static final String BASE_API_URL="http://192.168.1.137:511";
-
 
     public static final String API_ADDRESS = "/RequestApi.aspx";
 
+    /**
+     * 用户token
+     */
+    public static String USER_TOKEN = "";
+    public static String APP_PLATFORM = "android";
+    public static String TOKEN_ERROR_CODE = "-1";
 
     /**
-     * 分享大厅页面地址修改
-     * 2017年11月28日
+     * app客户端配置
      */
-    public static final String NEW_SHARE_HALL_ADDRESS = "http://www.danertu.com/mobile/sharehall/list.aspx?platform=android&issharehall=1";
+    public static class APP_URL {
+        public static String WECHAT_PAY_CALLBACK_URL_SIMPLE = "http://www.danertu.com/PayReturn/WeiPay/App_Notify.aspx";//普通订单微信支付回调地址
+        public static String WECHAT_PAY_CALLBACK_URL_STOCK = "http://www.danertu.com/PayReturn/WeiPay/App_Notify_WareHouse.aspx";//囤货微信支付回调地址
+        public static String ALI_PAY_CALLBACK_URL_SIMPLE = "https://api.danertu.com:446/AppPayReturn.aspx";//普通订单支付宝回调地址
+        public static String ALI_PAY_CALLBACK_URL_STOCK = "https://api.danertu.com:446/AppPayReturnWareHouse.aspx";//囤货支付宝支付回调地址
+        public static String DANERTU_STOCK_PROTOCOL = "https://appweb.danertu.com:8444/articlescrap/articlescrap_tunhuo_protocol.html?from=order";//单耳兔智慧仓库协议地址
+        public static String SHOP_SHARE_URL = "http://115.28.55.222:8085/doShare.aspx?type=s&shopid=";//店铺推广地址
+        public static String NEW_SHARE_HALL_ADDRESS = "http://www.danertu.com/mobile/sharehall/list.aspx?platform=android&issharehall=1";
+        public static String imgServer = "http://img.danertu.com/"; // 图片服务器
+        public static String APK_DOWNLOAD_URL = "http://www.danertu.com/download/danertu.apk";//apk下载地址
+        public static String APK_PATCH_DOWNLOAD_URL = "http://www.danertu.com/download/danertu-patch.apk";//apk差分包下载地址
+        public static String ANNOUNCEMENT_DETAIL_URL = "http://www.danertu.com/mobile/announcement/AnnouncementDetail.htm";//资讯分享详细地址
+        public static String KUAIDI100_ADDRESS = "https://m.kuaidi100.com/result.jsp?nu=";//快递物流查询地址
+        public static String TICKET_DETAIL_URL = "http://www.danertu.com/wechat/product_merge.aspx";//票务商品详情页面地址
+    }
+
     /**
-     * 2018年2月2日
-     * 单耳兔智慧仓库协议地址
+     * 支付方式
      */
-    public static final String DANERTU_STOCK_PROTOCOL = appWebPageUrl + "articlescrap/articlescrap_tunhuo_protocol.html?from=order";
+    public static class PAY_WAY {
+        public static final String PAY_WAY_ALI = "Alipay";
+        public static final String PAY_WAY_WECHAT = "WechatPay";
+        public static final String PAY_WAY_ACCOUNT = "AccountPay";
+        public static final String PAY_WAY_ARRIVE = "ArrivedPay";
+    }
 
     // appi
     // 请同时修改 androidmanifest.xml里面，.PaymentCenterActivity里的属性<data
@@ -113,9 +130,12 @@ public class Constants {
     // API密钥，在商户平台设置
     public static final String API_KEY = "YTA3YWMzNWFkM2UwMjI5OTAyYzFiZmU4";
 
+    public static final String QL_SUPPLIERID = "zsqlsz";
     public static final String QY_SUPPLIERID = "shopnum1";
     public final static String deviceType = "android";
     public final static String downloadDir = "danertu/";// 安装目录
+
+
     /**
      * 记录错误密码信息的文本
      */
@@ -140,7 +160,6 @@ public class Constants {
      */
     public final static String guid01 = "6ccaa7c9-d363-45bc-bcac-4f06debb5426";
 
-    public final static String apkDownloadAddress = "http://www.danertu.com/download/danertu.apk";
 
     public final static String CK_SHOPID = "15017339307";
     public final static String CK_PHONE = "4009952220";
@@ -218,16 +237,9 @@ public class Constants {
     public static int MaxDateNum = 100000; // 设置最大数据条数
     public static int pageSize = 10; // 分页每页显示数
 
-    //	public static String imgServer = "http://115.28.77.246/"; // 图片服务器
-    public final static String imgServer = "http://img.danertu.com/"; // 图片服务器
 
     public static String cityText = "";
-    // 店铺推广地址
-    public final static String shareUmlDo = "http://115.28.55.222:8085/doShare.aspx?type=s&shopid=";
-    public final static String IOSshareUmlDo = "http://115.28.55.222:8085/indexios.aspx?type=s&shopid=";
-    // 个人分享地址
-    public static String sharepUmlDo = "http://115.28.55.222:8085/doShare.aspx?type=p&shopid=";
-    public static String IOSsharepUmlDo = "http://115.28.55.222:8085/indexios.aspx?type=p&shopid=";
+
 
     /**
      * webview与js交互的接口名
@@ -388,4 +400,14 @@ public class Constants {
     public final static String GET_LOCATION_FINISH = "com.danertu.dianping.GET_LOCATION_FINISH";
 
     public final static String PAY_UTILS_RESULT = "com.danertu.dianping.PAY_UTILS_RESULT";
+
+    /**
+     * 合作商家的登录id
+     */
+    public final static ArrayList<String> COOPERATE_SUPPLIER_ID =new ArrayList<String>(){
+        {
+            add("zsqlsz");
+        }
+    };
+
 }

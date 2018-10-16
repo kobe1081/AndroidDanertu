@@ -73,17 +73,18 @@ public class MyOrderDetailFragment extends Fragment {
         this.payState = state;
     }
 
-    private String bannerUrl, proName, buyNum, arrTime, leaveTime, agentMobile;
+    private String bannerUrl, proName, buyNum, arrTime, leaveTime, agentMobile,uid;
 
     public void initOrderBody(String bannerUrl, String proName,
                               String buyNum, String arrTime, String leaveTime,
-                              String agentMobile) {
+                              String agentMobile,String uid) {
         this.bannerUrl = bannerUrl;
         this.proName = proName;
         this.buyNum = buyNum;
         this.arrTime = arrTime;
         this.leaveTime = leaveTime;
         this.agentMobile = agentMobile;
+        this.uid=uid;
     }
 
     private String totalprice, recName, recMobile, outOrderNumber, paymentName, orderCreate;
@@ -267,7 +268,7 @@ public class MyOrderDetailFragment extends Fragment {
         protected Integer doInBackground(String... params) {
             int result = 0;
             try {
-                result = Integer.parseInt(AppManager.getInstance().postGetOrderPayTime(outOrderNumber));
+                result = Integer.parseInt(AppManager.getInstance().postGetOrderPayTime(outOrderNumber,uid));
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -277,6 +278,7 @@ public class MyOrderDetailFragment extends Fragment {
 
         protected void onPostExecute(final Integer result) {
             super.onPostExecute(result);
+
             if (result <= 0) {
                 setPayVisibility(View.GONE);
             } else {

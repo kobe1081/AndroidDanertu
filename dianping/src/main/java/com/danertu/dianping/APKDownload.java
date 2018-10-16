@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bobo.utils.PatchUtils;
+import com.config.Constants;
 import com.danertu.download.DownloadNoti;
 import com.danertu.download.DownloadService;
 import com.danertu.download.FileUtil;
@@ -45,12 +48,13 @@ public class APKDownload extends Activity implements OnClickListener {
         try {
             System.loadLibrary("diff");
         } catch (Exception e) {
-            Logger.e("APKDownload","64位so库");
+            Logger.e("APKDownload", "64位so库");
             e.printStackTrace();
         }
     }
 
     public static final String k_isComplete = "complete";
+    public static final String COMPLEX_APK_PATH = Environment.getExternalStorageState() + File.separator + "myfile" + File.separator + "";
     /**
      * 1表示首次进入会默认开始下载，2表示下载进行中，3表示下载完毕
      */
@@ -86,9 +90,9 @@ public class APKDownload extends Activity implements OnClickListener {
             isComplete = Boolean.parseBoolean(tComplete);
         }
         if (isComplete)
-            url = "http://www.danertu.com/download/danertu.apk";
+            url = Constants.APP_URL.APK_DOWNLOAD_URL;
         else
-            url = "http://www.danertu.com/download/danertu-patch.apk";
+            url = Constants.APP_URL.APK_PATCH_DOWNLOAD_URL;
 
         Logger.e("APKDownload", "isComplete:" + isComplete + ", state:" + state);
         button = (Button) this.findViewById(R.id.button);
@@ -238,7 +242,7 @@ public class APKDownload extends Activity implements OnClickListener {
                     downEndInitWidget();
                     Toast.makeText(APKDownload.this, "下载完成,马上安装", Toast.LENGTH_SHORT).show();
 
-				/* apk安装界面跳转 */
+                    /* apk安装界面跳转 */
                     String filename = FileUtil.getFileName(url);
                     String str = "/myfile/" + filename;
                     String fileName = Environment.getExternalStorageDirectory() + str; // 下载的补丁
@@ -278,10 +282,22 @@ public class APKDownload extends Activity implements OnClickListener {
         }
     }
 
-    private void fileInstall(File file) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+    private void fileInstall(final File file) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                if (Build.VERSION.SDK_INT >= 24) { //判读版本是否在7.0以上
+                    Uri uri = FileProvider.getUriForFile(APKDownload.this, "com.danertu.dianping.fileprovider", file);
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    intent.setDataAndType(uri, "application/vnd.android.package-archive");
+                } else {
+                    intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+                }
+                startActivity(intent);
+            }
+        });
+
     }
 }

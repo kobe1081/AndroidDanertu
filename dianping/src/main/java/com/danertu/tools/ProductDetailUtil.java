@@ -17,22 +17,20 @@ import com.danertu.dianping.LoginActivity;
 import com.danertu.dianping.PaymentCenterActivity;
 import com.danertu.widget.CommonTools;
 
-import cn.xiaoneng.coreapi.ChatParamsBody;
 
 public class ProductDetailUtil {
     private BaseActivity base = null;
     private int canBuyCount = 2;
     private DBManager db = null;
 
-    public ProductDetailUtil(BaseActivity base, int canBuyCount, DBManager db) {
-        this(base, canBuyCount, db, null);
-    }
+//    public ProductDetailUtil(BaseActivity base, int canBuyCount, DBManager db) {
+//        this(base, canBuyCount, db);
+//    }
 
-    public ProductDetailUtil(BaseActivity base, int canBuyCount, DBManager db, XNUtil xnUtil) {
+    public ProductDetailUtil(BaseActivity base, int canBuyCount, DBManager dbl) {
         this.base = base;
         this.canBuyCount = canBuyCount;
         this.db = db;
-        this.xnUtil = xnUtil;
     }
 
     /**
@@ -110,12 +108,12 @@ public class ProductDetailUtil {
     public boolean toPayCenter(String guid, String sCount, String imgName,
                                String supId, String shopid, String agentId, String proName,
                                String sPrice, String marketPrice, String createUser, boolean isbackcall, String attrParam,
-                               String arriveTime, String leaveTime, String shopName, String discountNum, String discountPrice) {
+                               String arriveTime, String leaveTime, String shopName, String discountNum, String discountPrice,String uid) {
         if (isCheckOutError(2, sCount, canBuyCount)) {
             return false;
         }
         ArrayList<HashMap<String, Object>> list = ActivityUtils.getShopCarList(guid, sCount,
-                imgName, supId, shopid, agentId, proName, sPrice, marketPrice, createUser, attrParam, arriveTime, leaveTime, shopName, discountNum, discountPrice);
+                imgName, supId, shopid, agentId, proName, sPrice, marketPrice, createUser, attrParam, arriveTime, leaveTime, shopName, discountNum, discountPrice,uid);
 //		if(!checkErrorMsg(list)) {
         int allCount = 0;
         double totalMoney = 0;
@@ -185,35 +183,4 @@ public class ProductDetailUtil {
 //        }
 //    }
 
-    public void setXNUtil(XNUtil xnUtil) {
-        this.xnUtil = xnUtil;
-    }
-
-    private XNUtil xnUtil;
-
-    /**
-     * 联系客服
-     * @param shopid
-     * @param guid
-     * @param proName
-     * @param price
-     * @param imgPath
-     */
-    public void contactService(String shopid, String guid, String proName, String price, String imgPath) {
-        String goodsUrl = "http://" + shopid + ".danertu.com/ProductDetail/" + guid + ".html";
-        ChatParamsBody itemparam = xnUtil.genProParam(guid, proName, Double.parseDouble(price), imgPath, goodsUrl, goodsUrl);
-        xnUtil.setItemparam(itemparam);
-        xnUtil.communicte();
-    }
-
-    public void setContactService(String proName, String orderPrice, String userName, String userId) {
-        xnUtil.setTitle(proName);
-        xnUtil.setUsername(userName);
-        xnUtil.setUserid(userId);
-        xnUtil.setOrderprice(orderPrice);
-    }
-
-    public void postCustomerTrack() {
-        xnUtil.postCustomerTrack();
-    }
 }

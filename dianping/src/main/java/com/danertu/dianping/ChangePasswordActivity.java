@@ -61,7 +61,7 @@ public class ChangePasswordActivity extends BaseActivity implements OnClickListe
         modifyBtn.setOnClickListener(this);
         cancelBtn.setOnClickListener(this);
         goBack.setText("修改密码");
-        tv_uid.setText(getResources().getString(R.string.loginacount)+ uid);
+        tv_uid.setText(getResources().getString(R.string.loginacount) + uid);
     }
 
     @Override
@@ -107,38 +107,49 @@ public class ChangePasswordActivity extends BaseActivity implements OnClickListe
         }
     }
 
-    public class ChangePsw extends AsyncTask<String, Integer, Boolean> {
+    public class ChangePsw extends AsyncTask<String, Integer, String> {
 
         @Override
-        protected Boolean doInBackground(String... arg0) {
+        protected String doInBackground(String... arg0) {
             try {
                 String pwd = arg0[0];
                 String newPwd = arg0[1];
-                String result = AppManager.getInstance().postChangePassword("0048", uid, pwd, newPwd);
-                if (!result.equals("false")) {
-                    return true;
-                }
+                return AppManager.getInstance().postChangePassword("0048", uid, pwd, newPwd);
             } catch (Exception e) {
                 System.out.print("错误：" + e.toString());
             }
-            return false;
+            return "";
         }
 
         @Override
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(final String result) {
             super.onPostExecute(result);
-            if (result) {
-                CommonTools.showShortToast(getApplicationContext(), "修改成功，请重新登录");
+            judgeIsTokenException(result, new TokenExceptionCallBack() {
+                @Override
+                public void tokenException(String code, String info) {
+                    sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                    jsShowMsg(info);
+//                    quitAccount();
+//                    finish();
+//                    jsStartActivity("LoginActivity", "");
+                }
+
+                @Override
+                public void ok() {
+                    if (!result.equals("false")) {
+                        CommonTools.showShortToast(getApplicationContext(), "修改成功，请重新登录");
 //                DBManager dbr = new DBManager();
 //                DBManager dbr = DBManager.getInstance();
 //                String mid = dbr.GetLoginUid(ChangePasswordActivity.this);
-                String mid = db.GetLoginUid(ChangePasswordActivity.this);
-                db.DeleteLoginInfo(ChangePasswordActivity.this, mid);
-                application.backToActivity("IndexActivity");
-                jsStartActivity("PersonalActivity", "");
-            } else {
-                CommonTools.showShortToast(getApplicationContext(), "修改失败");
-            }
+                        String mid = db.GetLoginUid(ChangePasswordActivity.this);
+                        db.DeleteLoginInfo(ChangePasswordActivity.this, mid);
+                        application.backToActivity("IndexActivity");
+                        jsStartActivity("PersonalActivity", "");
+                    } else {
+                        CommonTools.showShortToast(getApplicationContext(), "修改失败");
+                    }
+                }
+            });
             hideLoadDialog();
         }
 

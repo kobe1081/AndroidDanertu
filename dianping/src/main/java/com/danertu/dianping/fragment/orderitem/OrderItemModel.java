@@ -1,7 +1,10 @@
 package com.danertu.dianping.fragment.orderitem;
 
+import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.config.ApiService;
 import com.config.Constants;
 import com.danertu.base.BaseModel;
@@ -11,6 +14,7 @@ import com.danertu.entity.NewOrderHeadBean;
 import com.danertu.entity.NewOrderBean;
 import com.danertu.entity.OrderBody;
 import com.danertu.entity.OrderHead;
+import com.danertu.entity.TokenExceptionBean;
 import com.danertu.tools.AppManager;
 import com.google.gson.Gson;
 
@@ -21,24 +25,35 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.danertu.dianping.fragment.orderitem.OrderItemPresenter.WHAT_CANCEL_FAIL;
+import static com.danertu.dianping.fragment.orderitem.OrderItemPresenter.WHAT_CANCEL_SUCCESS;
 import static com.danertu.dianping.fragment.orderitem.OrderItemPresenter.WHAT_MORE_ERROR;
 import static com.danertu.dianping.fragment.orderitem.OrderItemPresenter.WHAT_MORE_SUCCESS;
+import static com.danertu.dianping.fragment.orderitem.OrderItemPresenter.WHAT_NEED_LOGIN;
 import static com.danertu.dianping.fragment.orderitem.OrderItemPresenter.WHAT_NO_MORE_DATA;
 import static com.danertu.dianping.fragment.orderitem.OrderItemPresenter.WHAT_ORDER_ERROR;
+import static com.danertu.dianping.fragment.orderitem.OrderItemPresenter.WHAT_ORDER_ONE_SUCCESS;
 import static com.danertu.dianping.fragment.orderitem.OrderItemPresenter.WHAT_ORDER_SUCCESS;
 
 public class OrderItemModel extends BaseModel {
     private int totalCount = 0;
     private int totalPageCount = 0;
     private List<NewOrderBean> list;
+    private List<NewOrderBean> tempList;
     private AppManager appManager;
-    private Gson gson;
 
-    public OrderItemModel() {
-        super();
+    public OrderItemModel(Context context) {
+        super(context);
         list = new ArrayList<>();
         appManager = AppManager.getInstance();
-        gson = new Gson();
+    }
+
+
+    public List<NewOrderBean> getTempList() {
+        if (tempList == null) {
+            tempList = new ArrayList<>();
+        }
+        return tempList;
     }
 
     /**
@@ -48,28 +63,43 @@ public class OrderItemModel extends BaseModel {
      * @param pageIndex
      * @param pageSize
      * @see 此方法必须跑在子线程中
+     * TODO 还有优化的空间
      */
     public void getOrders(Handler handler, String orderType, String loginId, final int pageIndex, int pageSize) {
         String orderHead = appManager.postGetOrderByType(loginId, orderType, pageIndex, pageSize);
-        NewOrderHeadBean newOrderHeadBean = gson.fromJson(orderHead, NewOrderHeadBean.class);
-
-        if (newOrderHeadBean == null || newOrderHeadBean.getVal()==null) {
+        if (TextUtils.isEmpty(orderHead)) {
             if (pageIndex > 1) {
-                sendMessage(handler,WHAT_MORE_ERROR);
+                sendMessage(handler, WHAT_MORE_ERROR);
             } else {
-                sendMessage(handler,WHAT_ORDER_ERROR);
+                sendMessage(handler, WHAT_ORDER_ERROR);
+            }
+            return;
+        }
+        TokenExceptionBean bean = JSONObject.parseObject(orderHead, TokenExceptionBean.class);
+        if (bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
+            sendMessage(handler, WHAT_NEED_LOGIN, bean.getInfo());
+            return;
+        }
+        bean = null;
+        NewOrderHeadBean newOrderHeadBean = JSONObject.parseObject(orderHead, NewOrderHeadBean.class);
+
+        if (newOrderHeadBean == null || newOrderHeadBean.getVal() == null) {
+            if (pageIndex > 1) {
+                sendMessage(handler, WHAT_MORE_ERROR);
+            } else {
+                sendMessage(handler, WHAT_ORDER_ERROR);
             }
             return;
         }
         try {
             List<NewOrderHeadBean.ValBean> beanList = newOrderHeadBean.getVal();
             NewOrderHeadBean.CountBean countBean = newOrderHeadBean.getCount();
-            if (countBean==null&&newOrderHeadBean.getVal().size()==0){
+            if (countBean == null && newOrderHeadBean.getVal().size() == 0) {
                 //无数据
-                if (pageIndex>1){
-                    sendMessage(handler,WHAT_NO_MORE_DATA);
-                }else {
-                    sendMessage(handler,WHAT_ORDER_SUCCESS);
+                if (pageIndex > 1) {
+                    sendMessage(handler, WHAT_NO_MORE_DATA);
+                } else {
+                    sendMessage(handler, WHAT_ORDER_SUCCESS);
                 }
                 return;
             }
@@ -78,28 +108,28 @@ public class OrderItemModel extends BaseModel {
             if (pageIndex > 1) {
                 if (pageIndex < totalPageCount) {
                     //添加数据
-                    addData(appManager, gson, list, beanList);
-                    sendMessage(handler,WHAT_MORE_SUCCESS);
+                    tempList = addData(handler, appManager, beanList, loginId);
+                    sendMessage(handler, WHAT_MORE_SUCCESS);
                 } else {
                     if (list.size() + beanList.size() <= totalCount) {
                         //添加数据
-                        addData(appManager, gson, list, beanList);
-                        sendMessage(handler,WHAT_MORE_SUCCESS);
+                        tempList = addData(handler, appManager, beanList, loginId);
+                        sendMessage(handler, WHAT_MORE_SUCCESS);
                     } else {
-                        sendMessage(handler,WHAT_NO_MORE_DATA);
+                        sendMessage(handler, WHAT_NO_MORE_DATA);
                     }
                 }
             } else {
                 //添加数据
-                addData(appManager, gson, list, beanList);
-                sendMessage(handler,WHAT_ORDER_SUCCESS);
+                tempList = addData(handler, appManager, beanList, loginId);
+                sendMessage(handler, WHAT_ORDER_SUCCESS);
             }
 
         } catch (Exception e) {
             if (pageIndex > 1) {
-                sendMessage(handler,WHAT_MORE_ERROR);
+                sendMessage(handler, WHAT_MORE_ERROR);
             } else {
-                sendMessage(handler,WHAT_ORDER_ERROR);
+                sendMessage(handler, WHAT_ORDER_ERROR);
             }
             if (Constants.isDebug) {
                 e.printStackTrace();
@@ -112,11 +142,10 @@ public class OrderItemModel extends BaseModel {
      * 添加数据
      *
      * @param appManager
-     * @param gson
-     * @param list
      * @param beanList
      */
-    public void addData(AppManager appManager, Gson gson, List<NewOrderBean> list, List<NewOrderHeadBean.ValBean> beanList) {
+    public List<NewOrderBean> addData(Handler handler, AppManager appManager, List<NewOrderHeadBean.ValBean> beanList, String uid) {
+        List<NewOrderBean> list = new ArrayList<>();
         for (NewOrderHeadBean.ValBean bean : beanList) {
             try {
                 String orderNumber = bean.getOrderNumber();
@@ -137,26 +166,55 @@ public class OrderItemModel extends BaseModel {
                 newOrderBean.setCreateTime(bean.getCreateTime());
                 newOrderBean.setPaymentName(bean.getPaymentName());
 
-                String orderBody = appManager.postGetOrderBody(orderNumber);
-                OrderBody body = gson.fromJson(orderBody, OrderBody.class);
-                OrderBody.OrderproductlistBean orderproductlist = body.getOrderproductlist();
-                List<OrderBody.OrderproductlistBean.OrderproductbeanBean> orderproductbean = orderproductlist.getOrderproductbean();
-                if (body == null || orderproductlist == null || orderproductbean == null) {
+                String orderBody = appManager.postGetOrderBody(orderNumber, uid);
+//                String orderBody = "{\"orderproductlist\": {\"orderproductbean\": [ {\"ShopName\":\"泉眼温泉店\",\"Guid\":\"a6852148\",\"MarketPrice\":\"158.00\",\"Name\":\"温泉成人套票 中山泉眼温泉\",\"CreateUser\":\"shopnum1\",\"BuyNumber\":\"4\",\"AgentID\":\"\",\"Detail\":\"\",\"SupplierLoginID\":\"dsfer\",\"iSGive\":\"0\",\"tel\":\"076085883668\",\"ShopPrice\":\"115.00\",\"SmallImage\":\"20170508162215806.jpg\",\"other1\":\"\",\"other2\":\"\",\"attribute\":\"\",\"ProductRank\":[]}]}}";
+
+                if (TextUtils.isEmpty(orderBody)) {
                     continue;
                 }
-                newOrderBean.setProductItems(orderproductlist.getOrderproductbean());
+                OrderBody body = JSONObject.parseObject(orderBody, OrderBody.class);
+                if (body == null || body.getOrderproductlist() == null || body.getOrderproductlist().getOrderproductbean() == null) {
+                    continue;
+                }
+                OrderBody.OrderproductlistBean orderproductlist = body.getOrderproductlist();
+                List<OrderBody.OrderproductlistBean.OrderproductbeanBean> orderproductbean = orderproductlist.getOrderproductbean();
+                newOrderBean.setProductItems(orderproductbean);
                 list.add(newOrderBean);
+//                handler.sendEmptyMessage(WHAT_ORDER_ONE_SUCCESS);
+
             } catch (Exception e) {
                 if (Constants.isDebug) {
                     e.printStackTrace();
                 }
-                continue;
             }
-
         }
+        return list;
     }
 
-    public void cancelOrder(String orderNumber, final ModelCallBack callBack) {
+    public void cancelOrder(Handler handler, String orderNumber, int position, String uid, final ModelCallBack callBack) {
+//        String json = appManager.postCancelOrder(orderNumber, uid);
+//        if (TextUtils.isEmpty(json)) {
+////            callBack.requestError();
+//            sendMessage(handler, WHAT_CANCEL_FAIL, position, orderNumber);
+//            return;
+//        }
+//        if ("true".equals(json)) {
+////            callBack.requestSuccess();
+//            sendMessage(handler, WHAT_CANCEL_SUCCESS, position, orderNumber);
+//        } else {
+//            TokenExceptionBean bean = JSONObject.parseObject(json, TokenExceptionBean.class);
+//            if (bean == null) {
+//                sendMessage(handler, WHAT_CANCEL_FAIL, position, orderNumber);
+////                callBack.requestError();
+//                return;
+//            }
+//            if ("false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
+//                sendMessage(handler, WHAT_NEED_LOGIN, bean.getInfo());
+////                callBack.tokenException(bean.getCode(), bean.getInfo());
+//            }
+//        }
+
+
         Call<String> call = retrofit.create(ApiService.class).cancelOrder("0075", orderNumber);
         call.enqueue(new Callback<String>() {
             @Override
@@ -180,8 +238,28 @@ public class OrderItemModel extends BaseModel {
         });
     }
 
-    public void sureTakeGoods(String orderNumber, final ModelCallBack callBack) {
-        Call<String> call = retrofit.create(ApiService.class).cancelOrder("0076", orderNumber);
+    public void sureTakeGoods(Handler handler, String orderNumber, int position, String uid, final ModelCallBack callBack) {
+//        String json = appManager.postFinishOrder(orderNumber, uid);
+//        if (TextUtils.isEmpty(json)) {
+////            callBack.requestError();
+//            sendMessage(handler, WHAT_CANCEL_FAIL, position, orderNumber);
+//            return;
+//        }
+//        if ("true".equals(json)) {
+//            callBack.requestSuccess();
+//        } else {
+//            TokenExceptionBean bean = JSONObject.parseObject(json, TokenExceptionBean.class);
+//            if (bean == null) {
+//                callBack.requestError();
+//                return;
+//            }
+//            if ("false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
+//                callBack.tokenException(bean.getCode(), bean.getInfo());
+//            }
+//        }
+
+//
+        Call<String> call = retrofit.create(ApiService.class).sureTakeGoods("0076", orderNumber);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -193,7 +271,12 @@ public class OrderItemModel extends BaseModel {
                 if ("true".equals(body)) {
                     callBack.requestSuccess();
                 } else {
-                    callBack.requestFailure();
+                    TokenExceptionBean bean = JSONObject.parseObject(response.body(), TokenExceptionBean.class);
+                    if (bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
+                        callBack.tokenException(bean.getCode(), bean.getInfo());
+                    } else {
+                        callBack.requestFailure();
+                    }
                 }
             }
 
@@ -204,17 +287,25 @@ public class OrderItemModel extends BaseModel {
         });
     }
 
-    public void getOrderHead(String orderNum, final ModelParamCallBack callBack){
+    public void getOrderHead(String orderNum, String uid, final ModelParamCallBack callBack) {
         Call<OrderHead> call = retrofit.create(ApiService.class).getOrderHead("0036", orderNum);
         call.enqueue(new Callback<OrderHead>() {
             @Override
             public void onResponse(Call<OrderHead> call, Response<OrderHead> response) {
-                if (response.code()!=RESULT_OK||response.body()==null||response.body().getOrderinfolist()==null||response.body().getOrderinfolist().getOrderinfobean()==null){
+                if (response.code() != RESULT_OK || response.body() == null) {
+                    callBack.requestError(null);
+                    return;
+                }
+                if ("false".equals(response.body().getResult()) && "-1".equals(response.body().getCode())) {
+                    callBack.tokenException(response.body().getCode(), response.body().getInfo());
+                    return;
+                }
+                if (response.body().getOrderinfolist() == null || response.body().getOrderinfolist().getOrderinfobean() == null) {
                     callBack.requestError(null);
                     return;
                 }
                 List<OrderHead.OrderinfolistBean.OrderinfobeanBean> orderinfobean = response.body().getOrderinfolist().getOrderinfobean();
-                if (orderinfobean.size()==0){
+                if (orderinfobean.size() == 0) {
                     callBack.requestError(null);
                     return;
                 }

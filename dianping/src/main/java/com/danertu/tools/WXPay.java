@@ -19,7 +19,6 @@ public class WXPay {
         super();
         wxPayUtil = new WXPayUtil(context);
         loadDialog = new LoadingDialog(context);
-
         Logger.e("WXPay", this.getClass().getPackage() + "." + this.getClass().getSimpleName() + "init WXPay");
     }
 
@@ -63,14 +62,13 @@ public class WXPay {
         protected Map<String, String> doInBackground(String... params) {
 //            String url = String.format("https://api.mch.weixin.qq.com/pay/unifiedorder");//统一下单api
             String url = "https://api.mch.weixin.qq.com/pay/unifiedorder";//统一下单api
-            String param = params[0];
-
+            String orderType = params[0];
             //2017年12月28日修改
             String entity = "";
-            if (TextUtils.isEmpty(param)) {
+            if (TextUtils.isEmpty(orderType)) {
                 entity = wxPayUtil.genProductArgs(getProNames(), getOutOrderNumber(), getPriceSum());
             } else {
-                entity = wxPayUtil.genProductArgs(getProNames(), getOutOrderNumber(), getPriceSum(), param);
+                entity = wxPayUtil.genProductArgs(getProNames(), getOutOrderNumber(), getPriceSum(), orderType);
             }
 //			Log.e("test", "doInBackground: --->entity="+entity );
             byte[] buf = Util.httpPost(url, entity);

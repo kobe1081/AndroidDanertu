@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.config.Constants;
 import com.danertu.entity.OrderBody;
 import com.danertu.entity.OrderHead;
@@ -30,6 +31,7 @@ import com.danertu.tools.QRCodeUtils;
 import com.danertu.widget.CommonTools;
 import com.google.gson.JsonSyntaxException;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
 
 import java.io.File;
 import java.io.OutputStream;
@@ -45,6 +47,7 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
     private TextView tv_use_state;
     private TextView tv_order_number;
     private TextView tv_save_qrcode;
+    private TextView tv_tips;
     private LinearLayout ll_qr_code;
     private Context context;
     public static final int RESULT_QR_CODE = 21;
@@ -73,7 +76,7 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
         context = this;
         Intent intent = getIntent();
         orderNumber = intent.getStringExtra("orderNumber");
-        position=intent.getIntExtra("position",-1);
+        position = intent.getIntExtra("position", -1);
         if (TextUtils.isEmpty(orderNumber)) {
             if (Constants.isDebug)
                 jsShowMsg("传递过来的订单号为空");
@@ -87,7 +90,7 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
         try {
 //            Bitmap qrCode = QRCodeUtils.createQRCode(orderNumber, CommonTools.dip2px(context, 170));
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.icon);
-            Bitmap qrCode = QRCodeUtils.createQRImage(orderNumber, CommonTools.dip2px(context, 200), bitmap);
+            Bitmap qrCode = QRCodeUtils.createQRImage(orderNumber, CommonTools.dip2px(context, 200), bitmap, true);
             iv_qr_code.setImageBitmap(qrCode);
         } catch (Exception e) {
             jsShowMsg("出错了，请重试");
@@ -106,6 +109,7 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
         tv_order_number = $(R.id.tv_order_number);
         tv_save_qrcode = $(R.id.tv_save_qrcode);
         ll_qr_code = $(R.id.ll_qr_code);
+        tv_tips=$(R.id.tv_tips);
         tv_save_qrcode.setOnClickListener(this);
     }
 
@@ -127,7 +131,7 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
                  * 保存二维码到手机上
                  */
                 saveDirName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + File.separator + "Danertu";
-                saveImgName = "Danertu_"+ DateTimeUtils.getDateToyyyyMMddHHmm()+"_" + orderNumber + ".png";
+                saveImgName = "Danertu_" + DateTimeUtils.getDateToyyyyMMddHHmm() + "_" + orderNumber + ".png";
                 File saveFile = new File(saveDirName);
                 if (!saveFile.exists()) {
                     saveFile.mkdir();
@@ -204,7 +208,7 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
     public void setRes() {
         Intent intent = new Intent();
         intent.putExtra("orderNumber", orderNumber);
-        intent.putExtra("position",position);
+        intent.putExtra("position", position);
         setResult(RESULT_QR_CODE, intent);
     }
 
@@ -222,54 +226,65 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
         @Override
         protected String doInBackground(String... param) {
             String orderNumber = param[0];
-            Map<String, String> map = new HashMap<>();
-            map.put("apiid", "0072");
-            map.put("orderNumber", orderNumber);
-            return AppManager.getInstance().doPost(map);
+            return appManager.postGetOrderBody(orderNumber, getUid());
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            try {
-                OrderBody orderBody = gson.fromJson(result, OrderBody.class);
-                if (orderBody == null) {
-                    jsShowMsg("数据有误");
-                    if (Constants.isDebug) {
-                        Logger.e(TAG, "接口 0072接口返回的数据为：" + result);
+        protected void onPostExecute(final String result) {
+            judgeIsTokenException(result, new TokenExceptionCallBack() {
+                @Override
+                public void tokenException(String code, String info) {
+                    sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                    jsShowMsg(info);
+//                    quitAccount();
+//                    finish();
+//                    jsStartActivity("LoginActivity", "");
+                }
+
+                @Override
+                public void ok() {
+                    try {
+                        OrderBody orderBody = JSONObject.parseObject(result, OrderBody.class);
+                        if (orderBody == null) {
+                            jsShowMsg("数据有误");
+                            if (Constants.isDebug) {
+                                Logger.e(TAG, "接口 0072接口返回的数据为：" + result);
+                            }
+                            finish();
+                            return;
+                        }
+                        //通过获取订单体来得到订单的使用状态
+                        new GetOrderHead().execute(orderNumber);
+                        List<OrderBody.OrderproductlistBean.OrderproductbeanBean> beanList = orderBody.getOrderproductlist().getOrderproductbean();
+                        for (OrderBody.OrderproductlistBean.OrderproductbeanBean bean : beanList) {
+                            View productItem = LayoutInflater.from(context).inflate(R.layout.item_qrcode_order, null, false);
+                            ImageView iv_product = ((ImageView) productItem.findViewById(R.id.iv_product));
+                            TextView tv_shop_price = ((TextView) productItem.findViewById(R.id.tv_shop_price));
+                            TextView tv_market_price = ((TextView) productItem.findViewById(R.id.tv_market_price));
+                            TextView tv_buy_count = ((TextView) productItem.findViewById(R.id.tv_buy_count));
+                            TextView tv_product_name = ((TextView) productItem.findViewById(R.id.tv_product_name));
+                            TextView tv_sub_name = ((TextView) productItem.findViewById(R.id.tv_sub_name));
+
+                            ImageLoader.getInstance().displayImage(getImgUrl(bean.getSmallImage(), bean.getAgentID(), bean.getSupplierLoginID()), iv_product);
+                            tv_product_name.setText(bean.getName());
+                            tv_shop_price.setText("￥" + bean.getShopPrice());
+                            tv_market_price.setText("￥" + bean.getMarketPrice());
+                            tv_market_price.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);//给原价加上删除线
+                            tv_market_price.getPaint().setAntiAlias(true);
+                            tv_buy_count.setText("x" + bean.getBuyNumber());
+                            ll_order_item.addView(productItem, 0);
+                        }
+
+                    } catch (Exception e) {
+                        jsShowMsg("出错了");
+                        if (Constants.isDebug) {
+                            jsShowMsg("获取订单体时出现错误");
+                        }
+                        finish();
+                        e.printStackTrace();
                     }
-                    finish();
-                    return;
                 }
-                //通过获取订单体来得到订单的使用状态
-                new GetOrderHead().execute(orderNumber);
-                List<OrderBody.OrderproductlistBean.OrderproductbeanBean> beanList = orderBody.getOrderproductlist().getOrderproductbean();
-                for (OrderBody.OrderproductlistBean.OrderproductbeanBean bean : beanList) {
-                    View productItem = LayoutInflater.from(context).inflate(R.layout.item_qrcode_order, null, false);
-                    ImageView iv_product = ((ImageView) productItem.findViewById(R.id.iv_product));
-                    TextView tv_shop_price = ((TextView) productItem.findViewById(R.id.tv_shop_price));
-                    TextView tv_market_price = ((TextView) productItem.findViewById(R.id.tv_market_price));
-                    TextView tv_buy_count = ((TextView) productItem.findViewById(R.id.tv_buy_count));
-                    TextView tv_product_name = ((TextView) productItem.findViewById(R.id.tv_product_name));
-                    TextView tv_sub_name = ((TextView) productItem.findViewById(R.id.tv_sub_name));
-
-                    ImageLoader.getInstance().displayImage(getImgUrl(bean.getSmallImage(), bean.getAgentID(), bean.getSupplierLoginID()), iv_product);
-                    tv_product_name.setText(bean.getName());
-                    tv_shop_price.setText("￥" + bean.getShopPrice());
-                    tv_market_price.setText("￥" + bean.getMarketPrice());
-                    tv_market_price.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);//给原价加上删除线
-                    tv_market_price.getPaint().setAntiAlias(true);
-                    tv_buy_count.setText("x" + bean.getBuyNumber());
-                    ll_order_item.addView(productItem, 0);
-                }
-
-            } catch (JsonSyntaxException e) {
-                jsShowMsg("出错了");
-                if (Constants.isDebug) {
-                    jsShowMsg("获取订单体时出现错误");
-                }
-                finish();
-                e.printStackTrace();
-            }
+            });
 
         }
     }
@@ -282,56 +297,70 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
         @Override
         protected String doInBackground(String... param) {
             String orderNumber = param[0];
-            Map<String, String> map = new HashMap<>();
-            map.put("apiid", "0036");
-            map.put("orderNumber", orderNumber);
-            return AppManager.getInstance().doPost(map);
+            return appManager.postGetOrderHead(orderNumber, getUid());
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            try {
-                OrderHead orderHead = gson.fromJson(result, OrderHead.class);
-                if (orderHead == null) {
-                    jsShowMsg("数据有误");
-                    if (Constants.isDebug) {
-                        Logger.e(TAG, "接口 0036接口返回的数据为：" + result);
-                    }
-                    finish();
-                    return;
+        protected void onPostExecute(final String result) {
+            judgeIsTokenException(result, new TokenExceptionCallBack() {
+                @Override
+                public void tokenException(String code, String info) {
+                    sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                    jsShowMsg(info);
+//                    quitAccount();
+//                    finish();
+//                    jsStartActivity("LoginActivity", "");
                 }
-                OrderHead.OrderinfolistBean.OrderinfobeanBean bean = orderHead.getOrderinfolist().getOrderinfobean().get(0);
-                shipmentStatus = bean.getShipmentStatus();
-                paymentStatus = bean.getPaymentStatus();
-                orderStatus = bean.getOderStatus();
 
-                Logger.e(TAG, "oderStatus=" + orderStatus + ",shipmentStatus=" + shipmentStatus + ",paymentStatus=" + paymentStatus);
-                //(OderStatus==0 || OderStatus==1 )&&ShipmentStatus==0&&PaymentStatus==2时说明未使用
-                if ((orderStatus.equals("0") || orderStatus.equals("1")) && shipmentStatus.equals("0") && paymentStatus.equals("2")) {
-                    //已支付，未使用
-                    tv_use_state.setText("未使用");
-                    tv_use_state.setVisibility(View.VISIBLE);
-                    hideLoadDialog();
-                } else if ((orderStatus.equals("0") || orderStatus.equals("1")) && shipmentStatus.equals("0") && paymentStatus.equals("0")) {
-                    //未支付（即认为到付），未使用
-                    tv_use_state.setText("未使用");
-                    tv_use_state.setVisibility(View.VISIBLE);
-                    hideLoadDialog();
-                } else if ((orderStatus.equals("5") && paymentStatus.equals("2")) || (shipmentStatus.equals("1") && paymentStatus.equals("2"))) {
-                    tv_use_state.setText("已使用（" + bean.getDispatchTime().split(" ")[0].replace("/", ".") + ")");
-                    tv_use_state.setVisibility(View.VISIBLE);
-                } else {
-                    tv_use_state.setText("状态未知");
+                @Override
+                public void ok() {
+                    try {
+                        OrderHead orderHead = JSONObject.parseObject(result, OrderHead.class);
+                        if (orderHead == null) {
+                            jsShowMsg("数据有误");
+                            if (Constants.isDebug) {
+                                Logger.e(TAG, "接口 0036接口返回的数据为：" + result);
+                            }
+                            finish();
+                            return;
+                        }
+                        OrderHead.OrderinfolistBean.OrderinfobeanBean bean = orderHead.getOrderinfolist().getOrderinfobean().get(0);
+                        shipmentStatus = bean.getShipmentStatus();
+                        paymentStatus = bean.getPaymentStatus();
+                        orderStatus = bean.getOderStatus();
+                        Logger.e(TAG, "oderStatus=" + orderStatus + ",shipmentStatus=" + shipmentStatus + ",paymentStatus=" + paymentStatus);
+                        //(OderStatus==0 || OderStatus==1 )&&ShipmentStatus==0&&PaymentStatus==2时说明未使用
+                        if ((orderStatus.equals("0") || orderStatus.equals("1")) && shipmentStatus.equals("0") && paymentStatus.equals("2")) {
+                            //已支付，未使用
+                            tv_use_state.setText("未使用");
+                            tv_use_state.setVisibility(View.VISIBLE);
+                            tv_tips.setVisibility(View.VISIBLE);
+                            hideLoadDialog();
+                        } else if ((orderStatus.equals("0") || orderStatus.equals("1")) && shipmentStatus.equals("0") && paymentStatus.equals("0")) {
+                            //未支付（即认为到付），未使用
+                            tv_use_state.setText("未使用");
+                            tv_use_state.setVisibility(View.VISIBLE);
+                            tv_tips.setVisibility(View.VISIBLE);
+                            hideLoadDialog();
+                        } else if ((orderStatus.equals("5") && paymentStatus.equals("2")) || (shipmentStatus.equals("1") && paymentStatus.equals("2"))) {
+                            tv_use_state.setText("已使用（" + bean.getDispatchTime().split(" ")[0].replace("/", ".") + ")");
+                            tv_use_state.setVisibility(View.VISIBLE);
+                            tv_tips.setVisibility(View.GONE);
+                        } else {
+                            tv_use_state.setText("状态未知");
+                            tv_tips.setVisibility(View.GONE);
+                        }
+                        hideLoadDialog();
+                    } catch (Exception e) {
+                        jsShowMsg("出错了");
+                        if (Constants.isDebug) {
+                            jsShowMsg("获取订单头时出现错误");
+                        }
+                        finish();
+                        e.printStackTrace();
+                    }
                 }
-                hideLoadDialog();
-            } catch (JsonSyntaxException e) {
-                jsShowMsg("出错了");
-                if (Constants.isDebug) {
-                    jsShowMsg("获取订单头时出现错误");
-                }
-                finish();
-                e.printStackTrace();
-            }
+            });
 
         }
     }

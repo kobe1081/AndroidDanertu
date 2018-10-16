@@ -1,5 +1,6 @@
 package com.danertu.dianping.fragment.drinkcoupon;
 
+import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
 
@@ -25,6 +26,7 @@ import static com.danertu.dianping.fragment.drinkcoupon.DrinkCouponPresenter.WHA
 import static com.danertu.dianping.fragment.drinkcoupon.DrinkCouponPresenter.WHAT_LOAD_MORE_ERROR;
 import static com.danertu.dianping.fragment.drinkcoupon.DrinkCouponPresenter.WHAT_LOAD_MORE_FAIL;
 import static com.danertu.dianping.fragment.drinkcoupon.DrinkCouponPresenter.WHAT_LOAD_MORE_SUCCESS;
+import static com.danertu.dianping.fragment.drinkcoupon.DrinkCouponPresenter.WHAT_NEED_LOGIN;
 import static com.danertu.dianping.fragment.drinkcoupon.DrinkCouponPresenter.WHAT_NO_MORE_DATA;
 import static com.danertu.dianping.fragment.drinkcoupon.DrinkCouponPresenter.WHAT_SHOP_DETAIL_ERROR;
 import static com.danertu.dianping.fragment.drinkcoupon.DrinkCouponPresenter.WHAT_SHOP_DETAIL_FAIL;
@@ -34,14 +36,14 @@ public class DrinkCouponModel extends BaseModel {
     private List<CouponBean.CouponListBean> couponList;
     private String totalCount = "0";
 
-    public DrinkCouponModel() {
-        super();
+    public DrinkCouponModel(Context context) {
+        super(context);
         couponList = new ArrayList<>();
     }
 
 
     public void getCouponList(final Handler handler, String uid, String useScope, final int pageIndex, int pageSize) {
-        Call<CouponBean> call = retrofit.create(ApiService.class).getCouponCenterList("0341", uid, useScope, pageIndex, pageSize);
+        Call<CouponBean> call = retrofit.create(ApiService.class).getCouponCenterList("0341", uid, pageIndex, pageSize, useScope);
         call.enqueue(new Callback<CouponBean>() {
             @Override
             public void onResponse(Call<CouponBean> call, Response<CouponBean> response) {
@@ -97,8 +99,8 @@ public class DrinkCouponModel extends BaseModel {
         });
     }
 
-    public void getCoupon(final Handler handler, final int position,String shopId, String loginId, String couponGuid) {
-        Call<BaseResultBean> call = retrofit.create(ApiService.class).getCoupon("0342", shopId,loginId, couponGuid);
+    public void getCoupon(final Handler handler, final int position, String shopId, String loginId, String couponGuid) {
+        Call<BaseResultBean> call = retrofit.create(ApiService.class).getCoupon("0342", couponGuid,  loginId, shopId);
         call.enqueue(new Callback<BaseResultBean>() {
             @Override
             public void onResponse(Call<BaseResultBean> call, Response<BaseResultBean> response) {
@@ -107,10 +109,15 @@ public class DrinkCouponModel extends BaseModel {
                     handler.sendEmptyMessage(WHAT_GET_COUPON_FAIL);
                     return;
                 }
+
                 if ("true".equals(body.getResult())) {
-                    sendMessage(handler, WHAT_GET_COUPON_SUCCESS, position);
+                    sendMessage(handler, WHAT_GET_COUPON_SUCCESS, position, body.getInfo());
                 } else {
-                    sendMessage(handler, WHAT_GET_COUPON_FAIL, position, body.getInfo());
+                    if ("false".equals(response.body().getResult()) && "-1".equals(response.body().getCode())) {
+                        handler.sendEmptyMessage(WHAT_NEED_LOGIN);
+                    } else {
+                        sendMessage(handler, WHAT_GET_COUPON_FAIL, position, body.getInfo());
+                    }
                 }
             }
 
@@ -122,7 +129,7 @@ public class DrinkCouponModel extends BaseModel {
     }
 
     public void getShopDetail(final Handler handler, final String shopId) {
-        Call<ShopDetailBean> call = retrofit.create(ApiService.class).getShopDetail("0041", shopId, "", "");
+        Call<ShopDetailBean> call = retrofit.create(ApiService.class).getShopDetail("0041", "", "", shopId);
         call.enqueue(new Callback<ShopDetailBean>() {
             @Override
             public void onResponse(Call<ShopDetailBean> call, Response<ShopDetailBean> response) {
@@ -136,7 +143,7 @@ public class DrinkCouponModel extends BaseModel {
                     return;
                 }
                 String leveltype = shopbean.get(0).getLeveltype();
-                sendMessage(handler, WHAT_SHOP_DETAIL_SUCCESS, Integer.parseInt(TextUtils.isEmpty(leveltype)?"1":leveltype), shopId);
+                sendMessage(handler, WHAT_SHOP_DETAIL_SUCCESS, Integer.parseInt(TextUtils.isEmpty(leveltype) ? "1" : leveltype), shopId);
             }
 
             @Override
@@ -145,6 +152,7 @@ public class DrinkCouponModel extends BaseModel {
             }
         });
     }
+
 
     public List<CouponBean.CouponListBean> getCouponList() {
         return couponList;

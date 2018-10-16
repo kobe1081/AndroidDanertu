@@ -13,15 +13,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.danertu.db.DBManager;
 import com.danertu.dianping.ActivityUtils;
 import com.danertu.dianping.R;
 import com.danertu.widget.CommonTools;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class SearchProductAdapter extends SearchAdapter {
-
+    private Context context;
+    private DBManager dbManager;
     public SearchProductAdapter(Context context, List<Map<String, Object>> data) {
         super(context, data);
+        this.context=context;
+        dbManager=DBManager.getInstance();
     }
 
     @Override
@@ -39,7 +43,7 @@ public class SearchProductAdapter extends SearchAdapter {
         String agentID = getItem(position).get("agentID").toString();
         String supplierID = getItem(position).get("supplierID").toString();
         String marketPrice = getItem(position).get("marketPrice").toString();
-        String ss = ActivityUtils.getImgUrl(imgName, agentID, supplierID);
+        String ss = ActivityUtils.getImgUrl(imgName, agentID, supplierID,dbManager.GetLoginUid(context));
 
         String proFormat = getItem(position).get("proFormat").toString();
         proFormat = proFormat.replaceAll(" ", "");

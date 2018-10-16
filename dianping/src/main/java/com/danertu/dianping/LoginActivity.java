@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Hashtable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,11 +14,13 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 import android.widget.Button;
 
 import cn.sharesdk.framework.Platform;
@@ -29,7 +30,6 @@ import cn.sharesdk.wechat.friends.Wechat;
 
 import com.config.Constants;
 import com.danertu.db.DBHelper;
-import com.danertu.tools.AppManager;
 import com.danertu.tools.AsyncTask;
 import com.danertu.tools.Logger;
 
@@ -49,7 +49,14 @@ public class LoginActivity extends BaseWebActivity implements PlatformActionList
             return;
         }
         initTitle("登录");
+
         this.startWebView(Constants.appWebPageUrl + "login.html");
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Logger.e(TAG,"onNewIntent-" +getParent());
     }
 
     @Override
@@ -57,6 +64,9 @@ public class LoginActivity extends BaseWebActivity implements PlatformActionList
         super.initWebSettings();
 //		this.mJsCallback = new JsCallback();
         this.webView.addJavascriptInterface(this, "app");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
     }
 
     private void initTitle(String string) {
@@ -137,45 +147,37 @@ public class LoginActivity extends BaseWebActivity implements PlatformActionList
             public void run() {
                 LoginActivity.this.account = account;
                 LoginActivity.this.passwd = passwd;
-//                HashMap<String, String> Params = new HashMap<>();
-//                Hashtable<String, String> Params = new Hashtable<>();
-//                Params.put("apiid", "0009");
-//                Params.put("dateline", String.valueOf(System.currentTimeMillis()));
-//                Params.put("uid", account);
-//                Params.put("pwd", passwd);
-//                doTaskAsync(Constants.api.POST_LOGIN_INFO, "", Params);
-                new LoginClz().execute(account,passwd);
+                new LoginAsync().execute(account, passwd);
             }
         });
     }
 
-    class LoginClz extends AsyncTask<String,Integer,String>{
+    class LoginAsync extends AsyncTask<String, Integer, String> {
 
         @Override
         protected String doInBackground(String... param) {
             String uid = param[0];
             String pwd = param[1];
-            return appManager.postLoginInfo("0009",uid,pwd);
+            return appManager.postLoginInfo("0009", uid, pwd);
         }
 
         @Override
         protected void onPostExecute(final String result) {
             super.onPostExecute(result);
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    try {
-                        JSONObject obj = new JSONObject(result).getJSONArray("val").getJSONObject(0);
-                        score = obj.getString("Score");
-                        String email = obj.getString("Email");
-                        String token = obj.getString("Token");
-                        setLoginInfo(account, passwd, email, nickname, headimgurl);
-                    } catch (JSONException e) {
-                        jsShowMsg("登录失败，请确认账号与密码的正确性");
-                        nickname = null;
-                        headimgurl = null;
-                    }
-                }
-            });
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                JSONObject obj = jsonObject.getJSONArray("val").getJSONObject(0);
+                JSONArray adr = jsonObject.getJSONArray("adr");
+                score = obj.getString("Score");
+                String email = obj.getString("Email");
+                String token = obj.getString("Token");
+                Constants.USER_TOKEN = token;
+                setLoginInfo(account, passwd, email, nickname, headimgurl, token);
+            } catch (JSONException e) {
+                jsShowMsg("登录失败，请确认账号与密码的正确性");
+                nickname = null;
+                headimgurl = null;
+            }
         }
     }
 
@@ -193,13 +195,11 @@ public class LoginActivity extends BaseWebActivity implements PlatformActionList
 
     @SuppressLint("SimpleDateFormat")
     @JavascriptInterface
-    private void setLoginInfo(String uId, String pwd, String email, String nickName, String headimgurl) {
+    private void setLoginInfo(String uId, String pwd, String email, String nickName, String headimgurl, String token) {
         new Thread(isFirstSetupRunnable).start();
         DBHelper dbHelper3 = DBHelper.getInstance(getContext());
-
         // 数据库执行插入命令
         // db3.insert("user", null, values);
-
         SQLiteDatabase dbr = dbHelper3.getWritableDatabase();
         ContentValues values = new ContentValues();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -208,6 +208,7 @@ public class LoginActivity extends BaseWebActivity implements PlatformActionList
         values.put("pwd", pwd);
         values.put("email", email);
         values.put("score", score);
+        values.put("token", token);
         values.put("loginTime", dateFormat.format(date));
         values.put("isLogin", "1");
         if (!TextUtils.isEmpty(nickName)) {
@@ -223,82 +224,62 @@ public class LoginActivity extends BaseWebActivity implements PlatformActionList
             else
                 dbr.insert("userLoginInfo", null, values);
             db.setLoginUserIsDefault(getContext(), uId);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        getUserAddress(uId);
+        new GetUserAddress().execute(uId);
+    }
+
+    class GetUserAddress extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... param) {
+            String uid = param[0];
+            return appManager.postGetUserAddress("0030", uid);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>();
+            try {
+                JSONObject jsonObject = new JSONObject(result).getJSONObject("adress");
+                JSONArray jsonArray = jsonObject.getJSONArray("adresslist");
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject oj = jsonArray.getJSONObject(i);
+                    // Adress adressEntity = new Adress();
+                    HashMap<String, Object> item = new HashMap<String, Object>();
+                    item.put("adress_uid", account);
+                    item.put("adress_name", oj.getString("name"));
+                    item.put("adress_tel", oj.getString("tel"));
+                    item.put("adress_mobile", oj.getString("mobile"));
+                    item.put("adress_Adress", oj.getString("adress"));
+                    item.put("adress_isdefault", oj.getString("ck"));
+                    item.put("adress_time", oj.getString("time"));
+                    item.put("adress_guid", oj.getString("guid"));
+                    data.add(item);
+
+                }
+                db.TogetherPcUserAddress(getContext(), account, data);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            finish();
+        }
     }
 
     Runnable isFirstSetupRunnable = new Runnable() {
         @Override
         public void run() {
-            String result = AppManager.getInstance().isFirstSetUp("0062", getIMEI());
+            String result = appManager.isFirstSetUp("0062", getIMEI());
             if (result.equals("false")) {
 //                result = AppManager.getInstance().insertFirstSetUp("0063", getIMEI());
-                AppManager.getInstance().updateUserScore("0061", account, "500");
+                appManager.updateUserScore("0061", account, "500");
             }
         }
 
     };
-
-    private void getUserAddress(String uId) {
-        Hashtable<String, String> Params = new Hashtable<>();
-        Params.put("apiid", "0030");
-        Params.put("uId", uId);
-        doTaskAsync(Constants.api.GET_USER_ADRESS, "", Params);
-    }
-
-    @Override
-    public void onTaskComplete(int taskId, final String result) {
-        switch (taskId) {
-            case Constants.api.POST_LOGIN_INFO:
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        try {
-                            JSONObject obj = new JSONObject(result).getJSONArray("val").getJSONObject(0);
-                            score = obj.getString("Score");
-                            String email = obj.getString("Email");
-                            setLoginInfo(account, passwd, email, nickname, headimgurl);
-                        } catch (JSONException e) {
-                            jsShowMsg("登录失败，请确认账号与密码的正确性");
-                            nickname = null;
-                            headimgurl = null;
-                        }
-                    }
-                });
-                break;
-
-            case Constants.api.GET_USER_ADRESS:
-//			toast("result: " + result);
-                try {
-                    ArrayList<HashMap<String, Object>> data = new ArrayList<>();
-                    JSONObject jsonObject = new JSONObject(result).getJSONObject("adress");
-                    JSONArray jsonArray = jsonObject.getJSONArray("adresslist");
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject oj = jsonArray.getJSONObject(i);
-                        // Address adressEntity = new Address();
-                        HashMap<String, Object> item = new HashMap<>();
-                        item.put("adress_uid", account);
-                        item.put("adress_name", oj.getString("name"));
-                        item.put("adress_tel", oj.getString("tel"));
-                        item.put("adress_mobile", oj.getString("mobile"));
-                        item.put("adress_Adress", oj.getString("adress"));
-                        item.put("adress_isdefault", oj.getString("ck"));
-                        item.put("adress_time", oj.getString("time"));
-                        item.put("adress_guid", oj.getString("guid"));
-                        data.add(item);
-                    }
-                    db.TogetherPcUserAddress(getContext(), account, data);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                finish();
-                break;
-            default:
-                break;
-        }
-    }
 
     public void finish() {
         SQLiteDatabase dbr = DBHelper.getInstance(getContext()).getReadableDatabase();

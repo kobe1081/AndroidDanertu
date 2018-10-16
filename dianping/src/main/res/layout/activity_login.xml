@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/android_layout_bg">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/android_layout_bg">
 
     <include
         android:id="@+id/personal_top_layout"
-        layout="@layout/common_title"/>
+        layout="@layout/common_title" />
 
     <!--     <RelativeLayout
             android:id="@+id/personal_top_layout"
@@ -71,7 +71,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/loginacount"
                         android:textColor="@android:color/black"
-                        android:textSize="18.0sp"/>
+                        android:textSize="18.0sp" />
 
                     <EditText
                         android:id="@+id/loginaccount"
@@ -86,8 +86,7 @@
                         android:paddingRight="30dp"
                         android:paddingTop="5dp"
                         android:textColor="#ff3b3b3b"
-                        android:textSize="16.0sp">
-                    </EditText>
+                        android:textSize="16.0sp"></EditText>
 
                     <!--   <ImageView
                           android:id="@+id/login_more"
@@ -96,7 +95,7 @@
                           android:src="@drawable/android_order_trace_info_more" /> -->
                 </LinearLayout>
 
-                <View style="@style/PersonalLine"/>
+                <View style="@style/PersonalLine" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -112,7 +111,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/loginpassword"
                         android:textColor="@android:color/black"
-                        android:textSize="18.0sp"/>
+                        android:textSize="18.0sp" />
 
                     <EditText
                         android:id="@+id/loginpassword"
@@ -128,8 +127,7 @@
                         android:paddingRight="30dp"
                         android:paddingTop="5dp"
                         android:textColor="#ff3b3b3b"
-                        android:textSize="16.0sp">
-                    </EditText>
+                        android:textSize="16.0sp"></EditText>
                 </LinearLayout>
             </LinearLayout>
 
@@ -150,7 +148,7 @@
                     android:layout_alignParentTop="true"
                     android:text="@string/find_password"
                     android:textColor="#ff288dfe"
-                    android:textSize="15.0sp"/>
+                    android:textSize="15.0sp" />
 
                 <TextView
                     android:id="@+id/register"
@@ -160,7 +158,7 @@
                     android:layout_alignParentTop="true"
                     android:text="@string/register_quick"
                     android:textColor="@color/black"
-                    android:textSize="15.0sp"/>
+                    android:textSize="15.0sp" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -181,7 +179,7 @@
                     android:gravity="center"
                     android:text="@string/login_btn"
                     android:textColor="#FFFFFF"
-                    android:textSize="20sp"/>
+                    android:textSize="20sp" />
             </RelativeLayout>
 
             <!--

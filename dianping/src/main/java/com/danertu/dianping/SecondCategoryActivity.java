@@ -13,11 +13,13 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -88,9 +90,11 @@ public class SecondCategoryActivity extends BaseActivity {
     @SuppressLint("SetJavaScriptEnabled")
     private void initWebContent() {
         webView.getSettings().setJavaScriptEnabled(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         webView.addJavascriptInterface(this, WEBINTERFACE_NAME);
         webView.loadUrl(Constants.appWebPageUrl + WEBPAGE_NAME);
-
         webView.setWebViewClient(new MWebViewClient(this, WEBINTERFACE_NAME) {
 
             @Override

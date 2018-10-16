@@ -2,6 +2,7 @@ package com.danertu.dianping;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -39,12 +41,16 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.config.Constants;
 import com.danertu.adapter.SearchProductAdapter;
 import com.danertu.adapter.SearchShopAdapter;
+import com.danertu.entity.ProductCategory;
 import com.danertu.tools.Logger;
 import com.danertu.widget.CommonTools;
 import com.danertu.widget.SearchTipsGroupView;
 import com.danertu.widget.SearchTipsGroupView.OnItemClick;
+import com.google.gson.JsonSyntaxException;
+
 
 public class SearchActivityV2 extends HomeActivity {
     private EditText mEditText;
@@ -69,8 +75,9 @@ public class SearchActivityV2 extends HomeActivity {
 
         @Override
         protected String[] doInBackground(String... params) {
-            HashMap<String, String> param = new HashMap<>();
+            LinkedHashMap<String, String> param = new LinkedHashMap<>();
             param.put("apiid", "0158");
+            param.put("tid", getUid());
             String result = appManager.doPost(param);
             return TextUtils.isEmpty(result) ? null : result.split(",");
         }
@@ -230,14 +237,34 @@ public class SearchActivityV2 extends HomeActivity {
             ListView lv = (ListView) v.findViewById(R.id.lv_search_content);
             if (i == 0) {//product
                 lv.setOnItemClickListener(new OnItemClickListener() {
-                    public void onItemClick(AdapterView<?> parent, View view,
-                                            int position, long id) {
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         @SuppressWarnings("unchecked")
                         Map<String, Object> item = (Map<String, Object>) parent.getItemAtPosition(position);
+                        Logger.e(TAG, item.toString());
                         String guid = String.valueOf(item.get("guid"));
                         String shopId = getShopId();
-                        Logger.e(TAG,"shopId="+shopId);
-                        jsStartActivity("ProductDetailsActivity2", "guid|" + guid + ",;shopid|" + shopId);
+                        String supplierID = String.valueOf(item.get("supplierID"));
+                        String price = String.valueOf(item.get("price"));
+                        String proName = String.valueOf(item.get("proName"));
+                        String img = String.valueOf(item.get("img"));
+                        String agentID = String.valueOf(item.get("agentID"));
+                        String detail = String.valueOf(item.get("detail"));
+                        if (supplierID.equals(Constants.QY_SUPPLIERID) || Constants.COOPERATE_SUPPLIER_ID.contains(supplierID)) {
+                            new ToQuanyanProductPage().execute(guid, shopId);
+                        } else {
+                            try {
+                                double tPrice = Double.parseDouble(price);
+                                if (tPrice == 1 || tPrice == 0.1) {
+                                    ActivityUtils.toProDetail2(SearchActivityV2.this, guid, proName, img, detail, agentID, supplierID, price, "0", "", "0", 0);
+                                } else {
+                                    ActivityUtils.toProDetail2(SearchActivityV2.this, guid, proName, img, detail, agentID, supplierID, price, "0", "", "0", 2);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.e(TAG, "startToProDetail: " + e.getMessage());
+                            }
+                        }
+//                        jsStartActivity("ProductDetailsActivity2", "guid|" + guid + ",;shopid|" + shopId);
                     }
                 });
             } else if (i == 1) {
@@ -341,6 +368,56 @@ public class SearchActivityV2 extends HomeActivity {
             }
         });
 
+    }
+
+    /**
+     * 跳转至温泉产品页面,1-门票，2-客房
+     * ticket_route.html?productCategory=*&guid=*
+     */
+    class ToQuanyanProductPage extends com.danertu.tools.AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... param) {
+            String productGuid = param[0];
+            if (TextUtils.isEmpty(productGuid)) {
+                return "";
+            }
+            return param[1] + ",;" + appManager.postGetProductCategory(productGuid);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            String[] split = result.split(",;");
+            if (TextUtils.isEmpty(split[1])) {
+                jsShowMsg("商品信息有误");
+                return;
+            }
+            try {
+                ProductCategory category = gson.fromJson(split[1], ProductCategory.class);
+                ProductCategory.ValBean bean = category.getVal().get(0);
+                String productCategory = bean.getProductCategory();
+                String guid = bean.getProductGuid();
+                if ("2".equals(productCategory) && Constants.QY_SUPPLIERID.equals(bean.getSupplierLoginId())) {
+                    jsStartActivity("ProductDetailsActivity2", "guid|" + guid + ",;shopid|" + getShopId());
+                } else {
+                    String url = Constants.APP_URL.TICKET_DETAIL_URL + "?shopid=" + getShopId() + "&platform=" + Constants.APP_PLATFORM + "&guid=" + bean.getProductGuid() + "&timestamp=" + System.currentTimeMillis();
+                    Intent intent = new Intent(context, HtmlActivityNew.class);
+                    intent.putExtra("url", url);
+                    startActivity(intent);
+                }
+//                jsStartActivity("com.danertu.dianping.HtmlActivity", "pageName|" + QUANYAN_PRODUCT_URL + "?&platform=android&timestamp=" + System.currentTimeMillis() + ",;guid|" + bean.getProductGuid() + ",;shopid|" + split[0] + ",;productCategory|" + bean.getProductCategory());
+
+//                Intent intent = new Intent(context, HtmlActivityNew.class);
+//                String url = Constants.appWebPageUrl + QUANYAN_PRODUCT_URL + "?productCategory=" + productCategory + "&guid=" + guid;
+//                intent.putExtra("url", url);
+//                startActivity(intent);
+            } catch (JsonSyntaxException e) {
+                jsShowMsg("商品信息有误");
+                e.printStackTrace();
+            }
+
+        }
     }
 
     private class SearchContentAdapter extends PagerAdapter {
@@ -495,7 +572,7 @@ public class SearchActivityV2 extends HomeActivity {
                 lv.setVisibility(visi1);
                 if (result != null) {
                     if (adapter == null) {
-                        adapter = new SearchShopAdapter(getContext(), result);
+                        adapter = new SearchShopAdapter(getContext(), result, getUid());
                         lv.setAdapter(adapter);
                     } else {
                         adapter.setData(result);

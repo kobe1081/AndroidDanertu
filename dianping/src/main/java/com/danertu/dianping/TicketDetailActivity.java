@@ -148,26 +148,26 @@ public class TicketDetailActivity extends BaseActivity {
                 try {
                     if (smallImg != null && smallImg.trim().length() > 0) {
                         if (smallImg.contains("/")) {
-                            s = Constants.imgServer
+                            s = Constants.APP_URL.imgServer
                                     + "Member/"
                                     + shopId
                                     + "/"
                                     + smallImg.substring(smallImg
                                     .lastIndexOf("/") + 1);
                         } else {
-                            s = Constants.imgServer + "Member/" + shopId + "/"
+                            s = Constants.APP_URL.imgServer + "Member/" + shopId + "/"
                                     + smallImg;
                         }
                     } else {
                         if (originalImge.contains("/")) {
-                            s = Constants.imgServer
+                            s = Constants.APP_URL.imgServer
                                     + "Member/"
                                     + shopId
                                     + "/"
                                     + originalImge.substring(originalImge
                                     .lastIndexOf("/") + 1);
                         } else {
-                            s = Constants.imgServer + "Member/" + shopId + "/"
+                            s = Constants.APP_URL.imgServer + "Member/" + shopId + "/"
                                     + originalImge;
                         }
 

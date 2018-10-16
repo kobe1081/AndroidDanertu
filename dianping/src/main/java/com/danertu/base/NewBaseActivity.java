@@ -86,6 +86,7 @@ public abstract class NewBaseActivity<V, T extends NewBasePresenter> extends Bas
     protected void initView() {
 
     }
+
     /**
      * 给activity设置view，加上加载动画，同时如果满足条件->Constants.ACT_FILL_STATUSBAR.contains(TAG)时，将内容区域延伸至状态栏区域，达到沉浸效果
      *
@@ -254,7 +255,7 @@ public abstract class NewBaseActivity<V, T extends NewBasePresenter> extends Bas
      */
     @JavascriptInterface
     public String getUid() {
-        return presenter.getUid();
+        return super.getUid();
     }
 
     @Override
@@ -462,7 +463,7 @@ public abstract class NewBaseActivity<V, T extends NewBasePresenter> extends Bas
     @JavascriptInterface
     @Override
     public String getImgUrl(String imgName, String agentID, String supplierID) {
-        return ActivityUtils.getImgUrl(imgName, agentID, supplierID);
+        return ActivityUtils.getImgUrl(imgName, agentID, supplierID, getUid());
     }
 
     @Override
@@ -517,7 +518,7 @@ public abstract class NewBaseActivity<V, T extends NewBasePresenter> extends Bas
      */
     @Override
     public String getStockSmallImgPath(String imgName) {
-        return Constants.imgServer + "sysProduct/" + imgName;
+        return Constants.APP_URL.imgServer + "sysProduct/" + imgName;
     }
 
     /**
@@ -529,7 +530,7 @@ public abstract class NewBaseActivity<V, T extends NewBasePresenter> extends Bas
      * @return
      */
     public String getSmallImgPath(String imgName, String agentID, String supplierID) {
-        return ActivityUtils.getImgUrl(imgName, agentID, supplierID);
+        return ActivityUtils.getImgUrl(imgName, agentID, supplierID, getUid());
     }
 
     private boolean isPayLoading = false;
@@ -756,8 +757,23 @@ public abstract class NewBaseActivity<V, T extends NewBasePresenter> extends Bas
         }
     }
 
+    @JavascriptInterface
     @Override
     public void shareImgWithQRCode(String imgSrc, String qrCodeContent, float startX, float startY, int widthAndHeight, String platformList) {
         super.shareImgWithQRCode(imgSrc, qrCodeContent, startX, startY, widthAndHeight, platformList);
+    }
+
+    @JavascriptInterface
+    @Override
+    public void quitAccount() {
+        String uid = getUid();
+        db.DeleteLoginInfo(getContext(), uid);
+        //防止登录删除不成功
+        if (db.GetLoginUid(getContext()).equals(uid)) {
+            if (Constants.isDebug) {
+                CommonTools.showShortToast(getContext(), "登录后登录信息更新不成功");
+            }
+            db.DeleteLoginInfo(getContext(), uid);
+        }
     }
 }

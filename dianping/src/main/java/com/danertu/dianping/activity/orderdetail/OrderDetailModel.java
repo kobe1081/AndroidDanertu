@@ -1,5 +1,7 @@
 package com.danertu.dianping.activity.orderdetail;
 
+import android.content.Context;
+
 import com.config.ApiService;
 import com.danertu.base.BaseModel;
 import com.danertu.base.ModelCallBack;
@@ -7,6 +9,8 @@ import com.danertu.base.ModelParamCallBack;
 import com.danertu.entity.OrderBody;
 import com.danertu.entity.OrderHead;
 import com.danertu.entity.QuanYanProductCategory;
+import com.danertu.entity.TokenExceptionBean;
+import com.google.gson.Gson;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,13 +28,27 @@ public class OrderDetailModel extends BaseModel {
     private OrderHead.OrderinfolistBean orderHead;
     private OrderBody.OrderproductlistBean orderBody;
 
+    public OrderDetailModel(Context context) {
+        super(context);
+    }
+
     public void getOrderInfo(String orderNumber, final ModelCallBack callBack) {
         Call<OrderHead> orderHeadCall = retrofit.create(ApiService.class).getOrderHead("0036", orderNumber);
         final Call<OrderBody> orderBodyCall = retrofit.create(ApiService.class).getOrderBody("0072", orderNumber);
         orderHeadCall.enqueue(new Callback<OrderHead>() {
             @Override
             public void onResponse(Call<OrderHead> call, Response<OrderHead> response) {
-                if (response.code() != RESULT_OK || response.body() == null || response.body().getOrderinfolist() == null || response.body().getOrderinfolist().getOrderinfobean() == null) {
+                if (response.code() != RESULT_OK || response.body() == null) {
+                    callBack.requestError();
+                    return;
+                }
+
+                if ("false".equals(response.body().getResult()) && "-1".equals(response.body().getCode())) {
+                    callBack.tokenException(response.body().getCode(), response.body().getInfo());
+                    return;
+                }
+
+                if (response.body().getOrderinfolist() == null || response.body().getOrderinfolist().getOrderinfobean() == null) {
                     callBack.requestError();
                     return;
                 }
@@ -38,7 +56,15 @@ public class OrderDetailModel extends BaseModel {
                 orderBodyCall.enqueue(new Callback<OrderBody>() {
                     @Override
                     public void onResponse(Call<OrderBody> call, Response<OrderBody> response) {
-                        if (response.code() != RESULT_OK || response.body() == null || response.body().getOrderproductlist() == null || response.body().getOrderproductlist().getOrderproductbean() == null) {
+                        if (response.code() != RESULT_OK || response.body() == null) {
+                            callBack.requestError();
+                            return;
+                        }
+                        if ("false".equals(response.body().getResult()) && "-1".equals(response.body().getCode())) {
+                            callBack.tokenException(response.body().getCode(), response.body().getInfo());
+                            return;
+                        }
+                        if (response.body().getOrderproductlist() == null || response.body().getOrderproductlist().getOrderproductbean() == null) {
                             callBack.requestError();
                             return;
                         }
@@ -89,11 +115,18 @@ public class OrderDetailModel extends BaseModel {
                     callBack.requestError();
                     return;
                 }
+
                 String body = response.body();
                 if ("true".equals(body)) {
                     callBack.requestSuccess();
                 } else {
-                    callBack.requestFailure();
+                    Gson gson = new Gson();
+                    TokenExceptionBean bean = gson.fromJson(response.body(), TokenExceptionBean.class);
+                    if (bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
+                        callBack.tokenException(bean.getCode(), bean.getInfo());
+                    } else {
+                        callBack.requestFailure();
+                    }
                 }
             }
 
@@ -105,7 +138,7 @@ public class OrderDetailModel extends BaseModel {
     }
 
     public void sureTakeGoods(String orderNumber, final ModelCallBack callBack) {
-        Call<String> call = retrofit.create(ApiService.class).cancelOrder("0076", orderNumber);
+        Call<String> call = retrofit.create(ApiService.class).sureTakeGoods("0076", orderNumber);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -117,7 +150,13 @@ public class OrderDetailModel extends BaseModel {
                 if ("true".equals(body)) {
                     callBack.requestSuccess();
                 } else {
-                    callBack.requestFailure();
+                    Gson gson = new Gson();
+                    TokenExceptionBean bean = gson.fromJson(response.body(), TokenExceptionBean.class);
+                    if (bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
+                        callBack.tokenException(bean.getCode(), bean.getInfo());
+                    } else {
+                        callBack.requestFailure();
+                    }
                 }
             }
 

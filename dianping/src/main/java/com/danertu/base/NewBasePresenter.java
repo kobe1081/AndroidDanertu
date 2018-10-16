@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 
 import com.config.Constants;
 import com.danertu.tools.Logger;
+import com.danertu.tools.ThreadUtil;
 import com.danertu.widget.CommonTools;
 
 import java.util.LinkedHashMap;
@@ -17,7 +19,7 @@ import java.util.LinkedHashMap;
  * presenter基类
  */
 
-public abstract class NewBasePresenter<T,V extends BaseModel> {
+public abstract class NewBasePresenter<T, V extends BaseModel> {
     /*这个基类的Presenter 主要的作用就是将当前Presenter持有的view 在合适的时候给清除掉*/
     public T view;
     public Context context;
@@ -28,7 +30,7 @@ public abstract class NewBasePresenter<T,V extends BaseModel> {
     public NewBasePresenter(Context context) {
         this.context = context;
         initHandler();
-        model=initModel();
+        model = initModel();
     }
 
     public void attach(T mView) {
@@ -152,5 +154,44 @@ public abstract class NewBasePresenter<T,V extends BaseModel> {
 
     public boolean isViewAttached() {
         return view != null;
+    }
+
+    public void runThread(Runnable runnable) {
+        ThreadUtil.execute(runnable);
+    }
+
+    public void sendMessage(Handler handler, int what, int arg1, Object object) {
+        if (handler == null) {
+            return;
+        }
+        Message message = handler.obtainMessage();
+        message.what = what;
+        message.obj = object;
+        message.arg1 = arg1;
+        handler.sendMessage(message);
+    }
+
+    public void sendMessage(Handler handler, int what, int arg1) {
+        sendMessage(handler, what, arg1, null);
+    }
+
+    public void sendMessage(Handler handler, int what, String info) {
+        if (handler == null) {
+            return;
+        }
+        Message message = handler.obtainMessage();
+        message.what = what;
+        if (!TextUtils.isEmpty(info)) {
+            message.obj = info;
+        }
+        handler.sendMessage(message);
+    }
+
+    public void sendMessage(Handler handler, int what, Object obj) {
+        sendMessage(handler, what, -1, obj);
+    }
+
+    public void sendMessage(Handler handler, int what) {
+        sendMessage(handler, what, null);
     }
 }

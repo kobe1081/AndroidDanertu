@@ -178,13 +178,13 @@ public class TicketActivity extends BaseActivity {
                     String imgUrl = "";
                     switch (type) {
                         case 1: // 单个商品优惠券
-                            imgUrl = Constants.imgServer + "sysProduct/" + ticketImg;
+                            imgUrl = Constants.APP_URL.imgServer + "sysProduct/" + ticketImg;
                             break;
                         case 2: // 店铺优惠券
-                            imgUrl = Constants.imgServer + "Member/" + shopid + "/" + ticketImg;
+                            imgUrl = Constants.APP_URL.imgServer + "Member/" + shopid + "/" + ticketImg;
                             break;
                         case 3: // 供应商优惠券
-                            imgUrl = Constants.imgServer + "SupplierProduct/" + supplierId + "/" + ticketImg;
+                            imgUrl = Constants.APP_URL.imgServer + "SupplierProduct/" + supplierId + "/" + ticketImg;
                             break;
                     }
                     item.put("productGuid", productGuid);

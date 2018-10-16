@@ -5,15 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 
+import com.config.Constants;
+import com.danertu.tools.Logger;
 import com.danertu.widget.MWebViewClient;
 
 public class MyOrderShipmentActivity extends BaseActivity {
@@ -67,15 +71,16 @@ public class MyOrderShipmentActivity extends BaseActivity {
 //            }
         });
         webView.getSettings().setJavaScriptEnabled(true);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         String shipCode = intent.getStringExtra(KEY_SHIPMENT_CODE);
         String shipNumber = intent.getStringExtra(KEY_SHIPMENT_NUMBER);
         String shipName = intent.getStringExtra(KEY_SHIPMENT_NAME);
         String type = TextUtils.isEmpty(shipCode) ? shipName : shipCode;
         //webView.loadUrl("http://wap.kuaidi100.com/wap_result.jsp?rand=20120517&id=quanfengkuaidi&fromWeb=null&&postid=123456");
 //		webView.loadUrl("http://wap.kuaidi100.com/wap_result.jsp?rand=20120517&id="+shipCode+"&fromWeb=null&&postid="+shipNumber);
-
-        webView.loadUrl("http://m.kuaidi100.com/index_all.html?type=" + type + "&postid=" + shipNumber);
+        webView.loadUrl(Constants.APP_URL.KUAIDI100_ADDRESS + shipNumber);
     }
 
     @Override

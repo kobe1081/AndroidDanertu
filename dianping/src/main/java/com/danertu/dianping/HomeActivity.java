@@ -93,6 +93,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
+
     /**
      * 返回首页
      *
@@ -160,7 +161,7 @@ public class HomeActivity extends BaseActivity {
         initShopCarCount();
     }
 
-    private View tabView;
+    protected View tabView;
 
     @Override
     public void setContentView(int layoutid) {

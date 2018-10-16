@@ -21,6 +21,7 @@ public class WarehousePresenter extends BasePresenter<WarehouseView> implements 
     public static final int MSG_LOAD_MORE_SUCCESS = 1113;
     public static final int MSG_LOAD_MORE_FAIL = 114;
     public static final int MSG_LOAD_MORE_NO_DATA = 115;
+    static final int MSG_NEED_LOGIN = 116;
 
     private WarehouseModel model;
     private int currentPage = 1;
@@ -30,7 +31,7 @@ public class WarehousePresenter extends BasePresenter<WarehouseView> implements 
 
     public WarehousePresenter(Context context) {
         super(context);
-        model = new WarehouseModel();
+        model = new WarehouseModel(context);
         initHandler();
     }
 
@@ -71,9 +72,19 @@ public class WarehousePresenter extends BasePresenter<WarehouseView> implements 
                     case MSG_LOAD_MORE_NO_DATA:
                         --currentPage;
                         isLoading = false;
-                        view.noMoreData();
-                        view.stopLoadMore();
-                        view.jsShowToast("已无更多数据");
+                        if (isViewAttached()){
+                            view.noMoreData();
+                            view.stopLoadMore();
+                            view.jsShowToast("已无更多数据");
+                        }
+                        break;
+                    case MSG_NEED_LOGIN:
+                        if (isViewAttached()){
+                            view.jsShowMsg("您的登录信息已过期，请重新登录");
+                            view.quitAccount();
+                            view.jsFinish();
+                            view.jsStartActivity("LoginActivity");
+                        }
                         break;
                 }
             }

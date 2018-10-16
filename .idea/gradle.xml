@@ -13,7 +13,6 @@
             <option value="$PROJECT_DIR$/dianping" />
             <option value="$PROJECT_DIR$/libzxing" />
             <option value="$PROJECT_DIR$/onekeyshare" />
-            <option value="$PROJECT_DIR$/xiaonengChatUI" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

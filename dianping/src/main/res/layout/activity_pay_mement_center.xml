@@ -174,7 +174,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="优惠券"
-                        android:textColor="@color/gray_text_aaa"
+                        android:textColor="@color/gray_text"
                         android:textSize="@dimen/small_text_size"/>
 
                     <TextView
@@ -203,7 +203,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="优惠码"
-                        android:textColor="@color/gray_text_aaa"
+                        android:textColor="@color/gray_text"
                         android:textSize="@dimen/small_text_size"/>
 
                     <TextView
@@ -228,7 +228,7 @@
                     android:minHeight="60dp"
                     android:padding="10dp"
                     android:text="金萝卜抵扣"
-                    android:textColor="@color/gray_text_aaa"
+                    android:textColor="@color/gray_text"
                     android:textSize="@dimen/small_text_size"
                     android:visibility="gone"/>
 
@@ -251,7 +251,7 @@
                         android:background="@color/white"
                         android:padding="8dp"
                         android:text="支付方式"
-                        android:textColor="@color/gray_text_aaa"
+                        android:textColor="@color/gray_text"
                         android:textSize="@dimen/small_text_size"/>
 
                     <CheckBox

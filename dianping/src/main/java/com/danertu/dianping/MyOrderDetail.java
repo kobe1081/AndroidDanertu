@@ -201,6 +201,7 @@ public class MyOrderDetail extends BaseActivity {
     public static final int RESULT_QRCODE_STATUS_CHANGE = 124;
 
     private boolean isQuanyan = false;
+    private boolean isQuanlin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -254,6 +255,12 @@ public class MyOrderDetail extends BaseActivity {
                     }
                     initView();
                     hideLoadDialog();
+                }
+
+                @Override
+                public void needLogin() {
+                    jsStartActivity("LoginActivity", "");
+                    finish();
                 }
             };
         } else {
@@ -591,20 +598,60 @@ public class MyOrderDetail extends BaseActivity {
     //    发起取消订单请求
     public Runnable cancelOrderRun = new Runnable() {
         public void run() {
-            if (AppManager.getInstance().postCancelOrder(outOrderNumber)) {
+            String json = AppManager.getInstance().postCancelOrder(outOrderNumber, db.GetLoginUid(context));
+            if ("true".equals(json)) {
                 sendMessage(WHAT_CANCEL_ORDER_SUCCESS, null);
             } else {
-                sendMessage(WHAT_CANCEL_ORDER_FAIL, null);
+                judgeIsTokenException(json, new TokenExceptionCallBack() {
+                    @Override
+                    public void tokenException(String code, final String info) {
+                        sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                jsShowMsg(info);
+//                                quitAccount();
+//                                finish();
+//                                jsStartActivity("LoginActivity", "");
+//                            }
+//                        });
+                    }
+
+                    @Override
+                    public void ok() {
+                        sendMessage(WHAT_CANCEL_ORDER_FAIL, null);
+                    }
+                });
             }
         }
     };
     //    发起确认收货请求
     public Runnable sureTakeGoods = new Runnable() {
         public void run() {
-            if (AppManager.getInstance().postFinishOrder(outOrderNumber)) {
+            String json = AppManager.getInstance().postFinishOrder(outOrderNumber, db.GetLoginUid(context));
+            if ("true".equals(json)) {
                 sendMessage(WHAT_TAKE_GOODS_SUCCESS, null);// 表示确定收货成功
             } else {
-                sendMessage(WHAT_TAKE_GOODS_FAIL, null);
+                judgeIsTokenException(json, new TokenExceptionCallBack() {
+                    @Override
+                    public void tokenException(String code, final String info) {
+                        sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                jsShowMsg(info);
+//                                quitAccount();
+//                                finish();
+//                                jsStartActivity("LoginActivity", "");
+//                            }
+//                        });
+                    }
+
+                    @Override
+                    public void ok() {
+                        sendMessage(WHAT_TAKE_GOODS_FAIL, null);
+                    }
+                });
             }
         }
     };
@@ -709,6 +756,7 @@ public class MyOrderDetail extends BaseActivity {
             final String supID = item.get(MyOrderData.ORDER_ITEM_SUPPLIERID_KEY);
 
             isQuanyan = supID.equals(Constants.QY_SUPPLIERID);
+            isQuanlin = supID.equals(Constants.QL_SUPPLIERID);
 
             final String discountBuyNum = item.get(MyOrderData.ORDER_ITEM_DISCOUNT_BUY_NUM);//优惠条件
             final String discountPrice = item.get(MyOrderData.ORDER_ITEM_DISCOUNT_PRICE);//优惠幅度
@@ -776,8 +824,8 @@ public class MyOrderDetail extends BaseActivity {
             final String mobile = agentMobile;
             proMsg.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    if (isQuanyan) {
-                        new ToQuanyanProductPage().execute(guid,agentID);
+                    if (isQuanyan||isQuanlin) {
+                        new ToQuanyanProductPage().execute(guid, agentID);
                     } else {
                         startToProDetail(guid, proName, image, "", agentID, supID, price, mobile);
                     }
@@ -1249,7 +1297,7 @@ public class MyOrderDetail extends BaseActivity {
     public void accPay() {
         String uid = getUid();
         String param[] = {uid, outOrderNumber, totalprice, pricedata};
-        new AccToPay(getContext()) {
+        new AccToPay(this) {
             @Override
             public void paySuccess() {
                 dialog_psw.dismiss();
@@ -1445,6 +1493,12 @@ public class MyOrderDetail extends BaseActivity {
                         initView();
                         hideLoadDialog();
                     }
+
+                    @Override
+                    public void needLogin() {
+                        jsStartActivity("LoginActivity", "");
+                        finish();
+                    }
                 };
             } else {
                 //从订单中心进入
@@ -1547,6 +1601,12 @@ public class MyOrderDetail extends BaseActivity {
                         initView();
                         hideLoadDialog();
                     }
+
+                    @Override
+                    public void needLogin() {
+                        jsStartActivity("LoginActivity", "");
+                        finish();
+                    }
                 };
             }
 
@@ -1636,7 +1696,7 @@ public class MyOrderDetail extends BaseActivity {
             if (TextUtils.isEmpty(productGuid)) {
                 return "";
             }
-            return param[1]+",;"+appManager.postGetProductCategory(productGuid);
+            return param[1] + ",;" + appManager.postGetProductCategory(productGuid);
         }
 
         @Override
@@ -1652,8 +1712,15 @@ public class MyOrderDetail extends BaseActivity {
                 ProductCategory.ValBean bean = category.getVal().get(0);
                 String productCategory = bean.getProductCategory();
                 String guid = bean.getProductGuid();
-
-                jsStartActivity("com.danertu.dianping.HtmlActivity", "pageName|"  + QUANYAN_PRODUCT_URL + "?&platform=android&timestamp=" + System.currentTimeMillis() + ",;guid|" + bean.getProductGuid() + ",;shopid|" + split[0] + ",;productCategory|" + bean.getProductCategory());
+                if ("2".equals(productCategory)&&Constants.QY_SUPPLIERID.equals(bean.getSupplierLoginId())){
+                    jsStartActivity("ProductDetailsActivity2", "guid|" + guid + ",;shopid|" + getShopId());
+                }else {
+                    String url = Constants.APP_URL.TICKET_DETAIL_URL + "?shopid=" + getShopId() + "&platform=" + Constants.APP_PLATFORM + "&guid=" + bean.getProductGuid() + "&timestamp=" + System.currentTimeMillis();
+                    Intent intent = new Intent(context, HtmlActivityNew.class);
+                    intent.putExtra("url", url);
+                    startActivity(intent);
+                }
+//                jsStartActivity("com.danertu.dianping.HtmlActivity", "pageName|" + QUANYAN_PRODUCT_URL + "?&platform=android&timestamp=" + System.currentTimeMillis() + ",;guid|" + bean.getProductGuid() + ",;shopid|" + split[0] + ",;productCategory|" + bean.getProductCategory());
 
 //                Intent intent = new Intent(context, HtmlActivityNew.class);
 //                String url = Constants.appWebPageUrl + QUANYAN_PRODUCT_URL + "?productCategory=" + productCategory + "&guid=" + guid;

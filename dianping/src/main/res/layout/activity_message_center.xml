@@ -45,13 +45,12 @@
         android:id="@+id/noresult_text"
         style="@style/style_18_666666"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@id/fraHead"
         android:layout_centerInParent="true"
-        android:layout_gravity="center"
         android:gravity="center"
         android:text="亲，当前暂时没有消息"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <com.danertu.widget.XListView
         android:id="@+id/msgList"

@@ -41,7 +41,7 @@ public class PayBackActivity extends BaseActivity {
 
     public final String TAG_REASON = "reason";
     public final String TAG_REASON_CONFIRM = "reasonConfirm";
-    public static final int RESULT_PAY_BACK=323;
+    public static final int RESULT_PAY_BACK = 323;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,7 +155,7 @@ public class PayBackActivity extends BaseActivity {
         }
 
         public void run() {
-            String result = AppManager.getInstance().setPayBack("0079", ordernumber, memberid, reason, remark);
+            String result = AppManager.getInstance().setPayBack("0079", ordernumber, memberid, reason, remark, getUid());
             Message msg = new Message();
             msg.obj = result;
             msg.what = 1;
@@ -167,7 +167,8 @@ public class PayBackActivity extends BaseActivity {
         public boolean handleMessage(Message msg) {
             if (msg.what == 1) {
                 hideLoadDialog();
-                if (msg.obj.toString().equals("true")) {
+                String json = msg.obj.toString();
+                if (json.equals("true")) {
                     jsShowMsg("退款信息已提交");
                     MyOrderData.payBackHandle(ordernumber);
                     if (isShowTips) {
@@ -175,7 +176,21 @@ public class PayBackActivity extends BaseActivity {
                     } else
                         finish();
                 } else {
-                    jsShowMsg("您已提交过退款信息，请耐心等候！");
+                    judgeIsTokenException(json, new TokenExceptionCallBack() {
+                        @Override
+                        public void tokenException(String code, String info) {
+                            sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                            jsShowMsg(info);
+//                            quitAccount();
+//                            finish();
+//                            jsStartActivity("LoginActivity", "");
+                        }
+
+                        @Override
+                        public void ok() {
+                            jsShowMsg("您已提交过退款信息，请耐心等候！");
+                        }
+                    });
                 }
             }
             setResult(RESULT_PAY_BACK);

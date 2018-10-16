@@ -153,7 +153,7 @@ public class AddressActivity extends BaseActivity implements OnClickListener {
         b_title = (Button) findViewById(R.id.b_title_back5);
         b_opera = (Button) findViewById(R.id.b_title_operation5);
         b_addAddress = (Button) findViewById(R.id.b_address_add);
-        tvNoAddressTips= ((TextView) findViewById(R.id.tv_no_address_tip));
+        tvNoAddressTips = ((TextView) findViewById(R.id.tv_no_address_tip));
         b_title.setOnClickListener(this);
         b_addAddress.setOnClickListener(this);
         b_opera.setOnClickListener(this);
@@ -215,31 +215,28 @@ public class AddressActivity extends BaseActivity implements OnClickListener {
         }
 
         protected String doInBackground(Integer... params) {
+            String result = "";
             try {
-                String result = appManager.postGetUserAddress("0030", uid);
-                try {
-                    JSONObject jsonObject = new JSONObject(result).getJSONObject("adress");
-                    JSONArray jsonArray = jsonObject.getJSONArray("adresslist");
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject oj = jsonArray.getJSONObject(i);
-                        // Address adressEntity = new Address();
-                        HashMap<String, Object> item = new HashMap<>();
-                        item.put("adress_uid", uid);
-                        item.put("adress_name", oj.getString("name"));
-                        item.put("adress_tel", oj.getString("tel"));
-                        item.put("adress_mobile", oj.getString("mobile"));
-                        item.put("adress_Adress", oj.getString("adress"));
-                        item.put("adress_isdefault", oj.getString("ck"));
-                        item.put("adress_time", oj.getString("time"));
-                        item.put("adress_guid", oj.getString("guid"));
-                        data.add(item);
-                    }
-                    db.TogetherPcUserAddress(AddressActivity.this, uid, data);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    // String s ="123";
+                result = appManager.postGetUserAddress("0030", uid);
+                JSONObject jsonObject = new JSONObject(result).getJSONObject("adress");
+                JSONArray jsonArray = jsonObject.getJSONArray("adresslist");
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject oj = jsonArray.getJSONObject(i);
+                    // Address adressEntity = new Address();
+                    HashMap<String, Object> item = new HashMap<>();
+                    item.put("adress_uid", uid);
+                    item.put("adress_name", oj.getString("name"));
+                    item.put("adress_tel", oj.getString("tel"));
+                    item.put("adress_mobile", oj.getString("mobile"));
+                    item.put("adress_Adress", oj.getString("adress"));
+                    item.put("adress_isdefault", oj.getString("ck"));
+                    item.put("adress_time", oj.getString("time"));
+                    item.put("adress_guid", oj.getString("guid"));
+                    data.add(item);
                 }
+                db.TogetherPcUserAddress(AddressActivity.this, uid, data);
             } catch (Exception e) {
+                judgeIsTokenException(result, "您的登录信息已过期，请重新登录", -1);
                 e.printStackTrace();
             }
             // 在data最前添加数据
@@ -398,11 +395,31 @@ public class AddressActivity extends BaseActivity implements OnClickListener {
             public void run() {
                 // 耗时操作
                 String result = appManager.postSetAddressIsDefault("0031", sguid, uid);
-                Logger.e(TAG,"设置默认地址结果==="+result);
+                Logger.e(TAG, "设置默认地址结果===" + result);
 
-                Message msg = Message.obtain();
-                msg.what = ADDRESS_SET_DEFAULT;
-                handleAddress.sendMessage(msg);
+                judgeIsTokenException(result, new TokenExceptionCallBack() {
+                    @Override
+                    public void tokenException(String code, final String info) {
+                        sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                jsShowMsg(info);
+//                                quitAccount();
+//                                finish();
+//                                jsStartActivity("LoginActivity", "");
+//                            }
+//                        });
+
+                    }
+
+                    @Override
+                    public void ok() {
+                        Message msg = Message.obtain();
+                        msg.what = ADDRESS_SET_DEFAULT;
+                        handleAddress.sendMessage(msg);
+                    }
+                });
             }
 
         }
@@ -415,7 +432,8 @@ public class AddressActivity extends BaseActivity implements OnClickListener {
             }
 
             public void run() {
-                appManager.postDeleteUserAddress("0014", sguid);
+                String s = appManager.postDeleteUserAddress("0014", sguid, uid);
+                judgeIsTokenException(s, "您的登录信息已过期，请重新登录", -1);
                 Message msg = Message.obtain();
                 msg.what = ADDRESS_DELETE;
                 handleAddress.sendMessage(msg);

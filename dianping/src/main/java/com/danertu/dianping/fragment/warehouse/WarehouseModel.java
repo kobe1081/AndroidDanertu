@@ -1,5 +1,6 @@
 package com.danertu.dianping.fragment.warehouse;
 
+import android.content.Context;
 import android.os.Handler;
 
 import com.danertu.base.BaseModel;
@@ -19,6 +20,7 @@ import static com.danertu.dianping.fragment.warehouse.WarehousePresenter.MSG_DAT
 import static com.danertu.dianping.fragment.warehouse.WarehousePresenter.MSG_LOAD_MORE_FAIL;
 import static com.danertu.dianping.fragment.warehouse.WarehousePresenter.MSG_LOAD_MORE_NO_DATA;
 import static com.danertu.dianping.fragment.warehouse.WarehousePresenter.MSG_LOAD_MORE_SUCCESS;
+import static com.danertu.dianping.fragment.warehouse.WarehousePresenter.MSG_NEED_LOGIN;
 
 /**
  * Created by Viz on 2017/12/21.
@@ -30,8 +32,8 @@ public class WarehouseModel extends BaseModel {
     private int totalPage = 0;
     private int totalCount = 0;
 
-    public WarehouseModel() {
-        super();
+    public WarehouseModel(Context context) {
+        super(context);
         categoryList = new ArrayList<>();
         productList = new ArrayList<>();
     }
@@ -45,7 +47,7 @@ public class WarehouseModel extends BaseModel {
      * @param orderBy           默认时间 库存降序=1
      */
     public void getStockList(final Handler handler, String memLoginId, final int pageIndex, int pageSize, String productCategoryId, String orderBy) {
-        Call<WarehouseBean> call = retrofit.create(ApiService.class).getStockList("0325", memLoginId, pageIndex, pageSize, productCategoryId, orderBy);
+        Call<WarehouseBean> call = retrofit.create(ApiService.class).getStockList("0325", memLoginId,orderBy, pageIndex, pageSize, productCategoryId);
         call.enqueue(new Callback<WarehouseBean>() {
             @Override
             public void onResponse(Call<WarehouseBean> call, Response<WarehouseBean> response) {
@@ -54,8 +56,12 @@ public class WarehouseModel extends BaseModel {
                     handler.sendEmptyMessage(MSG_SERVER_ERROR);
                     return;
                 }
+
+                if ("false".equals(response.body().getResult()) && "-1".equals(response.body().getCode())) {
+                    handler.sendEmptyMessage(MSG_NEED_LOGIN);
+                    return;
+                }
                 WarehouseBean body = response.body();
-                println(body);
                 try {
                     totalPage = Integer.parseInt(body.getTotalPageCount_o());
                     totalCount = Integer.parseInt(body.getTotalCount_o());

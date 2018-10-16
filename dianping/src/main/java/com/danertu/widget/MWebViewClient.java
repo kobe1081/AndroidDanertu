@@ -1,13 +1,10 @@
 package com.danertu.widget;
 
 import java.io.IOException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -28,6 +25,18 @@ import android.webkit.WebViewClient;
 import com.config.Constants;
 import com.danertu.tools.Logger;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class MWebViewClient extends WebViewClient {
     private boolean isError = false;
     private String iface = null;
@@ -40,7 +49,6 @@ public class MWebViewClient extends WebViewClient {
         this.iface = ifaceName;
 
     }
-
 
 
     @Override
@@ -72,7 +80,7 @@ public class MWebViewClient extends WebViewClient {
         return response;
     }
 
-//    @Override
+    //    @Override
 //    public boolean shouldOverrideUrlLoading(WebView view, String url) {
 //        //    return super.shouldOverrideUrlLoading(view, url);
 //        //重写这个用于页面点击号码开启系统拨号盘
@@ -99,6 +107,7 @@ public class MWebViewClient extends WebViewClient {
 
     /**
      * https发生错误回调
+     *
      * @param view
      * @param handler
      * @param error
@@ -177,22 +186,59 @@ public class MWebViewClient extends WebViewClient {
 
     private int httpState = -1;
 
-    public int getHttpState(final String url) {
+    public int getHttpState(String url) {
         long st, et;
         st = System.currentTimeMillis();
-        HttpUriRequest params = null;
-        HttpClient client = null;
-        try {
-            params = new HttpHead(url);// 服务器响应只返回消息头，一般用于检测链接的有效性
-            client = new DefaultHttpClient();
-            HttpResponse response = client.execute(params);
-            httpState = response.getStatusLine().getStatusCode();
 
-            Header[] heads = response.getAllHeaders();
+//        HttpUriRequest params = null;
+//        HttpClient client = null;
+//        url="https://danertu.com";
+//        url="https://appweb.danertu.com:444/Android/AndroidIndex.html";
+//        try {
+//            params = new HttpHead(url);// 服务器响应只返回消息头，一般用于检测链接的有效性
+//            client = new DefaultHttpClient();
+//            HttpResponse response = client.execute(params);
+//            httpState = response.getStatusLine().getStatusCode();
+//
+//            Header[] heads = response.getAllHeaders();
+//            int count = 0;
+//            Logger.v("消息头" + count++, "stateCode: "+httpState);
+//            for (Header item : heads) {
+//                Logger.v("消息头" + count++, item.toString());
+//            }
+//
+//        } catch (Exception e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//            description = e.toString();
+//            httpState = 0;
+//        } finally{
+//            if(params != null && !params.isAborted()){
+//                params.abort();
+//            }
+//            if(client != null){
+//                client = null;
+//            }
+//        }
+
+        OkHttpClient okHttpClient = null;
+        Request request = null;
+
+        try {
+            okHttpClient = new OkHttpClient.Builder()
+                    .sslSocketFactory(createSSLSocketFactory(), new TrustAllCerts())
+                    .hostnameVerifier(new TrustAllHostnameVerifier())
+                    .build();
+            request = new Request.Builder()
+                    .url(url)
+                    .build();
+            Response response = okHttpClient.newCall(request).execute();
+            httpState = response.code();
+            Headers headers = response.headers();
             int count = 0;
             Logger.v("消息头" + count++, "stateCode: " + httpState);
-            for (Header item : heads) {
-                Logger.v("消息头" + count++, item.toString());
+            for (int i = 0; i < headers.size(); i++) {
+                Logger.v("消息头" + count++, headers.get(headers.name(i)));
             }
 
         } catch (Exception e) {
@@ -200,16 +246,47 @@ public class MWebViewClient extends WebViewClient {
             description = e.toString();
             httpState = 0;
         } finally {
-            if (params != null && !params.isAborted()) {
-                params.abort();
-            }
-            if (client != null) {
-                client = null;
-            }
+            if (okHttpClient != null)
+                okHttpClient = null;
         }
         et = System.currentTimeMillis();
         Logger.v("耗时", (et - st) + "毫秒");
         return httpState;
+    }
+
+    private static class TrustAllCerts implements X509TrustManager {
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+        }
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return new X509Certificate[0];
+        }
+    }
+
+    private static class TrustAllHostnameVerifier implements HostnameVerifier {
+
+        @Override
+        public boolean verify(String hostname, SSLSession session) {
+            return true;
+        }
+    }
+
+    private static SSLSocketFactory createSSLSocketFactory() {
+        SSLSocketFactory ssfFactory = null;
+        try {
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, new TrustManager[]{new TrustAllCerts()}, new SecureRandom());
+            ssfFactory = sc.getSocketFactory();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ssfFactory;
     }
 
 }

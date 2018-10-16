@@ -26,21 +26,18 @@ import com.alipay.sdk.app.PayTask;
 import com.config.Constants;
 import com.danertu.entity.StockOrderDetailBean;
 import com.danertu.entity.StockOrderReturnDetail;
+import com.danertu.tools.AlipayUtil;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.Logger;
 import com.danertu.tools.MyDialog;
 import com.danertu.tools.Result;
-import com.danertu.tools.StockAlipayUtil;
 import com.danertu.tools.StockOrderReturnAccountPay;
-import com.danertu.tools.StockWXPay;
+import com.danertu.tools.WXPay;
 import com.danertu.widget.CommonTools;
 import com.danertu.widget.PayPswDialog;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import wl.codelibrary.widget.CircleImageView;
 import wl.codelibrary.widget.IOSDialog;
@@ -55,6 +52,7 @@ public class StockOrderDetailActivity extends BaseActivity implements View.OnCli
     public static final int RESULT_RETURN = 999;
     private static final int WHAT_TAKE_GOODS_SUCCESS = 122;
     private static final int WHAT_TAKE_GOODS_FAIL = 123;
+    public static final int RESULT_SURE_TAKE_GOODS = 998;
     private Button btn_back;
     private TextView tv_title;
     private TextView tv_order_trade_state;
@@ -118,7 +116,7 @@ public class StockOrderDetailActivity extends BaseActivity implements View.OnCli
     private static final String PAY_WAY_WECHAPAY = "WechatPay";
 
     private PayPswDialog dialog_psw = null;
-    private StockWXPay stockWXPay;
+    private WXPay wxPay;
     private SetReturnPayWay setReturnPayWay;
 
 
@@ -282,10 +280,25 @@ public class StockOrderDetailActivity extends BaseActivity implements View.OnCli
     //    发起确认收货请求
     public Runnable sureTakeGoods = new Runnable() {
         public void run() {
-            if (AppManager.getInstance().postFinishOrder(outOrderNumber)) {
+            String json = AppManager.getInstance().postFinishOrder(outOrderNumber, db.GetLoginUid(context));
+            if ("true".equals(json)) {
                 sendHandlerMessage(WHAT_TAKE_GOODS_SUCCESS, null);// 表示确定收货成功
             } else {
-                sendHandlerMessage(WHAT_TAKE_GOODS_FAIL, null);
+                judgeIsTokenException(json, new TokenExceptionCallBack() {
+                    @Override
+                    public void tokenException(String code, String info) {
+                        sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                        jsShowMsg(info);
+//                        quitAccount();
+//                        finish();
+//                        jsStartActivity("LoginActivity", "");
+                    }
+
+                    @Override
+                    public void ok() {
+                        sendHandlerMessage(WHAT_TAKE_GOODS_FAIL, null);
+                    }
+                });
             }
 
         }
@@ -321,6 +334,7 @@ public class StockOrderDetailActivity extends BaseActivity implements View.OnCli
                         tv_order_trade_state.setText("已收货");
                         b_order_opera2.setEnabled(false);
                         b_order_opera2.setVisibility(View.GONE);
+                        setResultSureTakeGoods();
                         hideLoadDialog();
                         break;
                     case WHAT_TAKE_GOODS_FAIL:
@@ -341,11 +355,7 @@ public class StockOrderDetailActivity extends BaseActivity implements View.OnCli
         @Override
         protected String doInBackground(String... strings) {
             String guid = strings[0];
-            Map<String, String> map = new HashMap<>();
-            map.put("apiid", "0329");
-            map.put("memLoginId", uid);
-            map.put("guid", guid);
-            return appManager.doPost(map);
+            return appManager.getStockOrderInfo(uid, guid);
         }
 
         @Override
@@ -376,10 +386,7 @@ public class StockOrderDetailActivity extends BaseActivity implements View.OnCli
                 String remark = TextUtils.isEmpty(bean.getRemark()) ? "无" : bean.getRemark();
                 tv_order_remark.setText(remark);
                 tv_order_createTime.setText("创建时间：" + bean.getCreateTime().replace("/", "."));
-
                 shipNumber = bean.getShipmentNumber();
-
-
                 //订单号为空的时候，查看物流不可点击
                 if (TextUtils.isEmpty(shipNumber)) {
                     b_order_opera1.setEnabled(false);
@@ -397,9 +404,25 @@ public class StockOrderDetailActivity extends BaseActivity implements View.OnCli
                 });
 
             } catch (Exception e) {
-                e.printStackTrace();
-                jsShowMsg("数据加载错误");
-                jsFinish();
+                judgeIsTokenException(s, new TokenExceptionCallBack() {
+                    @Override
+                    public void tokenException(String code, String info) {
+                        sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                        jsShowMsg(info);
+//                        quitAccount();
+//                        finish();
+//                        jsStartActivity("LoginActivity", "");
+                    }
+
+                    @Override
+                    public void ok() {
+                        jsShowMsg("数据加载错误");
+                        jsFinish();
+                    }
+                });
+
+                if (Constants.isDebug)
+                    e.printStackTrace();
             }
             hideLoadDialog();
         }
@@ -414,13 +437,7 @@ public class StockOrderDetailActivity extends BaseActivity implements View.OnCli
         @Override
         protected String doInBackground(String... strings) {
             String outOrderNumber = strings[0];
-            Map<String, String> map = new HashMap<>();
-            map.put("apiid", "0333");
-            map.put("memLoginId", uid);
-            map.put("wareHouseOrderOrderNumber", outOrderNumber);
-//            map.put("memLoginId", "15015007777");
-//            map.put("wareHouseOrderOrderNumber", "201712192358144");
-            return appManager.doPost(map);
+            return appManager.getStockReturnOrderInfo(uid, outOrderNumber);
         }
 
         @Override
@@ -534,9 +551,25 @@ public class StockOrderDetailActivity extends BaseActivity implements View.OnCli
 //                }
 //                ((View) b_order_opera1.getParent()).setVisibility(View.GONE);
             } catch (Exception e) {
-                e.printStackTrace();
-                jsShowMsg("数据加载错误");
-                jsFinish();
+                judgeIsTokenException(s, new TokenExceptionCallBack() {
+                    @Override
+                    public void tokenException(String code, String info) {
+                        sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                        jsShowMsg(info);
+//                        quitAccount();
+//                        finish();
+//                        jsStartActivity("LoginActivity", "");
+                    }
+
+                    @Override
+                    public void ok() {
+                        jsShowMsg("数据加载错误");
+                        jsFinish();
+                    }
+                });
+                if (Constants.isDebug) {
+                    e.printStackTrace();
+                }
             }
             hideLoadDialog();
         }
@@ -650,35 +683,43 @@ public class StockOrderDetailActivity extends BaseActivity implements View.OnCli
         @Override
         protected String doInBackground(String... strings) {
             String wareHouseOrderReturnGuid = strings[0];
-            HashMap<String, String> map = new HashMap<>();
-            map.put("apiid", "0334");
-            map.put("wareHouseOrderReturnGuid", wareHouseOrderReturnGuid);
-            map.put("mobilePayWay", payWay);
-            map.put("deviceType", Constants.deviceType);
-
-            return appManager.doPost(map);
+            return appManager.setReturnPayWay(uid, wareHouseOrderReturnGuid, payWay, Constants.deviceType);
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(final String s) {
             super.onPostExecute(s);
             //{ "result":"true", "info": "设置成功"}
-            try {
-                JSONObject object = new JSONObject(s);
-                boolean result = object.getBoolean("result");
-                String info = object.getString("info");
-                if (result) {
-                    //设置成功
-                    payWayDialog.dismiss();
-                    //支付按钮可点击
-                    returnCostPopup.getContentView().findViewById(R.id.tv_confirm).setEnabled(true);
-                } else {
-                    jsShowMsg(info);
-//                    setReturnPayWay.execute(guid);
+            judgeIsTokenException(s, new TokenExceptionCallBack() {
+                @Override
+                public void tokenException(String code, String info) {
+                    sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                    jsShowMsg(info);
+//                    quitAccount();
+//                    finish();
+//                    jsStartActivity("LoginActivity", "");
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+
+                @Override
+                public void ok() {
+                    try {
+                        JSONObject object = new JSONObject(s);
+                        boolean result = object.getBoolean("result");
+                        String info = object.getString("info");
+                        if (result) {
+                            //设置成功
+                            payWayDialog.dismiss();
+                            //支付按钮可点击
+                            returnCostPopup.getContentView().findViewById(R.id.tv_confirm).setEnabled(true);
+                        } else {
+                            jsShowMsg(info);
+//                    setReturnPayWay.execute(guid);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
     }
 
@@ -850,9 +891,9 @@ public class StockOrderDetailActivity extends BaseActivity implements View.OnCli
      * 微信支付
      */
     public void wechatToPay(String productName, String orderNumber, String price) {
-        if (stockWXPay == null)
-            stockWXPay = new StockWXPay(context);
-        stockWXPay.toPay(productName, orderNumber, price, ORDER_TYPE_ORDER_RETURN);
+        if (wxPay == null)
+            wxPay = new WXPay(context);
+        wxPay.toPay(productName, orderNumber, price, ORDER_TYPE_ORDER_RETURN);
     }
 
     /**
@@ -869,7 +910,7 @@ public class StockOrderDetailActivity extends BaseActivity implements View.OnCli
             @Override
             public void run() {
                 try {
-                    String orderInfo = new StockAlipayUtil(getContext()).getSignPayOrderInfo(orderNumber, productName, productDetail, totalPrice, ORDER_TYPE_ORDER_RETURN);
+                    String orderInfo = new AlipayUtil(getContext()).getSignPayOrderInfo(orderNumber, productName, productDetail, totalPrice, ORDER_TYPE_ORDER_RETURN);
 //                    String orderInfo = new StockAlipayUtil(getContext()).getSignPayOrderInfo(orderNumber, productName, productDetail, "0.01", ORDER_TYPE_ORDER_RETURN);
                     PayTask aliPay = new PayTask(StockOrderDetailActivity.this);
                     String result = aliPay.pay(orderInfo);
@@ -919,4 +960,12 @@ public class StockOrderDetailActivity extends BaseActivity implements View.OnCli
         intent.putExtra("position", position);
         setResult(resultCode, intent);
     }
+
+    public void setResultSureTakeGoods() {
+        Intent intent = new Intent();
+        intent.putExtra("orderNumber", outOrderNumber);
+        intent.putExtra("position", position);
+        setResult(RESULT_SURE_TAKE_GOODS, intent);
+    }
+
 }

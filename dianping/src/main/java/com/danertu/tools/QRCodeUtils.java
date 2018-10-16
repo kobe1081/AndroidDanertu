@@ -33,6 +33,7 @@ public class QRCodeUtils {
     public static Bitmap createQRCode(String str, int widthAndHeight) throws WriterException {
         Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();
         hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
+
         BitMatrix matrix = new MultiFormatWriter().encode(str, BarcodeFormat.QR_CODE, widthAndHeight, widthAndHeight);
 
         int width = matrix.getWidth();
@@ -59,7 +60,7 @@ public class QRCodeUtils {
      * @param logoBm
      * @return
      */
-    public static Bitmap createQRImage(String content, int heightPix, Bitmap logoBm) {
+    public static Bitmap createQRImage(String content, int heightPix, Bitmap logoBm, boolean isTranslucent) {
         try {
 // if (content == null || "".equals(content)) {
 // return false;
@@ -69,12 +70,13 @@ public class QRCodeUtils {
             Map<EncodeHintType, Object> hints = new HashMap<>();
             hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
             //容错级别
-            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
             //设置空白边距的宽度
-            // hints.put(EncodeHintType.MARGIN, 2); //default is 4
+            hints.put(EncodeHintType.MARGIN, 0); //default is 4
 
             // 图像数据转换，使用了矩阵转换
             BitMatrix bitMatrix = new QRCodeWriter().encode(content, BarcodeFormat.QR_CODE, heightPix, heightPix, hints);
+
             int[] pixels = new int[heightPix * heightPix];
             // 下面这里按照二维码的算法，逐个生成二维码的图片，
             // 两个for循环是图片横列扫描的结果
@@ -83,7 +85,11 @@ public class QRCodeUtils {
                     if (bitMatrix.get(x, y)) {
                         pixels[y * heightPix + x] = 0xff000000;
                     } else {
-                        pixels[y * heightPix + x] = 0xffffffff;
+                        if (isTranslucent) {
+                            pixels[y * heightPix + x] = 0x00ffffff;
+                        } else {
+                            pixels[y * heightPix + x] = 0xffffffff;
+                        }
                     }
                 }
             }
@@ -103,6 +109,22 @@ public class QRCodeUtils {
         }
 
         return null;
+    }
+
+    private static BitMatrix deleteWhite(BitMatrix matrix) {
+        int[] rec = matrix.getEnclosingRectangle();
+        int resWidth = rec[2] + 10;
+        int resHeight = rec[3] + 10;
+
+        BitMatrix resMatrix = new BitMatrix(resWidth, resHeight);
+        resMatrix.clear();
+        for (int i = 0; i < resWidth; i++) {
+            for (int j = 0; j < resHeight; j++) {
+                if (matrix.get(i + rec[0], j + rec[1]))
+                    resMatrix.set(i, j);
+            }
+        }
+        return resMatrix;
     }
 
     /**

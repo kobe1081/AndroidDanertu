@@ -1,7 +1,11 @@
 package com.danertu.dianping;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
@@ -13,6 +17,7 @@ import android.widget.Button;
 import com.config.Constants;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.Logger;
+
 
 /**
  * 能送餐或订餐的店铺列表
@@ -42,6 +47,9 @@ public class FoodShopActivity extends BaseWebActivity implements OnClickListener
         String url = Constants.appWebPageUrl + "Android_food_Shop.html";
         this.webView.addJavascriptInterface(this, "app");
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         startWebView(url);
     }
 
@@ -155,28 +163,30 @@ public class FoodShopActivity extends BaseWebActivity implements OnClickListener
      */
     @JavascriptInterface
     public String getShopList(String type, String isCanorder, String isCanSell) {
-        HashMap<String, String> param = new HashMap<>();
+        LinkedHashMap<String,String> param=new LinkedHashMap<>();
         param.put("apiid", "0037");
-        param.put("pageSize", String.valueOf(Constants.pageSize));
-        param.put("pageIndex", String.valueOf(pageindex));
-        param.put("kword", "");
-        param.put("type", type);
         param.put("isCanOrder", isCanOrder);
         param.put("isCanSell", isCanSell);
+        param.put("kword", "");
+        param.put("pageIndex", String.valueOf(pageindex));
+        param.put("pageSize", String.valueOf(Constants.pageSize));
+        param.put("tid", getUid());
+        param.put("type", type);
         String cityName = Constants.getCityName();
         String dCityName = Constants.getDcityName();
+
         if (cityName != null && dCityName != null) {
             if (cityName.equals(dCityName)) {
+                param.put("areaCode", "");
                 param.put("gps", Constants.getLa() + "," + Constants.getLt());
                 param.put("less", "80000");
-                param.put("areaCode", "");
             } else {
                 param.put("areaCode", cityName);
             }
         } else {
             param.put("areaCode", "0000");
         }
-        String result = AppManager.getInstance().doPost(param);
+        String result = appManager.doPost(param);
         result = result == null ? "" : result.replaceAll("\n|\r", "");
         return result;
     }

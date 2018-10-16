@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.json.JSONObject;
 
@@ -43,6 +44,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.danertu.download.FileUtil;
+import com.danertu.entity.TokenExceptionBean;
 import com.danertu.tools.AsyncTask;
 import com.danertu.tools.FWorkUtil;
 import com.danertu.tools.GoodsEditTWatcher;
@@ -241,28 +243,45 @@ public class PShopAdd extends BaseActivity implements OnClickListener {
                     }
                 }
             }
-            String result = appManager.postEditGoods(guid, name, picName, shopPrice, marketPrice, repertoryCount, proDetail, proPhotos);
-            JSONObject obj = new JSONObject(result);
-            if (Boolean.parseBoolean(obj.getString("result"))) {
-                if (isChangedBanner && upBitmap != null) {
-                    upload(picName, upBitmap);
-                    Thread.sleep(100);
-                }
-                if (proPhotosSize > 0) {
-                    for (int i = 0; i < proPhotosSize; i++) {
-                        String itemName = picDatas.get(i);
-                        if (!itemName.startsWith("http")) {
-                            Bitmap proItem = BitmapFactory.decodeFile(itemName);
-                            upload(names[i], proItem);
-                            deleteCropImg(itemName);
-                            Thread.sleep(100);
-
+            final String result = appManager.postEditGoods(guid, name, picName, shopPrice, marketPrice, repertoryCount, proDetail, proPhotos, uid);
+            if (judgeIsTokenException(result)) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            TokenExceptionBean tokenExceptionBean = com.alibaba.fastjson.JSONObject.parseObject(result, TokenExceptionBean.class);
+                            jsShowMsg(tokenExceptionBean.getInfo());
+                            quitAccount();
+                            finish();
+                            jsStartActivity("LoginActivity", "");
+                        } catch (Exception e) {
+                            newHandler.sendMessage(getMessage(WHAT_SUBMIT_FAIL, "编辑商品失败"));
+                            e.printStackTrace();
                         }
                     }
-                }
-                newHandler.sendMessage(getMessage(WHAT_SUBMIT_SUCCESS, "编辑商品成功"));
+                });
+
             } else {
-                newHandler.sendMessage(getMessage(WHAT_SUBMIT_FAIL, "编辑商品失败"));
+                JSONObject obj = new JSONObject(result);
+                if (Boolean.parseBoolean(obj.getString("result"))) {
+                    if (isChangedBanner && upBitmap != null) {
+                        upload(picName, upBitmap);
+                    }
+                    if (proPhotosSize > 0) {
+                        for (int i = 0; i < proPhotosSize; i++) {
+                            String itemName = picDatas.get(i);
+                            if (!itemName.startsWith("http")) {
+                                Bitmap proItem = BitmapFactory.decodeFile(itemName);
+                                upload(names[i], proItem);
+                                deleteCropImg(itemName);
+
+                            }
+                        }
+                    }
+                    newHandler.sendMessage(getMessage(WHAT_SUBMIT_SUCCESS, "编辑商品成功"));
+                } else {
+                    newHandler.sendMessage(getMessage(WHAT_SUBMIT_FAIL, "编辑商品失败"));
+                }
             }
         }
 
@@ -309,34 +328,54 @@ public class PShopAdd extends BaseActivity implements OnClickListener {
                         }
                     }
                     String proPhotos = sb.toString();
-                    result = appManager.postAddGoods(uid, name, picName, shopPrice, marketPrice, repertoryCount, type, proDetail, proPhotos);
-                    JSONObject obj = new JSONObject(result);
-                    if (Boolean.parseBoolean(obj.getString("result"))) {
-                        Bitmap upBitmap = (Bitmap) item.get(KEY_PHOTO);
-                        upload(picName, upBitmap);
-                        Thread.sleep(100);
-                        if (proDesImgs != null) {
-                            for (int i = 0; i < proDesImgs.length; i++) {
-                                String itemName = proDesImgs[i].substring(7);//去掉"file://"前缀
-                                Bitmap proItem = BitmapFactory.decodeFile(itemName);
-                                upload(names[i], proItem);
-                                deleteCropImg(itemName);
-                                Thread.sleep(100);
+                    result = appManager.postAddGoods(uid, name, picName, shopPrice, marketPrice, repertoryCount, type, proDetail, proPhotos, uid);
+                    if (judgeIsTokenException(result)) {
+                        final String finalResult = result;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    TokenExceptionBean tokenExceptionBean = com.alibaba.fastjson.JSONObject.parseObject(finalResult, TokenExceptionBean.class);
+                                    jsShowMsg(tokenExceptionBean.getInfo());
+                                    quitAccount();
+                                    finish();
+                                    jsStartActivity("LoginActivity", "");
+                                } catch (Exception e) {
+                                    newHandler.sendMessage(getMessage(WHAT_SUBMIT_FAIL, "添加商品失败，请重新添加"));
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-                        if (proPhotosSize > 0) {
-                            for (int i = 0; i < proPhotosSize; i++) {
-                                String itemName = picDatas.get(i);
-                                Bitmap proItem = BitmapFactory.decodeFile(itemName);
-                                upload(names[i], proItem);
-                                deleteCropImg(itemName);
-                            }
-                        }
-                        newHandler.sendMessage(getMessage(WHAT_SUBMIT_SUCCESS, "添加商品成功"));
+                        });
+
                     } else {
-                        newHandler.sendMessage(getMessage(WHAT_SUBMIT_FAIL, "添加商品失败，请重新添加"));
+                        JSONObject obj = new JSONObject(result);
+                        if (Boolean.parseBoolean(obj.getString("result"))) {
+                            Bitmap upBitmap = (Bitmap) item.get(KEY_PHOTO);
+                            upload(picName, upBitmap);
+                            Thread.sleep(100);
+                            if (proDesImgs != null) {
+                                for (int i = 0; i < proDesImgs.length; i++) {
+                                    String itemName = proDesImgs[i].substring(7);//去掉"file://"前缀
+                                    Bitmap proItem = BitmapFactory.decodeFile(itemName);
+                                    upload(names[i], proItem);
+                                    deleteCropImg(itemName);
+                                    Thread.sleep(100);
+                                }
+                            }
+                            if (proPhotosSize > 0) {
+                                for (int i = 0; i < proPhotosSize; i++) {
+                                    String itemName = picDatas.get(i);
+                                    Bitmap proItem = BitmapFactory.decodeFile(itemName);
+                                    upload(names[i], proItem);
+                                    deleteCropImg(itemName);
+                                }
+                            }
+                            newHandler.sendMessage(getMessage(WHAT_SUBMIT_SUCCESS, "添加商品成功"));
+                        } else {
+                            newHandler.sendMessage(getMessage(WHAT_SUBMIT_FAIL, "添加商品失败，请重新添加"));
+                        }
+                        count++;
                     }
-                    count++;
                 }
             } catch (Exception e) {
                 newHandler.sendMessage(getMessage(WHAT_SUBMIT_FAIL, e.toString()));
@@ -547,11 +586,8 @@ public class PShopAdd extends BaseActivity implements OnClickListener {
             try {
                 String guid = param[0];
                 String type = param[1];
-                HashMap<String, String> para = new HashMap<>();
-                para.put("apiid", "0232");
-                para.put("guid", guid);
-                para.put("type", type);
-                result = appManager.doPost(para);
+
+                result = appManager.postEditGoods(guid, getUid(), type);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -561,9 +597,24 @@ public class PShopAdd extends BaseActivity implements OnClickListener {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            aDialog.dismiss();
-            setResult(3);
-            finish();
+            if (judgeIsTokenException(result)) {
+                try {
+                    TokenExceptionBean tokenExceptionBean = com.alibaba.fastjson.JSONObject.parseObject(result, TokenExceptionBean.class);
+                    jsShowMsg(tokenExceptionBean.getInfo());
+                    quitAccount();
+                    finish();
+                    jsStartActivity("LoginActivity", "");
+                } catch (Exception e) {
+                    aDialog.dismiss();
+                    setResult(3);
+                    finish();
+                    e.printStackTrace();
+                }
+            } else {
+                aDialog.dismiss();
+                setResult(3);
+                finish();
+            }
         }
     }
 

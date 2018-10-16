@@ -34,7 +34,7 @@ public class CouponProductsPresenter extends NewBasePresenter<CouponProductsCont
 
     @Override
     public CouponProductsModel initModel() {
-        return new CouponProductsModel();
+        return new CouponProductsModel(context);
     }
 
     @Override
@@ -67,6 +67,16 @@ public class CouponProductsPresenter extends NewBasePresenter<CouponProductsCont
                     view.jsHideLoading();
                     view.stopRefresh();
                     view.notifyChange(model.getList().size());
+                }
+            }
+
+            @Override
+            public void tokenException(String code,String info) {
+                if (isViewAttached()){
+                    view.jsShowMsg(info);
+                    view.quitAccount();
+                    view.jsFinish();
+                    view.jsStartActivity("LoginActivity");
                 }
             }
 

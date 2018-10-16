@@ -8,7 +8,6 @@
       <module fileurl="file://$PROJECT_DIR$/dianping/dianping.iml" filepath="$PROJECT_DIR$/dianping/dianping.iml" />
       <module fileurl="file://$PROJECT_DIR$/libzxing/libzxing.iml" filepath="$PROJECT_DIR$/libzxing/libzxing.iml" />
       <module fileurl="file://$PROJECT_DIR$/onekeyshare/onekeyshare.iml" filepath="$PROJECT_DIR$/onekeyshare/onekeyshare.iml" />
-      <module fileurl="file://$PROJECT_DIR$/xiaonengChatUI/xiaonengChatUI.iml" filepath="$PROJECT_DIR$/xiaonengChatUI/xiaonengChatUI.iml" />
     </modules>
   </component>
 </project>

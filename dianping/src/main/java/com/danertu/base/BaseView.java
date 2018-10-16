@@ -223,6 +223,7 @@ public interface BaseView {
 
     void payOrder(String orderNumber, boolean isShowAccountPay, boolean isShowArrivePay, final String callBackMethod);
 
+    @JavascriptInterface
     void payOrder(String orderNumber, boolean isShowAliPay, boolean isShowWechatPay, boolean isShowAccountPay, boolean isShowArrivePay, final String callBackMethod);
 
     boolean checkOpsPermission(String permission);
@@ -233,5 +234,9 @@ public interface BaseView {
 
     void getStoragePermission();
 
+    @JavascriptInterface
     void shareImgWithQRCode(String imgSrc, final String qrCodeContent, final float startX, final float startY, final int widthAndHeight, final String platformList);
+
+    @JavascriptInterface
+    void quitAccount();
 }

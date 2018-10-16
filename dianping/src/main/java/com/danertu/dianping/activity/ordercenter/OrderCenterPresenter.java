@@ -16,7 +16,7 @@ public class OrderCenterPresenter extends NewBasePresenter<OrderCenterContact.Or
 
     @Override
     public OrderCenterModel initModel() {
-        return new OrderCenterModel();
+        return new OrderCenterModel(context);
     }
 
     @Override

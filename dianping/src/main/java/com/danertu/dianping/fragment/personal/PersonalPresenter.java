@@ -34,6 +34,6 @@ public class PersonalPresenter extends NewBasePresenter<PersonalContact.Personal
 
     @Override
     public PersonalModel initModel() {
-        return new PersonalModel();
+        return new PersonalModel(context);
     }
 }

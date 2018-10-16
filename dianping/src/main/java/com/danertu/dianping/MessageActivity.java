@@ -17,9 +17,12 @@ import android.widget.TextView;
 
 import com.config.Constants;
 import com.danertu.entity.Messagebean;
-import com.danertu.tools.NoticeManager;
+import com.danertu.tools.AsyncTask;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
+
 
 /**
  * 首页消息中心
@@ -55,16 +58,6 @@ public class MessageActivity extends HomeActivity implements OnItemClickListener
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 switch (msg.what) {
-                    case NoticeManager.GETMSG_COMPLETE:
-                        hideLoadDialog();
-                        if (NoticeManager.getInstance().hasNewMsg()) {
-                            NoticeManager.getInstance().resetUnsetMsgCount();
-                            dataList = NoticeManager.getInstance().getMsgLists();
-                            adapter.notifyDataSetChanged();
-                        } else {
-                            tvNoResult.setVisibility(View.VISIBLE);
-                        }
-                        break;
 
                     default:
                         break;
@@ -73,14 +66,7 @@ public class MessageActivity extends HomeActivity implements OnItemClickListener
 
         };
         showLoadDialog();
-        //传入一个handler, 异步任务完成时通知主线程处理
-        NoticeManager.getInstance().setHandler(mHandler);
-        String memberid = getIntent().getStringExtra("memberid");
-        if (TextUtils.isEmpty(memberid)) {
-            NoticeManager.getInstance().undateMsg();
-        } else {
-            NoticeManager.getInstance().updateMsg(memberid);
-        }
+        new GetMessageData().execute();
     }
 
     @Override
@@ -179,5 +165,41 @@ public class MessageActivity extends HomeActivity implements OnItemClickListener
         startActivity(it);
     }
 
+
+    class GetMessageData extends AsyncTask<Void, Integer, String> {
+
+        @Override
+        protected String doInBackground(Void... param) {
+
+            return appManager.postGetMessage(getUid());
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            hideLoadDialog();
+            try {
+                ArrayList<Messagebean> results = new ArrayList<>();
+                org.json.JSONObject obj = new org.json.JSONObject(result).getJSONObject("messageList");
+                JSONArray arr = obj.getJSONArray("messagebean");
+                for (int i = 0; i < arr.length(); i++) {
+                    org.json.JSONObject oj = arr.getJSONObject(i);
+                    Messagebean json = gson.fromJson(oj.toString(), Messagebean.class);
+                    results.add(json);
+                }
+
+                dataList.addAll(results);
+                adapter.notifyDataSetChanged();
+                if (dataList.size() <= 0) {
+                    mList.setVisibility(View.GONE);
+                    tvNoResult.setVisibility(View.VISIBLE);
+                }
+            } catch (Exception e) {
+                if (Constants.isDebug)
+                    e.printStackTrace();
+                tvNoResult.setVisibility(View.VISIBLE);
+            }
+        }
+    }
 
 }

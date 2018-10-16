@@ -1,6 +1,7 @@
 package com.danertu.dianping;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +18,9 @@ public class HtmlActivity extends BaseWebActivity {
 
         webView.addJavascriptInterface(this, "app");
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         Intent i = getIntent();
         String pageName = i.getStringExtra("pageName");
         boolean isAutoShowDialog = Boolean.parseBoolean(i.getStringExtra("showDialog"));

@@ -1,5 +1,6 @@
 package com.danertu.dianping;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
@@ -24,10 +25,12 @@ public class MyWalletMoreActivity extends BaseWebActivity {
 		handler = new MyHandler(this);
 //		startWebView("file:///android_asset/wallet_set.html");
 		webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-		startWebView(Constants.appWebPageUrl+WEBPAGE);
 
 		webView.addJavascriptInterface(this, "app");
-		
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+		}
+		startWebView(Constants.appWebPageUrl+WEBPAGE);
 		initPswDialog();
 //		startActivity(new Intent(getContext(), AccountToPay.class));
 	}

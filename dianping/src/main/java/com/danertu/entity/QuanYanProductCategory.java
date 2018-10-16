@@ -32,6 +32,15 @@ public class QuanYanProductCategory {
         private String ProductGuid;
         private String ProductCategory;
         private String ProductProperty;
+        private String SupplierLoginId;
+
+        public String getSupplierLoginId() {
+            return SupplierLoginId;
+        }
+
+        public void setSupplierLoginId(String supplierLoginId) {
+            SupplierLoginId = supplierLoginId;
+        }
 
         public String getProductGuid() {
             return ProductGuid;

@@ -1,5 +1,6 @@
 package com.danertu.dianping.fragment.stockorder;
 
+import android.content.Context;
 import android.os.Handler;
 
 import com.danertu.base.BaseModel;
@@ -17,6 +18,7 @@ import static com.danertu.dianping.fragment.stockorder.StockOrderPresenter.MSG_G
 import static com.danertu.dianping.fragment.stockorder.StockOrderPresenter.MSG_GET_DATA_SUCCESS;
 import static com.danertu.dianping.fragment.stockorder.StockOrderPresenter.MSG_LOAD_MORE_FAIL;
 import static com.danertu.dianping.fragment.stockorder.StockOrderPresenter.MSG_LOAD_MORE_SUCCESS;
+import static com.danertu.dianping.fragment.stockorder.StockOrderPresenter.MSG_NEED_LOGIN;
 import static com.danertu.dianping.fragment.stockorder.StockOrderPresenter.MSG_NO_MORE_DATA;
 
 /**
@@ -28,31 +30,34 @@ public class StockOrderModel extends BaseModel {
     private String totalPage;
     private String totalCount;
 
-    public StockOrderModel() {
-        super();
+    public StockOrderModel(Context context) {
+        super(context);
         orderLists = new ArrayList<>();
     }
 
     /**
      * 获取提货订单
-     * @see 注意：这里的分页当要加载的页数大于总页数时，接口还是会返回最后一页的数据，所以需要特殊处理
      *
      * @param handler
      * @param menLoginId
      * @param pageIndex
      * @param pageSize
+     * @see 注意：这里的分页当要加载的页数大于总页数时，接口还是会返回最后一页的数据，所以需要特殊处理
      */
     public void getStockOrder(final Handler handler, String menLoginId, final int pageIndex, int pageSize) {
-        Call<WareHouseOrderBean> call = retrofit.create(ApiService.class).getStockOrder("0328", menLoginId, pageIndex, pageSize);
+        Call<WareHouseOrderBean> call = retrofit.create(ApiService.class).getStockOrder("0328",  menLoginId, pageIndex, pageSize);
         call.enqueue(new Callback<WareHouseOrderBean>() {
             @Override
             public void onResponse(Call<WareHouseOrderBean> call, Response<WareHouseOrderBean> response) {
-                if (response.code() != RESULT_OK) {
+                if (response.code() != RESULT_OK || response.body() == null) {
                     handler.sendEmptyMessage(MSG_SERVER_ERROR);
                     return;
                 }
+                if ("false".equals(response.body().getResult()) && "-1".equals(response.body().getCode())) {
+                    handler.sendEmptyMessage(MSG_NEED_LOGIN);
+                    return;
+                }
                 List<WareHouseOrderBean.WareHouseOrderListBean> list = response.body().getWareHouseOrderList();
-
                 try {
                     totalPage = response.body().getTotalPageCount_o();
                     totalCount = response.body().getTotalCount_o();
@@ -69,7 +74,7 @@ public class StockOrderModel extends BaseModel {
                                 //当前列表的总数加上返回的列表数量大于总数，说明肯定超过了最大页，说明数据已经加载完
                                 handler.sendEmptyMessage(MSG_NO_MORE_DATA);
                             }
-                        }else {
+                        } else {
                             orderLists.addAll(orderLists.size(), list);
                             handler.sendEmptyMessage(MSG_LOAD_MORE_SUCCESS);
                         }
@@ -89,7 +94,6 @@ public class StockOrderModel extends BaseModel {
                     e.printStackTrace();
                     return;
                 }
-
 
 
             }

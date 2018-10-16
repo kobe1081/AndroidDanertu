@@ -3,6 +3,7 @@ package com.danertu.dianping;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
@@ -67,10 +68,12 @@ public class RechargeActivity extends BaseWebActivity {
         handler = new MyHandler(context);
         alipayUtil = new AlipayUtil(context);
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
+        webView.addJavascriptInterface(this, "app");
         startWebView(Constants.appWebPageUrl + "Android_wallet_recharge.html");
 
-        webView.addJavascriptInterface(this, "app");
 
         //test-----------------------
 //		uid = db.GetLoginUid(getContext());
@@ -104,7 +107,7 @@ public class RechargeActivity extends BaseWebActivity {
                     try {
                         uid = getUid();
                         encryptInfo = accUtil.getPostInfo(uid, inoutTag, money, remark, rechargeWay, rechargeCode);
-                        new PostMoneyInfo().execute(encryptInfo);
+                        new PostMoneyInfo().execute(uid, encryptInfo);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -145,9 +148,10 @@ public class RechargeActivity extends BaseWebActivity {
     public class PostMoneyInfo extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... arg0) {
-            String param = arg0[0];
+            String uid = arg0[0];
+            String param = arg0[1];
             try {
-                return appManager.postMoneyInfo(param);
+                return appManager.postMoneyInfo(param, uid);
             } catch (Exception e) {
                 e.printStackTrace();
                 return e.toString();
@@ -155,19 +159,34 @@ public class RechargeActivity extends BaseWebActivity {
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(final String result) {
             super.onPostExecute(result);
-            try {
-                JSONObject obj = new JSONObject(result);
-                String tag = obj.getString("result");
-                String info = obj.getString("info");
-                if (tag.equals("true")) {
-                    tAliapy.start();
-                } else
-                    CommonTools.showShortToast(context, info);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            judgeIsTokenException(result, new TokenExceptionCallBack() {
+                @Override
+                public void tokenException(String code, String info) {
+                    sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                    jsShowMsg(info);
+//                    quitAccount();
+//                    finish();
+//                    jsStartActivity("LoginActivity", "");
+                }
+
+                @Override
+                public void ok() {
+                    try {
+                        JSONObject obj = new JSONObject(result);
+                        String tag = obj.getString("result");
+                        String info = obj.getString("info");
+                        if (tag.equals("true")) {
+                            tAliapy.start();
+                        } else
+                            CommonTools.showShortToast(context, info);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
             hideLoadDialog();
         }
 

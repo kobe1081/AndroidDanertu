@@ -24,8 +24,8 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
+import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -48,14 +48,15 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.alipay.sdk.app.PayTask;
 import com.config.Constants;
 import com.danertu.db.DBHelper;
 import com.danertu.entity.BaseResultBean;
 import com.danertu.entity.ChooseCouponBean;
 import com.danertu.entity.FavTicket;
-import com.danertu.entity.MyCouponBean;
 import com.danertu.entity.PaymentPriceData;
+import com.danertu.entity.TokenExceptionBean;
 import com.danertu.tools.AccToPay;
 import com.danertu.tools.AlipayUtil;
 import com.danertu.tools.AppManager;
@@ -63,9 +64,6 @@ import com.danertu.tools.ArithUtils;
 import com.danertu.tools.Logger;
 import com.danertu.tools.MyDialog;
 import com.danertu.tools.Result;
-import com.danertu.tools.StockAccountPay;
-import com.danertu.tools.StockAlipayUtil;
-import com.danertu.tools.StockWXPay;
 import com.danertu.tools.WXPay;
 import com.danertu.widget.CommonTools;
 import com.danertu.widget.PayPswDialog;
@@ -76,7 +74,10 @@ import static com.danertu.dianping.activity.choosecoupon.ChooseCouponPresenter.R
 
 
 /**
- * 支付页面
+ * 作者:  Viz
+ * 日期:  2018/9/30 10:22
+ * <p>
+ * 描述： 结算中心页面
  */
 public class PaymentCenterActivity extends BaseActivity implements OnClickListener {
 
@@ -108,6 +109,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
     //    优惠价
     private TextView tv_order_1, tv_order_discountPrice;
     private TextView tv_order_2, tv_price;
+    private TextView tv_order_3;
     private PopupWindow _PopupWindow;
     Button button1, btnclosePop, btnclose;
     RelativeLayout remarklayout, invoicelayout, arrivetimelayout, leavetimelayout;
@@ -194,11 +196,11 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
      */
     public double ckProductMoney = 0;
     public String totalCount = null;
-    public String recName = null;
     /**
      * 个人收货地址
      */
     public String recAddress = null;
+    public String recName = null;
     public String recMobile = null;
     public String uid = null;
     String intent_allCount = null;
@@ -352,45 +354,27 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
             public void passwordRight() {
                 String param[] = {uid, outOrderNumber, price.getTotalPrice(), pricedata};
 //                String param[] = {uid, outOrderNumber, "0.01", "0.01"};
-                if (isStock) {
-                    StockAccountPay stockAccountPay = new StockAccountPay(getContext()) {
-                        @Override
-                        public void paySuccess() {
-                            dialog_psw.dismiss();
+                AccToPay accToPay = new AccToPay(PaymentCenterActivity.this, isStock) {
+                    @Override
+                    public void paySuccess() {
+                        dialog_psw.dismiss();
+                        if (isStock) {
                             //囤货支付成功操作
 //                            jsShowMsg("支付成功");
                             toWarehouse();
-                            finish();
-                        }
 
-                        @Override
-                        public void payFail() {
-
-                        }
-
-                        @Override
-                        public void payError() {
-                            //支付出错
-                            hideLoadDialog();
-                        }
-                    };
-                    stockAccountPay.execute(param);
-                } else {
-                    AccToPay accToPay = new AccToPay(getContext()) {
-
-                        @Override
-                        public void paySuccess() {
-                            dialog_psw.dismiss();
+                        } else {
                             toOrderComplete(outOrderNumber, getString(R.string.payWay_account_tips), price.getTotalPrice(), true);
                         }
+                    }
 
-                        @Override
-                        public void payFail() {
-
-                        }
-                    };
-                    accToPay.execute(param);
-                }
+                    @Override
+                    public void payFail() {
+                        //支付出错
+                        hideLoadDialog();
+                    }
+                };
+                accToPay.execute(param);
             }
 
             @Override
@@ -410,6 +394,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
         }
         Intent intent = new Intent(context, StockpileActivity.class);
         startActivity(intent);
+        finish();
     }
 
 
@@ -431,7 +416,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
 
     private RelativeLayout rl_fav_ticket;
     private TextView tv_fav_ticket;
-    private RelativeLayout rl_fav_num;
+    //    private RelativeLayout rl_fav_num;
     private TextView tv_fav_num_tips;
     private CheckBox cb_payWay_tag;
     private TextView txt_totalFav;
@@ -462,9 +447,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
         uid = db.GetLoginUid(context);
         Cursor cursor = db.GetDefaultAddress(this, uid);
         initDefaultContactMsg(cursor);
-
         initCKProPrice();
-
         showLoadDialog();
         new Thread(new RGetData(shoppingCarList)).start();
     }
@@ -555,7 +538,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
             }
 
             StringBuilder sb = new StringBuilder();
-            HashMap<String, String> param = handleParamStr(attrParam);
+            LinkedHashMap<String, String> param = handleParamStr(attrParam);
             if (param != null) {
                 Set<String> keys = param.keySet();
                 for (String key : keys) {
@@ -576,12 +559,18 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
             TextView tv_favourable_tip = (TextView) v.findViewById(R.id.tv_item_favourable_tip);//优惠提示----n件更优惠
             TextView tv_dec = (TextView) v.findViewById(R.id.tv_order_produce_dec);
             tv_order_1 = ((TextView) v.findViewById(R.id.tv_order_1));
+            tv_order_1.setVisibility(View.GONE);
             tv_order_discountPrice = ((TextView) v.findViewById(R.id.tv_order_discount_price));//优惠价
+            tv_order_discountPrice.setTextColor(ContextCompat.getColor(context, R.color.red_text1));
             tv_order_2 = ((TextView) v.findViewById(R.id.tv_order_2));
+            tv_order_2.setVisibility(View.GONE);
+            tv_order_3 = ((TextView) v.findViewById(R.id.tv_order_3));
+            tv_order_3.setVisibility(View.GONE);
             tv_price = (TextView) v.findViewById(R.id.tv_order_produce_price);// 拿货价
             TextView tv_order_proMarketPrice = (TextView) v.findViewById(R.id.tv_order_proMarketPrice);
-            tv_order_proMarketPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);//给原价加上删除线
-            tv_order_proMarketPrice.getPaint().setAntiAlias(true);
+            tv_order_proMarketPrice.setVisibility(View.GONE);
+//            tv_order_proMarketPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);//给原价加上删除线
+//            tv_order_proMarketPrice.getPaint().setAntiAlias(true);
             TextView tv_num = (TextView) v.findViewById(R.id.tv_order_produce_num);
             TextView tv_song = (TextView) v.findViewById(R.id.item_joinCount);
             TextView tv_qy_arrTime = (TextView) v.findViewById(R.id.item_arriveTime);
@@ -592,7 +581,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
             tv_title.setText(proName);
             String priceStr = isCanFav ? "￥" + CommonTools.formatZero2Str(price + discountPrice) : "￥" + CommonTools.formatZero2Str(price);
             tv_price.setText(priceStr);
-            tv_order_proMarketPrice.setText("￥" + marketPrice);
+//            tv_order_proMarketPrice.setText("￥" + marketPrice);
             tv_order_discountPrice.setText("￥" + CommonTools.formatZero2Str(price));
             tv_num.setText("x" + tempcount);
             tv_totalPrice.setText("￥" + CommonTools.formatZero2Str(Integer.parseInt(tempcount) * price));//商品总价
@@ -751,16 +740,16 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
 
     public static PaymentCenterHandler handler;
 
-    public void setUseScoreListener() {
+    public void setUseScoreListener(boolean isChangeState) {
         zhekouMoney = ckProductMoney * 0.1; // 抵扣金额为平台商品总价的10%
         zhekouMoney = formatZero2(zhekouMoney);
-
-        cb_useJLB.setChecked(false);
+        if (isChangeState) {
+            cb_useJLB.setChecked(false);
+        }
         if (canUseMoney >= zhekouMoney) {
             price.setCanUseJlbMoney(zhekouMoney);
         } else
             price.setCanUseJlbMoney(canUseMoney);
-
         setCbText();
     }
 
@@ -787,7 +776,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
         cb_payWay_tag = (CheckBox) findViewById(R.id.cb_payWay_tag);
         rl_fav_ticket = ((RelativeLayout) findViewById(R.id.rl_fav_ticket));//优惠券
         tv_fav_ticket = (TextView) findViewById(R.id.tv_fav_ticket);
-        rl_fav_num = (RelativeLayout) findViewById(R.id.rl_fav_num);//优惠码
+//        rl_fav_num = (RelativeLayout) findViewById(R.id.rl_fav_num);//优惠码
         tv_fav_num_tips = (TextView) findViewById(R.id.tv_fav_num_tips);
         payWay = getString(R.string.payWay_account_key);
         cb_payWay_tag.setText(getString(R.string.payWay_account_tips));
@@ -854,24 +843,43 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                     jsShowMsg("正在检测验证码");
                     new Thread() {
                         public void run() {
-                            String state = appManager.postCheckFavNum(codenumber, favNumGuids);
-                            try {
-                                JSONObject obj = new JSONObject(state);
-                                info = obj.getString("info");
-                                String favNumMoney = obj.getString("result");
-                                price.setFavNumMoney(new BigDecimal(favNumMoney).doubleValue());
-                            } catch (JSONException | NumberFormatException e) {
-                                e.printStackTrace();
-                            }
-                            runOnUiThread(new Runnable() {
-                                public void run() {
-                                    String num = price.getFavNumMoney() > 0 ? codenumber : "";
-                                    setTotalMoneyText();
-                                    tv_fav_num_tips.setText(num);
-                                    favNumDialog.dismiss();
-                                    if (!TextUtils.isEmpty(info))
-                                        jsShowMsg(info);
-                                    isClick = false;
+                            final String state = appManager.postCheckFavNum(codenumber, favNumGuids, uid);
+                            judgeIsTokenException(state, new TokenExceptionCallBack() {
+                                @Override
+                                public void tokenException(String code, final String info) {
+                                    sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                                    runOnUiThread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            jsShowMsg(info);
+//                                            quitAccount();
+//                                            finish();
+//                                            jsStartActivity("LoginActivity", "");
+//                                        }
+//                                    });
+                                }
+
+                                @Override
+                                public void ok() {
+                                    try {
+                                        JSONObject obj = new JSONObject(state);
+                                        info = obj.getString("info");
+                                        String favNumMoney = obj.getString("result");
+                                        price.setFavNumMoney(new BigDecimal(favNumMoney).doubleValue());
+                                    } catch (JSONException | NumberFormatException e) {
+                                        e.printStackTrace();
+                                    }
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            String num = price.getFavNumMoney() > 0 ? codenumber : "";
+                                            setTotalMoneyText();
+                                            tv_fav_num_tips.setText(num);
+                                            favNumDialog.dismiss();
+                                            if (!TextUtils.isEmpty(info))
+                                                jsShowMsg(info);
+                                            isClick = false;
+                                        }
+                                    });
                                 }
                             });
                         }
@@ -943,7 +951,9 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
 //        });
 //        ((RadioButton) rg.getChildAt(0)).setChecked(true);
 //    }
-
+    /**
+     * 抵扣金萝卜--由app调用接口抵扣。。。。。
+     */
     public Runnable scoreRunnable = new Runnable() {
         public void run() {
             String uid = getUid();
@@ -983,7 +993,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
         //是否是后台拿货，是则隐藏优惠券、优惠码、金萝卜抵扣
         if (!isBackCall) {
             rl_fav_ticket.setVisibility(View.VISIBLE);
-            rl_fav_num.setVisibility(View.VISIBLE);
+//            rl_fav_num.setVisibility(View.VISIBLE);
 //            cb_useJLB.setVisibility(View.VISIBLE);
             //隐藏拿货价标签
             tv_order_2.setVisibility(View.GONE);
@@ -995,6 +1005,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
     private void initListener() {
         if (isBackCall) {
             cb_useJLB.setVisibility(View.GONE);
+//            price.setUseJLB(false);
         } else {
             cb_useJLB.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
@@ -1018,10 +1029,10 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
         });
 
         setTicketDKListener();
-        setUseScoreListener();
+        setUseScoreListener(true);
 
         b_submit.setOnClickListener(this);
-        rl_fav_num.setOnClickListener(this);
+//        rl_fav_num.setOnClickListener(this);
         fl_payWay_show.setOnClickListener(this);
         findViewById(R.id.ib_toSelectAddress).setOnClickListener(this);
         ll_contact.setOnClickListener(this);
@@ -1159,7 +1170,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
             String leaveTime = item.get("leaveTime").toString();
             String attrParam = item.get(KEY_ATTRS).toString();
             String attrs = "";
-            HashMap<String, String> param = handleParamStr(attrParam);
+            LinkedHashMap<String, String> param = handleParamStr(attrParam);
 
             if (param != null) {
                 Set<String> keys = param.keySet();
@@ -1206,7 +1217,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                 e.printStackTrace();
             }
             tag_cash = cbText + "; " + useTickets;
-            postResult = appManager.postOrder(getIMEI(), getMac(), getDeviceID(), postString, tag_cash, isBackCall);
+            postResult = appManager.postOrder(getIMEI(), getMac(), getDeviceID(), postString, tag_cash, isBackCall, uid);
         }
 
         return postResult;
@@ -1222,12 +1233,9 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
         String productID = "";
         String proName = "";
         String price = "";
-
         double tempPrice = 0;
-
         body = "";
         int buyCount = 0;
-
         while (carListIterator.hasNext()) {
             Map<String, Object> item = carListIterator.next();
             productID = item.get("productID").toString();
@@ -1236,7 +1244,6 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
             buyCount = Integer.parseInt(item.get("count").toString());
             //计算订单总价
             tempPrice = buyCount * (Float.parseFloat(price));
-
 //            try {
 //                int song = (Integer) item.get(KEY_SONG_COUNT);
 //                int tCount = Integer.parseInt(buyCount) + song;
@@ -1248,7 +1255,6 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
             body += proName + ",";
         }
         //0324接口
-
         String totalPrice = CommonTools.formatZero2Str(tempPrice);
         return appManager.postStockOrder(getUid(), productID, String.valueOf(buyCount), payWay, Constants.deviceType, myremark, getVersionCode() + "", totalPrice);
     }
@@ -1263,7 +1269,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
     public String useCashTicket(ArrayList<HashMap<String, Object>> cashTicketList) throws Exception {
         String ticketNumbers = "";
         int size = cashTicketList.size();
-        String result;
+        final String result;
         boolean isSuccess;
         String info;
         StringBuilder sb = new StringBuilder();
@@ -1280,14 +1286,35 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
             if (isCanUseCashTicket) {
                 ticketNumbers = ticketNumbers.substring(0, ticketNumbers.length() - 1);
                 result = appManager.useTickets(uid, ticketNumbers);
-                JSONObject obj = new JSONObject(result);
-                isSuccess = Boolean.parseBoolean(obj.getString(KEY_RESULT).toLowerCase());
-                info = obj.getString(KEY_RESULT_INFO);
-                if (!isSuccess) {
-                    price.setFavCashTicket(0);
-                    if (!TextUtils.isEmpty(info))
-                        Logger.e(TAG, "PaymentCenterActivity useCashTicket info=" + info);
-                    CommonTools.showShortToast(context, info);
+
+                if (judgeIsTokenException(result)) {
+                    try {
+                        TokenExceptionBean tokenExceptionBean = com.alibaba.fastjson.JSONObject.parseObject(result, TokenExceptionBean.class);
+                        sendMessageNew(WHAT_TO_LOGIN, -1, tokenExceptionBean.getInfo());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            TokenExceptionBean tokenExceptionBean = com.alibaba.fastjson.JSONObject.parseObject(result, TokenExceptionBean.class);
+//                            jsShowMsg(tokenExceptionBean.getInfo());
+//                            quitAccount();
+//                            finish();
+//                            jsStartActivity("LoginActivity", "");
+//                        }
+//                    });
+
+                } else {
+                    JSONObject obj = new JSONObject(result);
+                    isSuccess = Boolean.parseBoolean(obj.getString(KEY_RESULT).toLowerCase());
+                    info = obj.getString(KEY_RESULT_INFO);
+                    if (!isSuccess) {
+                        price.setFavCashTicket(0);
+                        if (!TextUtils.isEmpty(info))
+                            Logger.e(TAG, "PaymentCenterActivity useCashTicket info=" + info);
+                        CommonTools.showShortToast(context, info);
+                    }
                 }
             }
         }
@@ -1387,11 +1414,11 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                 break;
 
             case R.id.rl_fav_num:
-                if (price.getFavTicket() > 0) {
-                    jsShowMsg("优惠码不能与优惠券同用");
-                    return;
-                }
-                favNumDialog.show();
+//                if (price.getFavTicket() > 0) {
+//                    jsShowMsg("优惠码不能与优惠券同用");
+//                    return;
+//                }
+//                favNumDialog.show();
                 break;
             case R.id.fl_payWay_show:
                 cb_payWay_tag.setChecked(!cb_payWay_tag.isChecked());
@@ -1432,7 +1459,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                 break;
             case R.id.tv_stock_protocol:
                 Intent intent = new Intent(context, HtmlActivityNew.class);
-                intent.putExtra("url", Constants.DANERTU_STOCK_PROTOCOL);
+                intent.putExtra("url", Constants.APP_URL.DANERTU_STOCK_PROTOCOL);
                 startActivity(intent);
                 break;
         }
@@ -1511,8 +1538,8 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
         private void postOrderMsg(Iterator<Map<String, Object>> carListIterator) {
             String s = "";
             String info = "";
+            String json = "";
             try {
-                String json = "";
                 if (isStock) {
                     json = postStockResult(carListIterator);
                 } else {
@@ -1523,7 +1550,31 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                 info = jsonObject.getString(KEY_RESULT_INFO);
                 s = jsonObject.getString(KEY_RESULT);
             } catch (JSONException e) {
+                if (judgeIsTokenException(json)) {
+                    try {
+                        TokenExceptionBean bean = com.alibaba.fastjson.JSONObject.parseObject(json, TokenExceptionBean.class);
+                        sendMessageNew(WHAT_TO_LOGIN, -1, bean.getInfo());
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            try {
+//                                TokenExceptionBean bean = com.alibaba.fastjson.JSONObject.parseObject(finalJson, TokenExceptionBean.class);
+//                                jsShowMsg(bean.getInfo());
+//                                quitAccount();
+//                                finish();
+//                                jsStartActivity("LoginActivity", "");
+//                            } catch (Exception e1) {
+//                                e1.printStackTrace();
+//                            }
+//                        }
+//                    });
+
+                }
                 e.printStackTrace();
+                return;
             }
             Message msg = new Message();
             if (s.equals(TAG_RESULT_FAIL)) {
@@ -1579,7 +1630,6 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
     }
 
     private WXPay wxPay;
-    private StockWXPay stockWXPay;
 
     /**
      * 微信支付
@@ -1587,15 +1637,12 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
      * @param outOrderNumber
      */
     public void wechatToPay(String outOrderNumber) {
+        if (wxPay == null) {
+            wxPay = new WXPay(context);
+        }
         if (isStock) {
-            if (stockWXPay == null) {
-                stockWXPay = new StockWXPay(context);
-            }
-            stockWXPay.toPay(body.substring(0, body.length() - 1), outOrderNumber, price.getTotalPrice(), orderType);
+            wxPay.toPay(body.substring(0, body.length() - 1), outOrderNumber, price.getTotalPrice(), orderType);
         } else {
-            if (wxPay == null) {
-                wxPay = new WXPay(context);
-            }
             wxPay.toPay(body.substring(0, body.length() - 1), outOrderNumber, price.getTotalPrice());
         }
     }
@@ -1610,11 +1657,11 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                 subject = body.substring(0, body.length() - 1);
                 String orderInfo = "";
                 if (isStock) {
-                    orderInfo = new StockAlipayUtil(getContext()).getSignPayOrderInfo(outOrderNumber, subject, body, price.getTotalPrice(), orderType);
+                    orderInfo = new AlipayUtil(PaymentCenterActivity.this).getSignPayOrderInfo(outOrderNumber, subject, body, price.getTotalPrice(), orderType);
                 } else {
-                    orderInfo = new AlipayUtil(getContext()).getSignPayOrderInfo(outOrderNumber, subject, body, price.getTotalPrice(), orderType);
+                    orderInfo = new AlipayUtil(PaymentCenterActivity.this).getSignPayOrderInfo(outOrderNumber, subject, body, price.getTotalPrice());
                 }
-//                String orderInfo = new AlipayUtil(getContext()).getSignPayOrderInfo(outOrderNumber, subject, body, "0.01", orderType);
+//                String orderInfo = new AlipayUtil(PaymentCenterActivity.this).getSignPayOrderInfo(outOrderNumber, subject, body, "0.01", orderType);
                 PayTask aliPay = new PayTask(PaymentCenterActivity.this);
                 String result = aliPay.pay(orderInfo);
                 Logger.i("alipayResult", result);
@@ -1751,7 +1798,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                 if (isQYPro || isQYHotel) {
                     qyCount++;
                 }
-                HashMap<String, String> param = handleParamStr(attrParam);
+                LinkedHashMap<String, String> param = handleParamStr(attrParam);
                 String attrGuids = "";
                 String attrNames = "";
                 if (param != null) {
@@ -1888,8 +1935,9 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
          */
         private List<FavTicket> getFavTickets(String guid) {
             List<FavTicket> list = null;
+            String tickets = "";
             try {
-                String tickets = appManager.getFavTickets(guid, uid, intent_allMoney);
+                tickets = appManager.getFavTickets(guid, uid, intent_allMoney);
 //				String tickets = "[{\"guid\":\"ade4b0f2-7b9b-4a76-87bd-f4ba6faafaea\",\"name\":\"1\",\"money\":\"1\",\"withOthers\":\"0\"}]";
                 JSONArray arr = new JSONArray(tickets);
                 int len = arr.length();
@@ -1904,6 +1952,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                     list.add(item);
                 }
             } catch (Exception e) {
+                judgeIsTokenException(tickets, "您的登录信息已过期，请重新登录", -1);
                 e.printStackTrace();
             }
             return list;
@@ -1916,7 +1965,7 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
          */
         private void initCashTickets(String shopid) {
             isCanUseCashTicket = true;
-            String cashTickets;
+            String cashTickets = null;
             try {
                 cashTickets = appManager.getCashPaper(shopid, uid);
                 JSONArray arr = new JSONObject(cashTickets).getJSONArray("ticketList");
@@ -1934,7 +1983,9 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                     cashTicketList.add(one);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                judgeIsTokenException(cashTickets, "您的登录信息已过期，请重新登录", -1);
+                if (Constants.isDebug)
+                    e.printStackTrace();
             }
         }
 
@@ -1942,11 +1993,26 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
          * 金萝卜
          */
         private void initJLB() {
+            String json = "";
             try {
-                score = AppManager.getInstance().postGetMemberScore("0085", uid);
+                json = AppManager.getInstance().postGetMemberScore("0085", uid);
+                score = json;
                 canUseMoney = Double.parseDouble(score) / 100; // 总积分可抵扣的金额
                 canUseMoney = formatZero2(canUseMoney);
             } catch (Exception e) {
+                if (judgeIsTokenException(json)) {
+                    try {
+                        TokenExceptionBean tokenExceptionBean = com.alibaba.fastjson.JSONObject.parseObject(json, TokenExceptionBean.class);
+                        sendMessageNew(WHAT_TO_LOGIN, -1, tokenExceptionBean.getInfo());
+//                        jsShowMsg(tokenExceptionBean.getInfo());
+//                        quitAccount();
+//                        finish();
+//                        jsStartActivity("LoginActivity", "");
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                    return;
+                }
                 sendEmptyMessage(PaymentCenterHandler.WHAT_GETJLB_FAIL);
             }
         }
@@ -2016,9 +2082,9 @@ public class PaymentCenterActivity extends BaseActivity implements OnClickListen
                         //此优惠券是否可用同其他优惠同时使用
                         selectedTicket.setWithOthers(bean.getLimitType());
                         price.setFavTicket(discount);
-                        ckProductMoney= Double.parseDouble(price.getTotalPrice());
+                        ckProductMoney = Double.parseDouble(price.getTotalPrice());
 
-                        setUseScoreListener();
+                        setUseScoreListener(false);
 //                        setCbText();
                         switch (bean.getLimitType()) {
                             case "0"://可与金萝卜一起使用

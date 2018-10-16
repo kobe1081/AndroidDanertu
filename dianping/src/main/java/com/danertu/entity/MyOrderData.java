@@ -38,6 +38,9 @@ import com.danertu.tools.AppManager;
 import com.danertu.tools.Logger;
 import com.danertu.tools.PayUtils;
 import com.danertu.widget.CommonTools;
+import com.google.gson.Gson;
+
+import static com.danertu.dianping.BaseActivity.WHAT_TO_LOGIN;
 
 /**
  * 提供订单数据及部分订单操作的类
@@ -140,6 +143,7 @@ public abstract class MyOrderData {
 
     public MyOrderData(BaseActivity context) {
         this(context, null);
+        this.base = context;
         this.context = context;
     }
 
@@ -151,12 +155,16 @@ public abstract class MyOrderData {
     private final int ADD_DATA_NO_COMMENT = 671;
     private final int LOAD_DATA = 672;
     private final int LOAD_DATA_FINISH = 673;
+    private final int NEED_LOGIN = 674;
     private Handler.Callback callback = new Handler.Callback() {
         public boolean handleMessage(Message msg) {
             HashMap<String, Object> item = (HashMap<String, Object>) msg.obj;
             switch (msg.what) {
                 case GET_DATA_SUCCESS:
                     getDataSuccess();
+                    break;
+                case NEED_LOGIN:
+                    needLogin();
                     break;
                 case ADD_DATA_ALL:
                     if (TAB_INDEX == 0 && order_list_all.size() < LIST_INIT_SIZE) {
@@ -203,6 +211,7 @@ public abstract class MyOrderData {
                         loadListener.loadFinish();
                     }
                     break;
+
             }
             return true;
         }
@@ -314,13 +323,34 @@ public abstract class MyOrderData {
         }
 
         public void run() {
-            String result = appManager.postGetOrderHead(orderNum);
+            String result = appManager.postGetOrderHead(orderNum, uid);
             try {
                 JSONObject oj = null;
                 if (!TextUtils.isEmpty(result))
                     oj = new JSONObject(result).getJSONObject("orderinfolist").getJSONArray("orderinfobean").getJSONObject(0);
                 initOrderBean(oj);
             } catch (JSONException e) {
+                base.judgeIsTokenException(result, new BaseActivity.TokenExceptionCallBack() {
+                    @Override
+                    public void tokenException(String code, final String info) {
+                        base.sendMessageNew(WHAT_TO_LOGIN, -1, info);
+//                        base.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                base.jsShowMsg(info);
+//                                base.quitAccount();
+//                                base.finish();
+//                                base.jsStartActivity("LoginActivity", "");
+//                            }
+//                        });
+                    }
+
+                    @Override
+                    public void ok() {
+
+                    }
+                });
+
                 e.printStackTrace();
             }
             handler.sendEmptyMessage(GET_DATA_SUCCESS);
@@ -387,7 +417,6 @@ public abstract class MyOrderData {
             // 耗时操作
             long ts = System.currentTimeMillis();
             String result = appManager.postGetUserOrderHead("0033", uid, "2");
-
             handler.sendEmptyMessage(GET_DATA_SUCCESS);
             long te = System.currentTimeMillis();
             Logger.i("获取头信息用时：", (te - ts) / 1000 + "");
@@ -395,6 +424,11 @@ public abstract class MyOrderData {
                 //开始解析数据
                 analyzeJsonString(result);
             } catch (Exception e) {
+                Gson gson = new Gson();
+                TokenExceptionBean bean = gson.fromJson(result, TokenExceptionBean.class);
+                if (bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
+                    handler.sendEmptyMessage(NEED_LOGIN);
+                }
                 e.printStackTrace();
             }
 //            handler.sendEmptyMessage(GET_DATA_SUCCESS);
@@ -406,6 +440,8 @@ public abstract class MyOrderData {
      * 数据加载完成后调用的方法
      */
     public abstract void getDataSuccess();
+
+    public abstract void needLogin();
 
     /**
      * 打开商品评论界面
@@ -662,7 +698,7 @@ public abstract class MyOrderData {
 //        if (isEmpty) {
 //            jsonOrderInfo = AppManager.getInstance().postGetOrderInfoShow("0072", orderNumber);
 //        }
-        String jsonOrderInfo = AppManager.getInstance().postGetOrderInfoShow("0072", orderNumber);
+        String jsonOrderInfo = AppManager.getInstance().postGetOrderInfoShow("0072", orderNumber, uid);
         ArrayList<HashMap<String, String>> data = new ArrayList<>();
         try {
             JSONObject jsonObj = new JSONObject(jsonOrderInfo).getJSONObject("orderproductlist");
@@ -750,7 +786,13 @@ public abstract class MyOrderData {
             Logger.e("test", "MyOrderData analyzeOrderInfo 错误信息》" + e.toString());
 //            jsonOrderInfo = AppManager.getInstance().postGetOrderInfoShow("0072", orderNumber);
 //            commitMsg(editor, orderNumber, jsonOrderInfo);
-            analyzeOrderInfo(orderNumber);
+            Gson gson = new Gson();
+            TokenExceptionBean bean = gson.fromJson(jsonOrderInfo, TokenExceptionBean.class);
+            if (bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
+                handler.sendEmptyMessage(NEED_LOGIN);
+            } else {
+                analyzeOrderInfo(orderNumber);
+            }
         }
         return data;
     }

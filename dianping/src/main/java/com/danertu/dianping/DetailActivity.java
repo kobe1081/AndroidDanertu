@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -93,6 +94,7 @@ public class DetailActivity extends BaseWebActivity {
         context = this;
         setContentView(R.layout.poidetail2);
         initData();
+
     }
 
     private void initData() {
@@ -152,6 +154,9 @@ public class DetailActivity extends BaseWebActivity {
     public void initWebView() {
         dWebClient = new DWebClient(this, IndexActivity.WV_INTERFACE);
         WebSettings setting = webView.getSettings();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setting.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         setting.setJavaScriptEnabled(true);
         setting.setJavaScriptCanOpenWindowsAutomatically(true);
         setting.setCacheMode(WebSettings.LOAD_NO_CACHE);

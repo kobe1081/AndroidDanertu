@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -35,35 +32,24 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import cn.jpush.android.api.JPushInterface;
 
+import com.alibaba.fastjson.JSONObject;
 import com.config.Constants;
 import com.danertu.db.ChinaArea;
 import com.danertu.db.DBHelper;
+import com.danertu.entity.AppConfigBean;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.ImageLoaderConfig;
 import com.danertu.tools.LocationUtil;
 import com.danertu.tools.Logger;
 import com.danertu.tools.MIUIUtils;
-import com.danertu.widget.CommonTools;
-import com.joker.annotation.PermissionsGranted;
-import com.joker.api.Permissions4M;
-import com.joker.api.apply.PermissionsChecker;
+import com.danertu.tools.SPTool;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.testin.agent.TestinAgent;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
 
 import static com.danertu.tools.MIUIUtils.isMIUI;
 
@@ -78,6 +64,7 @@ public class SplashActivity extends BaseActivity {
     public static final int REQUEST_LOCATION = 290;
 
     private TextView tv_version;
+    private Context context;
     Handler mHandler;
 
     /**
@@ -88,7 +75,8 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        locationUtil = new LocationUtil(this);
+        context = this;
+        locationUtil = new LocationUtil(context);
         locate();
         DBHelper.getInstance(getContext()).getWritableDatabase().close();//创建数据库
         new ChinaArea(getContext()).getWritableDatabase().close();
@@ -106,7 +94,8 @@ public class SplashActivity extends BaseActivity {
         getStoragePermission();
         getPhoneStatePermission();
         findViewById();
-        initView();
+        new GetBg().execute();
+        new GetAppConfig().execute();
         setSwipeBackEnable(false);
         setOverrideExitAniamtion(false);
     }
@@ -211,10 +200,7 @@ public class SplashActivity extends BaseActivity {
     public static final int WHAT_COUNT = 7;
 
     public String getExtensionShopId(String uid) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("apiid", "0102");
-        params.put("memberid", uid);
-        return AppManager.getInstance().doPost(params);
+        return appManager.getExtensionShopId(uid);
     }
 
     /**
@@ -223,7 +209,7 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void initView() {
         String tips = "";
-        if (!Constants.appWebPageUrl.equals("http://115.28.55.222:8018/")) {
+        if (!Constants.appWebPageUrl.equals("https://appweb.danertu.com:8444/")) {
             tips = "_" + Constants.appWebPageUrl;
         }
         if (Constants.isDebug) {
@@ -236,7 +222,7 @@ public class SplashActivity extends BaseActivity {
         /**
          * 获取启动页背景
          */
-        new GetBg().execute();
+
         /**
          * 检查版本更新
          */
@@ -244,10 +230,164 @@ public class SplashActivity extends BaseActivity {
         b_pass.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 dialogHandler.sendMessage(getMessage(WHAT_GETEXTENS_SUCCESS, ""));
-                timer.cancel();
+                if (timer != null)
+                    timer.cancel();
             }
         });
     }
+
+    class GetAppConfig extends AsyncTask<Void, Integer, AppConfigBean> {
+
+        @Override
+        protected AppConfigBean doInBackground(Void... voids) {
+            AppConfigBean bean = null;
+            try {
+                String appConfig = appManager.getAppConfig(getUid());
+                bean = JSONObject.parseObject(appConfig, AppConfigBean.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return bean;
+        }
+
+        @Override
+        protected void onPostExecute(AppConfigBean appConfigBean) {
+            super.onPostExecute(appConfigBean);
+            if (appConfigBean == null || appConfigBean.getVal() == null || appConfigBean.getVal().size() == 0) {
+
+                String urlAlipayReturn = SPTool.getString(context, SPTool.SP_APP_CONFIG, "UrlAlipayReturn");
+                if (!TextUtils.isEmpty(urlAlipayReturn))
+                    Constants.APP_URL.ALI_PAY_CALLBACK_URL_SIMPLE = urlAlipayReturn;
+
+                String urlAlipayReturnWareHouse = SPTool.getString(context, SPTool.SP_APP_CONFIG, "UrlAlipayReturnWareHouse");
+                if (!TextUtils.isEmpty(urlAlipayReturnWareHouse))
+                    Constants.APP_URL.ALI_PAY_CALLBACK_URL_STOCK = urlAlipayReturnWareHouse;
+
+                String urlWechatReturn = SPTool.getString(context, SPTool.SP_APP_CONFIG, "UrlWechatReturn");
+                if (!TextUtils.isEmpty(urlWechatReturn))
+                    Constants.APP_URL.WECHAT_PAY_CALLBACK_URL_SIMPLE = urlWechatReturn;
+
+                String urlWechatReturnWareHouse = SPTool.getString(context, SPTool.SP_APP_CONFIG, "UrlWechatReturnWareHouse");
+                if (!TextUtils.isEmpty(urlWechatReturnWareHouse))
+                    Constants.APP_URL.WECHAT_PAY_CALLBACK_URL_STOCK = urlWechatReturnWareHouse;
+
+                String urlWareHouseRules = SPTool.getString(context, SPTool.SP_APP_CONFIG, "UrlWareHouseRules");
+                if (!TextUtils.isEmpty(urlWareHouseRules))
+                    Constants.APP_URL.DANERTU_STOCK_PROTOCOL = urlWareHouseRules;
+
+                String urlShopShare = SPTool.getString(context, SPTool.SP_APP_CONFIG, "UrlShopShare");
+                if (TextUtils.isEmpty(urlShopShare))
+                    Constants.APP_URL.SHOP_SHARE_URL = urlShopShare;
+
+                String urlShareHall = SPTool.getString(context, SPTool.SP_APP_CONFIG, "UrlShareHall");
+                if (!TextUtils.isEmpty(urlShareHall))
+                    Constants.APP_URL.NEW_SHARE_HALL_ADDRESS = urlShareHall;
+
+                String urlImgDomain = SPTool.getString(context, SPTool.SP_APP_CONFIG, "UrlImgDomain");
+                if (!TextUtils.isEmpty(urlImgDomain))
+                    Constants.APP_URL.imgServer = urlImgDomain;
+
+                String urlAndroidUpdateFull = SPTool.getString(context, SPTool.SP_APP_CONFIG, "UrlAndroidUpdateFull");
+                if (TextUtils.isEmpty(urlAndroidUpdateFull))
+                    Constants.APP_URL.APK_DOWNLOAD_URL = urlAndroidUpdateFull;
+
+                String urlAndroidUpdateDifference = SPTool.getString(context, SPTool.SP_APP_CONFIG, "UrlAndroidUpdateDifference");
+                if (!TextUtils.isEmpty(urlAndroidUpdateDifference))
+                    Constants.APP_URL.APK_PATCH_DOWNLOAD_URL = urlAndroidUpdateDifference;
+
+                String urlAnnouncementDetail = SPTool.getString(context, SPTool.SP_APP_CONFIG, "UrlAnnouncementDetail");
+                if (!TextUtils.isEmpty(urlAnnouncementDetail))
+                    Constants.APP_URL.ANNOUNCEMENT_DETAIL_URL = urlAnnouncementDetail;
+
+                String urlExpressQuery = SPTool.getString(context, SPTool.SP_APP_CONFIG, "UrlExpressQuery");
+                if (!TextUtils.isEmpty(urlExpressQuery))
+                    Constants.APP_URL.KUAIDI100_ADDRESS = urlExpressQuery;
+            } else {
+                AppConfigBean.ValBean valBean = appConfigBean.getVal().get(0);
+
+                String urlAlipayReturn = valBean.getUrlAlipayReturn();
+                if (!TextUtils.isEmpty(urlAlipayReturn)){
+                    Constants.APP_URL.ALI_PAY_CALLBACK_URL_SIMPLE = urlAlipayReturn;
+                    SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlAlipayReturn", urlAlipayReturn);
+                }
+
+                String urlAlipayReturnWareHouse = valBean.getUrlAlipayReturnWareHouse();
+                if (!TextUtils.isEmpty(urlAlipayReturnWareHouse)){
+                    Constants.APP_URL.ALI_PAY_CALLBACK_URL_STOCK = urlAlipayReturnWareHouse;
+                    SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlAlipayReturnWareHouse", urlAlipayReturnWareHouse);
+                }
+
+                String urlWechatReturn = valBean.getUrlWechatReturn();
+                if (!TextUtils.isEmpty(urlWechatReturn)){
+                    Constants.APP_URL.WECHAT_PAY_CALLBACK_URL_SIMPLE = urlWechatReturn;
+                    SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlWechatReturn", urlWechatReturn);
+                }
+
+                String urlWechatReturnWareHouse = valBean.getUrlWechatReturnWareHouse();
+                if (!TextUtils.isEmpty(urlWechatReturnWareHouse)){
+                    Constants.APP_URL.WECHAT_PAY_CALLBACK_URL_STOCK = urlWechatReturnWareHouse;
+                    SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlWechatReturnWareHouse", urlWechatReturnWareHouse);
+                }
+
+                String urlWareHouseRules = valBean.getUrlWareHouseRules();
+                if (!TextUtils.isEmpty(urlWareHouseRules)){
+                    Constants.APP_URL.DANERTU_STOCK_PROTOCOL = urlWareHouseRules;
+                    SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlWareHouseRules", urlWareHouseRules);
+                }
+
+                String urlShopShare = valBean.getUrlShopShare();
+                if (!TextUtils.isEmpty(urlShopShare)){
+                    Constants.APP_URL.SHOP_SHARE_URL = urlShopShare;
+                    SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlShopShare", urlShopShare);
+                }
+
+                String urlShareHall = valBean.getUrlShareHall();
+                if (!TextUtils.isEmpty(urlShareHall)){
+                    Constants.APP_URL.NEW_SHARE_HALL_ADDRESS = urlShareHall;
+                    SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlShareHall", urlShareHall);
+                }
+
+                String urlImgDomain = valBean.getUrlImgDomain();
+                if (!TextUtils.isEmpty(urlImgDomain)){
+                    Constants.APP_URL.imgServer = urlImgDomain;
+                    SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlImgDomain", urlImgDomain);
+                }
+
+                String urlAndroidUpdateFull = valBean.getUrlAndroidUpdateFull();
+                if (!TextUtils.isEmpty(urlAndroidUpdateFull)){
+                    Constants.APP_URL.APK_DOWNLOAD_URL = urlAndroidUpdateFull;
+                    SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlAndroidUpdateFull", urlAndroidUpdateFull);
+                }
+
+                String urlAndroidUpdateDifference = valBean.getUrlAndroidUpdateDifference();
+                if (!TextUtils.isEmpty(urlAndroidUpdateDifference)){
+                    SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlAndroidUpdateDifference", urlAndroidUpdateDifference);
+                    Constants.APP_URL.APK_PATCH_DOWNLOAD_URL = urlAndroidUpdateDifference;
+                }
+
+                String UrlAnnouncementDetail = valBean.getUrlAnnouncementDetail();
+                if (!TextUtils.isEmpty(UrlAnnouncementDetail)){
+                    SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlAnnouncementDetail", UrlAnnouncementDetail);
+                    Constants.APP_URL.ANNOUNCEMENT_DETAIL_URL = UrlAnnouncementDetail;
+                }
+
+                String UrlExpressQuery = valBean.getUrlExpressQuery();
+                if (!TextUtils.isEmpty(UrlExpressQuery)){
+                    SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlExpressQuery", UrlExpressQuery);
+                    Constants.APP_URL.KUAIDI100_ADDRESS = UrlExpressQuery;
+                }
+
+                String urlTicketProductDetail = valBean.getUrlTicketProductDetail();
+                if (!TextUtils.isEmpty(urlTicketProductDetail)){
+                    SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlTicketProductDetail", urlTicketProductDetail);
+                    Constants.APP_URL.TICKET_DETAIL_URL = urlTicketProductDetail;
+                }
+            }
+            initView();
+        }
+
+    }
+
 
     /**
      * 判断是否是首次进入app
@@ -276,9 +416,7 @@ public class SplashActivity extends BaseActivity {
      */
     private class GetBg extends AsyncTask<String, Void, String> {
         protected String doInBackground(String... params) {
-            HashMap<String, String> param = new HashMap<>();
-            param.put("apiid", "0313");
-            return appManager.doPost(param);
+            return appManager.getSplashBg();
         }
 
         @Override
@@ -347,10 +485,9 @@ public class SplashActivity extends BaseActivity {
          *                   false：下载差分包
          */
         public void getTips(boolean isComplete) {
-            HashMap<String, String> param = new HashMap<>();
-            param.put("apiid", "0103");
+
             try {
-                String upgradeTips = AppManager.getInstance().doPost(param);
+                String upgradeTips = appManager.getUpdateTips();
                 Message msg = Message.obtain();
                 Bundle data = new Bundle();
                 data.putString(k_upgradeTips, upgradeTips);

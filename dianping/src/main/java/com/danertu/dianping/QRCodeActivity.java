@@ -1,6 +1,9 @@
 package com.danertu.dianping;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +14,7 @@ import android.webkit.WebView;
 import com.config.Constants;
 import com.danertu.tools.AsyncTask;
 import com.danertu.widget.CommonTools;
+
 
 /**
  * 2017年11月28日
@@ -71,10 +75,10 @@ public class QRCodeActivity extends HomeActivity {
 //        webView.loadUrl(Constants.appWebPageUrl + "android/new_share.html");
         /**
          * 2017年11月28日
-         * @since  82版本
+         * @since 82版本
          * 修改链接地址
          */
-        webView.loadUrl(Constants.NEW_SHARE_HALL_ADDRESS);
+        webView.loadUrl(Constants.APP_URL.NEW_SHARE_HALL_ADDRESS);
     }
 
     private boolean isLoading = false;
@@ -107,10 +111,11 @@ public class QRCodeActivity extends HomeActivity {
                     CommonTools.showShortToast(getContext(), "参数不能为空");
                     return null;
                 }
-                HashMap<String, String> param = new HashMap<>();
+                LinkedHashMap<String,String> param=new LinkedHashMap<>();
                 String[] strList = paramStr.split(",;");
                 for (String aStrList : strList) {
-                    param.put(aStrList.substring(0, aStrList.indexOf("|")), aStrList.substring(aStrList.indexOf("|") + 1));
+                    String substring = aStrList.substring(0, aStrList.indexOf("|"));
+                    param.put(substring, aStrList.substring(aStrList.indexOf("|") + 1));
                 }
                 String result = appManager.doPost(param);
                 return result.replaceAll("\n|\r", "");

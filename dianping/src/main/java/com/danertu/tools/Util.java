@@ -134,7 +134,7 @@ public class Util {
             TrustManager tm = new X509TrustManager() {
 
                 public X509Certificate[] getAcceptedIssuers() {
-                    return null;
+                    return new X509Certificate[0];
                 }
 
                 @Override

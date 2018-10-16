@@ -20,6 +20,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.config.Constants;
+import com.danertu.entity.TokenExceptionBean;
 import com.danertu.tools.AccountUtil;
 import com.danertu.tools.AsyncTask;
 import com.danertu.tools.Logger;
@@ -89,14 +90,31 @@ public class TakeMoneyActivity extends BaseActivity implements OnClickListener {
         @Override
         protected HashMap<String, String> doInBackground(String... param) {
             HashMap<String, String> result = new HashMap<>();
+            String postJson = "";
             try {
                 String json = appManager.getPayAccountNum(uid);
                 JSONObject obj = new JSONObject(json);
                 result.put(ALIPAY, obj.getString("CK_ZhiFuBaoNumber").replaceAll(" |\n|\r", ""));
                 result.put(BANDCARD, obj.getString("WW").replaceAll(" |\n|\r", ""));
-                result.put(BALANCE, appManager.getWalletMoney("0224", uid));
+                postJson = appManager.getWalletMoney("0224", uid);
+                result.put(BALANCE, String.format("%.2f", Double.parseDouble(postJson)));
             } catch (Exception e) {
-                e.printStackTrace();
+                judgeIsTokenException(postJson, "您的登录信息已过期，请重新登录", -1);
+
+//                if (judgeIsTokenException(postJson)) {
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            jsShowMsg("您的登录信息已过期，请重新登录");
+//                            quitAccount();
+//                            finish();
+//                            jsStartActivity("LoginActivity", "");
+//                        }
+//                    });
+//
+//                }
+                if (Constants.isDebug)
+                    e.printStackTrace();
             }
             return result;
         }
@@ -200,7 +218,26 @@ public class TakeMoneyActivity extends BaseActivity implements OnClickListener {
             String pswMD5 = MD5Util.MD5(psw);
             try {
                 payPsw = appManager.getPayPswMD5(uid);
-                return payPsw.equals(pswMD5);
+                boolean equals = payPsw.equals(pswMD5);
+                if (equals) {
+                    return true;
+                } else {
+                    if (judgeIsTokenException(payPsw)) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                TokenExceptionBean tokenExceptionBean = com.alibaba.fastjson.JSONObject.parseObject(payPsw, TokenExceptionBean.class);
+                                jsShowMsg(tokenExceptionBean.getInfo());
+                                quitAccount();
+                                finish();
+                                jsStartActivity("LoginActivity", "");
+                            }
+                        });
+
+                    } else {
+                        return false;
+                    }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -222,11 +259,15 @@ public class TakeMoneyActivity extends BaseActivity implements OnClickListener {
         @Override
         protected String doInBackground(String... arg0) {
             String result = "0.00";
+            String json = "";
             try {
-                result = appManager.getWalletMoney("0224", uid);
+                json = appManager.getWalletMoney("0224", uid);
+                result = String.format("%.2f", Double.parseDouble(json));
                 Logger.i(TAG, "账户余额为：" + result);
             } catch (Exception e) {
-                e.printStackTrace();
+                judgeIsTokenException(json, "您的登录信息已过期，请重新登录", -1);
+                if (Constants.isDebug)
+                    e.printStackTrace();
             }
             return result;
         }
@@ -265,12 +306,26 @@ public class TakeMoneyActivity extends BaseActivity implements OnClickListener {
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(final String result) {
             super.onPostExecute(result);
-            if (result == null || result.equals("")) {
-                CommonTools.showShortToast(getContext(), "请先绑定银行卡！");
-                finish();
-                return;
+            if (judgeIsTokenException(result)) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        TokenExceptionBean tokenExceptionBean = com.alibaba.fastjson.JSONObject.parseObject(result, TokenExceptionBean.class);
+                        jsShowMsg(tokenExceptionBean.getInfo());
+                        quitAccount();
+                        finish();
+                        jsStartActivity("LoginActivity", "");
+                    }
+                });
+
+            } else {
+                if (result == null || result.equals("")) {
+                    CommonTools.showShortToast(getContext(), "请先绑定银行卡！");
+                    finish();
+                    return;
+                }
             }
             cardNum = result;
         }
@@ -286,7 +341,7 @@ public class TakeMoneyActivity extends BaseActivity implements OnClickListener {
             double money = Double.parseDouble(arg0[0]);
             try {
                 if (takeMoney <= money) {
-                    result = appManager.postTakeMoneyInfo(accUtil.getPostTakeMoneyInfo(uid, takeMoney, remark), type);
+                    result = appManager.postTakeMoneyInfo(accUtil.getPostTakeMoneyInfo(uid, takeMoney, remark), type, uid);
                     JSONObject obj = new JSONObject(result);
                     String tag = obj.getString("result");
                     String info = obj.getString("info");
@@ -306,14 +361,28 @@ public class TakeMoneyActivity extends BaseActivity implements OnClickListener {
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(final String result) {
             super.onPostExecute(result);
             if (result.equals(TAKE_MONEY_SUCCESS)) {
                 finish();
                 jsStartActivity("WapActivity", "webTitle|" + OK + ",;webUrl|" + Constants.appWebPageUrl + "Android_wallet_withdraw1.html");
             } else {
                 Logger.e("test", "TakeMoneyActivity onPostExecute  result=" + result);
-                CommonTools.showShortToast(getContext(), result);
+                if (judgeIsTokenException(result)) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            TokenExceptionBean tokenExceptionBean = com.alibaba.fastjson.JSONObject.parseObject(result, TokenExceptionBean.class);
+                            jsShowMsg(tokenExceptionBean.getInfo());
+                            quitAccount();
+                            jsStartActivity("LoginActivity", "");
+                            finish();
+                        }
+                    });
+
+                } else {
+                    CommonTools.showShortToast(getContext(), result);
+                }
             }
             hideLoadDialog();
         }

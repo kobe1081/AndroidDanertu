@@ -2,8 +2,10 @@ package com.config;
 
 import com.danertu.entity.BaseResultBean;
 import com.danertu.entity.ChooseCouponBean;
+import com.danertu.entity.CouponAllBean;
 import com.danertu.entity.CouponBean;
 import com.danertu.entity.CouponCountBean;
+import com.danertu.entity.CouponDetailBean;
 import com.danertu.entity.CouponProductsBean;
 import com.danertu.entity.LeaderBean;
 import com.danertu.entity.MyCouponBean;
@@ -28,6 +30,7 @@ import retrofit2.http.POST;
 
 public interface ApiService {
     /**
+     * 需要授权
      * 获取订单头
      *
      * @param apiId       0036
@@ -40,6 +43,7 @@ public interface ApiService {
                                  @Field("ordernumber") String orderNumber);
 
     /**
+     * 不需要授权
      * 获取店铺详细信息
      *
      * @param apiId  0041
@@ -51,11 +55,12 @@ public interface ApiService {
     @POST(Constants.API_ADDRESS)
     @FormUrlEncoded
     Call<ShopDetailBean> getShopDetail(@Field("apiid") String apiId,
-                                       @Field("shopid") String shopId,
                                        @Field("la") String la,
-                                       @Field("lt") String lt);
+                                       @Field("lt") String lt,
+                                       @Field("shopid") String shopId);
 
     /**
+     * 需要授权
      * 获取订单体
      *
      * @param apiId       0072
@@ -68,6 +73,7 @@ public interface ApiService {
                                  @Field("ordernumber") String orderNumber);
 
     /**
+     * 需要授权
      * 取消订单
      *
      * @param apiId       0075
@@ -80,6 +86,7 @@ public interface ApiService {
                              @Field("ordernumber") String orderNumber);
 
     /**
+     * 需要授权
      * 确认收货
      *
      * @param apiId       0076
@@ -93,6 +100,7 @@ public interface ApiService {
 
 
     /**
+     * 不需要授权
      * 检查当前登录用户是否为店主
      *
      * @param apiId  0141
@@ -105,6 +113,7 @@ public interface ApiService {
                                        @Field("shopid") String shopId);
 
     /**
+     * 不需要授权
      * 获取上级店铺信息
      *
      * @param apiId  0245
@@ -117,6 +126,7 @@ public interface ApiService {
                                    @Field("shopid") String shopId);
 
     /**
+     * 需要授权
      * 获取囤货列表
      *
      * @param apiId             0325
@@ -131,12 +141,13 @@ public interface ApiService {
     @FormUrlEncoded
     Call<WarehouseBean> getStockList(@Field("apiid") String apiId,
                                      @Field("memLoginId") String memLoginId,
+                                     @Field("orderBy") String orderBy,
                                      @Field("pageIndex") int pageIndex,
                                      @Field("pageSize") int pageSize,
-                                     @Field("productCategoryId") String productCategoryId,
-                                     @Field("orderBy") String orderBy);
+                                     @Field("productCategoryId") String productCategoryId);
 
     /**
+     * 需要授权
      * 获取囤货订单列表
      *
      * @param apiId      0328
@@ -153,6 +164,7 @@ public interface ApiService {
                                            @Field("pageSize") int pageSize);
 
     /**
+     * 需要授权
      * 根据分类获取订单信息
      *
      * @param apiId      0337
@@ -166,20 +178,25 @@ public interface ApiService {
     @FormUrlEncoded
     Call<NewOrderHeadBean> getOrderByType(@Field("apiid") String apiId,
                                           @Field("memLoginId") String memLoginId,
+                                          @Field("orderType") String orderType,
                                           @Field("pageIndex") int pageIndex,
-                                          @Field("pageSize") int pageSize,
-                                          @Field("orderType") String orderType);
+                                          @Field("pageSize") int pageSize);
 
     /**
+     * 不需要授权
      * 获取温泉产品分类
-     * @param apiId 0338
+     *
+     * @param apiId       0338
      * @param productGuid 产品guid
      * @return
      */
+    @POST(Constants.API_ADDRESS)
+    @FormUrlEncoded
     Call<QuanYanProductCategory> getQuanYanProductCategory(@Field("apiid") String apiId,
                                                            @Field("productGuid") String productGuid);
 
     /**
+     * 不需要授权
      * 获取可领的温泉/酒水/商城优惠券
      *
      * @param apiId     0341
@@ -193,11 +210,12 @@ public interface ApiService {
     @FormUrlEncoded
     Call<CouponBean> getCouponCenterList(@Field("apiid") String apiId,
                                          @Field("memLoginId") String memLoginId,
-                                         @Field("useScope") String useScope,
                                          @Field("pageIndex") int pageIndex,
-                                         @Field("pageSize") int pageSize);
+                                         @Field("pageSize") int pageSize,
+                                         @Field("useScope") String useScope);
 
     /**
+     * 需要授权
      * 领取指定优惠券
      *
      * @param apiId      0342
@@ -210,11 +228,12 @@ public interface ApiService {
 //    @POST("http://192.168.1.195:8081/ApiTest/RequestApi.aspx")
     @FormUrlEncoded
     Call<BaseResultBean> getCoupon(@Field("apiid") String apiId,
-                                   @Field("shopId") String shopId,
+                                   @Field("couponGuid") String couponGuid,
                                    @Field("memLoginId") String memLoginId,
-                                   @Field("couponGuid") String couponGuid);
+                                   @Field("shopId") String shopId);
 
     /**
+     * 需要授权
      * 获取指定用户的已领取/已使用/已过期优惠券
      *
      * @param apiId            0343
@@ -228,31 +247,29 @@ public interface ApiService {
 //    @POST("http://192.168.1.195:8081/ApiTest/RequestApi.aspx")
     @FormUrlEncoded
     Call<MyCouponBean> getMyCouponList(@Field("apiid") String apiId,
-                                       @Field("memLoginId") String memLoginId,
                                        @Field("isUsedOrIsDelete") String isUsedOrIsDelete,
+                                       @Field("memLoginId") String memLoginId,
                                        @Field("pageIndex") int pageIndex,
                                        @Field("pageSize") int pageSize);
 
     /**
+     * 需要授权
      * 获取商品可用的优惠券
      *
      * @param apiId      0344
      * @param multiParam 混合参数    [{"productGuids":["ff6c4fa4-f891-4dac-bd86-523abbeb6235"],"shopId":"13925340017"},{"productGuids":["dd70d3e2-580b-4531-90d1-07e04ef8cced"],"shopId":"13557013342"}]
      * @param memLoginId 登录id
-     * @param pageIndex  页码
-     * @param pageSize   页容量
      * @return
      */
     @POST(Constants.API_ADDRESS)
 //    @POST("http://192.168.1.195:8081/ApiTest/RequestApi.aspx")
     @FormUrlEncoded
     Call<ChooseCouponBean> chooseCoupon(@Field("apiid") String apiId,
-                                        @Field("multiParam") String multiParam,
                                         @Field("memLoginId") String memLoginId,
-                                        @Field("pageIndex") int pageIndex,
-                                        @Field("pageSize") int pageSize);
+                                        @Field("multiParam") String multiParam);
 
     /**
+     * 需要授权
      * 获取指定优惠券适用的商品列表
      *
      * @param apiId      0345
@@ -263,10 +280,11 @@ public interface ApiService {
 //    @POST("http://192.168.1.195:8081/ApiTest/RequestApi.aspx")
     @FormUrlEncoded
     Call<CouponProductsBean> getProductsFromCoupon(@Field("apiid") String apiId,
-                                                   @Field("memLoginId") String memLoginId,
-                                                   @Field("couponGuid") String couponGuid);
+                                                   @Field("couponGuid") String couponGuid,
+                                                   @Field("memLoginId") String memLoginId);
 
     /**
+     * 需要授权
      * 获取优惠券数量
      *
      * @param apiId      0346
@@ -278,6 +296,33 @@ public interface ApiService {
     @FormUrlEncoded
     Call<CouponCountBean> getCouponCount(@Field("apiid") String apiId,
                                          @Field("memLoginId") String memLoginId);
+
+    /**
+     * 不需要授权
+     * 获取已领取的优惠券详细
+     *
+     * @param apiId            0347
+     * @param couponRecordGuid
+     * @return
+     */
+    @POST(Constants.API_ADDRESS)
+    @FormUrlEncoded
+    Call<CouponBean> getCouponDetail(@Field("apiid") String apiId,
+                                     @Field("couponRecordGuid") String couponRecordGuid,
+                                     @Field("memLoginId") String memLoginId);
+
+    /**
+     * 获取未领取的优惠券详细
+     *
+     * @param apiId      0348
+     * @param couponGuid
+     * @return
+     */
+    @POST(Constants.API_ADDRESS)
+    @FormUrlEncoded
+    Call<CouponBean> getCouponDetail(@Field("apiid") String apiId,
+                                     @Field("couponGuid") String couponGuid);
+
 
 }
 

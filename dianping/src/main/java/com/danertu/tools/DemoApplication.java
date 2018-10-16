@@ -6,9 +6,11 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
+import android.support.multidex.MultiDex;
 
 import cn.jpush.android.api.JPushInterface;
-import cn.xiaoneng.uiapi.Ntalker;
+import okhttp3.OkHttpClient;
+import okio.Buffer;
 
 import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.ModuleName;
@@ -45,15 +47,15 @@ public class DemoApplication extends MobApplication {
         JPushInterface.setDebugMode(true);    // 设置开启日志,发布时请关闭日志
         JPushInterface.init(this);            // 初始化 JPush
         JPushInterface.resumePush(this);
-
-        //小能SDK
-        int initSDK = Ntalker.getInstance().initSDK(context, XNUtil.siteid, XNUtil.appkey);// 初始化SDK
-//        Logger.e("xn_test", "initSDK xn result="+initSDK);
-        Ntalker.getInstance().enableDebug(false);// 选择debug模式--------------------
-
 //        mQueue = Volley.newRequestQueue(this);
 //        mQueue.start();
         activities = new Stack<>();
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
     public void addActivity(Activity act) {

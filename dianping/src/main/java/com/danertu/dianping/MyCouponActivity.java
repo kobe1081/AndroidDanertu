@@ -25,9 +25,9 @@ import com.danertu.dianping.activity.mycoupon.MyCouponContact;
 import com.danertu.dianping.activity.mycoupon.MyCouponPresenter;
 import com.danertu.entity.MyCouponBean;
 import com.danertu.tools.DateTimeUtils;
-import com.danertu.tools.Logger;
 import com.danertu.widget.CommonTools;
 import com.danertu.widget.XListView;
+import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +38,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.danertu.dianping.activity.mycoupon.MyCouponPresenter.REQUEST_GET_COUPON;
+import static com.danertu.dianping.fragment.mallcoupon.MallCouponFragment.REQUEST_COUPON_DETAIL;
 
 /**
  * 通用优惠卷跳转首页
@@ -100,11 +101,17 @@ public class MyCouponActivity extends NewBaseActivity<MyCouponContact.MyCouponVi
 
     @OnClick(R.id.tv_coupon_history)
     public void onTvCouponHistoryClick(View view) {
+        if (!isClickMoreTimesShortTime()) {
+            return;
+        }
         jsStartActivity("com.danertu.dianping.CouponHistoryActivity");
     }
 
     @OnClick({R.id.tv_coupon_get_more, R.id.tv_no_data})
     public void onTvMoreClick(View view) {
+        if (!isClickMoreTimesShortTime()) {
+            return;
+        }
         jsStartActivityForResult("com.danertu.dianping.CouponCenterActivity", "shopid|" + getShopId(), REQUEST_GET_COUPON);
     }
 
@@ -257,7 +264,9 @@ public class MyCouponActivity extends NewBaseActivity<MyCouponContact.MyCouponVi
              */
             holder.tvMyCouponName.setText(bean.getCouponName());
             if ("0".equals(bean.getDiscountType())) {
-                holder.tvMyCouponMoney.setText(setStyleForUnSignNumLeft("￥" + bean.getDiscountPrice()));
+                String discountPrice = bean.getDiscountPrice();
+                discountPrice = discountPrice.substring(0, discountPrice.indexOf("."));
+                holder.tvMyCouponMoney.setText(setStyleForUnSignNumLeft(getResources().getString(R.string.rmb) + discountPrice));
             } else {
                 String discountPercent = bean.getDiscountPercent();
                 if (discountPercent.endsWith("0")) {
@@ -290,7 +299,7 @@ public class MyCouponActivity extends NewBaseActivity<MyCouponContact.MyCouponVi
                     String[] splitTomorrowStart = bean.getUseFromTomorrowStart().replace("/", ".").replace("-", ".").split(" ");
                     String[] splitTomorrowEnd = bean.getUseFromTomorrowEnd().replace("/", ".").replace("-", ".").split(" ");
 //                    useDate = "领取后次日" + bean.getUseFromTomorrow() + "天内有效";
-                    useDate=splitTomorrowStart[0]+"-"+splitTomorrowEnd[0];
+                    useDate = splitTomorrowStart[0] + "-" + splitTomorrowEnd[0];
 //                    isCanUse(holder.tvMyCouponUse, useFromTomorrowStart);
                     break;
                 case "2":
@@ -299,7 +308,7 @@ public class MyCouponActivity extends NewBaseActivity<MyCouponContact.MyCouponVi
                     String[] splitTodayStart = bean.getUseFromTodayStart().replace("/", ".").replace("-", ".").split(" ");
                     String[] splitTodayEnd = bean.getUseFromTodayEnd().replace("/", ".").replace("-", ".").split(" ");
 //                    useDate = "领取后" + bean.getUseFromToday() + "天内有效";
-                    useDate=splitTodayStart[0]+"-"+splitTodayEnd[0];
+                    useDate = splitTodayStart[0] + "-" + splitTodayEnd[0];
 //                    isCanUse(holder.tvMyCouponUse, useFromTodayStart);
                     break;
             }
@@ -330,12 +339,14 @@ public class MyCouponActivity extends NewBaseActivity<MyCouponContact.MyCouponVi
                         isShowDescriptionMap.put(position, true);
                         holder.llMyCouponLimit.setTag(0);
                         showLimit(holder.llMyCouponLimit, true);
-                        holder.ivMyCouponMore.setImageBitmap(bitmapDown);
+//                        holder.ivMyCouponMore.setImageBitmap(bitmapDown);
+                        holder.ivMyCouponMore.setImageBitmap(bitmapUp);
                     } else {
                         holder.llMyCouponLimit.setTag(1);
                         isShowDescriptionMap.put(position, false);
                         showLimit(holder.llMyCouponLimit, false);
-                        holder.ivMyCouponMore.setImageBitmap(bitmapUp);
+//                        holder.ivMyCouponMore.setImageBitmap(bitmapUp);
+                        holder.ivMyCouponMore.setImageBitmap(bitmapDown);
                     }
                 }
             });
@@ -379,7 +390,6 @@ public class MyCouponActivity extends NewBaseActivity<MyCouponContact.MyCouponVi
 //            });
 
 
-
             holder.tvMyCouponUse.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -388,34 +398,34 @@ public class MyCouponActivity extends NewBaseActivity<MyCouponContact.MyCouponVi
                     switch (bean.getUseValidityType()) {
                         case "0"://自定义日期
                             try {
-                                String useStartTime = bean.getUseStartTime().replace("/","-");
-                                String useEndTime = bean.getUseEndTime().replace("/","-");
+                                String useStartTime = bean.getUseStartTime().replace("/", "-");
+                                String useEndTime = bean.getUseEndTime().replace("/", "-");
                                 //比较两个日期,如果日期相等返回0；小于0，参数date1就是在date2之后,大于0，参数date1就是在date2之前
-                                isCanUse= DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(),useStartTime)<0&&DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(),useEndTime)>=0;
+                                isCanUse = DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(), useStartTime) < 0 && DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(), useEndTime) >= 0;
                             } catch (Exception e) {
-                                isCanUse=false;
+                                isCanUse = false;
 //                                        e.printStackTrace();
                             }
                             break;
                         case "1"://领取后次日N天内可用
                             try {
-                                String useStartTime = bean.getUseFromTomorrowStart().replace("/","-");
-                                String useEndTime = bean.getUseFromTomorrowEnd().replace("/","-");
+                                String useStartTime = bean.getUseFromTomorrowStart().replace("/", "-");
+                                String useEndTime = bean.getUseFromTomorrowEnd().replace("/", "-");
                                 //比较两个日期,如果日期相等返回0；小于0，参数date1就是在date2之后,大于0，参数date1就是在date2之前
-                                isCanUse= DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(),useStartTime)<0&&DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(),useEndTime)>=0;
+                                isCanUse = DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(), useStartTime) < 0 && DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(), useEndTime) >= 0;
                             } catch (Exception e) {
-                                isCanUse=false;
+                                isCanUse = false;
 //                                        e.printStackTrace();
                             }
                             break;
                         case "2"://领取后当日N天内可用
                             try {
-                                String useStartTime = bean.getUseFromTodayStart().replace("/","-");
-                                String useEndTime = bean.getUseFromTodayEnd().replace("/","-");
+                                String useStartTime = bean.getUseFromTodayStart().replace("/", "-");
+                                String useEndTime = bean.getUseFromTodayEnd().replace("/", "-");
                                 //比较两个日期,如果日期相等返回0；小于0，参数date1就是在date2之后,大于0，参数date1就是在date2之前
-                                isCanUse= DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(),useStartTime)<0&&DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(),useEndTime)>=0;
+                                isCanUse = DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(), useStartTime) < 0 && DateTimeUtils.compareDate(DateTimeUtils.getDateToyyyyMMddHHmmss(), useEndTime) >= 0;
                             } catch (Exception e) {
-                                isCanUse=false;
+                                isCanUse = false;
 //                                        e.printStackTrace();
                             }
                             break;
@@ -445,8 +455,9 @@ public class MyCouponActivity extends NewBaseActivity<MyCouponContact.MyCouponVi
                                 } else {
                                     //门票/客房   AppointProductType  1-成人票、儿童票  2-团体票  3-客房
                                     switch (bean.getAppointProductType()) {
-                                        case "1":case "2":
-                                            jsStartActivity("com.danertu.dianping.HtmlActivity", "pageName|"+"android/"+bean.getAppointProductUrl()+ "&platform=android&timestamp=" + System.currentTimeMillis()+",;guid|" + guids[0] + ",;shopid|" + bean.getShopId()+",;productCategory|"+bean.getAppointProductType());
+                                        case "1":
+                                        case "2":
+                                            jsStartActivity("com.danertu.dianping.HtmlActivity", "pageName|" + "android/" + bean.getAppointProductUrl() + "&platform=android&timestamp=" + System.currentTimeMillis() + ",;guid|" + guids[0] + ",;shopid|" + bean.getShopId() + ",;productCategory|" + bean.getAppointProductType());
                                             break;
                                         case "3":
                                             jsStartActivity("com.danertu.dianping.ProductDetailsActivity2", "guid|" + guids[0] + ",;shopid|" + bean.getShopId());
@@ -484,7 +495,39 @@ public class MyCouponActivity extends NewBaseActivity<MyCouponContact.MyCouponVi
             holder.llRoot.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    if (!isClickMoreTimesShortTime()) {
+                        return;
+                    }
+                    Intent intent = new Intent(context, CouponDetailActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("shopid", getShopId());
+                    bundle.putInt("position", position);
+                    bundle.putString("couponGuid", bean.getCouponGuid());
+                    bundle.putString("couponRecordGuid", bean.getCouponRecordGuid());
+                    bundle.putString("isUsed", "0");
+                    intent.putExtras(bundle);
+                    startActivityForResult(intent, REQUEST_COUPON_DETAIL);
+                }
+            });
+            holder.tvCouponShare.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!isClickMoreTimesShortTime()) {
+                        return;
+                    }
+                    try {
+                        if ("3".equals(bean.getUseScope())) {
+                            shareImgWithQRCode(bean.getImageUrl(), bean.getCouponShareUrl()+ "&shopid=" + bean.getUseAgentAppoint(), Float.parseFloat(bean.getImageX()), Float.parseFloat(bean.getImageY()), Integer.parseInt(bean.getImageWidth()), "Wechat&WechatMoments");
+                        } else {
+                            shareImgWithQRCode(bean.getImageUrl(), bean.getCouponShareUrl() + "&shopid=" + getShopId(), Float.parseFloat(bean.getImageX()), Float.parseFloat(bean.getImageY()), Integer.parseInt(bean.getImageWidth()), "Wechat&WechatMoments");
+                        }
+//                        shareImgWithQRCode(bean.getImageUrl(), Constants.COUPON_SHARE_URL+bean.getCouponGuid()+"&shopid="+getShopId(), Float.parseFloat(bean.getImageX()), Float.parseFloat(bean.getImageY()), Integer.parseInt(bean.getImageWidth()), "Wechat&WechatMoments");
+                    } catch (Exception e) {
+                        jsShowMsg("分享失败");
+                        if (Constants.isDebug) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             });
             return convertView;
@@ -527,6 +570,8 @@ public class MyCouponActivity extends NewBaseActivity<MyCouponContact.MyCouponVi
             ImageView ivMyCouponMore;
             @BindView(R.id.ll_root)
             LinearLayout llRoot;
+            @BindView(R.id.tv_coupon_share)
+            TextView tvCouponShare;
 
             public ViewHolder(View view) {
 //                R.layout.item_my_coupon

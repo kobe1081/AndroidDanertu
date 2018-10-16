@@ -5,12 +5,14 @@ import java.util.HashMap;
 import org.json.JSONException;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 import android.widget.Button;
 
 import com.config.Constants;
@@ -91,6 +93,9 @@ public class ShopCommentActivity extends BaseWebActivity implements OnClickListe
     public void initUI() {
         startWebView(SERVER_URL);
         webView.addJavascriptInterface(this, IFACE_NAME);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         initTitle("店铺评论", "去评论");
     }
 
