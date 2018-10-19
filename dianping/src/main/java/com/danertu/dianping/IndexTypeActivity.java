@@ -39,8 +39,7 @@ import android.widget.TextView;
 
 import com.config.Constants;
 import com.danertu.dianping.R.color;
-import com.danertu.tools.AppManager;
-import com.danertu.tools.AppUtil;
+import com.danertu.widget.CommonTools;
 import com.danertu.widget.MWebViewClient;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -413,7 +412,7 @@ public class IndexTypeActivity extends BaseActivity {
             public void onClick(View v) {
                 if (pop == null) {
                     if (dropAdapter == null) {
-                        float width = AppUtil.dip2px(getContext(), 130);
+                        float width = CommonTools.dip2px(getContext(), 130);
                         dropAdapter = new DropAdapter();
                         dropListView = new ListView(IndexTypeActivity.this);
                         pop = new PopupWindow(dropListView, (int) width, LayoutParams.WRAP_CONTENT);

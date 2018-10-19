@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -734,5 +735,13 @@ public class CommonTools {
         }
 
         return 0;
+    }
+
+    /* 首字母大写 */
+    static public String ucFirst(String str) {
+        if (str != null && !Objects.equals(str, "")) {
+            str = str.substring(0, 1).toUpperCase() + str.substring(1);
+        }
+        return str;
     }
 }

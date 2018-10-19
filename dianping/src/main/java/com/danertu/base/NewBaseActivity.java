@@ -12,7 +12,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Process;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -27,7 +26,6 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
@@ -35,26 +33,14 @@ import com.config.Constants;
 import com.danertu.db.DBManager;
 import com.danertu.dianping.ActivityUtils;
 import com.danertu.dianping.BaseActivity;
-import com.danertu.dianping.BaseTaskPool;
 import com.danertu.dianping.R;
-import com.danertu.entity.MyOrderData;
-import com.danertu.entity.MyOrderDataQRCode;
-import com.danertu.tools.AppManager;
-import com.danertu.tools.DemoApplication;
-import com.danertu.tools.DeviceTag;
-import com.danertu.tools.ImageLoaderConfig;
-import com.danertu.tools.LocationUtil;
 import com.danertu.tools.MIUIUtils;
 import com.danertu.tools.PayUtils;
 import com.danertu.tools.ShareUtil;
 import com.danertu.tools.StatusBarUtil;
 import com.danertu.tools.SystemBarTintManager;
 import com.danertu.widget.CommonTools;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
-import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
-
-import static com.danertu.dianping.BaseActivity.REQUEST_PHONE_STATE;
 import static com.danertu.tools.MIUIUtils.isMIUI;
 
 public abstract class NewBaseActivity<V, T extends NewBasePresenter> extends BaseActivity implements BaseView {

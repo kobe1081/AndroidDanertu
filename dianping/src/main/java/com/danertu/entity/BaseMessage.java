@@ -9,7 +9,7 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.danertu.tools.AppUtil;
+import com.danertu.widget.CommonTools;
 
 public class BaseMessage {
 
@@ -100,7 +100,7 @@ public class BaseMessage {
         if (strArr.length > 0) {
             str = strArr[0];
         }
-        return AppUtil.ucFirst(str);
+        return CommonTools.ucFirst(str);
     }
 
 }

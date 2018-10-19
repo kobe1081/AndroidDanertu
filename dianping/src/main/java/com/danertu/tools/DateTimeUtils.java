@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Random;
 
 /**
  * Created by Viz on 2018/1/18.
@@ -258,5 +260,20 @@ public class DateTimeUtils {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static String getFormatTimeStamp() {
+//		long timeSt = System.currentTimeMillis();
+//		DateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+//		String order = format.format(new Date(timeSt));
+//		return order;
+        SimpleDateFormat format = new SimpleDateFormat("MMddHHmmss", Locale.getDefault());
+        Date date = new Date();
+        String key = format.format(date);
+
+        Random r = new Random();
+        key = key + Math.abs(r.nextInt());
+        key = key.substring(0, 15);
+        return key;
     }
 }

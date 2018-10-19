@@ -72,8 +72,8 @@ import com.danertu.entity.MyOrderDataQRCode;
 import com.danertu.entity.TokenExceptionBean;
 import com.danertu.tools.AESEncrypt;
 import com.danertu.tools.AppManager;
-import com.danertu.tools.AppUtil;
 import com.danertu.tools.AsyncTask;
+import com.danertu.tools.DateTimeUtils;
 import com.danertu.tools.DemoApplication;
 import com.danertu.tools.DeviceTag;
 import com.danertu.tools.ImageLoaderConfig;
@@ -104,7 +104,6 @@ import static com.danertu.tools.MIUIUtils.isMIUI;
 public abstract class BaseActivity extends SwipeBackActivity {
     public final String TAG = getClass().getSimpleName();
     protected Handler handler;
-    protected BaseTaskPool taskPool;
     public boolean isLoading = false;
     public ProgressBar pb_loading = null;
     protected DBManager db = null;
@@ -813,7 +812,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
 
     @JavascriptInterface
     public String getTimeStamp() {
-        return AppUtil.getFormatTimeStamp();
+        return DateTimeUtils.getFormatTimeStamp();
     }
 
     /**

@@ -14,8 +14,8 @@ import com.alipay.sdk.app.PayTask;
 import com.config.Constants;
 import com.danertu.tools.AccountUtil;
 import com.danertu.tools.AlipayUtil;
-import com.danertu.tools.AppUtil;
 import com.danertu.tools.AsyncTask;
+import com.danertu.tools.DateTimeUtils;
 import com.danertu.tools.Result;
 import com.danertu.widget.CommonTools;
 
@@ -73,23 +73,6 @@ public class RechargeActivity extends BaseWebActivity {
         }
         webView.addJavascriptInterface(this, "app");
         startWebView(Constants.appWebPageUrl + "Android_wallet_recharge.html");
-
-
-        //test-----------------------
-//		uid = db.GetLoginUid(getContext());
-//		String uids[] = {"15113347438","yutu0118","1222"};
-//		for (String uid : uids) {
-//			rechargeCode = AppUtil.getFormatTimeStamp();
-//			String encryptInfo;
-//			try {
-//				money = 1000;
-//				encryptInfo = accUtil.getPostInfo(uid, inoutTag, money, remark, rechargeWay, rechargeCode);
-//				new PostMoneyInfo().execute(encryptInfo);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//		}
-        //test-----------------------
     }
 
     @JavascriptInterface
@@ -103,7 +86,7 @@ public class RechargeActivity extends BaseWebActivity {
                 } else {
                     money = tMoney;
                     String encryptInfo;
-                    rechargeCode = AppUtil.getFormatTimeStamp();
+                    rechargeCode = DateTimeUtils.getFormatTimeStamp();
                     try {
                         uid = getUid();
                         encryptInfo = accUtil.getPostInfo(uid, inoutTag, money, remark, rechargeWay, rechargeCode);

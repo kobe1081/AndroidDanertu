@@ -8,8 +8,6 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.config.Constants;
-import com.danertu.tools.AppUtil;
-import com.danertu.tools.Logger;
 
 import static com.danertu.dianping.BaseActivity.WHAT_TO_LOGIN;
 
@@ -38,7 +36,7 @@ public class BaseHandler extends Handler {
                     result = msg.getData().getString("data");
                     if (result != null) {
                         ui.onTaskComplete(taskId, result);
-                    } else if (!AppUtil.isEmptyInt(taskId)) {
+                    } else if (!(new Integer(taskId) == null)) {
                         ui.onTaskComplete(taskId);
                     } else {
                         ui.toast(Constants.err.MESSAGE);
