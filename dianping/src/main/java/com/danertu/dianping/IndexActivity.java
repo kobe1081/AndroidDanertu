@@ -89,9 +89,6 @@ public class IndexActivity extends HomeActivity implements OnClickListener {
         new Thread(getParamsRunnable).start();
         new GetShop().execute(getLoginId());
         initBroadcastReceiver();
-
-
-        StatusBarUtil.StatusBarLightMode(this,true);
     }
 
     class CheckApp extends AsyncTask<String, Integer, String> {

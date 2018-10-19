@@ -158,7 +158,6 @@ public abstract class BaseActivity extends SwipeBackActivity {
             }
         }
         appManager.setUid(getUid());
-
     }
 
     /**
@@ -702,6 +701,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
         manager.setNavigationBarTintResource(R.color.black);
 //        setSystemBar(R.color.white);
         setSystemBar(R.color.tab_black);
+//        setSystemBarWhite();
 //        setSystemBar(R.color.transparent);
 
     }
@@ -749,8 +749,6 @@ public abstract class BaseActivity extends SwipeBackActivity {
      */
     @JavascriptInterface
     public void setSystemBarColor(final String color) {
-        Logger.e(TAG, "setSystemBarColor " + color);
-
         runOnUiThread(new Runnable() {
             public void run() {
                 if (manager != null && !TextUtils.isEmpty(color)) {

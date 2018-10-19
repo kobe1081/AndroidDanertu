@@ -463,10 +463,10 @@ public class SplashActivity extends BaseActivity {
             try {
                 if (!TextUtils.isEmpty(versionNo))
                     version = Integer.parseInt(versionNo);
-                Logger.i("当前版本号", code + "");
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
+
             if (code == version - 1) {
                 getTips(false);
             } else if (code < version) {

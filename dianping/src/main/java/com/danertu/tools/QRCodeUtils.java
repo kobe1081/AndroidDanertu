@@ -31,11 +31,13 @@ public class QRCodeUtils {
      * @throws WriterException
      */
     public static Bitmap createQRCode(String str, int widthAndHeight) throws WriterException {
-        Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();
+        Hashtable<EncodeHintType, Object> hints = new Hashtable<EncodeHintType, Object>();
         hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
-
-        BitMatrix matrix = new MultiFormatWriter().encode(str, BarcodeFormat.QR_CODE, widthAndHeight, widthAndHeight);
-
+        //容错级别
+        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+        //设置空白边距的宽度
+        hints.put(EncodeHintType.MARGIN, 0); //default is 4
+        BitMatrix matrix = new MultiFormatWriter().encode(str, BarcodeFormat.QR_CODE, widthAndHeight, widthAndHeight,hints);
         int width = matrix.getWidth();
         int height = matrix.getHeight();
         int[] pixels = new int[width * height];
@@ -65,7 +67,6 @@ public class QRCodeUtils {
 // if (content == null || "".equals(content)) {
 // return false;
 // }
-
             //配置参数
             Map<EncodeHintType, Object> hints = new HashMap<>();
             hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
@@ -73,10 +74,8 @@ public class QRCodeUtils {
             hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
             //设置空白边距的宽度
             hints.put(EncodeHintType.MARGIN, 0); //default is 4
-
             // 图像数据转换，使用了矩阵转换
             BitMatrix bitMatrix = new QRCodeWriter().encode(content, BarcodeFormat.QR_CODE, heightPix, heightPix, hints);
-
             int[] pixels = new int[heightPix * heightPix];
             // 下面这里按照二维码的算法，逐个生成二维码的图片，
             // 两个for循环是图片横列扫描的结果

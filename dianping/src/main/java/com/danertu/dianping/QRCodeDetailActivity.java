@@ -88,9 +88,9 @@ public class QRCodeDetailActivity extends BaseActivity implements View.OnClickLi
         new GetOrderBody().execute(orderNumber);
 
         try {
-//            Bitmap qrCode = QRCodeUtils.createQRCode(orderNumber, CommonTools.dip2px(context, 170));
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.icon);
-            Bitmap qrCode = QRCodeUtils.createQRImage(orderNumber, CommonTools.dip2px(context, 200), bitmap, true);
+            Bitmap qrCode = QRCodeUtils.createQRCode(orderNumber, CommonTools.dip2px(context, 200));
+//            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.icon);
+//            Bitmap qrCode = QRCodeUtils.createQRImage(orderNumber, CommonTools.dip2px(context, 200), bitmap, true);
             iv_qr_code.setImageBitmap(qrCode);
         } catch (Exception e) {
             jsShowMsg("出错了，请重试");

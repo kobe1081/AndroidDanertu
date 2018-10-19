@@ -412,12 +412,14 @@ public class OrderItemFragment extends NewBaseFragment<OrderItemContact.OrderIte
             if (isShowQRCode) {
                 if (isQuanyan) {
                     if ("0".equals(paymentStatus)) {
+                        btnParent.setVisibility(View.VISIBLE);
                         holder.bOrderCenter.setText(BTN_PAY);
                         holder.bOrderCenter.setVisibility(View.VISIBLE);
                         holder.bOrderRight.setText(BTN_QRCODE);
                         holder.bOrderRight.setVisibility(View.VISIBLE);
                         holder.tvMyOrderTradeState.setText(STATUS_TICKET_NO_USE);
                     } else if ("0".equals(shipmentStatus) && "2".equals(paymentStatus)) {
+                        btnParent.setVisibility(View.VISIBLE);
                         holder.tvMyOrderTradeState.setText(STATUS_TICKET_NO_USE);
                         holder.bOrderRight.setText(BTN_QRCODE);
                         holder.bOrderCenter.setText(BTN_PAYBACK);

@@ -3,14 +3,10 @@ package com.danertu.tools;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.xmlpull.v1.XmlPullParser;
 
 import wl.codelibrary.utils.NetInfoUtil;
@@ -225,12 +221,7 @@ public class WXPayUtil {
         signParams.put("partnerid", req.partnerId);
         signParams.put("prepayid", req.prepayId);
         signParams.put("timestamp", req.timeStamp);
-
         req.sign = genAppSign(signParams);
-
-        Log.e("test", "genPayReq: signParams" + signParams);
-        Log.e("test", "genPayReq: sign=" + req.sign);
-
         return req;
     }
 

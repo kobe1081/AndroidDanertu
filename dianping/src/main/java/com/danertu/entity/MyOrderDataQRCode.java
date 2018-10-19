@@ -336,7 +336,7 @@ public abstract class MyOrderDataQRCode {
             String mobile = oj.getString(HEAD_P_MOBILE);
             String orderType = oj.getString(ORDER_TYPE_KEY);
 
-            ArrayList<HashMap<String, String>> orderItemSet = analyzeOrderInfo(orderNumber);
+            ArrayList<HashMap<String, String>> orderItemSet = analyzeOrderInfo(orderNumber, orderStatus, ShipmentStatus, PaymentStatus);
             itemOrder = getOrder(
                     orderItemSet,
                     orderNumber,
@@ -500,9 +500,9 @@ public abstract class MyOrderDataQRCode {
                 continue;
             }
 
-            ArrayList<HashMap<String, String>> orderItemSet = analyzeOrderInfo(orderNumber);
+            ArrayList<HashMap<String, String>> orderItemSet = analyzeOrderInfo(orderNumber, orderStatus, ShipmentStatus, PaymentStatus);
 
-            if (isOnlyQuanYan && !isQuanYan) {
+            if ((isOnlyQuanYan && !isQuanYan)) {
                 continue;
             }
 
@@ -607,6 +607,7 @@ public abstract class MyOrderDataQRCode {
     }
 
     private boolean isQuanYan = false;
+    private boolean isCooperateSupplier = false;
 
     /**
      * 解析订单商品的数据
@@ -622,8 +623,9 @@ public abstract class MyOrderDataQRCode {
     // joininfo =
     // AppManager.getInstance().getPJoinedInfo("0082",list.get(index).get("productID").toString());
     @SuppressLint("CommitPrefEdits")
-    private ArrayList<HashMap<String, String>> analyzeOrderInfo(String orderNumber) {
+    private ArrayList<HashMap<String, String>> analyzeOrderInfo(String orderNumber, String orderStatue, String shipmentStatue, String payStatue) {
         isQuanYan = false;
+        isCooperateSupplier = false;
 //        if (sp == null)
 //            sp = base.getSharedPreferences(uid + ".danertu", Context.MODE_PRIVATE);
 //        Editor editor = sp.edit();
@@ -654,8 +656,8 @@ public abstract class MyOrderDataQRCode {
                 JSONObject oj = orderproductbean.getJSONObject(i);
                 String supplierLoginID = oj.getString("SupplierLoginID");
                 isQuanYan = supplierLoginID.equals(Constants.QY_SUPPLIERID);
-
-                if (isOnlyQuanYan && !isQuanYan) {
+                isCooperateSupplier = Constants.COOPERATE_SUPPLIER_ID.contains(supplierLoginID) && (("0".equals(shipmentStatue) && "2".equals(payStatue)) || ("1".equals(shipmentStatue) && "2".equals(payStatue)) || "5".equals(orderStatue));
+                if ((isOnlyQuanYan && !isQuanYan) && !isCooperateSupplier) {
                     continue;
                 }
 
@@ -737,7 +739,7 @@ public abstract class MyOrderDataQRCode {
             if (bean != null && "false".equals(bean.getResult()) && "-1".equals(bean.getCode())) {
                 handler.sendEmptyMessage(NEED_LOGIN);
             } else {
-                analyzeOrderInfo(orderNumber);
+                analyzeOrderInfo(orderNumber, orderStatue, shipmentStatue, payStatue);
             }
         }
         return data;
