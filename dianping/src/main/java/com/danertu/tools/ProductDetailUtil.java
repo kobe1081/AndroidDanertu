@@ -30,7 +30,7 @@ public class ProductDetailUtil {
     public ProductDetailUtil(BaseActivity base, int canBuyCount, DBManager dbl) {
         this.base = base;
         this.canBuyCount = canBuyCount;
-        this.db = db;
+        this.db = dbl;
     }
 
     /**

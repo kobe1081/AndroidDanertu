@@ -15,19 +15,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="dc2d1d3c-0471-4678-8c4a-39f59b22cc2c" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseTaskPool.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AppClient.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AppUtil.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/NoticeManager.java" afterPath="" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/UpdateBean.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/StockAccountPay.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/StockAlipayUtil.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/StockWXPay.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/StockWXPayUtil.java" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/base/NewBaseActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/base/NewBaseActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/config/Constants.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/config/Constants.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseHandler.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/IndexTypeActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/IndexTypeActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/RechargeActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/RechargeActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/BaseMessage.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/BaseMessage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/DateTimeUtils.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/DateTimeUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/widget/CommonTools.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/widget/CommonTools.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/SplashActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/SplashActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/StockOrderDetailActivity.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/StockOrderDetailActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AppManager.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AppManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/PayUtils.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/PayUtils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/ProductDetailUtil.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/ProductDetailUtil.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/WXPay.java" afterPath="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/WXPay.java" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -54,11 +55,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="BaseActivity.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="AppManager.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AppManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="512">
+              <caret line="1765" column="51" lean-forward="false" selection-start-line="1765" selection-start-column="51" selection-end-line="1765" selection-end-column="51" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BaseActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="213">
-              <caret line="1377" column="5" lean-forward="true" selection-start-line="1377" selection-start-column="5" selection-end-line="1377" selection-end-column="5" />
+            <state relative-caret-position="414">
+              <caret line="906" column="42" lean-forward="true" selection-start-line="906" selection-start-column="42" selection-end-line="906" selection-end-column="42" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#25124#25125#0" expanded="true" />
@@ -70,36 +81,52 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="WXPay.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/WXPay.java">
+      <file leaf-file-name="Constants.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/config/Constants.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1292">
-              <caret line="70" column="112" lean-forward="false" selection-start-line="70" selection-start-column="112" selection-end-line="70" selection-end-column="112" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BaseTask.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseTask.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="152">
-              <caret line="8" column="36" lean-forward="false" selection-start-line="8" selection-start-column="36" selection-end-line="8" selection-end-column="36" />
+            <state relative-caret-position="532">
+              <caret line="64" column="0" lean-forward="false" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BaseHandler.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseHandler.java">
+      <file leaf-file-name="PaymentCenterActivity.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/PaymentCenterActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="489">
+              <caret line="1616" column="5" lean-forward="false" selection-start-line="1616" selection-start-column="5" selection-end-line="1616" selection-end-column="5" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="IndexActivity.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/IndexActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="100">
+              <caret line="98" column="0" lean-forward="false" selection-start-line="98" selection-start-column="0" selection-end-line="98" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PayUtils.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/PayUtils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-810">
+              <caret line="674" column="41" lean-forward="false" selection-start-line="674" selection-start-column="41" selection-end-line="674" selection-end-column="41" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PaymentCenterHandler.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/PaymentCenterHandler.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="247">
-              <caret line="13" column="21" lean-forward="true" selection-start-line="13" selection-start-column="21" selection-end-line="13" selection-end-column="21" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+              <caret line="20" column="45" lean-forward="false" selection-start-line="20" selection-start-column="41" selection-end-line="20" selection-end-column="45" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -115,14 +142,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>tv_order_2</find>
-      <find>discountCondition</find>
-      <find>recName</find>
-      <find>cb_useJLB</find>
-      <find>ll_cb</find>
-      <find>payWay</find>
-      <find>new BasicNameValuePair(</find>
-      <find>Stock</find>
       <find>0331</find>
       <find>payFail</find>
       <find>StockAccountPay</find>
@@ -145,6 +164,14 @@
       <find>isCooperateSupplier</find>
       <find>WHAT_CHECKVERSION_SUCCESS</find>
       <find>ucFirst</find>
+      <find>version</find>
+      <find>WXPayinit</find>
+      <find>psw_limit_text</find>
+      <find>WHAT_WECHAT_PAY</find>
+      <find>getProductPayway</find>
+      <find>setVersionCode</find>
+      <find>versionName</find>
+      <find>wAct</find>
     </findStrings>
     <replaceStrings>
       <replace>);</replace>
@@ -5358,25 +5385,19 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/dianping/src/main/java/com/config/Test.java" />
-        <option value="$PROJECT_DIR$/code_library/build.gradle" />
         <option value="$PROJECT_DIR$/dianping/build/intermediates/manifests/full/debug/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/dianping/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/DemoApplication.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/HtmlActivityNew.java" />
-        <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/ProductDetailUtil.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/ProductDetailWeb.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/res/layout/activity_pro_detail_webpage.xml" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/ProductDetailWebPage.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/StockAlipayUtil.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AlipayUtil.java" />
-        <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/StockWXPayUtil.java" />
-        <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/WXPay.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AccToPay.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/ProductDetailsActivity2.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseWebActivity.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/PaymentCenterActivity.java" />
-        <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/PayUtils.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/AppConfigBean.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/QuanYanProductCategory.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/activity/orderdetail/OrderDetailPresenter.java" />
@@ -5385,7 +5406,6 @@
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/OrderDetailActivity.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/SearchActivityV2.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderDetail.java" />
-        <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/StockOrderDetailActivity.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/fragment/stockorder/StockOrderPresenter.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/res/layout/activity_index.xml" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/StatusBarUtil.java" />
@@ -5395,11 +5415,8 @@
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/MyOrderDataQRCode.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/fragment/orderitem/OrderItemFragment.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/adapter/MyOrderQRCodeAdapter.java" />
-        <option value="$PROJECT_DIR$/dianping/src/main/java/com/config/Constants.java" />
-        <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/SplashActivity.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/adapter/MyOrderAdapter.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/WXPayUtil.java" />
-        <option value="$PROJECT_DIR$/dianping/build.gradle" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/Util.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/base/NewBaseActivity.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/IndexTypeActivity.java" />
@@ -5407,8 +5424,18 @@
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/DateTimeUtils.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/BaseMessage.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseHandler.java" />
-        <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseActivity.java" />
         <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/RechargeActivity.java" />
+        <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/StockWXPayUtil.java" />
+        <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/StockOrderDetailActivity.java" />
+        <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/WXPay.java" />
+        <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/UpdateBean.java" />
+        <option value="$PROJECT_DIR$/dianping/build.gradle" />
+        <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/SplashActivity.java" />
+        <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/ProductDetailUtil.java" />
+        <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/PayUtils.java" />
+        <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AppManager.java" />
+        <option value="$PROJECT_DIR$/dianping/src/main/java/com/config/Constants.java" />
+        <option value="$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseActivity.java" />
       </list>
     </option>
   </component>
@@ -5454,6 +5481,56 @@
               <option name="myItemId" value="dianping" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidModuleNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidResFolderNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="xml" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidResFolderTypeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Danertu" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="dianping" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidResFolderNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="values" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidResFolderTypeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Danertu" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="dianping" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidResFolderNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Danertu" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="dianping" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidModuleNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -5474,10 +5551,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="danertu" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="widget" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -5528,6 +5601,10 @@
               <option name="myItemId" value="danertu" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="dianping" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -5551,7 +5628,29 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="base" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Danertu" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="dianping" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="config" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -5588,13 +5687,14 @@
     <property name="android.project.structure.proportion" value="0.15" />
     <property name="last_opened_file_path" value="D:/android.keystore" />
     <property name="show.do.not.ask.upgrade.gradle.plugin" value="3.0.0" />
-    <property name="device.picker.selection" value="PL2GAM17C0811229" />
+    <property name="device.picker.selection" value="bc83828" />
     <property name="android.profiler.active" value="true" />
     <property name="ExportApk.ApkPath" value="D:\WorkSpace\DanertuNew\Danertu\dianping" />
     <property name="ExportApk.Flavors" value="" />
     <property name="ExportApk.BuildType" value="release" />
     <property name="ExportApk.SignV1" value="true" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/dianping/src/main/res/mipmap-mdpi" />
+    <property name="extract.method.default.visibility" value="private" />
   </component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
@@ -5696,7 +5796,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1539933086127" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1540287647618" />
       </method>
     </configuration>
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests">
@@ -5744,7 +5844,7 @@
       </Profilers>
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1539933086127" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1540287647618" />
       </method>
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -5927,7 +6027,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1539933086128" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1540287647618" />
       </method>
     </configuration>
     <list size="1">
@@ -5994,7 +6094,14 @@
       <option name="project" value="LOCAL" />
       <updated>1539932117823</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="移除不使用的网络请求相关类">
+      <created>1539933124282</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1539933124282</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TodoView">
@@ -6019,9 +6126,9 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.50319827" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3286334" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.80498374" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.58829904" sideWeight="0.4978678" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3347779" sideWeight="0.4978678" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.5053305" order="13" side_tool="true" content_ui="tabs" />
@@ -6111,7 +6218,9 @@
     <MESSAGE value="1.新增优惠券详情；&#10;2.更新zxing库；&#10;3.移除小能SDK；&#10;4.修复其他一些bug；" />
     <MESSAGE value="--" />
     <MESSAGE value="1.修改微信支付Util.java工具类，移除HttpClient&#10;2.修复订单中心按钮消失问题&#10;3.券码详情二维码去掉logo&#10;4.消费码适配泉林" />
-    <option name="LAST_COMMIT_MESSAGE" value="1.修改微信支付Util.java工具类，移除HttpClient&#10;2.修复订单中心按钮消失问题&#10;3.券码详情二维码去掉logo&#10;4.消费码适配泉林" />
+    <MESSAGE value="移除不使用的网络请求相关类" />
+    <MESSAGE value="1.删除多余代码文件。&#10;2.支付模块优化。&#10;3.调整接口请求超时时间。" />
+    <option name="LAST_COMMIT_MESSAGE" value="1.删除多余代码文件。&#10;2.支付模块优化。&#10;3.调整接口请求超时时间。" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -6120,195 +6229,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/StockOrderDetailActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="251">
-          <caret line="335" column="64" lean-forward="false" selection-start-line="335" selection-start-column="64" selection-end-line="335" selection-end-column="64" />
-          <folding>
-            <element signature="e#9400#10357#0" expanded="true" />
-            <element signature="e#10356#10357#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/res/layout/activity_index.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="10" column="45" lean-forward="false" selection-start-line="10" selection-start-column="45" selection-end-line="10" selection-end-column="45" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/StatusBarUtil.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1577">
-          <caret line="93" column="22" lean-forward="false" selection-start-line="93" selection-start-column="22" selection-end-line="93" selection-end-column="22" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/OrderDetailActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="373" column="63" lean-forward="false" selection-start-line="373" selection-start-column="63" selection-end-line="373" selection-end-column="63" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AppManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="329">
-          <caret line="476" column="9" lean-forward="false" selection-start-line="476" selection-start-column="7" selection-end-line="476" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderDetail.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="251">
-          <caret line="825" column="45" lean-forward="true" selection-start-line="825" selection-start-column="45" selection-end-line="825" selection-end-column="45" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/QRCodeUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="441">
-          <caret line="64" column="109" lean-forward="false" selection-start-line="64" selection-start-column="109" selection-end-line="64" selection-end-column="109" />
-          <folding>
-            <element signature="e#889#913#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/QRCodeDetailActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="494">
-          <caret line="90" column="48" lean-forward="false" selection-start-line="90" selection-start-column="48" selection-end-line="90" selection-end-column="48" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/IndexActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="494">
-          <caret line="91" column="5" lean-forward="false" selection-start-line="91" selection-start-column="5" selection-end-line="91" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://E:/AndroidSDK/sources/android-26/android/view/View.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="215">
-          <caret line="20277" column="34" lean-forward="false" selection-start-line="20277" selection-start-column="16" selection-end-line="20277" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/SystemBarTintManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="327">
-          <caret line="207" column="42" lean-forward="true" selection-start-line="207" selection-start-column="42" selection-end-line="207" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/MyOrderQRCodeActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="41" column="76" lean-forward="false" selection-start-line="41" selection-start-column="76" selection-end-line="41" selection-end-column="76" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/MyOrderDataQRCode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="441">
-          <caret line="504" column="0" lean-forward="false" selection-start-line="504" selection-start-column="0" selection-end-line="504" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/fragment/orderitem/OrderItemFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="411" column="31" lean-forward="false" selection-start-line="411" selection-start-column="31" selection-end-line="411" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/adapter/MyOrderQRCodeAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="627" column="123" lean-forward="false" selection-start-line="627" selection-start-column="123" selection-end-line="627" selection-end-column="123" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/APKDownload.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="36" column="18" lean-forward="false" selection-start-line="36" selection-start-column="18" selection-end-line="36" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/SplashActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="424">
-          <caret line="475" column="26" lean-forward="false" selection-start-line="475" selection-start-column="26" selection-end-line="475" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/adapter/MyOrderAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="424" column="55" lean-forward="false" selection-start-line="424" selection-start-column="55" selection-end-line="424" selection-end-column="55" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/wxapi/WXEntryActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
-          <caret line="29" column="42" lean-forward="false" selection-start-line="29" selection-start-column="42" selection-end-line="29" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/dianping/libs/libammsdk.jar!/com/tencent/mm/sdk/openapi/IWXAPI.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="11" column="17" lean-forward="false" selection-start-line="11" selection-start-column="17" selection-end-line="11" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/AndroidManifest.xml">
-      <provider editor-type-id="android-manifest">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="754" column="33" lean-forward="false" selection-start-line="754" selection-start-column="33" selection-end-line="754" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/wxapi/WXPayEntryActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="513">
-          <caret line="45" column="13" lean-forward="false" selection-start-line="45" selection-start-column="13" selection-end-line="45" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://E:/AndroidSDK/platforms/android-26/optional/org.apache.http.legacy.jar!/org/apache/http/impl/client/DefaultHttpClient.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="171">
@@ -6329,14 +6249,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="247">
           <caret line="23" column="11" lean-forward="false" selection-start-line="23" selection-start-column="11" selection-end-line="23" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/StockWXPay.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="299">
-          <caret line="81" column="30" lean-forward="false" selection-start-line="81" selection-start-column="30" selection-end-line="81" selection-end-column="30" />
           <folding />
         </state>
       </provider>
@@ -6365,14 +6277,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/config/Constants.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="437">
-          <caret line="41" column="82" lean-forward="false" selection-start-line="41" selection-start-column="82" selection-end-line="41" selection-end-column="82" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://E:/AndroidSDK/sources/android-26/org/apache/http/conn/ssl/AllowAllHostnameVerifier.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="361">
@@ -6389,39 +6293,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/WXPayUtil.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2470">
-          <caret line="132" column="18" lean-forward="false" selection-start-line="132" selection-start-column="18" selection-end-line="132" selection-end-column="18" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/Util.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="247">
           <caret line="44" column="9" lean-forward="false" selection-start-line="44" selection-start-column="9" selection-end-line="44" selection-end-column="9" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="513">
-          <caret line="27" column="36" lean-forward="true" selection-start-line="27" selection-start-column="36" selection-end-line="27" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/WXPay.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1292">
-          <caret line="70" column="112" lean-forward="false" selection-start-line="70" selection-start-column="112" selection-end-line="70" selection-end-column="112" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -6497,34 +6373,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseTask.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="8" column="36" lean-forward="false" selection-start-line="8" selection-start-column="36" selection-end-line="8" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="213">
-          <caret line="1377" column="5" lean-forward="true" selection-start-line="1377" selection-start-column="5" selection-end-line="1377" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#25124#25125#0" expanded="true" />
-            <element signature="e#25181#25182#0" expanded="true" />
-            <element signature="e#39637#39638#0" expanded="true" />
-            <element signature="e#39705#39706#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/RechargeActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="311">
           <caret line="88" column="70" lean-forward="true" selection-start-line="88" selection-start-column="70" selection-end-line="88" selection-end-column="70" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -6545,12 +6399,262 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/StockWXPayUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="473">
+          <caret line="30" column="23" lean-forward="true" selection-start-line="30" selection-start-column="23" selection-end-line="30" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/StockWXPay.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="16" column="19" lean-forward="true" selection-start-line="16" selection-start-column="19" selection-end-line="16" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/StockAlipayUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="17" column="13" lean-forward="false" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/StockAccountPay.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="26" column="34" lean-forward="true" selection-start-line="26" selection-start-column="34" selection-end-line="26" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/StockOrderReturnAccountPay.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="266">
+          <caret line="22" column="22" lean-forward="false" selection-start-line="22" selection-start-column="22" selection-end-line="22" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseHandler.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="247">
-          <caret line="13" column="21" lean-forward="true" selection-start-line="13" selection-start-column="21" selection-end-line="13" selection-end-column="21" />
+          <caret line="13" column="21" lean-forward="false" selection-start-line="13" selection-start-column="21" selection-end-line="13" selection-end-column="21" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="8" column="36" lean-forward="false" selection-start-line="8" selection-start-column="36" selection-end-line="8" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/AccountRecord.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="266">
+          <caret line="78" column="53" lean-forward="false" selection-start-line="78" selection-start-column="53" selection-end-line="78" selection-end-column="53" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/entity/UpdateBean.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="266">
+          <caret line="14" column="32" lean-forward="false" selection-start-line="14" selection-start-column="32" selection-end-line="14" selection-end-column="32" />
+          <folding>
+            <element signature="e#285#286#0" expanded="true" />
+            <element signature="e#334#335#0" expanded="true" />
+            <element signature="e#378#379#0" expanded="true" />
+            <element signature="e#415#416#0" expanded="true" />
+            <element signature="e#448#449#0" expanded="true" />
+            <element signature="e#500#501#0" expanded="true" />
+            <element signature="e#544#545#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/SplashActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="471" column="13" lean-forward="false" selection-start-line="471" selection-start-column="13" selection-end-line="471" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/StockOrderDetailActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="223">
+          <caret line="940" column="13" lean-forward="false" selection-start-line="940" selection-start-column="13" selection-end-line="940" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1107">
+          <caret line="3" column="9" lean-forward="false" selection-start-line="3" selection-start-column="9" selection-end-line="3" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/onekeyshare/proguard-rules.pro">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/proguard.cfg">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="475">
+          <caret line="121" column="31" lean-forward="false" selection-start-line="121" selection-start-column="31" selection-end-line="121" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/ProductDetailUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="418">
+          <caret line="169" column="8" lean-forward="false" selection-start-line="169" selection-start-column="8" selection-end-line="169" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/WXPay.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="11" column="32" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="128" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/WXPayUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-15">
+          <caret line="108" column="41" lean-forward="true" selection-start-line="108" selection-start-column="41" selection-end-line="108" selection-end-column="41" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="222">
+          <caret line="201" column="4" lean-forward="true" selection-start-line="201" selection-start-column="4" selection-end-line="203" selection-end-column="105" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AccToPay.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="399">
+          <caret line="100" column="83" lean-forward="true" selection-start-line="100" selection-start-column="83" selection-end-line="100" selection-end-column="83" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AccountUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="2" column="13" lean-forward="false" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AlipayUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="18" column="38" lean-forward="false" selection-start-line="18" selection-start-column="38" selection-end-line="18" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/CustomDialog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="15" column="13" lean-forward="false" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/PaymentCenterActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="489">
+          <caret line="1616" column="5" lean-forward="false" selection-start-line="1616" selection-start-column="5" selection-end-line="1616" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/PaymentCenterHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="20" column="45" lean-forward="false" selection-start-line="20" selection-start-column="41" selection-end-line="20" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/PayUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-810">
+          <caret line="674" column="41" lean-forward="false" selection-start-line="674" selection-start-column="41" selection-end-line="674" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/base/BaseModel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="741">
+          <caret line="124" column="15" lean-forward="false" selection-start-line="124" selection-start-column="8" selection-end-line="124" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/tools/AppManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="512">
+          <caret line="1765" column="51" lean-forward="false" selection-start-line="1765" selection-start-column="51" selection-end-line="1765" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/config/Constants.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="532">
+          <caret line="64" column="0" lean-forward="false" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/IndexActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="100">
+          <caret line="98" column="0" lean-forward="false" selection-start-line="98" selection-start-column="0" selection-end-line="98" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dianping/src/main/java/com/danertu/dianping/BaseActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="906" column="42" lean-forward="true" selection-start-line="906" selection-start-column="42" selection-end-line="906" selection-end-column="42" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#25124#25125#0" expanded="true" />
+            <element signature="e#25181#25182#0" expanded="true" />
+            <element signature="e#39637#39638#0" expanded="true" />
+            <element signature="e#39705#39706#0" expanded="true" />
           </folding>
         </state>
       </provider>

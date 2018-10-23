@@ -32,6 +32,7 @@ import com.danertu.widget.CommonTools;
 import com.danertu.widget.PayPswDialog;
 import com.google.gson.Gson;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import static com.danertu.dianping.BaseActivity.WHAT_TO_LOGIN;
@@ -53,6 +54,7 @@ public abstract class PayUtils {
     private ImageView ivClose;
 
     private static final int WHAT_PAY = 898;
+    private WeakReference<BaseActivity> weakReference=null;
     private BaseActivity baseActivity;
     public static Handler handler;
     private Context context;
@@ -94,7 +96,8 @@ public abstract class PayUtils {
         this.context = activity;
         productGuid = "";
         productName = "";
-        baseActivity = activity;
+        weakReference=new WeakReference<BaseActivity>(activity);
+        baseActivity = weakReference.get();
         this.uid = uid;
         this.orderNumber = orderNumber;
         this.isShowAliPay = isShowAliPay;
@@ -669,6 +672,7 @@ public abstract class PayUtils {
                                 break;
                         }
                     } catch (Exception e) {
+                        payError("出现错误");
                         e.printStackTrace();
                     }
 

@@ -911,7 +911,6 @@ public class StockOrderDetailActivity extends BaseActivity implements View.OnCli
             public void run() {
                 try {
                     String orderInfo = new AlipayUtil(getContext()).getSignPayOrderInfo(orderNumber, productName, productDetail, totalPrice, ORDER_TYPE_ORDER_RETURN);
-//                    String orderInfo = new StockAlipayUtil(getContext()).getSignPayOrderInfo(orderNumber, productName, productDetail, "0.01", ORDER_TYPE_ORDER_RETURN);
                     PayTask aliPay = new PayTask(StockOrderDetailActivity.this);
                     String result = aliPay.pay(orderInfo);
                     Logger.i("alipayResult", result);

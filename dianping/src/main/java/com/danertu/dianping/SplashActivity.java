@@ -40,6 +40,7 @@ import com.config.Constants;
 import com.danertu.db.ChinaArea;
 import com.danertu.db.DBHelper;
 import com.danertu.entity.AppConfigBean;
+import com.danertu.entity.UpdateBean;
 import com.danertu.tools.AppManager;
 import com.danertu.tools.ImageLoaderConfig;
 import com.danertu.tools.LocationUtil;
@@ -306,79 +307,79 @@ public class SplashActivity extends BaseActivity {
                 AppConfigBean.ValBean valBean = appConfigBean.getVal().get(0);
 
                 String urlAlipayReturn = valBean.getUrlAlipayReturn();
-                if (!TextUtils.isEmpty(urlAlipayReturn)){
+                if (!TextUtils.isEmpty(urlAlipayReturn)) {
                     Constants.APP_URL.ALI_PAY_CALLBACK_URL_SIMPLE = urlAlipayReturn;
                     SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlAlipayReturn", urlAlipayReturn);
                 }
 
                 String urlAlipayReturnWareHouse = valBean.getUrlAlipayReturnWareHouse();
-                if (!TextUtils.isEmpty(urlAlipayReturnWareHouse)){
+                if (!TextUtils.isEmpty(urlAlipayReturnWareHouse)) {
                     Constants.APP_URL.ALI_PAY_CALLBACK_URL_STOCK = urlAlipayReturnWareHouse;
                     SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlAlipayReturnWareHouse", urlAlipayReturnWareHouse);
                 }
 
                 String urlWechatReturn = valBean.getUrlWechatReturn();
-                if (!TextUtils.isEmpty(urlWechatReturn)){
+                if (!TextUtils.isEmpty(urlWechatReturn)) {
                     Constants.APP_URL.WECHAT_PAY_CALLBACK_URL_SIMPLE = urlWechatReturn;
                     SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlWechatReturn", urlWechatReturn);
                 }
 
                 String urlWechatReturnWareHouse = valBean.getUrlWechatReturnWareHouse();
-                if (!TextUtils.isEmpty(urlWechatReturnWareHouse)){
+                if (!TextUtils.isEmpty(urlWechatReturnWareHouse)) {
                     Constants.APP_URL.WECHAT_PAY_CALLBACK_URL_STOCK = urlWechatReturnWareHouse;
                     SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlWechatReturnWareHouse", urlWechatReturnWareHouse);
                 }
 
                 String urlWareHouseRules = valBean.getUrlWareHouseRules();
-                if (!TextUtils.isEmpty(urlWareHouseRules)){
+                if (!TextUtils.isEmpty(urlWareHouseRules)) {
                     Constants.APP_URL.DANERTU_STOCK_PROTOCOL = urlWareHouseRules;
                     SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlWareHouseRules", urlWareHouseRules);
                 }
 
                 String urlShopShare = valBean.getUrlShopShare();
-                if (!TextUtils.isEmpty(urlShopShare)){
+                if (!TextUtils.isEmpty(urlShopShare)) {
                     Constants.APP_URL.SHOP_SHARE_URL = urlShopShare;
                     SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlShopShare", urlShopShare);
                 }
 
                 String urlShareHall = valBean.getUrlShareHall();
-                if (!TextUtils.isEmpty(urlShareHall)){
+                if (!TextUtils.isEmpty(urlShareHall)) {
                     Constants.APP_URL.NEW_SHARE_HALL_ADDRESS = urlShareHall;
                     SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlShareHall", urlShareHall);
                 }
 
                 String urlImgDomain = valBean.getUrlImgDomain();
-                if (!TextUtils.isEmpty(urlImgDomain)){
+                if (!TextUtils.isEmpty(urlImgDomain)) {
                     Constants.APP_URL.imgServer = urlImgDomain;
                     SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlImgDomain", urlImgDomain);
                 }
 
                 String urlAndroidUpdateFull = valBean.getUrlAndroidUpdateFull();
-                if (!TextUtils.isEmpty(urlAndroidUpdateFull)){
+                if (!TextUtils.isEmpty(urlAndroidUpdateFull)) {
                     Constants.APP_URL.APK_DOWNLOAD_URL = urlAndroidUpdateFull;
                     SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlAndroidUpdateFull", urlAndroidUpdateFull);
                 }
 
                 String urlAndroidUpdateDifference = valBean.getUrlAndroidUpdateDifference();
-                if (!TextUtils.isEmpty(urlAndroidUpdateDifference)){
+                if (!TextUtils.isEmpty(urlAndroidUpdateDifference)) {
                     SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlAndroidUpdateDifference", urlAndroidUpdateDifference);
                     Constants.APP_URL.APK_PATCH_DOWNLOAD_URL = urlAndroidUpdateDifference;
                 }
 
                 String UrlAnnouncementDetail = valBean.getUrlAnnouncementDetail();
-                if (!TextUtils.isEmpty(UrlAnnouncementDetail)){
+                if (!TextUtils.isEmpty(UrlAnnouncementDetail)) {
                     SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlAnnouncementDetail", UrlAnnouncementDetail);
                     Constants.APP_URL.ANNOUNCEMENT_DETAIL_URL = UrlAnnouncementDetail;
                 }
 
                 String UrlExpressQuery = valBean.getUrlExpressQuery();
-                if (!TextUtils.isEmpty(UrlExpressQuery)){
+                if (!TextUtils.isEmpty(UrlExpressQuery)) {
                     SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlExpressQuery", UrlExpressQuery);
                     Constants.APP_URL.KUAIDI100_ADDRESS = UrlExpressQuery;
                 }
 
                 String urlTicketProductDetail = valBean.getUrlTicketProductDetail();
-                if (!TextUtils.isEmpty(urlTicketProductDetail)){
+                if (!TextUtils.isEmpty(urlTicketProductDetail)) {
                     SPTool.updateString(context, SPTool.SP_APP_CONFIG, "UrlTicketProductDetail", urlTicketProductDetail);
                     Constants.APP_URL.TICKET_DETAIL_URL = urlTicketProductDetail;
                 }
@@ -451,13 +452,53 @@ public class SplashActivity extends BaseActivity {
         }
 
         /**
+         *
          * 检查更新
          * @return
+         *
+         * 2018年10月22日
+         * @since version 92
+         *  添加接口可控制是否增量更新
          */
         public boolean updateCheck() {
             // 耗时操作
             boolean result = true;
             versionNo = AppManager.getInstance().getVersionNo("0057");
+//            versionNo = "{\"newVersion\":\"91\",\"isComplete\":\"false\"}";
+            if (versionNo.contains("{")) {
+                result = newUpdate(result, versionNo);
+            } else {
+                result = oldUpdate(result);
+            }
+            return result;
+        }
+
+        public boolean newUpdate(boolean result, String json) {
+            try {
+                UpdateBean updateBean = JSONObject.parseObject(json, UpdateBean.class);
+                int code = getVersionCode();
+                int version = updateBean.getNewVersion();
+                if ("true".equals(updateBean.getIsComplete())) {
+                    getTips(true);
+                } else {
+                    if (code == version - 1) {
+                        getTips(false);
+                    } else if (code < version) {
+                        getTips(true);
+                    } else {
+                        result = false;
+                    }
+                }
+
+            } catch (Exception e) {
+                result = false;
+                e.printStackTrace();
+            }
+
+            return result;
+        }
+
+        private boolean oldUpdate(boolean result) {
             int version = 0;
             int code = getVersionCode();
             try {
@@ -471,8 +512,9 @@ public class SplashActivity extends BaseActivity {
                 getTips(false);
             } else if (code < version) {
                 getTips(true);
-            } else
+            } else {
                 result = false;
+            }
             return result;
         }
         // IndexActivity.this.showhandler.sendMessage(msg);

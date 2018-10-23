@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 import android.annotation.SuppressLint;
@@ -1763,6 +1764,7 @@ public class AppManager {
             }
 
             httpClient = new OkHttpClient.Builder()
+                    .connectTimeout(30, TimeUnit.SECONDS)
                     .sslSocketFactory(createSSLSocketFactory(), new TrustAllCerts())
                     .hostnameVerifier(new TrustAllHostnameVerifier())
                     .build();

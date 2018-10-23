@@ -39,8 +39,8 @@ public class Constants {
 //    public static final String apiSrcUrl = "https://api.danertu.com:8021/requestapi.aspx";
 
 //  常用
-    public static final String appWebPageUrl = "https://appweb.danertu.com:8444/";
-    public static final String apiSrcUrl = "https://api.danertu.com:8446/requestapi.aspx";
+//    public static final String appWebPageUrl = "https://appweb.danertu.com:8444/";
+//    public static final String apiSrcUrl = "https://api.danertu.com:8446/requestapi.aspx";
 
 
     //弃用,改为https
@@ -60,8 +60,8 @@ public class Constants {
 //    public static final String appWebPageUrl = "http://115.28.55.222:8019/";//外网测试地址
 
 //常用
-//    public static final String appWebPageUrl = "http://192.168.1.137:778/";
-//    public static final String apiSrcUrl = "http://192.168.1.137:511/RequestApi.aspx";
+    public static final String appWebPageUrl = "http://192.168.1.137:778/";
+    public static final String apiSrcUrl = "http://192.168.1.137:511/RequestApi.aspx";
 
 //	public static final String apiSrcUrl = "http://192.168.1.253:8085/RequestApi.aspx";
 

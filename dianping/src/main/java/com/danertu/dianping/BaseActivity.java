@@ -1629,7 +1629,8 @@ public abstract class BaseActivity extends SwipeBackActivity {
             @Override
             public void payError(String message) {
                 isPayLoading = false;
-                jsShowMsg(message);
+                if (!TextUtils.isEmpty(message))
+                    jsShowMsg(message);
             }
 
             @Override
@@ -1677,28 +1678,28 @@ public abstract class BaseActivity extends SwipeBackActivity {
             public void paySuccess() {
                 isPayLoading = false;
                 if (webView != null)
-                    webView.loadUrl(Constants.IFACE + callBackMethod + "(‘1’)");
+                    webView.loadUrl(Constants.IFACE + callBackMethod + "('1')");
             }
 
             @Override
             public void payFail() {
                 isPayLoading = false;
                 if (webView != null)
-                    webView.loadUrl(Constants.IFACE + callBackMethod + "(‘2’)");
+                    webView.loadUrl(Constants.IFACE + callBackMethod + "('2')");
             }
 
             @Override
             public void payCancel() {
                 isPayLoading = false;
                 if (webView != null)
-                    webView.loadUrl(Constants.IFACE + callBackMethod + "(‘3’)");
+                    webView.loadUrl(Constants.IFACE + callBackMethod + "('3')");
             }
 
             @Override
             public void payError(String message) {
                 isPayLoading = false;
                 if (webView != null)
-                    webView.loadUrl(Constants.IFACE + callBackMethod + "(‘4’)");
+                    webView.loadUrl(Constants.IFACE + callBackMethod + "('4')");
             }
 
             @Override

@@ -19,7 +19,7 @@ public class WXPay {
         super();
         wxPayUtil = new WXPayUtil(context);
         loadDialog = new LoadingDialog(context);
-        Logger.e("WXPay", this.getClass().getPackage() + "." + this.getClass().getSimpleName() + "init WXPay");
+        Logger.e("WXPay", this.getClass().getPackage() + "." + this.getClass().getSimpleName() + " init WXPay");
     }
 
     public void toPay(String proNames, String outOrderNumber, String priceSum) {
